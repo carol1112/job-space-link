@@ -219,6 +219,87 @@ header .auth-buttons a:hover{
   transform:translateX(3px);
 }
 
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 0;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03);
+}
+
 /* ============================================================
    ABOUT NAV FIX
 ============================================================ */
@@ -955,36 +1036,64 @@ button.login-btn:disabled{
   }
 
   header{
-    padding:0 14px 0 8px;
-    gap:10px;
+    height:var(--header-h) !important;
+    gap:2px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
   }
 
   header .logo img{
-    height:54px;
+    height:54px !important;
   }
 
-  header nav{
-    display:none;
-  }
-
-  header .auth-buttons{
-    display:none;
-  }
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
-    display:inline-flex;
-    width:40px;
-    height:40px;
+    order:2 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:1px !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
   .mobile-panel{
-    padding:12px 14px 16px;
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
   }
 
-  .mobile-panel .mnav a{
-    padding:11px 12px;
-    border-radius:11px;
-    font-size:0.92rem;
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    width:48px !important;
+    min-width:48px !important;
+    padding:11px 0 !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
   }
 
   .page-shell{
@@ -1036,45 +1145,67 @@ button.login-btn:disabled{
   }
 
   header{
-    padding:0 12px 0 8px;
-    gap:8px;
+    height:var(--header-h) !important;
+    gap:1px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
   header .logo{
-    margin-left:-2px;
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
   }
 
   header .logo img{
-    height:50px;
+    height:50px !important;
   }
 
-  header nav{
-    display:none;
-  }
-
-  header .auth-buttons{
-    display:none;
-  }
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
-    display:inline-flex;
-    width:38px;
-    height:38px;
-    border-radius:9px;
+    order:2 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
   .mobile-panel{
-    padding:12px 12px 14px;
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
   }
 
   .mobile-panel .mnav{
-    gap:7px;
+    gap:7px !important;
   }
 
-  .mobile-panel .mnav a{
-    padding:10px 11px;
-    border-radius:10px;
-    font-size:0.88rem;
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    width:46px !important;
+    min-width:46px !important;
+    padding:10px 0 !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
   }
 
   .page-shell{
@@ -1204,18 +1335,19 @@ button.login-btn:disabled{
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
-      <button
-        type="button"
-        class="mnav-toggle"
-        id="mobileAboutToggle"
-        aria-expanded="false"
-        aria-controls="mobileAboutMenu"
-      >
-        <span class="mnav-toggle-left">
-          <span>About</span>
-        </span>
-        <i class="fa-solid fa-caret-down mnav-caret"></i>
-      </button>
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
 
       <div class="mnav-submenu" id="mobileAboutMenu">
         <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
@@ -1228,8 +1360,7 @@ button.login-btn:disabled{
     <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
     <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
-   <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
-
+    <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
     <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
@@ -1311,6 +1442,7 @@ let lastFocusedBeforeOverlay = null;
   const dd = document.getElementById("aboutNavDropdown");
   const toggle = document.getElementById("aboutNavToggle");
   const menu = document.getElementById("aboutNavMenu");
+  const aboutLink = document.getElementById("aboutNavLink");
 
   if(!dd || !toggle || !menu) return;
 
@@ -1335,6 +1467,12 @@ let lastFocusedBeforeOverlay = null;
       openAboutMenu();
     }
   });
+
+  if(aboutLink){
+    aboutLink.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  }
 
   document.addEventListener("click", function(e){
     if(!dd.contains(e.target)){
@@ -1361,19 +1499,43 @@ let lastFocusedBeforeOverlay = null;
 (function(){
   const btn = document.getElementById("navToggle");
   const panel = document.getElementById("mobilePanel");
+  const aboutGroup = document.getElementById("mobileAboutGroup");
+  const aboutToggle = document.getElementById("mobileAboutToggle");
   if(!btn || !panel) return;
+
+  function closeAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    aboutGroup.classList.remove("open");
+    aboutToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    const open = aboutGroup.classList.toggle("open");
+    aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
 
   function close(){
     panel.classList.remove("open");
     panel.setAttribute("aria-hidden","true");
     btn.setAttribute("aria-expanded","false");
+    closeAbout();
   }
 
   btn.addEventListener("click", ()=>{
     const open = panel.classList.toggle("open");
     panel.setAttribute("aria-hidden", open ? "false" : "true");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(!open) closeAbout();
   });
+
+  if(aboutToggle){
+    aboutToggle.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAbout();
+    });
+  }
 
   panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
   document.addEventListener("keydown", (e)=>{
