@@ -214,6 +214,87 @@ header .auth-buttons a:hover{
   transform:translateX(3px);
 }
 
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03);
+}
+
 /* ============================================================
    ABOUT NAV DROPDOWN
 =========================================================== */
@@ -1484,12 +1565,17 @@ footer{
 
   header{
     height:var(--header-h) !important;
-    gap:10px !important;
+    gap:2px !important;
     padding:0 12px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
   header .logo{
-    margin-left:-2px !important;
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
   }
 
   header .logo img{
@@ -1500,10 +1586,15 @@ footer{
   header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
+    order:2 !important;
     display:inline-flex !important;
     width:40px !important;
     height:40px !important;
     border-radius:10px !important;
+    margin-left:1px !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
   .mobile-panel{
@@ -1515,10 +1606,24 @@ footer{
     gap:8px !important;
   }
 
-  .mobile-panel .mnav a{
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
     padding:11px 12px !important;
     border-radius:11px !important;
     font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    width:48px !important;
+    min-width:48px !important;
+    justify-content:center !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
   }
 }
 
@@ -1528,12 +1633,20 @@ footer{
 
   header{
     height:var(--header-h) !important;
-    gap:8px !important;
-    padding:0 10px 0 6px !important;
+    gap:1px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
   header .logo{
-    margin-left:-2px !important;
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
   }
 
   header .logo img{
@@ -1544,10 +1657,15 @@ footer{
   header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
+    order:2 !important;
     display:inline-flex !important;
     width:38px !important;
     height:38px !important;
     border-radius:9px !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
   .mobile-panel{
@@ -1559,10 +1677,42 @@ footer{
     gap:7px !important;
   }
 
-  .mobile-panel .mnav a{
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
     padding:10px 11px !important;
     border-radius:10px !important;
     font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    width:46px !important;
+    min-width:46px !important;
+    justify-content:center !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
+  }
+
+  .footer-simple{
+    flex-direction:column;
+    height:auto;
+    padding:10px 0 15px;
+    gap:10px;
+  }
+
+  .footer-simple .footer-logo img{
+    height:40px;
+  }
+
+  .worker-float.w3,
+  .worker-float.w4,
+  .worker-float.w5,
+  .worker-float.w6{
+    display:none;
   }
 }
 
@@ -1636,25 +1786,24 @@ footer{
 </div>
 
 <!-- MOBILE PANEL -->
-
-<!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
-      <button
-        type="button"
-        class="mnav-toggle"
-        id="mobileAboutToggle"
-        aria-expanded="false"
-        aria-controls="mobileAboutMenu"
-      >
-        <span class="mnav-toggle-left">
-          <span>About</span>
-        </span>
-        <i class="fa-solid fa-caret-down mnav-caret"></i>
-      </button>
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
 
       <div class="mnav-submenu" id="mobileAboutMenu">
         <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
@@ -1667,12 +1816,10 @@ footer{
     <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
     <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
-   <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
-
+    <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
     <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
-
 
 <main>
   <!-- HERO -->
@@ -2004,6 +2151,14 @@ footer{
     }
   });
 
+  const aboutLink = document.getElementById("aboutNavLink");
+
+  if(aboutLink){
+    aboutLink.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  }
+
   menu.querySelectorAll("a").forEach(function(a){
     a.addEventListener("click", function(){
       closeAboutMenu();
@@ -2017,22 +2172,48 @@ footer{
 (function(){
   const btn = document.getElementById("navToggle");
   const panel = document.getElementById("mobilePanel");
+  const aboutGroup = document.getElementById("mobileAboutGroup");
+  const aboutToggle = document.getElementById("mobileAboutToggle");
   if(!btn || !panel) return;
+
+  function closeAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    aboutGroup.classList.remove("open");
+    aboutToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    const open = aboutGroup.classList.toggle("open");
+    aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
 
   function close(){
     panel.classList.remove("open");
     panel.setAttribute("aria-hidden","true");
     btn.setAttribute("aria-expanded","false");
+    closeAbout();
   }
 
   btn.addEventListener("click", ()=>{
     const open = panel.classList.toggle("open");
     panel.setAttribute("aria-hidden", open ? "false" : "true");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(!open) closeAbout();
   });
 
+  if(aboutToggle){
+    aboutToggle.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAbout();
+    });
+  }
+
   panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
-  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") close();
+  });
 
   document.addEventListener("click", (e)=>{
     if(panel.classList.contains("open")){
