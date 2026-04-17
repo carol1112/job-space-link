@@ -1,0 +1,275 @@
+/* ============================================
+   REFINED HEADER (GLASS + NEON, LAPTOP SAFE)
+   - Cleaner layout
+   - No wrapping/overflow surprises
+   - Dropdowns consistent
+============================================ */
+
+:root{
+  --hdrH: 100px;
+  --hdrBg: rgba(15,23,42,0.82);
+  --hdrLine: rgba(59,130,246,0.38);
+  --hdrGlow: 0 10px 30px rgba(0,198,255,0.16);
+  --hdrShadow: 0 6px 20px rgba(59,130,246,0.22);
+
+  --btnBorder: rgba(148,163,184,0.50);
+  --btnBg: rgba(15,23,42,0.70);
+  --btnHover: rgba(37,99,235,0.78);
+
+  --txt: #e5e7eb;
+  --txtDim: rgba(229,231,235,0.86);
+  --neonA: #00c6ff;
+  --neonB: #8b5cf6;
+}
+
+/* HEADER SHELL */
+header{
+  position:fixed;
+  top:0; left:0; right:0;
+  height: var(--hdrH);
+  z-index:1000;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 18px;
+
+  padding: 14px 6%;
+  background: var(--hdrBg);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hdrLine);
+  box-shadow: var(--hdrShadow), var(--hdrGlow);
+}
+
+/* LEFT: LOGO */
+header .logo{
+  display:flex;
+  align-items:center;
+  flex: 0 0 auto;
+}
+header .logo img{
+  height: 88px;
+  width:auto;
+  margin-top: 2px;
+  filter: drop-shadow(0 0 12px rgba(59,130,246,0.70));
+  transition: transform .25s ease, filter .25s ease;
+}
+header .logo img:hover{
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 18px rgba(0,198,255,0.95));
+}
+
+/* CENTER: NAV */
+header nav{
+  flex: 1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 16px;
+
+  min-width: 0;            /* prevents overflow bugs */
+  white-space: nowrap;     /* keeps menu in one line */
+  overflow: hidden;        /* avoids spilling into auth buttons */
+}
+
+header nav a{
+  color: var(--txtDim);
+  text-decoration:none;
+  font-weight: 700;
+  font-size: 0.95rem;
+
+  padding: 10px 10px;
+  border-radius: 999px;
+  transition: color .2s ease, background .2s ease, text-shadow .2s ease, transform .2s ease;
+}
+header nav a:hover{
+  color: #fff;
+  background: rgba(0,198,255,0.12);
+  text-shadow: 0 0 12px rgba(0,198,255,0.55);
+  transform: translateY(-1px);
+}
+
+/* RIGHT: AUTH BUTTONS */
+.auth-buttons{
+  flex: 0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap: 10px;
+
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+.auth-buttons a,
+.dropdown-toggle{
+  text-decoration:none;
+  font-size: 0.90rem;
+  font-weight: 800;
+  color: var(--txt);
+
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--btnBorder);
+  background: var(--btnBg);
+
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.auth-buttons a:hover,
+.dropdown-toggle:hover{
+  transform: translateY(-1px);
+  background: var(--btnHover);
+  border-color: rgba(129,140,248,0.78);
+  box-shadow: 0 0 14px rgba(0,198,255,0.22);
+}
+
+/* PRIMARY / SUBSCRIPTION STYLE */
+.auth-buttons .subscription{
+  border: 0;
+  background: linear-gradient(90deg, var(--neonA), var(--neonB), #ec4899);
+  background-size: 200%;
+  box-shadow: 0 0 14px rgba(59,130,246,0.55);
+}
+.auth-buttons .subscription:hover{
+  background-position: 100% 0;
+  box-shadow: 0 0 22px rgba(129,140,248,0.85);
+}
+
+/* EMPLOYER DROPDOWN */
+.dropdown{ position:relative; display:inline-block; }
+.caret-icon{ font-size:0.75rem; opacity:0.9; }
+
+.dropdown-menu{
+  position:absolute;
+  right:0;
+  top: calc(100% + 10px);
+  min-width: 220px;
+
+  display:none;
+  flex-direction:column;
+
+  background: rgba(15,23,42,0.98);
+  border: 1px solid rgba(59,130,246,0.55);
+  border-radius: 14px;
+  box-shadow: 0 14px 30px rgba(2,6,23,0.55);
+  padding: 8px;
+  z-index: 9999;
+}
+
+.dropdown-menu a{
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--txtDim);
+  background: transparent;
+  border: 1px solid transparent;
+}
+.dropdown-menu a:hover{
+  background: rgba(0,198,255,0.14);
+  border-color: rgba(0,198,255,0.25);
+  color:#fff;
+}
+
+/* show menu when JS sets it */
+.dropdown-menu.open{ display:flex; }
+
+/* OPTIONAL hover open (desktop only) */
+@media (min-width: 1024px){
+  .dropdown:hover .dropdown-menu{ display:flex; }
+}
+
+/* ABOUT NAV DROPDOWN */
+.nav-dropdown{ position:relative; display:inline-block; }
+.nav-dropdown > a{ display:inline-flex; align-items:center; gap:8px; }
+
+.nav-dropdown-menu{
+  position:absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 230px;
+
+  display:none;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(15,23,42,0.96);
+  border: 1px solid rgba(59,130,246,0.35);
+  box-shadow: 0 14px 30px rgba(0,198,255,0.18);
+  backdrop-filter: blur(12px);
+  z-index: 9999;
+}
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: #dbeafe;
+  font-weight: 800;
+}
+.nav-dropdown-menu a:hover{
+  background: linear-gradient(90deg, var(--neonA), var(--neonB));
+  color:#061022;
+}
+.nav-dropdown.open .nav-dropdown-menu{ display:block; }
+
+/* =========================
+   RESPONSIVE REFINEMENTS
+========================= */
+
+/* Standard laptop */
+@media (min-width: 1024px) and (max-width: 1439px){
+  header{ padding: 12px 4.5%; }
+  header .logo img{ height: 80px; }
+  header nav{ gap: 10px; }
+  header nav a{ font-size: 0.92rem; padding: 9px 8px; }
+  .auth-buttons a, .dropdown-toggle{ padding: 8px 12px; font-size: 0.88rem; }
+}
+
+/* Tablet landscape: keep nav visible but tighter (optional) */
+@media (min-width: 820px) and (max-width: 1023px){
+  header{ height: 78px; padding: 10px 3.5%; }
+  header .logo img{ height: 64px; }
+  header nav{ gap: 8px; }
+  header nav a{ font-size: 0.86rem; padding: 8px 6px; }
+  .auth-buttons a, .dropdown-toggle{ padding: 7px 10px; font-size: 0.84rem; }
+}
+
+/* Tablet / mobile: stack + allow wrapping */
+@media (max-width: 819px){
+  header{
+    height: auto;
+    padding: 12px 4%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  header nav{
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+  .auth-buttons{
+    order: 2;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+  .nav-dropdown-menu{
+    position: static;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .dropdown-menu{
+    right: auto;
+    left: 0;
+  }
+}

@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Space Link | About</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="jobspacelink.css" />
+
+  <style>
+/* ============================================================
+   PAGE RESET + FIXED HEADER/FOOTER SPACE
+=========================================================== */
+:root{ --header-h: 78px; }
+
+html, body{
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+  min-height:100%;
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+
+body{
+  padding-top:var(--header-h);
+  padding-bottom:150px;
+  background:
+    radial-gradient(circle at top left, rgba(14,165,233,0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(139,92,246,0.14), transparent 30%),
+    linear-gradient(180deg, #081120 0%, #0f172a 35%, #0b1220 100%);
+  color:#ffffff;
+  font-family:"Poppins",sans-serif;
+}
+
+a{ color:inherit; }
+
+/* ============================================================
+   HEADER - SAME FORMAT AS INDEX
+=========================================================== */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:1rem;
+}
+
+/* ============================================================
+   MOBILE PANEL
+=========================================================== */
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+/* ============================================================
+   ABOUT NAV DROPDOWN
+=========================================================== */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* ============================================================
+   FLOATING BACKGROUND WORKERS
+=========================================================== */
+.bg-workers{
+  position:fixed;
+  left:0;
+  right:0;
+  top:var(--header-h);
+  height:calc(100vh - var(--header-h));
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.bg-workers::before{
+  content:"";
+  position:absolute;
+  inset:-25%;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(0,198,255,0.14), transparent 56%),
+    radial-gradient(circle at 78% 25%, rgba(139,92,246,0.12), transparent 58%),
+    radial-gradient(circle at 50% 92%, rgba(14,165,233,0.10), transparent 62%),
+    radial-gradient(circle at 50% 50%, rgba(15,23,42,0.18), rgba(15,23,42,0.66));
+}
+
+.worker-float{
+  position:absolute;
+  opacity:0.20;
+  transform: translate3d(0,0,0);
+  will-change: transform, filter, opacity;
+  user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+  animation: workerFloat 12s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(0,198,255,0.18));
+}
+
+.worker-float.depth-far{
+  opacity:0.14;
+  filter: blur(0.4px) drop-shadow(0 0 14px rgba(0,198,255,0.14));
+}
+
+.worker-float.depth-mid{
+  opacity:0.18;
+  filter: blur(0.15px) drop-shadow(0 0 18px rgba(0,198,255,0.16));
+}
+
+.worker-float.depth-near{
+  opacity:0.22;
+  filter: blur(0px) drop-shadow(0 0 22px rgba(0,198,255,0.18));
+}
+
+.worker-float.w1{ animation-duration: 18s; animation-delay:-3s; }
+.worker-float.w2{ animation-duration: 22s; animation-delay:-9s; }
+.worker-float.w3{ animation-duration: 20s; animation-delay:-6s; }
+.worker-float.w4{ animation-duration: 26s; animation-delay:-12s; }
+.worker-float.w5{ animation-duration: 24s; animation-delay:-10s; }
+.worker-float.w6{ animation-duration: 21s; animation-delay:-8s; }
+
+@keyframes workerFloat{
+  0%,100%{ transform: translate3d(var(--px, 0px), calc(var(--py, 0px) + 0px), 0) scale(var(--s, 1)); }
+  50%{ transform: translate3d(calc(var(--px, 0px) + 10px), calc(var(--py, 0px) - 18px), 0) scale(var(--s, 1)); }
+}
+
+/* ============================================================
+   PAGE CONTENT STYLES
+=========================================================== */
+main,
+section,
+footer{
+  position:relative;
+  z-index:2;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 rgba(0,198,255,0);}50%{box-shadow:0 0 28px rgba(0,198,255,0.24);}}
+@keyframes floatSoft{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+.section-wrap{
+  max-width:1250px;
+  margin:0 auto;
+  padding:0 22px;
+}
+
+.section-heading{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.section-heading .eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 14px;
+  border-radius:999px;
+  border:1px solid rgba(125,211,252,0.24);
+  background:rgba(15,23,42,0.58);
+  color:#bae6fd;
+  font-size:0.86rem;
+  letter-spacing:0.03em;
+  backdrop-filter:blur(10px);
+}
+
+.section-heading h2{
+  margin:16px 0 12px;
+  font-size:clamp(2rem, 4vw, 2.9rem);
+  line-height:1.15;
+  text-shadow:0 0 20px rgba(0,198,255,0.18);
+}
+
+.section-heading p{
+  max-width:840px;
+  margin:0 auto;
+  color:#cbd5e1;
+  font-size:1.04rem;
+  line-height:1.75;
+}
+
+.glass-card{
+  background:linear-gradient(180deg, rgba(15,23,42,0.78), rgba(15,23,42,0.62));
+  border:1px solid rgba(59,130,246,0.26);
+  border-radius:22px;
+  box-shadow:0 18px 50px rgba(2,8,23,0.36), 0 0 26px rgba(0,198,255,0.08);
+  backdrop-filter:blur(14px);
+}
+
+/* HERO */
+.hero{
+  position:relative;
+  padding:70px 20px 70px;
+  overflow:hidden;
+}
+
+.hero::before,
+.hero::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  filter:blur(18px);
+  z-index:0;
+}
+
+.hero::before{
+  width:420px;
+  height:420px;
+  top:-90px;
+  left:-120px;
+  background:radial-gradient(circle, rgba(0,198,255,0.18), rgba(0,198,255,0));
+}
+
+.hero::after{
+  width:480px;
+  height:480px;
+  right:-130px;
+  top:-50px;
+  background:radial-gradient(circle, rgba(139,92,246,0.22), rgba(139,92,246,0));
+}
+
+.hero-inner{
+  position:relative;
+  z-index:1;
+  max-width:1240px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1.15fr 0.85fr;
+  gap:34px;
+  align-items:center;
+}
+
+.hero-copy,
+.hero-panel{
+  animation:fadeUp 0.9s ease both;
+}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 16px;
+  border-radius:999px;
+  background:rgba(15,23,42,0.6);
+  border:1px solid rgba(125,211,252,0.25);
+  color:#bae6fd;
+  font-size:0.9rem;
+  margin-bottom:20px;
+}
+
+.hero h1{
+  margin:0;
+  font-size:clamp(2.5rem, 5vw, 4.35rem);
+  line-height:1.06;
+  letter-spacing:-0.02em;
+}
+
+.hero h1 .gradient-text{
+  background:linear-gradient(90deg,#7dd3fc 0%,#00c6ff 38%,#8b5cf6 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 30px rgba(0,198,255,0.16);
+}
+
+.hero p{
+  max-width:760px;
+  margin:20px 0 0;
+  font-size:1.08rem;
+  line-height:1.2;
+  color:#dbeafe;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  margin-top:10px;
+}
+
+.hero-btn,
+.cta-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:14px 20px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:600;
+  transition:transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.hero-btn.primary,
+.cta-btn.primary{
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+  color:#061022;
+  box-shadow:0 14px 28px rgba(0,198,255,0.24);
+}
+
+.hero-btn.secondary,
+.cta-btn.secondary{
+  background:rgba(15,23,42,0.56);
+  border:1px solid rgba(125,211,252,0.25);
+  color:#e0f2fe;
+}
+
+.hero-btn:hover,
+.cta-btn:hover{
+  transform:translateY(-3px);
+}
+
+.hero-highlights{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:14px;
+  margin-top:28px;
+}
+
+.highlight-pill{
+  padding:12px 14px;
+  border-radius:16px;
+  background:rgba(15,23,42,0.55);
+  border:1px solid rgba(59,130,246,0.2);
+  color:#dbeafe;
+  font-size:0.95rem;
+}
+
+.highlight-pill i{
+  color:#7dd3fc;
+  margin-right:8px;
+}
+
+.hero-panel{
+  padding:28px;
+  position:relative;
+  overflow:hidden;
+}
+
+.hero-panel::before{
+  content:"";
+  position:absolute;
+  inset:-30% auto auto -15%;
+  width:230px;
+  height:230px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,198,255,0.18), transparent 65%);
+}
+
+.hero-panel::after{
+  content:"";
+  position:absolute;
+  right:-60px;
+  bottom:-80px;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(139,92,246,0.14), transparent 70%);
+}
+
+.panel-top,
+.panel-bottom,
+.mini-stat{
+  position:relative;
+  z-index:1;
+}
+
+.panel-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.panel-top .icon-wrap{
+  width:62px;
+  height:62px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.18), rgba(139,92,246,0.18));
+  border:1px solid rgba(125,211,252,0.26);
+  color:#7dd3fc;
+  font-size:1.5rem;
+  animation:floatSoft 4s ease-in-out infinite;
+}
+
+.panel-top .status-chip{
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:0.84rem;
+  color:#dcfce7;
+  border:1px solid rgba(74,222,128,0.22);
+  background:rgba(20,83,45,0.24);
+}
+
+.hero-panel h3{
+  margin:18px 0 10px;
+  font-size:1.55rem;
+}
+
+.hero-panel p{
+  margin:0;
+  color:#cbd5e1;
+  line-height:1.75;
+  font-size:0.98rem;
+}
+
+.panel-points{
+  margin:22px 0 0;
+  padding:0;
+  list-style:none;
+  display:grid;
+  gap:12px;
+}
+
+.panel-points li{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  color:#e2e8f0;
+  line-height:1.6;
+}
+
+.panel-points li i{
+  margin-top:4px;
+  color:#7dd3fc;
+}
+
+.panel-bottom{
+  margin-top:24px;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:14px;
+}
+
+.mini-stat{
+  padding:18px 16px;
+  border-radius:18px;
+  background:rgba(2,6,23,0.34);
+  border:1px solid rgba(59,130,246,0.18);
+}
+
+.mini-stat strong{
+  display:block;
+  font-size:1.6rem;
+  color:#ffffff;
+}
+
+.mini-stat span{
+  display:block;
+  margin-top:6px;
+  color:#bfdbfe;
+  font-size:0.92rem;
+}
+
+/* OVERVIEW */
+.about-overview{
+  padding:16px 0 24px;
+}
+
+.about-cards{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:22px;
+  margin-top:34px;
+}
+
+.about-card{
+  padding:28px 24px;
+  transition:transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.about-card:hover{
+  transform:translateY(-7px);
+  border-color:rgba(125,211,252,0.42);
+  box-shadow:0 22px 45px rgba(2,8,23,0.42), 0 0 28px rgba(0,198,255,0.18);
+}
+
+.about-card .card-icon{
+  width:64px;
+  height:64px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  font-size:1.55rem;
+  color:#7dd3fc;
+  background:linear-gradient(135deg, rgba(0,198,255,0.16), rgba(139,92,246,0.14));
+  border:1px solid rgba(125,211,252,0.18);
+  margin-bottom:18px;
+}
+
+.about-card h3{
+  margin:0 0 12px;
+  font-size:1.3rem;
+}
+
+.about-card p{
+  margin:0;
+  color:#cbd5e1;
+  line-height:1.75;
+  font-size:0.98rem;
+}
+
+/* STATS */
+.stats-strip{
+  padding:34px 0 14px;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:18px;
+}
+
+.stat-box{
+  padding:24px 20px;
+  text-align:center;
+}
+
+.stat-box strong{
+  display:block;
+  font-size:2rem;
+  margin-bottom:6px;
+  color:#ffffff;
+}
+
+.stat-box span{
+  color:#bfdbfe;
+  font-size:0.96rem;
+  line-height:1.5;
+  display:block;
+}
+
+/* STORY */
+.story-section{
+  padding:62px 0 10px;
+}
+
+.story-grid{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:24px;
+  align-items:stretch;
+}
+
+.story-main,
+.story-side{
+  padding:30px;
+}
+
+.story-main p,
+.story-side p{
+  color:#d6e2f0;
+  line-height:1.85;
+  margin:0;
+}
+
+.story-main h3,
+.story-side h3{
+  margin:0 0 14px;
+  font-size:1.45rem;
+}
+
+.story-main .story-columns{
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:18px;
+}
+
+.story-point{
+  padding:20px 18px;
+  border-radius:18px;
+  background:rgba(2,6,23,0.32);
+  border:1px solid rgba(59,130,246,0.18);
+}
+
+.story-point h4{
+  margin:0 0 10px;
+  font-size:1.02rem;
+}
+
+.story-point p{
+  font-size:0.94rem;
+}
+
+.side-list{
+  list-style:none;
+  padding:0;
+  margin:20px 0 0;
+  display:grid;
+  gap:14px;
+}
+
+.side-list li{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  color:#dbeafe;
+  line-height:1.6;
+}
+
+.side-list i{
+  color:#7dd3fc;
+  margin-top:4px;
+}
+
+/* PROCESS */
+.process-section{
+  padding:66px 0 10px;
+}
+
+.process-grid{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:18px;
+  margin-top:34px;
+}
+
+.process-card{
+  padding:26px 22px;
+  position:relative;
+}
+
+.process-number{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-weight:700;
+  color:#061022;
+  background:linear-gradient(90deg,#7dd3fc,#8b5cf6);
+  margin-bottom:16px;
+}
+
+.process-card h3{
+  margin:0 0 12px;
+  font-size:1.18rem;
+}
+
+.process-card p{
+  margin:0;
+  color:#cbd5e1;
+  line-height:1.75;
+  font-size:0.97rem;
+}
+
+/* AUDIENCE */
+.audience-section{
+  padding:66px 0 12px;
+}
+
+.audience-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:24px;
+}
+
+.audience-card{
+  padding:30px;
+}
+
+.audience-card .audience-icon{
+  width:58px;
+  height:58px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  font-size:1.35rem;
+  margin-bottom:16px;
+  color:#7dd3fc;
+  background:linear-gradient(135deg, rgba(0,198,255,0.16), rgba(139,92,246,0.14));
+  border:1px solid rgba(125,211,252,0.22);
+}
+
+.audience-card h3{
+  margin:0 0 12px;
+  font-size:1.45rem;
+}
+
+.audience-card p{
+  color:#dbeafe;
+  line-height:1.8;
+  margin:0 0 16px;
+}
+
+.audience-card ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:grid;
+  gap:12px;
+}
+
+.audience-card li{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+  color:#cbd5e1;
+  line-height:1.6;
+}
+
+.audience-card li i{
+  color:#7dd3fc;
+  margin-top:4px;
+}
+
+/* CTA */
+.cta-section{
+  padding:72px 0 30px;
+}
+
+.cta-box{
+  padding:36px 30px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  animation:pulseGlow 6s ease-in-out infinite;
+}
+
+.cta-box::before{
+  content:"";
+  position:absolute;
+  inset:auto auto -120px -60px;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,198,255,0.14), transparent 70%);
+}
+
+.cta-box::after{
+  content:"";
+  position:absolute;
+  top:-110px;
+  right:-70px;
+  width:250px;
+  height:250px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(139,92,246,0.16), transparent 70%);
+}
+
+.cta-box > *{
+  position:relative;
+  z-index:1;
+}
+
+.cta-box h2{
+  margin:0 0 14px;
+  font-size:clamp(2rem, 4vw, 2.7rem);
+}
+
+.cta-box p{
+  max-width:760px;
+  margin:0 auto;
+  color:#dbeafe;
+  line-height:1.8;
+}
+
+.cta-actions{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:14px;
+  margin-top:26px;
+}
+
+/* FOOTER - SAME FORMAT AS INDEX */
+.footer-simple{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:rgba(15,23,42,0.9);
+  border-top:1px solid rgba(59,130,246,0.4);
+  height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:40px;
+  padding:0 20px;
+  color:#cbd5e1;
+  backdrop-filter:blur(10px);
+  z-index:999;
+}
+
+.footer-simple .footer-logo img{
+  height:55px;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.45));
+  transition:transform 0.3s ease, filter 0.3s ease;
+}
+
+.footer-simple .footer-logo img:hover{
+  transform:scale(1.12);
+  filter:drop-shadow(0 0 14px rgba(0,198,255,0.9));
+}
+
+.footer-simple .footer-bottom{
+  font-size:0.85rem;
+  color:#94a3b8;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   RESPONSIVE
+=========================================================== */
+@media (max-width: 1280px){
+  header{
+    gap:10px;
+    padding:0 12px 0 6px;
+  }
+
+  header .logo img{
+    height:46px;
+  }
+
+  header nav{
+    gap:10px;
+    margin-left:2px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.82rem;
+  }
+
+  header .auth-buttons{
+    gap:6px;
+  }
+
+  header .auth-buttons a{
+    padding:0 9px;
+    font-size:0.78rem;
+  }
+}
+
+@media (max-width: 1080px){
+  .hero-inner,
+  .story-grid,
+  .audience-grid{
+    grid-template-columns:1fr;
+  }
+
+  .about-cards,
+  .process-grid,
+  .stats-grid{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
+}
+
+@media (max-width: 920px){
+  header{
+    justify-content:space-between;
+    padding:0 12px 0 8px;
+  }
+
+  header nav{
+    display:none;
+  }
+
+  header .auth-buttons{
+    display:none;
+  }
+
+  .nav-toggle{
+    display:inline-flex;
+  }
+}
+
+@media (max-width: 768px){
+
+  
+  body{
+    padding-bottom:165px;
+  }
+
+  .hero{
+    padding:78px 18px 72px;
+  }
+
+  .hero-highlights,
+  .panel-bottom,
+  .story-main .story-columns,
+  .about-cards,
+  .process-grid,
+  .stats-grid,
+  .audience-grid{
+    grid-template-columns:1fr;
+  }
+
+  .hero-actions,
+  .cta-actions{
+    flex-direction:column;
+  }
+
+  .hero-btn,
+  .cta-btn{
+    width:100%;
+  }
+
+  .hero-panel,
+  .story-main,
+  .story-side,
+  .audience-card,
+  .cta-box{
+    padding:24px 20px;
+  }
+}
+
+@media (max-width: 480px){
+  :root{ --header-h: 72px; }
+
+  body{
+    padding-bottom:178px;
+  }
+
+  header{
+    padding:0 10px 0 6px;
+  }
+
+  header .logo{
+    margin-left:-2px;
+  }
+
+  header .logo img{
+    height:42px;
+  }
+
+  .section-wrap{
+    padding:0 16px;
+  }
+
+  .footer-simple{
+    flex-direction:column;
+    height:auto;
+    padding:10px 0 15px;
+    gap:10px;
+  }
+
+  .footer-simple .footer-logo img{
+    height:40px;
+  }
+
+  .worker-float.w3,
+  .worker-float.w4,
+  .worker-float.w5,
+  .worker-float.w6{
+    display:none;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .worker-float{
+    animation:none !important;
+    transform:none !important;
+  }
+
+  .hero-panel .icon-wrap,
+  .cta-box{
+    animation:none !important;
+  }
+}
+  
+/* ============================================================
+   FINAL HEADER RESPONSIVE PATCH
+   Header refined across exact requested breakpoints
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:2px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+
+  header .logo{
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    gap:15px !important;
+    margin-left:7px !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:9px !important;
+    padding:0 12px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:66px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    gap:9px !important;
+    margin-left:3px !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:34px !important;
+    padding:0 2px !important;
+    font-size:0.75rem !important;
+  }
+
+  .nav-dropdown{
+    height:34px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    height:20px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.74rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:5px !important;
+  }
+
+  header .auth-buttons a{
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:7px !important;
+    padding:0 8px 0 5px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-dropdown{
+    height:31px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:10px !important;
+    padding:0 12px 0 8px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 10px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+        <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<!-- BACKGROUND WORKERS -->
+<div class="bg-workers" aria-hidden="true">
+  <img class="worker-float w1 depth-far" data-depth="0.14" src="w1.jpg" alt="" style="left:6%; top:18%; width:180px; --s:1;" />
+  <img class="worker-float w2 depth-far" data-depth="0.16" src="w2.jpg" alt="" style="left:74%; top:10%; width:210px; --s:1;" />
+  <img class="worker-float w3 depth-mid" data-depth="0.24" src="w7.jpg" alt="" style="left:12%; top:62%; width:240px; --s:1;" />
+  <img class="worker-float w4 depth-mid" data-depth="0.28" src="w4.jpg" alt="" style="left:80%; top:58%; width:260px; --s:1;" />
+  <img class="worker-float w5 depth-near" data-depth="0.38" src="w5.jpg" alt="" style="left:46%; top:26%; width:320px; --s:1;" />
+  <img class="worker-float w6 depth-near" data-depth="0.32" src="w6.jpg" alt="" style="left:36%; top:76%; width:260px; --s:1;" />
+</div>
+
+<!-- MOBILE PANEL -->
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="employer_dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="hero-badge">
+          <i class="fa-solid fa-globe"></i>
+          Connecting Global Employers and Remote Professionals
+        </div>
+
+        <h1>Build stronger remote teams with <span class="gradient-text">Job Space Link</span></h1>
+        <p>
+          Job Space Link is built to make remote hiring simpler, faster, and more dependable. We help employers find qualified professionals and help jobseekers discover real opportunities that match their skills, goals, and preferred way of working.
+        </p>
+
+        <div class="hero-actions">
+          <a href="postedhiring.html" class="hero-btn primary">
+            <i class="fa-solid fa-briefcase"></i>
+            Explore Jobs
+          </a>
+          <a href="postjob.html" class="hero-btn secondary">
+            <i class="fa-solid fa-plus"></i>
+            Post a Job
+          </a>
+        </div>
+
+        <div class="hero-highlights">
+          <div class="highlight-pill"><i class="fa-solid fa-check"></i> Remote-first job marketplace</div>
+          <div class="highlight-pill"><i class="fa-solid fa-check"></i> Faster employer-jobseeker matching</div>
+          <div class="highlight-pill"><i class="fa-solid fa-check"></i> Built for global hiring access</div>
+        </div>
+      </div>
+
+      <div class="hero-panel glass-card">
+        <div class="panel-top">
+          <div class="icon-wrap">
+            <i class="fa-solid fa-network-wired"></i>
+          </div>
+          <div class="status-chip">Platform Vision • Active</div>
+        </div>
+
+        <h3>Why Job Space Link exists</h3>
+        <p>
+          We created Job Space Link to reduce the gap between great employers and great remote talent. Our goal is to give both sides a professional, accessible, and efficient way to connect without unnecessary friction.
+        </p>
+
+        <ul class="panel-points">
+          <li><i class="fa-solid fa-circle-check"></i><span>Clearer pathways for employers to publish openings and attract qualified candidates.</span></li>
+          <li><i class="fa-solid fa-circle-check"></i><span>A stronger online space for remote professionals to present their skills and apply confidently.</span></li>
+          <li><i class="fa-solid fa-circle-check"></i><span>A modern platform experience focused on speed, visibility, and growth.</span></li>
+        </ul>
+
+        <div class="panel-bottom">
+          <div class="mini-stat">
+            <strong>Remote</strong>
+            <span>Focused on flexible and work-from-home opportunities.</span>
+          </div>
+          <div class="mini-stat">
+            <strong>Global</strong>
+            <span>Designed to support international employers and talent.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section class="about-overview">
+    <div class="section-wrap">
+      <div class="section-heading">
+        <span class="eyebrow"><i class="fa-solid fa-circle-info"></i> About the platform</span>
+        <h2>What is Job Space Link</h2>
+        <p>
+          Job Space Link is a global platform designed to connect international employers
+          with talented remote professionals. Whether you're searching for flexible work-from-home
+          opportunities or seeking world-class remote staff, Job Space Link provides a smooth,
+          secure, and efficient hiring experience.
+        </p>
+      </div>
+
+      <div class="about-cards">
+        <article class="about-card glass-card">
+          <div class="card-icon">
+            <i class="fa-solid fa-laptop-code"></i>
+          </div>
+          <h3>Remote Talent Marketplace</h3>
+          <p>
+            Discover skilled remote professionals across customer support, administration, finance, marketing, technology, and other key business functions.
+          </p>
+        </article>
+
+        <article class="about-card glass-card">
+          <div class="card-icon">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <h3>Faster Hiring Flow</h3>
+          <p>
+            Employers can publish openings, improve visibility, and move candidates through the hiring process with a smoother and more organized experience.
+          </p>
+        </article>
+
+        <article class="about-card glass-card">
+          <div class="card-icon">
+            <i class="fa-solid fa-earth-asia"></i>
+          </div>
+          <h3>Global Opportunities</h3>
+          <p>
+            Jobseekers gain access to broader remote opportunities, helping talented professionals work with companies beyond local boundaries.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-strip">
+    <div class="section-wrap">
+      <div class="stats-grid">
+        <div class="stat-box glass-card">
+          <strong>1 Platform</strong>
+          <span>One central place to post jobs, apply, and connect remotely.</span>
+        </div>
+        <div class="stat-box glass-card">
+          <strong>2 Sides</strong>
+          <span>Built equally for employers searching and professionals applying.</span>
+        </div>
+        <div class="stat-box glass-card">
+          <strong>Remote-Ready</strong>
+          <span>Designed around digital-first work opportunities and hiring needs.</span>
+        </div>
+        <div class="stat-box glass-card">
+          <strong>Global Reach</strong>
+          <span>Supports cross-border hiring and broader candidate visibility.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="story-section">
+    <div class="section-wrap">
+      <div class="story-grid">
+        <div class="story-main glass-card">
+          <h3>Our mission</h3>
+          <p>
+            Job Space Link aims to create a dependable bridge between opportunity and talent. We believe remote hiring should feel professional, transparent, and accessible. That means giving employers a better way to discover capable people and giving jobseekers a better place to be found.
+          </p>
+
+          <div class="story-columns">
+            <div class="story-point">
+              <h4>For employers</h4>
+              <p>Make remote recruitment more efficient through better exposure, simpler posting, and clearer access to qualified applicants.</p>
+            </div>
+            <div class="story-point">
+              <h4>For jobseekers</h4>
+              <p>Create more visibility for skills, experience, and work readiness in a market where remote careers continue to grow.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-side glass-card">
+          <h3>What makes the platform valuable</h3>
+          <p>
+            Beyond listing openings, Job Space Link is positioned as a connection space where remote work becomes easier to discover, evaluate, and act on.
+          </p>
+
+          <ul class="side-list">
+            <li><i class="fa-solid fa-arrow-right"></i><span>Clean pathways from job discovery to application.</span></li>
+            <li><i class="fa-solid fa-arrow-right"></i><span>Stronger branding for employers posting remote roles.</span></li>
+            <li><i class="fa-solid fa-arrow-right"></i><span>Improved presentation of platform purpose and trust.</span></li>
+            <li><i class="fa-solid fa-arrow-right"></i><span>A more polished About page that supports your site credibility.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process-section">
+    <div class="section-wrap">
+      <div class="section-heading">
+        <span class="eyebrow"><i class="fa-solid fa-diagram-project"></i> Platform flow</span>
+        <h2>How Job Space Link Platform Works</h2>
+        <p>
+          The platform is designed to keep the path from opportunity to connection simple and understandable for both sides.
+        </p>
+      </div>
+
+      <div class="process-grid">
+        <article class="process-card glass-card">
+          <div class="process-number">01</div>
+          <h3>Post or discover</h3>
+          <p>Employers publish openings while jobseekers explore remote roles that fit their skills and career goals.</p>
+        </article>
+
+        <article class="process-card glass-card">
+          <div class="process-number">02</div>
+          <h3>Present skills clearly</h3>
+          <p>Applicants share their qualifications while employers provide role expectations, requirements, and business context.</p>
+        </article>
+
+        <article class="process-card glass-card">
+          <div class="process-number">03</div>
+          <h3>Connect faster</h3>
+          <p>The platform supports more direct visibility between hiring companies and professionals seeking remote work.</p>
+        </article>
+
+        <article class="process-card glass-card">
+          <div class="process-number">04</div>
+          <h3>Move toward hiring</h3>
+          <p>From application to employer review, the experience is built to reduce friction and encourage better matching outcomes.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIENCE -->
+  <section class="audience-section">
+    <div class="section-wrap">
+      <div class="audience-grid">
+        <article class="audience-card glass-card">
+          <div class="audience-icon">
+            <i class="fa-solid fa-building"></i>
+          </div>
+          <h3>For employers</h3>
+          <p>
+            Reach remote-ready professionals and present your hiring needs in a more structured, professional environment.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-check"></i><span>Showcase open roles to a wider talent pool.</span></li>
+            <li><i class="fa-solid fa-check"></i><span>Support faster discovery of candidates for remote positions.</span></li>
+            <li><i class="fa-solid fa-check"></i><span>Strengthen employer visibility on a work-from-home focused platform.</span></li>
+          </ul>
+        </article>
+
+        <article class="audience-card glass-card">
+          <div class="audience-icon">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <h3>For jobseekers</h3>
+          <p>
+            Find meaningful remote opportunities and share your background where employers are actively looking for talent.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-check"></i><span>Access remote opportunities from different companies and industries.</span></li>
+            <li><i class="fa-solid fa-check"></i><span>Present your qualifications for flexible, global work settings.</span></li>
+            <li><i class="fa-solid fa-check"></i><span>Engage with a platform designed around remote career growth.</span></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="section-wrap">
+      <div class="cta-box glass-card">
+        <h2>Ready to use Job Space Link?</h2>
+        <p>
+          Whether you are hiring remote professionals or looking for your next work-from-home opportunity, Job Space Link is built to help you move forward with more clarity, visibility, and confidence.
+        </p>
+
+        <div class="cta-actions">
+          <a href="postjob.html" class="cta-btn primary">
+            <i class="fa-solid fa-paper-plane"></i>
+            Post Jobs
+          </a>
+          <a href="applicantform.html?source=jobspacelink" class="cta-btn secondary">
+            <i class="fa-solid fa-file-lines"></i>
+            Post Resume
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer-simple">
+  <div class="footer-logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+  <p class="footer-bottom">© 2025 Job Space Link</p>
+</footer>
+
+<script>
+/* ============================================================
+   ABOUT DROPDOWN (Desktop)
+=========================================================== */
+(function(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(!dd || !toggle || !menu) return;
+
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openAboutMenu(){
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isOpen = dd.classList.contains("open");
+    if(isOpen){
+      closeAboutMenu();
+    }else{
+      openAboutMenu();
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if(!dd.contains(e.target)){
+      closeAboutMenu();
+    }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      closeAboutMenu();
+    }
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  });
+})();
+
+/* ============================================================
+   MOBILE MENU
+=========================================================== */
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  if(!btn || !panel) return;
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth >= 769) close();
+  }, { passive:true });
+})();
+
+/* ============================================================
+   PARALLAX DEPTH (mouse + scroll)
+=========================================================== */
+(function(){
+  const items = Array.from(document.querySelectorAll(".worker-float"));
+  if(!items.length) return;
+
+  const reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduceMotion) return;
+
+  let mouseX = 0, mouseY = 0;
+  let tx = 0, ty = 0;
+  let raf = null;
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  function onMove(e){
+    const w = window.innerWidth || 1;
+    const h = window.innerHeight || 1;
+    const cx = w / 2;
+    const cy = h / 2;
+    mouseX = clamp((e.clientX - cx) / cx, -1, 1);
+    mouseY = clamp((e.clientY - cy) / cy, -1, 1);
+    if(!raf) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(){
+    raf = null;
+
+    tx += (mouseX - tx) * 0.07;
+    ty += (mouseY - ty) * 0.07;
+
+    const scrollInfluence = clamp((window.scrollY || 0) * 0.00035, 0, 0.35);
+
+    items.forEach(el=>{
+      const depth = parseFloat(el.dataset.depth || "0.2");
+      const baseX = 55 * depth;
+      const baseY = 42 * depth;
+
+      const moveX = tx * baseX;
+      const moveY = (ty * baseY) + (scrollInfluence * 40 * depth);
+
+      el.style.setProperty("--px", moveX.toFixed(2) + "px");
+      el.style.setProperty("--py", moveY.toFixed(2) + "px");
+    });
+
+    raf = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener("mousemove", onMove, { passive:true });
+  window.addEventListener("scroll", ()=>{
+    if(!raf) raf = requestAnimationFrame(tick);
+  }, { passive:true });
+
+  tick();
+})();
+</script>
+
+</body>
+</html>

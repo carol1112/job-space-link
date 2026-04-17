@@ -1,0 +1,3566 @@
+
+<!-- ==========================================================  
+     UPDATED: location_dashboard.html
+     ✅ Applied INDEX header style + format
+     ✅ Added About dropdown
+     ✅ Added mobile menu panel
+     ✅ Preserved all existing dashboard/map/file-viewer logic
+========================================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Applicant Location Dashboard | Job Space Link</title>
+
+<!-- ICONS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+<!-- GLOBAL CSS -->
+<link rel="stylesheet" href="jobspacelink.css" />
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<!-- ✅ LEAFLET (OpenStreetMap) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- ✅ PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<!-- ✅ DOCX -> HTML -->
+<script src="https://unpkg.com/mammoth@1.9.0/mammoth.browser.min.js"></script>
+
+<!-- ✅ XLSX / CSV -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<!-- ✅ HEIC/HEIF -->
+<script src="https://unpkg.com/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+<!-- ✅ TIFF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tiff.js/1.0.0/tiff.min.js"></script>
+
+<style>
+:root{
+  --header-h: 78px;
+  --site-header-offset: var(--header-h);
+  --dashboard-sticky-top: calc(var(--site-header-offset) + 8px);
+  --dashboard-top-stack: 136px;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+  min-height:100%;
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+
+/* =========================================================
+   RESET + GLOBAL
+========================================================= */
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins","Segoe UI",sans-serif;}
+body{
+  padding-top: var(--header-h);
+  background: radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #0f172a);
+  color:#e5e7eb;
+  overflow-x:hidden;
+}
+
+/* ============================================================
+   HEADER - INDEX STYLE
+=========================================================== */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:1rem;
+}
+
+/* Mobile panel */
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+/* ============================================================
+   ABOUT NAV FIX
+=========================================================== */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* Wrapper */
+.dashboard-wrapper{
+  position:relative;
+  width: calc(100vw - 60px);
+  max-width: 1800px;
+  margin: 28px auto 52px;
+  padding: 28px 35px 35px;
+  background: rgba(15,23,42,0.90);
+  border-radius: 22px;
+  border: 1px solid rgba(0,198,255,0.45);
+  box-shadow: 0 0 30px rgba(0,198,255,0.25);
+  backdrop-filter: blur(10px);
+  overflow: visible;
+}
+
+.dashboard-top-shell{
+  position:sticky;
+  top:var(--dashboard-sticky-top);
+  z-index:120;
+  margin:-8px -10px 10px;
+  padding:10px 10px 12px;
+  border-radius:18px;
+  background:linear-gradient(180deg, rgba(15,23,42,0.985) 0%, rgba(15,23,42,0.965) 72%, rgba(15,23,42,0.88) 100%);
+  border:1px solid rgba(0,198,255,0.16);
+  box-shadow:0 14px 28px rgba(2,6,23,0.34);
+  backdrop-filter:blur(12px);
+}
+.dashboard-top-shell::after{
+  content:"";
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg, rgba(0,198,255,0), rgba(0,198,255,0.34), rgba(124,58,237,0.34), rgba(0,198,255,0));
+}
+
+.dashboard-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.dashboard-title h1{
+  font-size:1.7rem;
+  font-weight:800;
+  color:#e8f9ff;
+  text-shadow:0 0 10px rgba(0,198,255,0.6);
+}
+
+/* Back button */
+.back-btn{
+  padding:10px 16px;
+  border-radius:14px;
+  border:1px solid rgba(0,198,255,0.55);
+  background:rgba(2,6,23,0.55);
+  color:#00eaff;
+  font-weight:900;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:0.25s ease;
+}
+.back-btn:hover{
+  background:linear-gradient(135deg,#00c6ff,#7c3aed);
+  color:#fff;
+  transform:translateY(-1px);
+}
+
+/* Controls */
+.controls-bar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:0;
+  align-items:center;
+}
+.search-field select,
+.search-box input,
+.controls-bar select{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(2,6,23,0.8);
+  border:1px solid rgba(0,198,255,0.35);
+  color:#fff;
+  font-size:0.85rem;
+}
+.search-field select{ min-width: 210px; }
+.search-box{ flex:1 1 280px; position:relative; }
+.search-box input{ width:100%; padding-right:40px; }
+.search-box i{ position:absolute; right:12px; top:50%; transform:translateY(-50%); }
+
+.search-btn{
+  padding:10px 18px;
+  border-radius:14px;
+  border:1px solid rgba(34,197,94,0.75);
+  background:linear-gradient(135deg,#022c22,#022c22);
+  color:#4ade80;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:0.25s ease;
+  box-shadow:0 0 10px rgba(34,197,94,0.25);
+}
+.search-btn:hover{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 0 18px rgba(34,197,94,0.55);
+}
+.reset-btn{
+  padding:10px 18px;
+  border-radius:14px;
+  border:1px solid rgba(0,198,255,0.55);
+  background:linear-gradient(135deg,#020617,#020617);
+  color:#00eaff;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:0.25s ease;
+  box-shadow:0 0 10px rgba(0,198,255,0.25);
+}
+.reset-btn:hover{
+  background:linear-gradient(135deg,#00c6ff,#7c3aed);
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 0 18px rgba(124,58,237,0.55);
+}
+
+#statusMsg{
+  margin: 8px 0 12px;
+  color:#cbd5e1;
+  font-size:0.9rem;
+}
+
+/* =================================================
+   LAYOUT: Map LEFT + Cards RIGHT (DEFAULT: laptop/desktop)
+================================================= */
+.grid-layout{
+  display:grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap:16px;
+  align-items:start;
+}
+
+/* Map panel */
+.map-panel{
+  position:sticky;
+  top: calc(var(--dashboard-sticky-top) + var(--dashboard-top-stack));
+  height: calc(100vh - var(--dashboard-sticky-top) - var(--dashboard-top-stack) - 22px);
+  min-height: 520px;
+  background: rgba(2,6,23,0.65);
+  border:1px solid rgba(0,198,255,0.35);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow: 0 0 22px rgba(0,198,255,0.18);
+}
+.map-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid rgba(0,198,255,0.25);
+  background: linear-gradient(90deg, rgba(0,198,255,0.18), rgba(124,58,237,0.16));
+}
+.map-header .title{
+  font-weight:800;
+  color:#e8f9ff;
+  text-shadow:0 0 8px rgba(0,198,255,0.35);
+  font-size:0.95rem;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.map-header .hint{
+  color:#9fbcd1;
+  font-size:0.78rem;
+  white-space:nowrap;
+}
+#map{ width:100%; height: calc(100% - 50px); }
+
+/* Cards panel */
+.cards-panel{
+  background: rgba(2,6,23,0.35);
+  border:1px solid rgba(0,198,255,0.18);
+  border-radius:18px;
+  padding:10px;
+}
+
+/* ✅ ALWAYS 2 columns on laptop/desktop (right side) */
+.grid-container{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+
+/* Card */
+.applicant-card{
+  background:rgba(15,23,42,0.95);
+  border-radius:14px;
+  padding:8px;
+  border:1px solid rgba(0,198,255,0.30);
+  box-shadow:0 0 10px rgba(0,198,255,0.10);
+  transition:0.20s ease;
+  cursor:pointer;
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  min-width:0;
+}
+.applicant-card:hover{
+  transform:translateY(-2px);
+  border-color:#00eaff;
+  box-shadow:0 0 18px rgba(0,198,255,0.26);
+}
+.card-pic{
+  width:58px;
+  height:68px;
+  border-radius:12px;
+  border:2px solid rgba(0,198,255,0.55);
+  object-fit:cover;
+  flex:0 0 auto;
+}
+.card-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width: 0;
+}
+.card-name{
+  font-weight:900;
+  color:#ffffff;
+  text-shadow:0 0 8px rgba(0,198,255,0.18);
+  font-size:0.88rem;
+  line-height:1.05;
+}
+.card-loc{
+  color:#cbd5e1;
+  font-size:0.76rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.card-loc i{ color:#00eaff; }
+.card-addr{
+  color:#9fbcd1;
+  font-size:0.72rem;
+  line-height:1.12;
+  opacity:0.95;
+  display:-webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow:hidden;
+}
+.card-actions{
+  margin-top:2px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.view-btn{
+  padding:6px 9px;
+  border-radius:11px;
+  cursor:pointer;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  color:white;
+  border:none;
+  font-size:0.76rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+/* Pagination */
+.pagination{
+  margin-top:12px;
+  display:flex;
+  justify-content:center;
+  gap:5px;
+  flex-wrap:wrap;
+}
+.pagination button{
+  padding:6px 12px;
+  border-radius:8px;
+  background:#1e293b;
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-size:0.8rem;
+}
+.pagination button.active{ background:linear-gradient(90deg,#00c6ff,#7c3aed); }
+
+
+/* ============================================================
+   FILE VIEWER MODAL - SCREENSHOT STYLE
+============================================================ */
+#docModal{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(0,234,255,0.12), transparent 34%),
+    radial-gradient(circle at 86% 84%, rgba(168,85,247,0.14), transparent 34%),
+    rgba(2,6,23,0.82);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  backdrop-filter:blur(8px);
+  padding:18px;
+}
+
+#docViewer{
+  width:min(98vw, 1640px);
+  height:min(92vh, 980px);
+  background:linear-gradient(180deg, rgba(1,13,36,0.98), rgba(0,8,26,0.98));
+  border-radius:34px;
+  border:1px solid rgba(0,198,255,0.38);
+  box-shadow:
+    0 0 0 1px rgba(0,198,255,0.08) inset,
+    0 25px 80px rgba(0,0,0,0.45),
+    0 0 28px rgba(0,198,255,0.16);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+#docViewerHeader{
+  min-height:88px;
+  display:grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items:center;
+  gap:16px;
+  padding:18px 20px;
+  border-bottom:1px solid rgba(0,198,255,0.16);
+  background:linear-gradient(180deg, rgba(2,16,46,0.9), rgba(0,10,34,0.88));
+}
+
+#docViewerHeaderSpacer{
+  min-width:0;
+}
+
+#docViewerTitle{
+  justify-self:center;
+  text-align:center;
+  font-size:clamp(1.2rem, 1.1rem + 0.55vw, 2rem);
+  font-weight:900;
+  color:#f8fbff;
+  letter-spacing:0.01em;
+  text-shadow:0 0 18px rgba(255,255,255,0.1), 0 0 18px rgba(0,198,255,0.2);
+}
+
+#docViewerHeaderActions{
+  justify-self:end;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.topbar-btn{
+  min-height:44px;
+  padding:0 18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.08);
+  color:#ffffff;
+  font-weight:800;
+  font-size:0.95rem;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.topbar-btn:hover{
+  transform:translateY(-1px);
+}
+
+#toggleSidebarBtn{
+  background:linear-gradient(180deg, rgba(25,114,179,0.95), rgba(11,72,126,0.96));
+  box-shadow:0 0 18px rgba(29,155,240,0.15);
+}
+
+#toggleSidebarBtn:hover{
+  border-color:rgba(133,207,255,0.45);
+  box-shadow:0 0 18px rgba(29,155,240,0.24);
+}
+
+#closeDocModal{
+  background:linear-gradient(180deg, rgba(125,22,48,0.98), rgba(92,12,35,0.98));
+  box-shadow:0 0 18px rgba(236,72,153,0.14);
+}
+
+#closeDocModal:hover{
+  border-color:rgba(255,148,191,0.4);
+  box-shadow:0 0 18px rgba(236,72,153,0.22);
+}
+
+#docViewerBody{
+  min-height:0;
+  flex:1;
+  display:flex;
+}
+
+#docSidebar{
+  width:386px;
+  flex:0 0 386px;
+  background:linear-gradient(180deg, rgba(0,13,39,0.98), rgba(0,9,28,0.98));
+  border-right:1px solid rgba(0,198,255,0.16);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  transition:flex-basis 0.28s ease, width 0.28s ease, opacity 0.24s ease, border-color 0.24s ease;
+}
+
+#docViewer.sidebar-hidden #docSidebar{
+  width:0;
+  flex-basis:0;
+  opacity:0;
+  border-right-color:transparent;
+}
+
+#docProfileCard{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:28px 22px 16px;
+  border-bottom:1px solid rgba(0,198,255,0.12);
+}
+
+#docApplicantPhotoWrap{
+  width:94px;
+  height:112px;
+  border-radius:22px;
+  padding:4px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.92), rgba(212,241,255,0.94));
+  box-shadow:0 0 0 2px rgba(0,198,255,0.4), 0 0 24px rgba(0,198,255,0.18);
+  overflow:hidden;
+  flex:0 0 auto;
+}
+
+#docApplicantPhoto{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:18px;
+  display:block;
+  background:#dbeafe;
+}
+
+#docApplicantInfo{
+  min-width:0;
+  flex:1;
+}
+
+#docApplicantName{
+  font-size:clamp(1rem, 0.95rem + 0.2vw, 1.35rem);
+  font-weight:900;
+  color:#ffffff;
+  line-height:1.15;
+  text-shadow:0 0 10px rgba(255,255,255,0.08);
+}
+
+#docApplicantRole{
+  margin-top:8px;
+  font-size:0.98rem;
+  font-weight:700;
+  color:#ecf7ff;
+  opacity:0.92;
+}
+
+#docMiniMeta{
+  margin-top:10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.doc-meta-chip{
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,198,255,0.18);
+  background:rgba(0,198,255,0.08);
+  color:#bfefff;
+  font-size:0.73rem;
+  font-weight:800;
+}
+
+#docTabs{
+  display:flex;
+  gap:10px;
+  padding:16px 16px 10px;
+  border-bottom:1px solid rgba(0,198,255,0.1);
+}
+
+.tab-btn{
+  flex:1;
+  min-height:48px;
+  padding:0 14px;
+  border-radius:18px;
+  border:1px solid rgba(0,198,255,0.16);
+  background:linear-gradient(180deg, rgba(4,22,58,0.96), rgba(2,16,44,0.96));
+  color:#6f7f97;
+  font-weight:900;
+  font-size:1rem;
+  letter-spacing:0.01em;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  transition:all 0.2s ease;
+}
+
+.tab-btn:hover{
+  color:#dff8ff;
+  border-color:rgba(0,198,255,0.32);
+  transform:translateY(-1px);
+}
+
+.tab-btn.active{
+  color:#ffffff;
+  background:linear-gradient(180deg, rgba(7,137,190,0.96), rgba(4,95,143,0.96));
+  border-color:rgba(87,214,255,0.28);
+  box-shadow:0 0 18px rgba(0,198,255,0.18) inset;
+}
+
+#tabHint{
+  padding:0 18px 12px;
+  color:#91aeca;
+  font-size:0.78rem;
+  line-height:1.45;
+}
+
+#filesPanel,
+#pagesPanel{
+  padding:12px 16px 18px;
+  overflow:auto;
+  flex:1;
+}
+
+#filesPanel{ display:block; }
+#pagesPanel{ display:none; }
+
+#docList{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.doc-item{
+  border-radius:24px;
+  border:1px solid rgba(0,198,255,0.18);
+  background:linear-gradient(180deg, rgba(2,24,58,0.88), rgba(1,16,41,0.92));
+  padding:10px;
+  cursor:pointer;
+  transition:transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.doc-item:hover{
+  transform:translateY(-1px);
+  border-color:rgba(43,221,255,0.45);
+  box-shadow:0 0 16px rgba(0,198,255,0.12);
+}
+
+.doc-item.active{
+  border-color:rgba(26,219,255,0.85);
+  box-shadow:0 0 0 1px rgba(0,198,255,0.22) inset, 0 0 20px rgba(0,198,255,0.16);
+}
+
+.doc-item-preview{
+  min-height:118px;
+  border-radius:18px;
+  border:1px solid rgba(0,198,255,0.14);
+  background:linear-gradient(180deg, rgba(4,26,60,0.92), rgba(3,19,46,0.94));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:10px;
+  position:relative;
+  overflow:hidden;
+}
+
+.doc-item-preview::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02);
+  pointer-events:none;
+}
+
+.doc-ico{
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#d8ecff;
+  font-size:2rem;
+}
+
+.doc-title{
+  font-weight:900;
+  font-size:0.95rem;
+  color:#f8fbff;
+  line-height:1.2;
+}
+
+.doc-sub{
+  margin-top:4px;
+  font-size:0.78rem;
+  color:#9bb5d0;
+}
+
+#pdfThumbsHead{
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:#dbeafe;
+  font-size:0.82rem;
+  border:1px solid rgba(0,198,255,0.12);
+  background:rgba(3,22,52,0.74);
+  border-radius:18px;
+  margin-bottom:12px;
+}
+
+#pdfThumbs{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:12px;
+}
+
+.pdf-thumb{
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(0,198,255,0.14);
+  background:linear-gradient(180deg, rgba(3,22,52,0.86), rgba(2,16,42,0.92));
+  cursor:pointer;
+  transition:transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pdf-thumb:hover{
+  transform:translateY(-1px);
+  border-color:rgba(43,221,255,0.42);
+  box-shadow:0 0 16px rgba(0,198,255,0.12);
+}
+
+.pdf-thumb.active{
+  border-color:rgba(26,219,255,0.92);
+  box-shadow:0 0 0 1px rgba(0,198,255,0.2) inset, 0 0 18px rgba(0,198,255,0.18);
+}
+
+.pdf-thumb canvas{
+  width:100%;
+  display:block;
+}
+
+.pdf-thumb .p{
+  padding:8px 10px;
+  font-size:0.76rem;
+  font-weight:800;
+  color:#d8ecff;
+}
+
+#pagesEmpty{
+  display:none;
+  color:#91aeca;
+  font-size:0.83rem;
+  line-height:1.55;
+  padding:16px;
+  border:1px dashed rgba(0,198,255,0.18);
+  border-radius:18px;
+  background:rgba(2,16,41,0.65);
+}
+
+#docMain{
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  background:linear-gradient(180deg, rgba(0,11,34,0.98), rgba(0,8,24,0.98));
+}
+
+#docStage{
+  min-height:0;
+  flex:1;
+  padding:18px 18px 0;
+  display:flex;
+  flex-direction:column;
+}
+
+#docInfoBar,
+#docInfoPill,
+#docFileName,
+#docBadge{
+  display:none !important;
+}
+
+#docInfoBar{
+  flex:0 0 auto;
+  padding:18px 0 16px;
+}
+
+#docInfoPill{
+  min-height:82px;
+  border-radius:24px;
+  background:#f5f6f8;
+  color:#223046;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 32px;
+  font-size:clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+  box-shadow:0 10px 24px rgba(0,0,0,0.2);
+}
+
+#docFileName{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-weight:500;
+}
+
+#docBadge{
+  flex:0 0 auto;
+  padding:9px 14px;
+  border-radius:999px;
+  background:rgba(13,31,58,0.08);
+  color:#26415f;
+  font-size:0.82rem;
+  font-weight:900;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+}
+
+#docPreviewShell{
+  min-height:0;
+  flex:1;
+  border-radius:26px;
+  border:1px solid rgba(0,198,255,0.14);
+  background:linear-gradient(180deg, rgba(0,10,29,0.98), rgba(0,8,23,0.98));
+  overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+#docPreview{
+  width:100%;
+  height:100%;
+  overflow:auto;
+  padding:14px 16px 16px;
+}
+
+.viewer-center{
+  width:100%;
+  min-height:100%;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
+
+.viewer-empty-state{
+  color:#cbd5e1;
+  text-align:center;
+  max-width:720px;
+  margin:auto;
+}
+
+.viewer-empty-state-title{
+  font-weight:900;
+  font-size:1.05rem;
+  margin-bottom:8px;
+  color:#e8f9ff;
+}
+
+.viewer-empty-state-desc{
+  color:#9fbcd1;
+  font-size:0.9rem;
+  line-height:1.5;
+}
+
+#imgWrap{
+  padding:12px;
+}
+
+#imgView{
+  max-width:100%;
+  max-height:100%;
+  border-radius:20px;
+  border:1px solid rgba(0,198,255,0.18);
+  box-shadow:0 0 24px rgba(0,198,255,0.1);
+  transform-origin:top center;
+  margin:auto;
+  display:block;
+}
+
+#pdfWrap{
+  padding:12px;
+}
+
+#pdfCanvas{
+  width:100%;
+  max-width:980px;
+  border-radius:20px;
+  border:1px solid rgba(0,198,255,0.16);
+  background:#0b1220;
+  box-shadow:0 0 24px rgba(0,198,255,0.1);
+  margin:auto;
+  display:block;
+}
+
+#htmlWrap,
+#tableWrap,
+#hexWrap{
+  padding:12px;
+}
+
+#htmlView{
+  width:min(100%, 980px);
+  background:rgba(248,250,252,0.98);
+  border:1px solid rgba(226,232,240,0.8);
+  border-radius:20px;
+  padding:18px;
+  color:#162233;
+  line-height:1.62;
+  transform-origin:top center;
+  margin:0 auto;
+}
+
+#tableView{
+  width:min(100%, 1120px);
+  background:rgba(248,250,252,0.98);
+  border:1px solid rgba(226,232,240,0.8);
+  border-radius:20px;
+  padding:14px;
+  overflow:auto;
+  color:#162233;
+  transform-origin:top center;
+  margin:0 auto;
+}
+
+#tableView table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.82rem;
+}
+
+#tableView th, #tableView td{
+  border:1px solid rgba(148,163,184,0.3);
+  padding:8px 10px;
+  vertical-align:top;
+  color:#162233;
+}
+
+#tableView th{
+  background:rgba(14,165,233,0.1);
+  color:#0f172a;
+  font-weight:900;
+}
+
+#hexView{
+  width:min(100%, 1120px);
+  background:rgba(248,250,252,0.98);
+  border:1px solid rgba(226,232,240,0.8);
+  border-radius:20px;
+  padding:16px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  white-space:pre-wrap;
+  word-break:break-word;
+  color:#0f172a;
+  transform-origin:top center;
+  margin:0 auto;
+}
+
+#docFooterBar{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:16px;
+  align-items:center;
+  padding:14px 18px 18px;
+  border-top:1px solid rgba(0,198,255,0.14);
+  background:linear-gradient(180deg, rgba(0,16,42,0.95), rgba(0,10,28,0.98));
+}
+
+#docFooterCenter{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.dv-btn{
+  min-height:46px;
+  padding:0 18px;
+  border-radius:18px;
+  border:1px solid rgba(0,198,255,0.18);
+  background:linear-gradient(180deg, rgba(8,60,110,0.96), rgba(4,42,80,0.96));
+  color:#ffffff;
+  cursor:pointer;
+  font-weight:900;
+  font-size:0.96rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  transition:transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.dv-btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(62,223,255,0.45);
+  box-shadow:0 0 16px rgba(0,198,255,0.14);
+}
+
+.dv-btn.green{
+  background:linear-gradient(180deg, rgba(11,114,72,0.96), rgba(8,88,56,0.96));
+  border-color:rgba(34,197,94,0.18);
+}
+
+.dv-btn.purple{
+  background:linear-gradient(180deg, rgba(106,114,255,0.96), rgba(116,82,255,0.96));
+  border-color:rgba(129,140,248,0.24);
+}
+
+.dv-btn.static{
+  min-width:72px;
+  cursor:default;
+}
+
+.dv-btn:disabled,
+.dv-btn.disabled{
+  opacity:0.45;
+  pointer-events:none;
+  transform:none;
+  box-shadow:none;
+}
+
+@media (max-width: 1280px){
+  #docViewer{
+    width:min(98vw, 1540px);
+    height:min(93vh, 950px);
+  }
+  #docSidebar{
+    width:340px;
+    flex-basis:340px;
+  }
+  #docFooterBar{
+    grid-template-columns:1fr;
+    justify-items:center;
+  }
+  #docFooterCenter{
+    order:2;
+  }
+}
+
+@media (max-width: 1023px){
+  #docModal{
+    padding:12px;
+  }
+  #docViewer{
+    width:96vw;
+    height:93vh;
+    border-radius:28px;
+  }
+  #docViewerHeader{
+    grid-template-columns:1fr;
+    justify-items:center;
+    gap:12px;
+    padding:16px;
+  }
+  #docViewerHeaderSpacer{
+    display:none;
+  }
+  #docViewerHeaderActions{
+    justify-self:center;
+  }
+  #docViewerBody{
+    flex-direction:column;
+  }
+  #docSidebar{
+    width:100%;
+    flex-basis:auto;
+    max-height:340px;
+    border-right:none;
+    border-bottom:1px solid rgba(0,198,255,0.14);
+  }
+  #docViewer.sidebar-hidden #docSidebar{
+    max-height:0;
+  }
+  #docStage{
+    padding:14px 14px 0;
+  }
+  #docInfoPill{
+    min-height:72px;
+    padding:0 20px;
+  }
+}
+
+@media (max-width: 768px){
+  #docModal{
+    padding:8px;
+  }
+  #docViewer{
+    width:98vw;
+    height:94vh;
+    border-radius:22px;
+  }
+  #docProfileCard{
+    padding:18px 16px 14px;
+  }
+  #docApplicantPhotoWrap{
+    width:78px;
+    height:94px;
+    border-radius:18px;
+  }
+  #docTabs{
+    padding:14px 12px 10px;
+  }
+  .tab-btn{
+    min-height:44px;
+    font-size:0.92rem;
+  }
+  #filesPanel,
+  #pagesPanel{
+    padding:10px 12px 14px;
+  }
+  #pdfThumbs{
+    grid-template-columns:repeat(2, 1fr);
+  }
+  #docStage{
+    padding:12px 12px 0;
+  }
+  #docInfoBar{
+    padding:12px 0 12px;
+  }
+  #docInfoPill{
+    min-height:64px;
+    padding:0 16px;
+    border-radius:20px;
+    font-size:0.96rem;
+  }
+  #docBadge{
+    font-size:0.72rem;
+    padding:7px 11px;
+  }
+  #docPreview{
+    padding:10px;
+  }
+  #docFooterBar{
+    padding:12px;
+    gap:12px;
+  }
+  .dv-btn,
+  .topbar-btn{
+    min-height:42px;
+    padding:0 14px;
+    font-size:0.88rem;
+    border-radius:16px;
+  }
+}
+
+@media (max-width: 560px){
+  #docViewerTitle{
+    font-size:1.08rem;
+  }
+  #docProfileCard{
+    gap:12px;
+  }
+  #docApplicantName{
+    font-size:0.96rem;
+  }
+  #docApplicantRole{
+    font-size:0.84rem;
+  }
+  #pdfThumbs{
+    grid-template-columns:1fr;
+  }
+  #docInfoPill{
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:center;
+    padding:12px 16px;
+    gap:8px;
+  }
+  #docFooterCenter{
+    justify-content:flex-start;
+  }
+}
+
+
+/* ============================================================
+   ✅ RESPONSIVE BREAKPOINTS (FULL)
+============================================================ */
+
+/* ===== Ultra-wide ===== */
+@media (min-width: 1800px){
+  .dashboard-wrapper{ padding: 38px; }
+  .grid-layout{ grid-template-columns: 1.5fr 1fr; gap:18px; }
+  .grid-container{ gap:10px; }
+  .applicant-card{ padding:10px; }
+  .card-pic{ width:62px; height:72px; }
+  .map-panel{ min-height: 600px; }
+}
+
+/* ===== Large Desktop ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  .dashboard-wrapper{ padding: 34px; }
+  .grid-layout{ grid-template-columns: 1.45fr 1fr; }
+}
+
+/* ===== Laptop (compact + map left / cards right / 2 columns) ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{
+    --site-header-offset: var(--header-h);
+    --dashboard-sticky-top: calc(var(--site-header-offset) + 8px);
+    --dashboard-top-stack: 132px;
+  }
+
+  .dashboard-wrapper{
+    width: calc(100vw - 46px);
+    padding: 20px 22px 24px;
+    margin: 24px auto 46px;
+    border-radius: 20px;
+  }
+
+  .dashboard-top-shell{
+    margin:-6px -8px 10px;
+    padding:9px 8px 10px;
+    border-radius:16px;
+  }
+
+  .dashboard-title h1{ font-size: 1.45rem; }
+
+  .controls-bar{ gap:10px; margin-bottom:0; }
+  .search-field select,
+  .search-box input,
+  .controls-bar select{
+    padding:9px 11px;
+    border-radius:13px;
+    font-size:0.82rem;
+  }
+  .search-btn, .reset-btn{
+    padding:9px 14px;
+    border-radius:13px;
+    font-size:0.82rem;
+  }
+
+  .grid-layout{
+    grid-template-columns: 1.35fr 1fr;
+    gap:12px;
+  }
+
+  .map-panel{
+    top: calc(var(--dashboard-sticky-top) + var(--dashboard-top-stack));
+    height: calc(100vh - var(--dashboard-sticky-top) - var(--dashboard-top-stack) - 20px);
+    min-height: 460px;
+    border-radius:16px;
+  }
+
+  .cards-panel{ padding:8px; border-radius:16px; }
+
+  .grid-container{
+    grid-template-columns: repeat(2, 1fr);
+    gap:7px;
+  }
+
+  .applicant-card{ padding:7px; border-radius:13px; gap:7px; }
+  .card-pic{ width:54px; height:64px; border-radius:11px; }
+  .card-name{ font-size:0.84rem; }
+  .card-loc{ font-size:0.73rem; }
+  .card-addr{ font-size:0.70rem; -webkit-line-clamp: 2; }
+  .view-btn{ padding:6px 8px; border-radius:10px; font-size:0.74rem; }
+}
+
+/* ✅✅ UPDATED: Tablet Landscape / Small Laptop (769px–1023px) */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{
+    --site-header-offset: var(--header-h);
+    --dashboard-sticky-top: calc(var(--site-header-offset) + 8px);
+    --dashboard-top-stack: 176px;
+  }
+
+  .dashboard-wrapper{
+    width: calc(100vw - 34px);
+    padding: 14px 16px 18px;
+    margin: 24px auto 46px;
+  }
+
+  .dashboard-top-shell{
+    margin:-4px -6px 10px;
+    padding:8px 6px 10px;
+    border-radius:16px;
+  }
+
+  .dashboard-title{ margin-bottom:8px; }
+  .dashboard-title h1{ font-size:1.28rem; }
+  .controls-bar{ gap:8px; }
+
+  .grid-layout{
+    grid-template-columns: 1.25fr 1fr;
+    gap:12px;
+  }
+
+  .map-panel{
+    position: sticky;
+    top: calc(var(--dashboard-sticky-top) + var(--dashboard-top-stack));
+    height: calc(100vh - var(--dashboard-sticky-top) - var(--dashboard-top-stack) - 18px);
+    min-height: 400px;
+  }
+
+  .cards-panel{ padding:8px; }
+
+  .grid-container{
+    grid-template-columns: repeat(2, 1fr);
+    gap:8px;
+  }
+}
+
+/* ===== Tablet / Large Mobile ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{
+    --site-header-offset: var(--header-h);
+    --dashboard-sticky-top: calc(var(--site-header-offset) + 8px);
+    --dashboard-top-stack: 206px;
+  }
+
+  .dashboard-wrapper{ width: calc(100vw - 26px); padding: 14px; margin: 20px auto 40px; }
+  .dashboard-top-shell{
+    margin:-4px -4px 10px;
+    padding:8px 4px 10px;
+    border-radius:16px;
+  }
+  .dashboard-title h1{ font-size:1.25rem; }
+  .grid-layout{ grid-template-columns: 1fr; gap:12px; }
+  .map-panel{ position:relative; top:auto; height: 340px; min-height: 340px; }
+  .grid-container{ grid-template-columns: 1fr; }
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 480px){
+  :root{
+    --header-h: 72px;
+    --site-header-offset: var(--header-h);
+    --dashboard-sticky-top: calc(var(--site-header-offset) + 6px);
+    --dashboard-top-stack: 274px;
+  }
+
+  .dashboard-wrapper{ width: calc(100vw - 18px); padding: 12px; margin: 18px auto 34px; border-radius:18px; }
+  .dashboard-top-shell{
+    margin:-4px -4px 10px;
+    padding:8px 4px 10px;
+    border-radius:14px;
+  }
+  .dashboard-title{ flex-direction:column; align-items:flex-start; gap:10px; }
+  .dashboard-title h1{ font-size:1.15rem; }
+  .controls-bar{ gap:10px; }
+  .search-field select{ min-width: 100%; }
+  .search-box{ flex:1 1 100%; }
+  #filterCountry, #filterProvince, #filterCity{ width:100%; }
+  #filterZip{ width:100%; min-width: 0 !important; }
+  .search-btn, .reset-btn{ width:100%; justify-content:center; }
+
+  .grid-layout{ grid-template-columns:1fr; gap:12px; }
+  .map-panel{ position:relative; top:auto; height: 320px; min-height: 320px; }
+  .grid-container{ grid-template-columns: 1fr; gap:8px; }
+
+  header{
+    padding:0 10px 0 6px;
+  }
+
+  header .logo{
+    margin-left:-2px;
+  }
+
+  header .logo img{
+    height:42px;
+  }
+}
+
+/* Header responsive */
+@media (max-width: 1280px){
+  header{
+    gap:10px;
+    padding:0 12px 0 6px;
+  }
+
+  header .logo img{
+    height:46px;
+  }
+
+  header nav{
+    gap:10px;
+    margin-left:2px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.82rem;
+  }
+
+  header .auth-buttons{
+    gap:6px;
+  }
+
+  header .auth-buttons a{
+    padding:0 9px;
+    font-size:0.78rem;
+  }
+}
+
+@media (max-width: 920px){
+  header{
+    justify-content:space-between;
+    padding:0 12px 0 8px;
+  }
+
+  header nav{
+    display:none;
+  }
+
+  header .auth-buttons{
+    display:none;
+  }
+
+  .nav-toggle{
+    display:inline-flex;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+            <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<div class="dashboard-wrapper">
+
+  <div class="dashboard-top-shell">
+    <div class="dashboard-title">
+      <h1><i class="fa-solid fa-map-location-dot"></i> Applicant Location Dashboard</h1>
+      <a class="back-btn" href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Back</a>
+    </div>
+
+    <div class="controls-bar">
+      <div class="search-field">
+        <select id="searchField">
+          <option value="all">Search: All</option>
+          <option value="country">Search: Country</option>
+          <option value="province">Search: Province</option>
+          <option value="city">Search: City</option>
+          <option value="zipcode">Search: Zipcode</option>
+        </select>
+      </div>
+
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Type to search (country/province/city/zipcode)..." />
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+
+      <select id="filterCountry"><option value="">Country</option></select>
+      <select id="filterProvince"><option value="">Province</option></select>
+      <select id="filterCity"><option value="">City</option></select>
+
+      <input id="filterZip" type="text" placeholder="Zipcode" style="min-width:140px;" />
+
+      <button class="search-btn" id="applyFiltersBtn"><i class="fa-solid fa-filter"></i> Search</button>
+      <button class="reset-btn" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+    </div>
+  </div>
+
+  <div id="statusMsg">Loading applicants...</div>
+
+  <div class="grid-layout">
+    <div class="map-panel">
+      <div class="map-header">
+        <div class="title"><i class="fa-solid fa-map"></i> Map</div>
+        <div class="hint" id="mapHint">Updates when you filter by location or search location fields</div>
+      </div>
+      <div id="map"></div>
+    </div>
+
+    <div class="cards-panel">
+      <div id="gridContainer" class="grid-container"></div>
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     FILE VIEWER MODAL (UPDATED TO MATCH SCREENSHOT STYLE)
+============================================================ -->
+<div id="docModal" aria-hidden="true">
+  <div id="docViewer">
+    <div id="docViewerHeader">
+      <div id="docViewerHeaderSpacer"></div>
+
+      <div id="docViewerTitle">Resume &amp; Supporting Documents Viewer</div>
+
+      <div id="docViewerHeaderActions">
+        <button id="toggleSidebarBtn" class="topbar-btn" type="button" title="Hide or show content panel">
+          <i class="fa-solid fa-eye-slash"></i>
+          <span id="toggleSidebarText">Hide Content</span>
+        </button>
+
+        <button id="closeDocModal" class="topbar-btn" type="button" title="Close">
+          <i class="fa-solid fa-xmark"></i>
+          <span>Close</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="docViewerBody">
+      <aside id="docSidebar">
+        <div id="docProfileCard">
+          <div id="docApplicantPhotoWrap">
+            <img id="docApplicantPhoto" src="https://via.placeholder.com/180x220?text=Photo" alt="Applicant photo" />
+          </div>
+
+          <div id="docApplicantInfo">
+            <div id="docApplicantName">Applicant Name</div>
+            <div id="docApplicantRole">Applicant Position</div>
+
+            <div id="docMiniMeta">
+              <span class="doc-meta-chip" id="docCount">0 file(s)</span>
+              <span class="doc-meta-chip" id="docTypeHint">Select a file</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="docTabs">
+          <button class="tab-btn active" id="filesTabBtn" type="button">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>FILES</span>
+          </button>
+
+          <button class="tab-btn" id="pagesTabBtn" type="button">
+            <i class="fa-solid fa-copy"></i>
+            <span>PAGES</span>
+          </button>
+        </div>
+
+        <div id="tabHint"></div>
+
+        <div id="filesPanel">
+          <div id="docList"></div>
+        </div>
+
+        <div id="pagesPanel">
+          <div id="pdfThumbsHead">
+            <span><i class="fa-solid fa-copy"></i> PDF Pages</span>
+            <span id="pdfPageInfo">—</span>
+          </div>
+
+          <div id="pagesEmpty">
+            <div style="font-weight:900;color:#e8f9ff;margin-bottom:6px;">No PDF selected</div>
+            <div>Select a PDF file in the <b>Files</b> tab to load page thumbnails.</div>
+          </div>
+
+          <div id="pdfThumbs"></div>
+        </div>
+      </aside>
+
+      <section id="docMain">
+        <div id="docStage">
+          <div id="docPreviewShell">
+            <div id="docPreview">
+              <div class="viewer-center" id="viewerCenter">
+                <div class="viewer-empty-state">
+                  <div class="viewer-empty-state-title">Select a file from the left</div>
+                  <div class="viewer-empty-state-desc">
+                    This viewer supports: Images, PDF, DOCX, XLSX/CSV, HEIC/HEIF, TIFF, text files, and a readable HEX fallback.
+                  </div>
+                </div>
+              </div>
+
+              <div class="viewer-center" id="imgWrap" style="display:none;">
+                <img id="imgView" alt="Preview" />
+              </div>
+
+              <div class="viewer-center" id="pdfWrap" style="display:none;">
+                <canvas id="pdfCanvas"></canvas>
+              </div>
+
+              <div class="viewer-center" id="htmlWrap" style="display:none;">
+                <div id="htmlView"></div>
+              </div>
+
+              <div class="viewer-center" id="tableWrap" style="display:none;">
+                <div id="tableView"></div>
+              </div>
+
+              <div class="viewer-center" id="hexWrap" style="display:none;">
+                <div id="hexView"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="docFooterBar">
+          <button class="dv-btn purple" id="prevDocBtn" type="button" title="Previous file">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Previous File</span>
+          </button>
+
+          <div id="docFooterCenter">
+            <button class="dv-btn" id="zoomOutBtn" type="button" title="Zoom out">
+              <i class="fa-solid fa-magnifying-glass-minus"></i>
+              <span>Zoom Out</span>
+            </button>
+
+            <button class="dv-btn static" id="zoomPercentBtn" type="button" title="Current zoom">100%</button>
+
+            <button class="dv-btn" id="zoomInBtn" type="button" title="Zoom in">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+              <span>Zoom In</span>
+            </button>
+
+            <button class="dv-btn" id="zoomResetBtn" type="button" title="Reset zoom">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>Reset</span>
+            </button>
+
+            <button class="dv-btn" id="fitBtn" type="button" title="Fit page">
+              <i class="fa-solid fa-left-right"></i>
+              <span>Fit Page</span>
+            </button>
+
+            <button class="dv-btn green" id="fullPageBtn" type="button" title="Full page">
+              <i class="fa-solid fa-expand"></i>
+              <span>Full Page</span>
+            </button>
+
+            <a class="dv-btn green" id="downloadDocBtn" href="#" download>
+              <i class="fa-solid fa-download"></i>
+              <span>Download</span>
+            </a>
+          </div>
+
+          <button class="dv-btn purple" id="nextDocBtn" type="button" title="Next file">
+            <span>Next File</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ============================================================
+   ABOUT DROPDOWN (HEADER)
+=========================================================== */
+(function(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(!dd || !toggle || !menu) return;
+
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openAboutMenu(){
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isOpen = dd.classList.contains("open");
+    if(isOpen){
+      closeAboutMenu();
+    }else{
+      openAboutMenu();
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if(!dd.contains(e.target)){
+      closeAboutMenu();
+    }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      closeAboutMenu();
+    }
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  });
+})();
+
+/* ============================================================
+   MOBILE MENU (HEADER)
+=========================================================== */
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  if(!btn || !panel) return;
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth > 920) close();
+  }, { passive:true });
+})();
+
+/* ============================================================
+   ✅ PDF.js worker
+============================================================ */
+if (window.pdfjsLib){
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
+
+/* ============================================================
+   STATE + DOM (PAGE)
+============================================================ */
+let allApplicants = [];
+let activeApplicants = [];
+let filtered = [];
+let page = 1;
+let pageSize = 10;
+
+const statusMsg = document.getElementById("statusMsg");
+const mapHint = document.getElementById("mapHint");
+
+const searchFieldEl = document.getElementById("searchField");
+const searchInput = document.getElementById("searchInput");
+
+const filterCountry = document.getElementById("filterCountry");
+const filterProvince = document.getElementById("filterProvince");
+const filterCity = document.getElementById("filterCity");
+const filterZip = document.getElementById("filterZip");
+
+const applyFiltersBtn = document.getElementById("applyFiltersBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const gridContainer = document.getElementById("gridContainer");
+const pagination = document.getElementById("pagination");
+
+/* Map */
+let map = null;
+let mapReady = false;
+let mapMarkersLayer = null;
+let activeMarker = null;
+
+let __mapUpdateToken = 0;
+let lastMapSignature = null;
+
+
+/* ============================================================
+   FILE VIEWER (STATE + DOM)
+============================================================ */
+const docModal = document.getElementById("docModal");
+const docViewer = document.getElementById("docViewer");
+const docSidebar = document.getElementById("docSidebar");
+const closeDocModalBtn = document.getElementById("closeDocModal");
+const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
+const toggleSidebarText = document.getElementById("toggleSidebarText");
+
+const docApplicantPhoto = document.getElementById("docApplicantPhoto");
+const docApplicantName = document.getElementById("docApplicantName");
+const docApplicantRole = document.getElementById("docApplicantRole");
+const docCount = document.getElementById("docCount");
+const docTypeHint = document.getElementById("docTypeHint");
+
+const docListEl = document.getElementById("docList");
+const docFileName = document.getElementById("docFileName");
+const docBadge = document.getElementById("docBadge");
+const docPreviewShell = document.getElementById("docPreviewShell");
+const downloadDocBtn = document.getElementById("downloadDocBtn");
+const fullPageBtn = document.getElementById("fullPageBtn");
+
+const prevDocBtn = document.getElementById("prevDocBtn");
+const nextDocBtn = document.getElementById("nextDocBtn");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+const zoomResetBtn = document.getElementById("zoomResetBtn");
+const zoomInBtn = document.getElementById("zoomInBtn");
+const zoomPercentBtn = document.getElementById("zoomPercentBtn");
+const fitBtn = document.getElementById("fitBtn");
+
+const viewerCenter = document.getElementById("viewerCenter");
+const imgWrap = document.getElementById("imgWrap");
+const imgView = document.getElementById("imgView");
+const pdfWrap = document.getElementById("pdfWrap");
+const pdfCanvas = document.getElementById("pdfCanvas");
+const htmlWrap = document.getElementById("htmlWrap");
+const htmlView = document.getElementById("htmlView");
+const tableWrap = document.getElementById("tableWrap");
+const tableView = document.getElementById("tableView");
+const hexWrap = document.getElementById("hexWrap");
+const hexView = document.getElementById("hexView");
+
+const pdfThumbs = document.getElementById("pdfThumbs");
+const pdfPageInfo = document.getElementById("pdfPageInfo");
+
+/* Tabs DOM */
+const filesTabBtn = document.getElementById("filesTabBtn");
+const pagesTabBtn = document.getElementById("pagesTabBtn");
+const filesPanel = document.getElementById("filesPanel");
+const pagesPanel = document.getElementById("pagesPanel");
+const pagesEmpty = document.getElementById("pagesEmpty");
+const tabHint = document.getElementById("tabHint");
+
+let viewerFiles = [];
+let viewerIndex = 0;
+let currentViewerApplicant = null;
+let isSidebarHidden = false;
+
+let zoom = 1;
+let pdfDoc = null;
+let pdfPageNum = 1;
+let pdfRenderToken = 0;
+
+/* object URL cleanup */
+let __activeObjectUrl = null;
+function setActiveObjectUrl(u){
+  try{
+    if (__activeObjectUrl) URL.revokeObjectURL(__activeObjectUrl);
+  }catch(e){}
+  __activeObjectUrl = u || null;
+}
+
+/* ============================================================
+   TABS + VIEWER PANEL LOGIC
+============================================================ */
+let activeTab = "files";
+
+function setTab(tab){
+  activeTab = tab === "pages" ? "pages" : "files";
+
+  filesTabBtn.classList.toggle("active", activeTab === "files");
+  pagesTabBtn.classList.toggle("active", activeTab === "pages");
+
+  filesPanel.style.display = activeTab === "files" ? "block" : "none";
+  pagesPanel.style.display = activeTab === "pages" ? "block" : "none";
+
+  updateTabHint();
+}
+
+function updateTabHint(){
+  const f = viewerFiles[viewerIndex];
+  const kind = f?.kind || "file";
+
+  if (activeTab === "files"){
+    tabHint.innerHTML = `<i class="fa-regular fa-lightbulb"></i> Select a file card below. PDF files also load page thumbnails in the <b>Pages</b> tab.`;
+    return;
+  }
+
+  if (kind !== "pdf"){
+    tabHint.innerHTML = `<i class="fa-regular fa-lightbulb"></i> The <b>Pages</b> panel is available only for PDF files.`;
+  } else {
+    tabHint.innerHTML = `<i class="fa-regular fa-lightbulb"></i> Click any thumbnail to jump directly to that PDF page.`;
+  }
+}
+
+function setSidebarHidden(hidden){
+  isSidebarHidden = !!hidden;
+  docViewer.classList.toggle("sidebar-hidden", isSidebarHidden);
+  toggleSidebarText.textContent = isSidebarHidden ? "Show Content" : "Hide Content";
+  const icon = toggleSidebarBtn.querySelector("i");
+  if (icon){
+    icon.className = isSidebarHidden ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
+  }
+}
+
+function updateZoomLabel(){
+  if (!zoomPercentBtn) return;
+  zoomPercentBtn.textContent = `${Math.round((zoom || 1) * 100)}%`;
+}
+
+function updateDownloadLink(fileObj){
+  if (!downloadDocBtn) return;
+
+  if (!fileObj || !fileObj.url){
+    downloadDocBtn.classList.add("disabled");
+    downloadDocBtn.removeAttribute("href");
+    downloadDocBtn.removeAttribute("download");
+    return;
+  }
+
+  downloadDocBtn.classList.remove("disabled");
+  downloadDocBtn.href = fileObj.url;
+  downloadDocBtn.setAttribute("download", (fileObj.downloadName || fileObj.name || "download"));
+  downloadDocBtn.setAttribute("target", "_blank");
+  downloadDocBtn.setAttribute("rel", "noopener");
+}
+
+function updateViewerButtons(){
+  const noFiles = !viewerFiles.length;
+  const atFirst = viewerIndex <= 0;
+  const atLast = viewerIndex >= viewerFiles.length - 1;
+
+  prevDocBtn.disabled = noFiles || atFirst;
+  nextDocBtn.disabled = noFiles || atLast;
+
+  [zoomOutBtn, zoomResetBtn, zoomInBtn, fitBtn, fullPageBtn].forEach(btn => {
+    if (btn) btn.disabled = noFiles;
+  });
+
+  if (zoomPercentBtn){
+    zoomPercentBtn.disabled = true;
+  }
+}
+
+function getApplicantRole(app){
+  return (
+    app?.position ||
+    app?.job_title ||
+    app?.desired_position ||
+    app?.target_position ||
+    app?.applicant_position ||
+    "Applicant"
+  );
+}
+
+toggleSidebarBtn.addEventListener("click", ()=> setSidebarHidden(!isSidebarHidden));
+filesTabBtn.addEventListener("click", ()=> setTab("files"));
+pagesTabBtn.addEventListener("click", ()=> setTab("pages"));
+
+fullPageBtn.addEventListener("click", async ()=>{
+  try{
+    if (!document.fullscreenElement){
+      await (docPreviewShell.requestFullscreen?.() || docViewer.requestFullscreen?.());
+    }else{
+      await document.exitFullscreen?.();
+    }
+  }catch(e){
+    console.warn("Fullscreen not available", e);
+  }
+});
+
+document.addEventListener("fullscreenchange", ()=>{
+  const icon = fullPageBtn?.querySelector("i");
+  const label = fullPageBtn?.querySelector("span");
+  const active = !!document.fullscreenElement;
+
+  if (icon) icon.className = active ? "fa-solid fa-compress" : "fa-solid fa-expand";
+  if (label) label.textContent = active ? "Exit Full Page" : "Full Page";
+});
+
+
+/* ============================================================
+   MAP init
+============================================================ */
+function initMapIfNeeded(){
+  if (mapReady) return;
+
+  map = L.map("map", { zoomControl: true }).setView([14.5995, 120.9842], 6);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(map);
+
+  mapMarkersLayer = L.layerGroup().addTo(map);
+  mapReady = true;
+
+  setTimeout(() => { try{ map.invalidateSize(); }catch(e){} }, 250);
+}
+
+/* ============================================================
+   Address builder
+============================================================ */
+function buildFullAddress(app){
+  const parts = [];
+
+  const street =
+    app.street || app.street_address || app.address || app.address_line ||
+    app.address1 || app.home_address || app.house_address || "";
+
+  const barangay = app.barangay || app.brgy || "";
+  const subdivision = app.subdivision || "";
+  const district = app.district || "";
+
+  if (street) parts.push(street);
+  if (subdivision) parts.push(subdivision);
+  if (barangay) parts.push(barangay);
+  if (district) parts.push(district);
+
+  if (app.city) parts.push(app.city);
+  if (app.province) parts.push(app.province);
+  if (app.zipcode) parts.push(app.zipcode);
+  if (app.country) parts.push(app.country);
+
+  return parts.filter(Boolean).join(", ").trim();
+}
+
+/* ============================================================
+   Geocode + caching
+============================================================ */
+function geoCacheKey(app){
+  const id = app.master_id || app.applicant_id || app.id || "unknown";
+  return `geo_${id}`;
+}
+function getCachedGeo(app){
+  try{
+    const raw = localStorage.getItem(geoCacheKey(app));
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj.lat !== "number" || typeof obj.lon !== "number") return null;
+    return obj;
+  }catch(e){ return null; }
+}
+function setCachedGeo(app, lat, lon, display_name){
+  try{
+    localStorage.setItem(geoCacheKey(app), JSON.stringify({ lat, lon, display_name: display_name || "", ts: Date.now() }));
+  }catch(e){}
+}
+function areaCacheKey(q){ return `geo_area_${String(q||"").trim().toLowerCase()}`; }
+function getCachedArea(q){
+  try{
+    const raw = localStorage.getItem(areaCacheKey(q));
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj.lat !== "number" || typeof obj.lon !== "number") return null;
+    return obj;
+  }catch(e){ return null; }
+}
+function setCachedArea(q, lat, lon, display_name){
+  try{
+    localStorage.setItem(areaCacheKey(q), JSON.stringify({ lat, lon, display_name: display_name || "", ts: Date.now() }));
+  }catch(e){}
+}
+
+async function geocodeAddress(address){
+  if (!address) return null;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`;
+  const res = await fetch(url, { method:"GET" });
+  if (!res.ok) return null;
+
+  const data = await res.json();
+  if (!Array.isArray(data) || !data.length) return null;
+
+  const first = data[0];
+  const lat = Number(first.lat);
+  const lon = Number(first.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+  return { lat, lon, display_name: first.display_name || "" };
+}
+
+/* ============================================================
+   Map focus (card click)
+============================================================ */
+async function focusApplicantOnMap(app){
+  initMapIfNeeded();
+
+  const fullAddress = buildFullAddress(app);
+  mapHint.textContent = fullAddress ? "Loading address..." : "No address found for this applicant.";
+
+  const address = fullAddress || [app.city, app.province, app.country].filter(Boolean).join(", ");
+  if (!address){
+    mapHint.textContent = "No location fields found.";
+    return;
+  }
+
+  const cached = getCachedGeo(app);
+  if (cached){
+    setMapMarker(app, cached.lat, cached.lon, address, cached.display_name || "");
+    return;
+  }
+
+  const geo = await geocodeAddress(address);
+  if (!geo){
+    mapHint.textContent = "Location not found.";
+    return;
+  }
+
+  setCachedGeo(app, geo.lat, geo.lon, geo.display_name);
+  setMapMarker(app, geo.lat, geo.lon, address, geo.display_name);
+}
+
+function setMapMarker(app, lat, lon, requestedAddress, resolvedAddress){
+  initMapIfNeeded();
+
+  if (activeMarker){
+    try{ map.removeLayer(activeMarker); }catch(e){}
+    activeMarker = null;
+  }
+
+  const name = app.full_name || "Applicant";
+  const locParts = [app.city, app.province, app.country].filter(Boolean).join(", ");
+
+  const popupHtml = `
+    <div style="font-family:Poppins,Segoe UI,sans-serif;min-width:220px;">
+      <div style="font-weight:800;margin-bottom:6px;">${escapeHTML(name)}</div>
+      <div style="color:#334155;font-size:12px;margin-bottom:6px;">
+        ${escapeHTML(locParts)}
+      </div>
+      <div style="font-size:12px;color:#0f172a;">
+        <div><b>Requested:</b> ${escapeHTML(requestedAddress || "—")}</div>
+        <div style="margin-top:4px;"><b>Resolved:</b> ${escapeHTML(resolvedAddress || "—")}</div>
+      </div>
+    </div>
+  `;
+
+  activeMarker = L.marker([lat, lon]).addTo(map).bindPopup(popupHtml);
+  map.setView([lat, lon], 13, { animate:true });
+  activeMarker.openPopup();
+
+  mapHint.textContent = "Location loaded ✔";
+}
+
+function clearMapVisuals(){
+  if (!mapReady) return;
+  try{ mapMarkersLayer.clearLayers(); }catch(e){}
+  if (activeMarker){
+    try{ map.removeLayer(activeMarker); }catch(e){}
+    activeMarker = null;
+  }
+}
+
+function buildAreaQueryFromFilters(){
+  const c = (filterCountry.value || "").trim();
+  const p = (filterProvince.value || "").trim();
+  const city = (filterCity.value || "").trim();
+  const zip = (filterZip.value || "").trim();
+
+  if (zip && city && c) return `${zip} ${city}, ${c}`;
+  if (city && p && c) return `${city}, ${p}, ${c}`;
+  if (city && c) return `${city}, ${c}`;
+  if (p && c) return `${p}, ${c}`;
+  if (c) return c;
+  if (zip) return zip;
+  return "";
+}
+
+function currentLocationSignature(){
+  return JSON.stringify({
+    country: (filterCountry.value || "").trim(),
+    province: (filterProvince.value || "").trim(),
+    city: (filterCity.value || "").trim(),
+    zip: (filterZip.value || "").trim(),
+    field: (searchFieldEl.value || "all").trim(),
+    q: (searchInput.value || "").trim()
+  });
+}
+
+function shouldUpdateMap(){
+  const sig = currentLocationSignature();
+  if (sig === lastMapSignature) return false;
+  lastMapSignature = sig;
+  return true;
+}
+
+async function centerMapForFilters(){
+  if (!mapReady) return;
+  const q = buildAreaQueryFromFilters();
+  if (!q) return;
+
+  mapHint.textContent = `Centering map to: ${q}...`;
+
+  const cached = getCachedArea(q);
+  if (cached){
+    map.setView([cached.lat, cached.lon], (filterCity.value ? 11 : 6), { animate:true });
+    mapHint.textContent = `Map centered: ${q}`;
+    return;
+  }
+
+  const geo = await geocodeAddress(q);
+  if (!geo){
+    mapHint.textContent = `Could not center map for: ${q}`;
+    return;
+  }
+
+  setCachedArea(q, geo.lat, geo.lon, geo.display_name);
+  map.setView([geo.lat, geo.lon], (filterCity.value ? 11 : 6), { animate:true });
+  mapHint.textContent = `Map centered: ${q}`;
+}
+
+function addMarkerToLayer(app, lat, lon){
+  if (!mapReady) return null;
+  const marker = L.circleMarker([lat, lon], { radius: 6, weight: 2, fillOpacity: 0.55 });
+  marker.bindPopup(`<b>${escapeHTML(app.full_name || "Applicant")}</b><br/>${escapeHTML(buildFullAddress(app) || "")}`);
+  marker.addTo(mapMarkersLayer);
+  return marker;
+}
+
+async function updateMap(items){
+  initMapIfNeeded();
+  if (!shouldUpdateMap()){
+    mapHint.textContent = "Map unchanged (same location search).";
+    return;
+  }
+
+  const token = ++__mapUpdateToken;
+  clearMapVisuals();
+
+  setTimeout(() => { try{ map.invalidateSize(); }catch(e){} }, 120);
+  await centerMapForFilters();
+
+  let markers = [];
+  let missing = [];
+
+  items.forEach(app => {
+    const cached = getCachedGeo(app);
+    if (cached){
+      const mk = addMarkerToLayer(app, cached.lat, cached.lon);
+      if (mk) markers.push(mk);
+    } else {
+      missing.push(app);
+    }
+  });
+
+  if (markers.length){
+    try{
+      const group = L.featureGroup(markers);
+      map.fitBounds(group.getBounds().pad(0.18), { animate:true });
+      mapHint.textContent = `Showing ${markers.length} location(s) on this page`;
+    }catch(e){}
+  } else {
+    mapHint.textContent = "Loading locations for filtered results...";
+  }
+
+  const MAX_GEOCODE_PER_UPDATE = 6;
+  const batch = missing.slice(0, MAX_GEOCODE_PER_UPDATE);
+
+  for (let i = 0; i < batch.length; i++){
+    if (token !== __mapUpdateToken) return;
+
+    const app = batch[i];
+    const address = buildFullAddress(app) || [app.city, app.province, app.country].filter(Boolean).join(", ");
+    if (!address) continue;
+
+    try{
+      const geo = await geocodeAddress(address);
+      if (!geo) continue;
+
+      setCachedGeo(app, geo.lat, geo.lon, geo.display_name);
+      const mk = addMarkerToLayer(app, geo.lat, geo.lon);
+      if (mk) markers.push(mk);
+
+      if (markers.length){
+        try{
+          const group = L.featureGroup(markers);
+          map.fitBounds(group.getBounds().pad(0.18), { animate:true });
+          mapHint.textContent = `Showing ${markers.length} location(s) on this page`;
+        }catch(e){}
+      }
+    }catch(e){}
+  }
+
+  if (!markers.length){
+    mapHint.textContent = "No locations to show for this page (click a card to geocode precisely).";
+  }
+}
+
+/* ============================================================
+   Load applicants
+============================================================ */
+function numOrNull(v){
+  if (v === null || typeof v === "undefined") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+function normalizeStatus(v){
+  const raw = (v === null || typeof v === "undefined") ? "" : String(v);
+  const s = raw.trim().toLowerCase();
+  if (s === "" || s === "active") return "Active";
+  if (s === "not active" || s === "notactive" || s === "inactive") return "Not Active";
+  return "Active";
+}
+
+async function loadApplicants(){
+  try{
+    statusMsg.textContent = "Loading applicants...";
+
+    const { data: master, error: masterError } =
+      await supabase.from("applicant_master_table").select("*");
+    if (masterError) throw masterError;
+
+    const { data: trans, error: transError } =
+      await supabase.from("applicant_transaction_table").select("*");
+    if (transError) throw transError;
+
+    const masterMap = {};
+    (master || []).forEach(m => { masterMap[m.id] = m; });
+
+    const mapped = (trans || []).map(t => {
+      const m = masterMap[t.master_id] || {};
+      const full_name = [m.first_name, m.middle_name, m.last_name].filter(Boolean).join(" ");
+
+      const txStatusNorm = normalizeStatus(t.status ?? t.app_status ?? t.application_status ?? "");
+      const masterStatusNorm = normalizeStatus(m.status ?? m.app_status ?? "");
+      const finalStatus = (txStatusNorm === "Not Active" || masterStatusNorm === "Not Active") ? "Not Active" : "Active";
+
+      const mergedAddress = {
+        street: t.street || m.street || "",
+        street_address: t.street_address || m.street_address || "",
+        address: t.address || m.address || "",
+        address_line: t.address_line || m.address_line || "",
+        address1: t.address1 || m.address1 || "",
+        home_address: t.home_address || m.home_address || "",
+        house_address: t.house_address || m.house_address || "",
+        subdivision: t.subdivision || m.subdivision || "",
+        barangay: t.barangay || m.barangay || t.brgy || m.brgy || "",
+        district: t.district || m.district || ""
+      };
+
+      return {
+        ...t,
+        ...mergedAddress,
+        transaction_id: t.id,
+        master_id: t.master_id,
+        full_name,
+        picture: t.pictures,
+        resume: t.resume,
+        documents: Array.isArray(t.documents) ? t.documents : [],
+        zipcode: t.zipcode,
+        province: t.province || "",
+        age: numOrNull(t.age),
+        status: finalStatus
+      };
+    });
+
+    allApplicants = mapped;
+    activeApplicants = allApplicants.filter(a => a.status === "Active");
+    activeApplicants.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+    populateFilters(activeApplicants);
+    filtered = [...activeApplicants];
+    page = 1;
+    render();
+
+    statusMsg.textContent = `Loaded ${filtered.length} active applicants.`;
+
+  }catch(e){
+    console.error(e);
+    statusMsg.textContent = "Failed to load applicants.";
+  }
+}
+
+/* ============================================================
+   Filters
+============================================================ */
+function populateFilters(activeList){
+  const countries = [...new Set(activeList.map(a => a.country).filter(Boolean))]
+    .sort((a,b)=>String(a).localeCompare(String(b)));
+  filterCountry.innerHTML = `<option value="">Country</option>`;
+  countries.forEach(c => filterCountry.innerHTML += `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`);
+
+  updateProvinceFilter(activeList, "");
+  updateCityFilter(activeList, "");
+}
+function updateProvinceFilter(activeList, restore){
+  const c = (filterCountry.value || "").trim();
+  const provinces = [...new Set(
+    activeList
+      .filter(a => !c || String(a.country||"").trim()===c)
+      .map(a => a.province)
+      .filter(Boolean)
+  )].sort((a,b)=>String(a).localeCompare(String(b)));
+
+  filterProvince.innerHTML = `<option value="">Province</option>`;
+  provinces.forEach(p => filterProvince.innerHTML += `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`);
+  if (restore && [...filterProvince.options].some(o => o.value === restore)) filterProvince.value = restore;
+}
+function updateCityFilter(activeList, restore){
+  const c = (filterCountry.value || "").trim();
+  const p = (filterProvince.value || "").trim();
+
+  const cities = [...new Set(
+    activeList
+      .filter(a => (!c || String(a.country||"").trim()===c) && (!p || String(a.province||"").trim()===p))
+      .map(a => a.city)
+      .filter(Boolean)
+  )].sort((a,b)=>String(a).localeCompare(String(b)));
+
+  filterCity.innerHTML = `<option value="">City</option>`;
+  cities.forEach(city => filterCity.innerHTML += `<option value="${escapeHTML(city)}">${escapeHTML(city)}</option>`);
+  if (restore && [...filterCity.options].some(o => o.value === restore)) filterCity.value = restore;
+}
+
+function normalizeSpace(s){
+  return String(s||"").toLowerCase().trim().replace(/\s+/g," ");
+}
+
+function matchesLocationSearch(app, field, query){
+  if (!query) return true;
+  const q = normalizeSpace(query);
+
+  const country = normalizeSpace(app.country);
+  const province = normalizeSpace(app.province);
+  const city = normalizeSpace(app.city);
+  const zip = normalizeSpace(app.zipcode);
+
+  if (field === "country") return country.includes(q);
+  if (field === "province") return province.includes(q);
+  if (field === "city") return city.includes(q);
+  if (field === "zipcode") return zip.includes(q);
+
+  return [country, province, city, zip].join(" ").includes(q);
+}
+
+function applyFilters(){
+  const countryVal = (filterCountry.value || "").trim();
+  const provVal = (filterProvince.value || "").trim();
+  const cityVal = (filterCity.value || "").trim();
+  const zipVal = (filterZip.value || "").trim();
+
+  const field = (searchFieldEl.value || "all").trim();
+  const q = (searchInput.value || "").trim();
+
+  filtered = activeApplicants.filter(a => {
+    if (countryVal && String(a.country||"").trim() !== countryVal) return false;
+    if (provVal && String(a.province||"").trim() !== provVal) return false;
+    if (cityVal && String(a.city||"").trim() !== cityVal) return false;
+
+    if (zipVal && !normalizeSpace(a.zipcode).includes(normalizeSpace(zipVal))) return false;
+    if (q && !matchesLocationSearch(a, field, q)) return false;
+
+    return true;
+  });
+
+  filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  page = 1;
+  render();
+}
+
+function resetFilters(){
+  searchFieldEl.value = "all";
+  searchInput.value = "";
+  filterCountry.value = "";
+  filterProvince.value = "";
+  filterCity.value = "";
+  filterZip.value = "";
+
+  populateFilters(activeApplicants);
+
+  filtered = [...activeApplicants];
+  page = 1;
+  lastMapSignature = null;
+
+  render();
+
+  initMapIfNeeded();
+  clearMapVisuals();
+  map.setView([14.5995, 120.9842], 6, { animate:true });
+  mapHint.textContent = "Map reset. Apply location filters to update markers.";
+}
+
+/* Dependent dropdowns */
+filterCountry.addEventListener("change", () => {
+  updateProvinceFilter(activeApplicants, "");
+  updateCityFilter(activeApplicants, "");
+});
+filterProvince.addEventListener("change", () => {
+  updateCityFilter(activeApplicants, "");
+});
+
+/* Buttons */
+applyFiltersBtn.addEventListener("click", applyFilters);
+resetBtn.addEventListener("click", resetFilters);
+searchInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") applyFilters(); });
+
+/* ============================================================
+   Pagination + render
+============================================================ */
+function paginate(list){
+  return list.slice((page - 1) * pageSize, page * pageSize);
+}
+function renderPagination(total){
+  pagination.innerHTML = "";
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const add = (label, action, disabled, active) => {
+    const btn = document.createElement("button");
+    btn.textContent = label;
+    if (disabled) btn.disabled = true;
+    if (active) btn.classList.add("active");
+    btn.onclick = action;
+    pagination.appendChild(btn);
+  };
+
+  add("Prev", () => { if(page>1){ page--; render(); } }, page===1, false);
+
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+
+  for (let i=start;i<=end;i++){
+    add(String(i), ()=>{ page=i; render(); }, false, i===page);
+  }
+  add("Next", () => { if(page<totalPages){ page++; render(); } }, page===totalPages, false);
+}
+
+function buildApplicantCard(app){
+  const card = document.createElement("div");
+  card.className = "applicant-card";
+
+  const img = document.createElement("img");
+  img.className = "card-pic";
+  img.src = app.picture || "https://via.placeholder.com/110x130?text=No+Photo";
+
+  const body = document.createElement("div");
+  body.className = "card-body";
+
+  const name = document.createElement("div");
+  name.className = "card-name";
+  name.textContent = app.full_name || "";
+
+  const loc = document.createElement("div");
+  loc.className = "card-loc";
+  loc.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${escapeHTML([app.city, app.province, app.country].filter(Boolean).join(", ") || "—")}`;
+
+  const addr = document.createElement("div");
+  addr.className = "card-addr";
+  addr.textContent = buildFullAddress(app) || "No detailed address field found.";
+
+  const actions = document.createElement("div");
+  actions.className = "card-actions";
+
+  const viewBtn = document.createElement("button");
+  viewBtn.className = "view-btn";
+  viewBtn.innerHTML = `<i class="fa-solid fa-folder-open"></i> View Files`;
+  viewBtn.onclick = (e) => { e.stopPropagation(); openDocs(app); };
+
+  actions.append(viewBtn);
+
+  body.append(name, loc, addr, actions);
+  card.append(img, body);
+
+  card.onclick = () => focusApplicantOnMap(app);
+
+  return card;
+}
+
+function render(){
+  initMapIfNeeded();
+
+  const items = paginate(filtered);
+
+  gridContainer.innerHTML = "";
+  items.forEach(app => gridContainer.appendChild(buildApplicantCard(app)));
+
+  renderPagination(filtered.length);
+
+  statusMsg.textContent =
+    filtered.length === 0
+      ? "No applicants match your location filters."
+      : `Location: ${pageSize} card(s)/page — Showing ${items.length} of ${filtered.length} active applicants`;
+
+  updateMap(items);
+}
+
+
+/* ============================================================
+   FILE VIEWER JS (SCREENSHOT STYLE)
+============================================================ */
+function extOf(nameOrUrl){
+  const s = String(nameOrUrl || "");
+  const clean = s.split("?")[0].split("#")[0];
+  const i = clean.lastIndexOf(".");
+  return i >= 0 ? clean.slice(i+1).toLowerCase() : "";
+}
+
+function baseNameFromUrl(url){
+  try{
+    const clean = String(url || "").split("?")[0].split("#")[0];
+    const last = clean.substring(clean.lastIndexOf("/") + 1) || "file";
+    return decodeURIComponent(last);
+  }catch(e){
+    return "file";
+  }
+}
+
+function friendlyNameFromUrl(url){
+  const base = baseNameFromUrl(url);
+  return base.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim() || "File";
+}
+
+function guessKindByExt(ext){
+  if (!ext) return "file";
+  if (["png","jpg","jpeg","jpe","gif","webp","bmp","jfif"].includes(ext)) return "image";
+  if (["pdf"].includes(ext)) return "pdf";
+  if (["docx"].includes(ext)) return "docx";
+  if (["xlsx","xls","csv"].includes(ext)) return "sheet";
+  if (["heic","heif"].includes(ext)) return "heic";
+  if (["tif","tiff"].includes(ext)) return "tiff";
+  if (["txt","log","json","xml","html","htm","md"].includes(ext)) return "text";
+  return "file";
+}
+
+function iconForKind(kind){
+  if (kind === "image") return "fa-regular fa-image";
+  if (kind === "pdf") return "fa-regular fa-file-pdf";
+  if (kind === "docx") return "fa-regular fa-file-word";
+  if (kind === "sheet") return "fa-regular fa-file-excel";
+  if (kind === "text") return "fa-regular fa-file-lines";
+  return "fa-regular fa-file";
+}
+
+function resolveFileUrl(u){
+  return String(u || "").trim();
+}
+
+/* Detect real image type by file signature */
+function detectMimeFromBytes(u8){
+  if (!u8 || u8.length < 12) return "";
+
+  if (u8[0] === 0xFF && u8[1] === 0xD8 && u8[2] === 0xFF) return "image/jpeg";
+  if (u8[0]===0x89 && u8[1]===0x50 && u8[2]===0x4E && u8[3]===0x47) return "image/png";
+  if (u8[0]===0x47 && u8[1]===0x49 && u8[2]===0x46) return "image/gif";
+  if (u8[0]===0x52 && u8[1]===0x49 && u8[2]===0x46 && u8[3]===0x46 &&
+      u8[8]===0x57 && u8[9]===0x45 && u8[10]===0x42 && u8[11]===0x50) return "image/webp";
+  if (u8[0]===0x42 && u8[1]===0x4D) return "image/bmp";
+  if ((u8[0]===0x49 && u8[1]===0x49 && u8[2]===0x2A && u8[3]===0x00) ||
+      (u8[0]===0x4D && u8[1]===0x4D && u8[2]===0x00 && u8[3]===0x2A)) return "image/tiff";
+
+  return "";
+}
+
+async function renderImageSmart(url){
+  imgWrap.style.display = "flex";
+  setActiveObjectUrl(null);
+
+  try{
+    const buf = await fetchArrayBuffer(url);
+    const u8 = new Uint8Array(buf);
+    const mime = detectMimeFromBytes(u8) || "image/jpeg";
+    const blob = new Blob([buf], { type: mime });
+    const objUrl = URL.createObjectURL(blob);
+    setActiveObjectUrl(objUrl);
+
+    imgView.src = objUrl;
+    imgView.onerror = () => {
+      setActiveObjectUrl(null);
+      imgView.src = url;
+    };
+    return;
+  }catch(e){
+    imgView.src = url;
+    imgView.onerror = () => showEmptyViewer("Image failed to load (CORS or invalid image).");
+  }
+}
+
+function collectApplicantFiles(app){
+  const files = [];
+
+  if (app.resume){
+    const resumeUrl = resolveFileUrl(app.resume);
+    const resumeExt = extOf(resumeUrl);
+    files.push({
+      name: "Resume",
+      displayName: friendlyNameFromUrl(resumeUrl) || "Resume",
+      downloadName: baseNameFromUrl(resumeUrl),
+      url: resumeUrl,
+      ext: resumeExt,
+      kind: guessKindByExt(resumeExt)
+    });
+  }
+
+  if (Array.isArray(app.documents) && app.documents.length){
+    app.documents.forEach((d, idx) => {
+      const url = resolveFileUrl(d);
+      const e = extOf(url);
+      files.push({
+        name: `Supporting Document ${idx+1}`,
+        displayName: friendlyNameFromUrl(url) || `Supporting Document ${idx+1}`,
+        downloadName: baseNameFromUrl(url),
+        url,
+        ext: e,
+        kind: guessKindByExt(e)
+      });
+    });
+  }
+
+  return files.filter(f => f.url && f.url !== "null" && f.url !== "undefined");
+}
+
+function openDocs(app){
+  currentViewerApplicant = app || null;
+  viewerFiles = collectApplicantFiles(app);
+  viewerIndex = 0;
+  zoom = 1;
+  pdfDoc = null;
+  pdfPageNum = 1;
+
+  docApplicantPhoto.src = app?.picture || "https://via.placeholder.com/180x220?text=Photo";
+  docApplicantName.textContent = app?.full_name || "Applicant";
+  docApplicantRole.textContent = getApplicantRole(app);
+
+  docCount.textContent = `${viewerFiles.length} file(s)`;
+  docTypeHint.textContent = viewerFiles.length ? "Choose a file" : "No files found";
+
+  renderFileList();
+  setSidebarHidden(false);
+  setTab("files");
+  updateZoomLabel();
+  updateDownloadLink(null);
+  updateViewerButtons();
+
+  pagesEmpty.style.display = "block";
+  pdfThumbs.innerHTML = "";
+  pdfPageInfo.textContent = "—";
+
+  docModal.style.display = "flex";
+  docModal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+
+  if (viewerFiles.length){
+    selectFile(0);
+  } else {
+    if (docFileName) docFileName.textContent = "No file selected";
+    if (docBadge) docBadge.textContent = "—";
+    showEmptyViewer("No resume or supporting documents found for this applicant.");
+  }
+}
+
+function closeDocs(){
+  docModal.style.display = "none";
+  docModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+
+  currentViewerApplicant = null;
+  pdfDoc = null;
+  pdfPageNum = 1;
+  viewerFiles = [];
+  viewerIndex = 0;
+  pdfThumbs.innerHTML = "";
+  pagesEmpty.style.display = "none";
+  resetPreview();
+  setActiveObjectUrl(null);
+  updateDownloadLink(null);
+  updateViewerButtons();
+}
+
+closeDocModalBtn.addEventListener("click", closeDocs);
+docModal.addEventListener("click", (e) => {
+  if (e.target === docModal) closeDocs();
+});
+document.addEventListener("keydown", (e) => {
+  if (docModal.style.display === "flex" && e.key === "Escape") closeDocs();
+  if (docModal.style.display === "flex" && e.key === "ArrowLeft") prevDoc();
+  if (docModal.style.display === "flex" && e.key === "ArrowRight") nextDoc();
+});
+
+prevDocBtn.addEventListener("click", prevDoc);
+nextDocBtn.addEventListener("click", nextDoc);
+
+zoomInBtn.addEventListener("click", ()=> setZoom(zoom * 1.15));
+zoomOutBtn.addEventListener("click", ()=> setZoom(zoom / 1.15));
+zoomResetBtn.addEventListener("click", ()=> setZoom(1));
+fitBtn.addEventListener("click", ()=> fitToView());
+
+function prevDoc(){
+  if (!viewerFiles.length) return;
+  const idx = Math.max(0, viewerIndex - 1);
+  selectFile(idx);
+}
+
+function nextDoc(){
+  if (!viewerFiles.length) return;
+  const idx = Math.min(viewerFiles.length - 1, viewerIndex + 1);
+  selectFile(idx);
+}
+
+function setZoom(z){
+  zoom = Math.max(0.35, Math.min(4.5, z));
+  updateZoomLabel();
+
+  imgView.style.transform = `scale(${zoom})`;
+  htmlView.style.transform = `scale(${zoom})`;
+  tableView.style.transform = `scale(${zoom})`;
+  hexView.style.transform = `scale(${zoom})`;
+
+  if (pdfDoc){
+    renderPdfPage(pdfPageNum);
+  }
+}
+
+function fitToView(){
+  if (pdfDoc){
+    const availableWidth = Math.max(520, docPreviewShell.clientWidth - 90);
+    zoom = Math.max(0.55, Math.min(2.2, availableWidth / 980));
+    updateZoomLabel();
+    renderPdfPage(pdfPageNum);
+    return;
+  }
+
+  setZoom(1);
+}
+
+function showEmptyViewer(msg){
+  resetPreview();
+  viewerCenter.style.display = "flex";
+  viewerCenter.innerHTML = `
+    <div class="viewer-empty-state">
+      <div class="viewer-empty-state-title">${escapeHTML(msg || "No preview")}</div>
+      <div class="viewer-empty-state-desc">Try another file from the left panel.</div>
+    </div>
+  `;
+}
+
+function resetPreview(){
+  viewerCenter.style.display = "none";
+  imgWrap.style.display = "none";
+  pdfWrap.style.display = "none";
+  htmlWrap.style.display = "none";
+  tableWrap.style.display = "none";
+  hexWrap.style.display = "none";
+
+  htmlView.innerHTML = "";
+  tableView.innerHTML = "";
+  hexView.textContent = "";
+  htmlView.style.transform = "scale(1)";
+  tableView.style.transform = "scale(1)";
+  hexView.style.transform = "scale(1)";
+  imgView.removeAttribute("src");
+  imgView.style.transform = "scale(1)";
+  setActiveObjectUrl(null);
+}
+
+function renderFileList(){
+  docListEl.innerHTML = "";
+
+  viewerFiles.forEach((f, idx) => {
+    const item = document.createElement("div");
+    item.className = "doc-item" + (idx === viewerIndex ? " active" : "");
+    item.onclick = () => selectFile(idx);
+
+    item.innerHTML = `
+      <div class="doc-item-preview">
+        <div class="doc-ico"><i class="${iconForKind(f.kind)}"></i></div>
+      </div>
+      <div class="doc-title">${escapeHTML(f.name || "File")}</div>
+      <div class="doc-sub">${escapeHTML((f.ext || "").toUpperCase() || "FILE")}</div>
+    `;
+
+    docListEl.appendChild(item);
+  });
+}
+
+function highlightActiveList(){
+  [...docListEl.querySelectorAll(".doc-item")].forEach((el, i) => {
+    el.classList.toggle("active", i === viewerIndex);
+  });
+}
+
+function setHeaderForFile(f){
+  if (docFileName) docFileName.textContent = f?.displayName || f?.name || "File";
+  if (docBadge) docBadge.textContent = (f?.ext || f?.kind || "file").toUpperCase();
+  docTypeHint.textContent = f?.kind ? `Preview: ${f.kind}` : "Preview";
+  updateDownloadLink(f);
+  updateViewerButtons();
+}
+
+async function selectFile(idx){
+  viewerIndex = idx;
+  highlightActiveList();
+  zoom = 1;
+  updateZoomLabel();
+
+  const f = viewerFiles[viewerIndex];
+  if (!f){
+    showEmptyViewer("File not found.");
+    updateDownloadLink(null);
+    updateViewerButtons();
+    return;
+  }
+
+  setHeaderForFile(f);
+  updateTabHint();
+
+  pdfDoc = null;
+  pdfPageNum = 1;
+  pdfThumbs.innerHTML = "";
+  pdfPageInfo.textContent = "—";
+  pagesEmpty.style.display = "none";
+
+  resetPreview();
+
+  const url = f.url;
+  const ext = f.ext || extOf(url);
+  const kind = f.kind || guessKindByExt(ext);
+
+  if (kind === "pdf"){
+    setTimeout(()=> setTab("pages"), 60);
+  } else {
+    if (activeTab === "pages"){
+      pagesEmpty.style.display = "block";
+    }
+    setTab("files");
+  }
+
+  if (kind === "image") return renderImageSmart(url);
+  if (kind === "pdf") return renderPDF(url);
+  if (kind === "docx") return renderDOCX(url);
+  if (kind === "sheet") return renderSheet(url, ext);
+  if (kind === "heic") return renderHEIC(url);
+  if (kind === "tiff") return renderTIFF(url);
+  if (kind === "text") return renderText(url);
+
+  return renderHexFallback(url);
+}
+
+async function fetchArrayBuffer(url){
+  const res = await fetch(url, { method:"GET" });
+  if (!res.ok) throw new Error("Fetch failed");
+  return await res.arrayBuffer();
+}
+
+async function fetchText(url){
+  const res = await fetch(url, { method:"GET" });
+  if (!res.ok) throw new Error("Fetch failed");
+  return await res.text();
+}
+
+async function renderPDF(url){
+  if (!window.pdfjsLib){
+    showEmptyViewer("PDF.js not loaded.");
+    pagesEmpty.style.display = "block";
+    return;
+  }
+
+  pdfWrap.style.display = "flex";
+  const myToken = ++pdfRenderToken;
+
+  try{
+    pdfDoc = await pdfjsLib.getDocument({ url }).promise;
+    if (myToken !== pdfRenderToken) return;
+
+    pdfPageNum = 1;
+    await renderPdfPage(pdfPageNum);
+    await buildPdfThumbs();
+
+    pagesEmpty.style.display = pdfThumbs.children.length ? "none" : "block";
+    pdfPageInfo.textContent = `${pdfPageNum} / ${pdfDoc.numPages}`;
+    updateTabHint();
+  }catch(e){
+    console.error(e);
+    pdfDoc = null;
+    showEmptyViewer("PDF preview failed.");
+    pagesEmpty.style.display = "block";
+  }
+}
+
+async function renderPdfPage(pageNum){
+  if (!pdfDoc) return;
+  const myToken = ++pdfRenderToken;
+
+  try{
+    const pageObj = await pdfDoc.getPage(pageNum);
+    if (myToken !== pdfRenderToken) return;
+
+    const viewport = pageObj.getViewport({ scale: 1.35 * zoom });
+    const ctx = pdfCanvas.getContext("2d");
+
+    pdfCanvas.width = Math.floor(viewport.width);
+    pdfCanvas.height = Math.floor(viewport.height);
+
+    await pageObj.render({ canvasContext: ctx, viewport }).promise;
+    if (myToken !== pdfRenderToken) return;
+
+    pdfPageInfo.textContent = `${pageNum} / ${pdfDoc.numPages}`;
+    highlightThumb(pageNum);
+  }catch(e){
+    console.error(e);
+    showEmptyViewer("PDF page render failed.");
+  }
+}
+
+function highlightThumb(pageNum){
+  [...pdfThumbs.querySelectorAll(".pdf-thumb")].forEach(el => {
+    el.classList.toggle("active", Number(el.dataset.page) === Number(pageNum));
+  });
+}
+
+async function buildPdfThumbs(){
+  if (!pdfDoc) return;
+
+  pdfThumbs.innerHTML = "";
+  const total = pdfDoc.numPages;
+  const MAX_THUMBS = Math.min(total, 18);
+  const pages = [];
+  for (let i=1; i<=MAX_THUMBS; i++) pages.push(i);
+
+  for (const p of pages){
+    try{
+      const pageObj = await pdfDoc.getPage(p);
+      const viewport = pageObj.getViewport({ scale: 0.35 });
+      const c = document.createElement("canvas");
+      const ctx = c.getContext("2d");
+      c.width = Math.floor(viewport.width);
+      c.height = Math.floor(viewport.height);
+      await pageObj.render({ canvasContext: ctx, viewport }).promise;
+
+      const wrap = document.createElement("div");
+      wrap.className = "pdf-thumb";
+      wrap.dataset.page = String(p);
+      wrap.onclick = () => {
+        pdfPageNum = p;
+        renderPdfPage(p);
+      };
+
+      const label = document.createElement("div");
+      label.className = "p";
+      label.textContent = `Page ${p}`;
+
+      wrap.appendChild(c);
+      wrap.appendChild(label);
+      pdfThumbs.appendChild(wrap);
+    }catch(e){}
+  }
+}
+
+async function renderDOCX(url){
+  htmlWrap.style.display = "flex";
+  try{
+    const buf = await fetchArrayBuffer(url);
+    const result = await mammoth.convertToHtml({ arrayBuffer: buf });
+    htmlView.innerHTML = `
+      <div style="width:100%;">
+        <div style="margin-bottom:12px;color:#475569;font-size:0.82rem;font-weight:800;">
+          <i class="fa-regular fa-file-word"></i> DOCX preview
+        </div>
+        <div>${result.value || ""}</div>
+      </div>
+    `;
+  }catch(e){
+    console.error(e);
+    showEmptyViewer("DOCX preview failed.");
+  }
+}
+
+async function renderSheet(url, ext){
+  tableWrap.style.display = "flex";
+  try{
+    if ((ext || "").toLowerCase() === "csv"){
+      const txt = await fetchText(url);
+      const rows = parseCSV(txt);
+      tableView.innerHTML = renderTableHTML(rows);
+      return;
+    }
+
+    const buf = await fetchArrayBuffer(url);
+    const wb = XLSX.read(buf, { type:"array" });
+    const sheetName = wb.SheetNames[0];
+    const ws = wb.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true });
+    tableView.innerHTML = `
+      <div style="color:#475569;font-size:0.82rem;margin-bottom:12px;font-weight:800;">
+        <i class="fa-regular fa-file-excel"></i> Sheet: ${escapeHTML(sheetName)}
+      </div>
+      ${renderTableHTML(json)}
+    `;
+  }catch(e){
+    console.error(e);
+    showEmptyViewer("Spreadsheet preview failed.");
+  }
+}
+
+function parseCSV(text){
+  const rows = [];
+  let row = [];
+  let cur = "";
+  let inQ = false;
+
+  for (let i=0;i<text.length;i++){
+    const ch = text[i];
+    const next = text[i+1];
+
+    if (ch === '"' && inQ && next === '"'){ cur += '"'; i++; continue; }
+    if (ch === '"'){ inQ = !inQ; continue; }
+
+    if (ch === "," && !inQ){ row.push(cur); cur=""; continue; }
+    if ((ch === "\n" || ch === "\r") && !inQ){
+      if (ch === "\r" && next === "\n") i++;
+      row.push(cur); cur="";
+      if (row.length > 1 || row[0] !== "") rows.push(row);
+      row = [];
+      continue;
+    }
+
+    cur += ch;
+  }
+
+  row.push(cur);
+  if (row.length > 1 || row[0] !== "") rows.push(row);
+  return rows;
+}
+
+function renderTableHTML(rows){
+  const safe = Array.isArray(rows) ? rows : [];
+  const head = safe[0] || [];
+  const body = safe.slice(1);
+
+  const ths = head.map(h => `<th>${escapeHTML(h)}</th>`).join("");
+  const trs = body.slice(0, 200).map(r => {
+    const tds = (r || []).map(c => `<td>${escapeHTML(c)}</td>`).join("");
+    return `<tr>${tds}</tr>`;
+  }).join("");
+
+  return `
+    <div style="overflow:auto;">
+      <table>
+        <thead><tr>${ths}</tr></thead>
+        <tbody>${trs || ""}</tbody>
+      </table>
+      <div style="margin-top:10px;color:#475569;font-size:0.78rem;font-weight:700;">
+        Showing up to 200 rows for performance.
+      </div>
+    </div>
+  `;
+}
+
+async function renderHEIC(url){
+  imgWrap.style.display = "flex";
+  try{
+    const buf = await fetchArrayBuffer(url);
+    const blob = new Blob([buf], { type: "image/heic" });
+
+    const converted = await heic2any({ blob, toType:"image/jpeg", quality:0.90 });
+    const outBlob = Array.isArray(converted) ? converted[0] : converted;
+    const objUrl = URL.createObjectURL(outBlob);
+    setActiveObjectUrl(objUrl);
+
+    imgView.src = objUrl;
+    imgView.onerror = () => showEmptyViewer("HEIC preview failed.");
+  }catch(e){
+    console.error(e);
+    showEmptyViewer("HEIC preview failed.");
+  }
+}
+
+async function renderTIFF(url){
+  imgWrap.style.display = "flex";
+  try{
+    const buf = await fetchArrayBuffer(url);
+    const tiff = new Tiff({ buffer: buf });
+    const canvas = tiff.toCanvas();
+    if (!canvas) throw new Error("TIFF toCanvas failed");
+    imgView.src = canvas.toDataURL("image/png");
+  }catch(e){
+    console.error(e);
+    showEmptyViewer("TIFF preview failed.");
+  }
+}
+
+async function renderText(url){
+  htmlWrap.style.display = "flex";
+  try{
+    const txt = await fetchText(url);
+    htmlView.innerHTML = `
+      <div style="width:100%;">
+        <div style="margin-bottom:12px;color:#475569;font-size:0.82rem;font-weight:800;">
+          <i class="fa-regular fa-file-lines"></i> Text preview
+        </div>
+        <pre style="white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,monospace;color:#162233;">${escapeHTML(txt.slice(0, 200000))}</pre>
+      </div>
+    `;
+  }catch(e){
+    console.error(e);
+    showEmptyViewer("Text preview failed.");
+  }
+}
+
+async function renderHexFallback(url){
+  hexWrap.style.display = "flex";
+  try{
+    const buf = await fetchArrayBuffer(url);
+    const bytes = new Uint8Array(buf);
+    const max = Math.min(bytes.length, 20000);
+
+    let out = "";
+    for (let i=0;i<max;i+=16){
+      const chunk = bytes.slice(i, i+16);
+      const hex = [...chunk].map(b => b.toString(16).padStart(2,"0")).join(" ");
+      const ascii = [...chunk].map(b => (b>=32 && b<=126) ? String.fromCharCode(b) : ".").join("");
+      out += `${String(i).padStart(6,"0")}  ${hex.padEnd(16*3)}  ${ascii}
+`;
+    }
+    hexView.textContent = out || "No data.";
+  }catch(e){
+    console.error(e);
+    showEmptyViewer("File preview not supported (and fallback failed).");
+  }
+}
+
+
+/* ============================================================
+   Utilities
+============================================================ */
+function escapeHTML(str){
+  return String(str ?? "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m] || m));
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+loadApplicants().then(() => {
+  initMapIfNeeded();
+  setTimeout(()=>{ try{ map.invalidateSize(); }catch(e){} }, 250);
+});
+</script>
+
+</body>
+</html>
+

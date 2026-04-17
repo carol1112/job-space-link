@@ -1,0 +1,3749 @@
+<!-- ==========================================================
+     Applicant Dashboard | Job Space Link  (FULL CODE - NO SHORTCUTS)
+
+     ✅ UPDATE APPLIED NOW (NEW ENHANCEMENT):
+     ✅ When applicant is DEACTIVATED (Not Active):
+        - ✅ REMOVE ALL RECORDS for that applicant from the dashboard
+        - ✅ Shows ONLY the LATEST transaction per applicant (master_id)
+        - ✅ Prevents older "Active" transactions from still showing
+
+     ✅ Laptop media (769px–1023px):
+        - Controls become TWO ROWS (compact)
+        - Row 1: Search All + Type Search + Position + Country + City + Gender
+        - Row 2: Date filter + Search + Reset + Table/Grid + Location
+=========================================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Applicant Dashboard | Job Space Link</title>
+
+<!-- ICONS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+<!-- GLOBAL CSS -->
+<link rel="stylesheet" href="jobspacelink.css" />
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<!-- ✅ PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<!-- ✅ DOCX -> HTML -->
+<script src="https://unpkg.com/mammoth@1.9.0/mammoth.browser.min.js"></script>
+
+<!-- ✅ XLSX / CSV -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<!-- ✅ HEIC/HEIF -> JPG/PNG -->
+<script src="https://unpkg.com/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+<!-- ✅ TIFF fallback -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tiff.js/1.0.0/tiff.min.js"></script>
+
+<style>
+/* ============================================================
+   RESET + GLOBAL
+============================================================ */
+html, body{
+  height:100%;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins","Segoe UI",sans-serif;}
+body{
+  background: radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #0f172a);
+  color:#e5e7eb;
+  overflow:hidden;
+}
+header{
+  position:relative;
+  z-index:60;
+}
+
+/* ============================================================
+   DASHBOARD PAGE VIEWPORT
+============================================================ */
+:root{
+  --app-header-offset: 92px;
+  --sticky-stack-gap: 10px;
+  --controls-sticky-height: 0px;
+}
+
+.dashboard-page-viewport{
+  position:fixed;
+  inset:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+  scroll-behavior:smooth;
+  padding:calc(var(--app-header-offset) + 6px) 8px 12px;
+  z-index:10;
+}
+.dashboard-page-viewport::-webkit-scrollbar{
+  width:14px;
+}
+.dashboard-page-viewport::-webkit-scrollbar-track{
+  background:rgba(226,232,240,0.74);
+  border-radius:999px;
+  box-shadow: inset 0 0 0 1px rgba(148,163,184,0.18);
+}
+.dashboard-page-viewport::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#00c6ff,#7c3aed);
+  border-radius:999px;
+  border:2px solid rgba(226,232,240,0.9);
+}
+
+.dashboard-scroll-shell{
+  width:100%;
+  max-width:100%;
+  margin:0 auto;
+  padding:0;
+  overflow:visible;
+}
+
+.dashboard-wrapper{
+  width:min(1700px, calc(100% - 6px));
+  min-height:calc(100vh - var(--app-header-offset) - 18px);
+  margin:0 auto;
+  padding:12px 18px 18px;
+  background: rgba(15,23,42,0.90);
+  border-radius: 22px;
+  border: 1px solid rgba(0,198,255,0.45);
+  box-shadow: 0 0 30px rgba(0,198,255,0.25);
+  backdrop-filter: blur(10px);
+  position:relative;
+  overflow:visible;
+}
+
+.dashboard-top-sticky{
+  position:sticky;
+  top:0;
+  z-index:40;
+  margin:-12px -18px var(--sticky-stack-gap);
+  padding:12px 18px 10px;
+  background:linear-gradient(180deg, rgba(15,23,42,0.992) 0%, rgba(15,23,42,0.965) 76%, rgba(15,23,42,0.90) 100%);
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid rgba(0,198,255,0.16);
+  border-radius:22px 22px 16px 16px;
+  box-shadow:0 12px 22px rgba(2,6,23,0.20);
+}
+
+.dashboard-results-viewport{
+  min-height:0;
+  overflow:visible;
+  padding:0;
+  margin:0;
+  position:relative;
+}
+
+.dashboard-views{
+  min-height:100%;
+  display:block;
+  overflow:visible;
+  padding-right:0;
+}
+
+.dashboard-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.dashboard-title h1{
+  font-size:1.7rem;
+  font-weight:700;
+  color:#e8f9ff;
+  text-shadow:0 0 10px rgba(0,198,255,0.6);
+}
+.refresh-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(0,198,255,0.35);
+  background:rgba(2,6,23,0.55);
+  color:#9fbcd1;
+  font-size:0.82rem;
+  white-space:nowrap;
+}
+.refresh-chip i{ color:#00eaff; }
+
+#statusMsg{
+  margin-top:8px;
+  padding:9px 12px;
+  border-radius:14px;
+  background:rgba(2,6,23,0.62);
+  border:1px solid rgba(0,198,255,0.22);
+  color:#cbd5e1;
+  font-size:0.86rem;
+  line-height:1.3;
+}
+
+/* ============================================================
+   CONTROLS
+============================================================ */
+.controls-bar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+  align-items:center;
+}
+.search-field{ flex:0 0 auto; }
+.search-field select{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(2,6,23,0.8);
+  border:1px solid rgba(0,198,255,0.35);
+  color:#fff;
+  font-size:0.85rem;
+  min-width: 190px;
+}
+.search-field select option{ background:#020617; color:#e5e7eb; }
+
+.search-box{ flex:1 1 260px; position:relative; }
+.search-box input{
+  width:100%;
+  padding:10px 40px 10px 14px;
+  border-radius:14px;
+  background:rgba(2,6,23,0.8);
+  border:1px solid rgba(0,198,255,0.45);
+  color:#fff;
+}
+.search-box i{ position:absolute; right:12px; top:50%; transform:translateY(-50%); }
+
+.controls-bar select,
+.controls-bar input[type="date"],
+.controls-bar input[type="number"]{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(2,6,23,0.8);
+  border:1px solid rgba(0,198,255,0.35);
+  color:#fff;
+  font-size:0.85rem;
+}
+.controls-bar input::placeholder{ color: rgba(255,255,255,0.55); }
+
+/* ============================================================
+   DATE FILTER INLINE
+============================================================ */
+.date-inline{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:14px;
+  background:rgba(2,6,23,0.65);
+  border:1px solid rgba(0,198,255,0.30);
+}
+.date-inline .date-label{
+  font-size:0.82rem;
+  color:#9ca3af;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.date-inline .date-label i{ color:#00eaff; }
+.date-inline select,
+.date-inline input[type="date"]{
+  padding:9px 10px;
+  border-radius:12px;
+  background:rgba(2,6,23,0.9);
+  border:1px solid rgba(0,198,255,0.35);
+  color:#fff;
+  font-size:0.82rem;
+}
+.date-inline input[type="date"]{ min-width: 150px; }
+
+/* ============================================================
+   SEARCH + RESET BUTTONS
+============================================================ */
+.search-btn{
+  padding:10px 18px;
+  border-radius:14px;
+  border:1px solid rgba(34,197,94,0.75);
+  background:linear-gradient(135deg,#022c22,#022c22);
+  color:#4ade80;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:0.25s ease;
+  box-shadow:0 0 10px rgba(34,197,94,0.25);
+}
+.search-btn:hover{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 0 18px rgba(34,197,94,0.55);
+}
+.search-btn:active{ transform:scale(0.97); }
+
+.reset-btn{
+  padding:10px 18px;
+  border-radius:14px;
+  border:1px solid rgba(0,198,255,0.55);
+  background:linear-gradient(135deg,#020617,#020617);
+  color:#00eaff;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:0.25s ease;
+  box-shadow:0 0 10px rgba(0,198,255,0.25);
+}
+.reset-btn:hover{
+  background:linear-gradient(135deg,#00c6ff,#7c3aed);
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 0 18px rgba(124,58,237,0.55);
+}
+.reset-btn:active{ transform:scale(0.97); }
+
+/* ============================================================
+   VIEW TOGGLE + LOCATION BUTTON
+============================================================ */
+.view-toggle{
+  display:flex;
+  overflow:hidden;
+  border-radius:14px;
+  border:1px solid rgba(0,198,255,0.35);
+}
+.view-toggle button{
+  padding:8px 16px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:#9ca3af;
+  font-size:0.85rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.view-toggle button.active{
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  color:#fff;
+}
+
+.location-link{ text-decoration:none; display:inline-block; }
+.location-btn{
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid rgba(0,198,255,0.45);
+  background:rgba(2,6,23,0.70);
+  color:#00eaff;
+  font-weight:800;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:0.25s ease;
+  box-shadow:0 0 10px rgba(0,198,255,0.18);
+}
+.location-btn:hover{
+  background:linear-gradient(135deg,#00c6ff,#7c3aed);
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 0 18px rgba(0,198,255,0.35);
+}
+.location-btn:active{ transform:scale(0.97); }
+
+/* ============================================================
+   TABLE VIEW (BASE)
+============================================================ */
+#tableView{
+  width:100%;
+  display:block;
+  background:rgba(2,6,23,0.34);
+  border:1px solid rgba(0,198,255,0.18);
+  border-radius:18px;
+  overflow:visible;
+}
+
+.table-scroll-area{
+  overflow:visible;
+  padding:0;
+}
+
+table{
+  width:100%;
+  min-width:100%;
+  table-layout:fixed;
+  border-collapse:separate;
+  border-spacing:0 10px;
+}
+thead th{
+  position:sticky;
+  top:calc(var(--controls-sticky-height, 0px) + 2px);
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+  padding:14px;
+  color:#e8f9ff;
+  border-bottom:2px solid rgba(0,198,255,0.45);
+  text-shadow:0 0 6px rgba(0,198,255,0.5);
+  font-size:0.95rem;
+  z-index:8;
+}
+tbody tr{ background:rgba(15,23,42,0.88); transition:0.25s; }
+tbody tr:hover{ background:rgba(0,198,255,0.15); }
+
+table th, table td{
+  padding:12px 14px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  vertical-align:top;
+}
+
+/* 12 columns */
+thead th:nth-child(1),  tbody td:nth-child(1)  { width: 115px;}
+thead th:nth-child(2),  tbody td:nth-child(2)  { width: 140px; }
+thead th:nth-child(3),  tbody td:nth-child(3)  { width: 85px; }
+thead th:nth-child(4),  tbody td:nth-child(4)  { width: 65px; text-align:center;}
+thead th:nth-child(5),  tbody td:nth-child(5)  { width: 110px; }
+thead th:nth-child(6),  tbody td:nth-child(6)  { width: 140px; }
+thead th:nth-child(7),  tbody td:nth-child(7)  { width: 85px; text-align:center; font-size:0.85rem; }
+thead th:nth-child(8),  tbody td:nth-child(8)  { width: 120px; text-align:right; }
+thead th:nth-child(9),  tbody td:nth-child(9)  { width: 150px; text-align:center; }
+thead th:nth-child(10), tbody td:nth-child(10) { width: 110px; }
+thead th:nth-child(11), tbody td:nth-child(11) { width: 110px; }
+thead th:nth-child(12), tbody td:nth-child(12) { width: 120px; }
+
+.pic-thumb{
+  width:60px;
+  height:70px;
+  object-fit:cover;
+  border-radius:10px;
+  border:2px solid rgba(0,198,255,0.45);
+}
+.money{ font-variant-numeric: tabular-nums; color:#e8f9ff; }
+
+/* Employment badge */
+.emp-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:0.78rem;
+  font-weight:700;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.06);
+  color:#e5e7eb;
+  white-space:nowrap;
+}
+.emp-badge.employed{
+  border-color: rgba(34,197,94,0.55);
+  background: rgba(34,197,94,0.12);
+  color:#bbf7d0;
+}
+.emp-badge.unemployed{
+  border-color: rgba(244,63,94,0.55);
+  background: rgba(244,63,94,0.12);
+  color:#fecdd3;
+}
+.emp-badge.unknown{
+  border-color: rgba(148,163,184,0.35);
+  background: rgba(148,163,184,0.08);
+  color:#cbd5e1;
+}
+
+/* ============================================================
+   GRID VIEW
+============================================================ */
+#gridOnlyView{
+  display:none;
+  width:100%;
+}
+.grid-only-shell{
+  width:100%;
+  background: rgba(2,6,23,0.35);
+  border:1px solid rgba(0,198,255,0.18);
+  border-radius:18px;
+  padding:12px;
+  overflow:visible;
+}
+.grid-scroll-area{
+  overflow:visible;
+  padding-right:0;
+}
+.grid-container{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  align-content:start;
+}
+.applicant-card{
+  background:rgba(15,23,42,0.95);
+  border-radius:14px;
+  padding:10px;
+  border:1px solid rgba(0,198,255,0.30);
+  box-shadow:0 0 10px rgba(0,198,255,0.10);
+  transition:0.20s ease;
+  cursor:pointer;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  min-width:0;
+}
+.applicant-card:hover{
+  transform:translateY(-2px);
+  border-color:#00eaff;
+  box-shadow:0 0 18px rgba(0,198,255,0.26);
+}
+.card-pic{
+  width:58px;
+  height:68px;
+  border-radius:12px;
+  border:2px solid rgba(0,198,255,0.55);
+  object-fit:cover;
+  flex:0 0 auto;
+}
+.card-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width: 0;
+}
+.card-name{
+  font-weight:800;
+  color:#ffffff;
+  text-shadow:0 0 8px rgba(0,198,255,0.18);
+  font-size:0.90rem;
+  line-height:1.05;
+}
+.card-sub{
+  color:#9ca3af;
+  font-size:0.74rem;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.card-sub span{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(0,198,255,0.14);
+  padding:3px 6px;
+  border-radius:12px;
+  white-space:nowrap;
+}
+.card-loc{
+  color:#cbd5e1;
+  font-size:0.76rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.card-loc i{ color:#00eaff; }
+.card-addr{
+  color:#9fbcd1;
+  font-size:0.72rem;
+  line-height:1.12;
+  opacity:0.95;
+  display:-webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow:hidden;
+}
+.card-actions{
+  margin-top:2px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.view-btn{
+  padding:7px 10px;
+  border-radius:11px;
+  cursor:pointer;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  color:white;
+  border:none;
+  font-size:0.76rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+/* Pagination */
+.pagination{
+  margin-top:0;
+  padding:12px 10px 10px;
+  display:flex;
+  justify-content:center;
+  gap:5px;
+  flex-wrap:wrap;
+  border-top:1px solid rgba(0,198,255,0.12);
+  background:rgba(2,6,23,0.58);
+}
+.pagination button{
+  padding:6px 12px;
+  border-radius:8px;
+  background:#1e293b;
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-size:0.8rem;
+}
+.pagination button:disabled{
+  opacity:0.45;
+  cursor:not-allowed;
+}
+.pagination button.active{ background:linear-gradient(90deg,#00c6ff,#7c3aed); }
+
+/* ============================================================
+   FILE VIEWER MODAL — UPDATED TO MATCH SAMPLE FORMAT
+============================================================ */
+#docModal{
+  position:fixed; inset:0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,0.12), transparent 42%),
+    radial-gradient(circle at 82% 82%, rgba(124,58,237,0.16), transparent 40%),
+    rgba(0,0,0,0.84);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  backdrop-filter: blur(7px);
+  padding:14px;
+}
+
+#docViewer{
+  width:min(1640px, 97vw);
+  height:min(92vh, 970px);
+  background:linear-gradient(180deg, rgba(2,11,28,.995), rgba(1,8,22,.998));
+  border-radius:28px;
+  border:1.5px solid rgba(0,219,255,0.34);
+  box-shadow:0 30px 72px rgba(0,0,0,.58);
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+#docViewer::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:28px;
+  pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(110,222,255,.06);
+}
+#docViewer.is-fullpage{
+  width:100vw;
+  height:100vh;
+  max-width:none;
+  max-height:none;
+  border-radius:0;
+}
+
+.doc-viewer-head{
+  position:relative;
+  min-height:74px;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:1px solid rgba(0,214,255,.16);
+  background:linear-gradient(180deg, rgba(2,10,25,.99), rgba(2,10,27,.99));
+  z-index:4;
+}
+.doc-viewer-title{
+  text-align:center;
+  max-width:calc(100% - 360px);
+  min-width:0;
+  font-size:1.18rem;
+  line-height:1.1;
+  font-weight:800;
+  color:#f5fbff;
+  letter-spacing:-.01em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.doc-head-actions{
+  position:absolute;
+  right:18px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.doc-head-btn,
+#closeDocModal{
+  min-height:40px;
+  border-radius:14px;
+  border:1px solid rgba(72,190,255,.34);
+  padding:0 16px;
+  font-size:.82rem;
+  font-weight:800;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  cursor:pointer;
+  white-space:nowrap;
+  color:#eff8ff;
+  background:linear-gradient(180deg, rgba(8,68,116,.98), rgba(5,34,66,.98));
+  transition:.18s ease;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.doc-head-btn:hover,
+#closeDocModal:hover,
+.ctrl-btn:hover,
+.nav-btn:hover,
+.doc-item:hover,
+.page-thumb:hover,
+.doc-tab-btn:hover{ transform:translateY(-1px); }
+#closeDocModal{
+  position:static;
+  background:linear-gradient(180deg, rgba(95,23,40,.98), rgba(63,14,27,.98));
+  border-color:rgba(255,102,140,.24);
+  color:#ffe8ee;
+}
+#docViewer.is-fullpage #closeDocModal{ display:none !important; }
+
+.doc-viewer-layout{
+  flex:1 1 auto;
+  min-height:0;
+  display:grid;
+  grid-template-columns:360px minmax(0, 1fr);
+  transition:grid-template-columns .22s ease;
+}
+#docViewer.sidebar-hidden .doc-viewer-layout{
+  grid-template-columns:0 minmax(0, 1fr);
+}
+
+#docList{
+  min-height:0;
+  overflow:hidden;
+  padding:18px 0 0;
+  background:linear-gradient(180deg, rgba(0,9,27,.998), rgba(0,7,20,.998));
+  border-right:1px solid rgba(0,214,255,.16);
+  transition:opacity .18s ease, padding .18s ease, border-color .18s ease;
+  position:relative;
+  z-index:3;
+  display:flex;
+  flex-direction:column;
+}
+#docViewer.sidebar-hidden #docList{
+  opacity:0;
+  padding:0;
+  pointer-events:none;
+  overflow:hidden;
+  border-right-color:transparent;
+}
+#sidebarProfile{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 20px 16px;
+  border-bottom:1px solid rgba(0,214,255,.14);
+  margin-bottom:12px;
+  overflow:visible;
+  text-align:left;
+  position:sticky;
+  top:0;
+  z-index:8;
+  flex:0 0 auto;
+  background:linear-gradient(180deg, rgba(0,9,27,.998), rgba(0,7,20,.985));
+}
+#sidebarPicture{
+  width:86px;
+  height:94px;
+  object-fit:cover;
+  border-radius:18px;
+  border:2px solid rgba(0,198,255,0.6);
+  box-shadow:0 0 16px rgba(0,198,255,0.55);
+  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  transform-origin:left center;
+  cursor:zoom-in;
+  background:#071325;
+  flex:0 0 auto;
+}
+#sidebarPicture:hover{
+  transform:translate3d(18px, 8px, 0) scale(1.68);
+  border-color: rgba(0,234,255,0.95);
+  box-shadow: 0 0 26px rgba(0,234,255,0.65), 0 0 52px rgba(124,58,237,0.35);
+  z-index:999;
+}
+.sidebar-copy{ min-width:0; }
+#sidebarName,
+#profileName{
+  font-weight:800;
+  font-size:1rem;
+  color:#f5fbff;
+  line-height:1.18;
+  text-shadow:0 0 6px rgba(0,198,255,0.25);
+  word-break:break-word;
+}
+#sidebarPosition{
+  margin-top:8px;
+  color:#d4e8ff;
+  font-size:.84rem;
+  font-weight:600;
+  line-height:1.2;
+}
+#profileName{ display:none; }
+
+.doc-tab-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:0 14px 10px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(0,214,255,.14);
+  position:sticky;
+  top:108px;
+  z-index:7;
+  flex:0 0 auto;
+  background:linear-gradient(180deg, rgba(0,9,27,.998), rgba(0,7,20,.985));
+}
+.doc-tab-btn{
+  min-height:38px;
+  border-radius:14px;
+  border:1px solid rgba(42,172,255,.14);
+  background:rgba(10,24,55,.9);
+  color:#d7ecff;
+  font-weight:800;
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  padding:0 12px;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.doc-tab-btn.active{
+  background:linear-gradient(180deg, rgba(0,108,145,.88), rgba(0,67,96,.96));
+  color:#f5fcff;
+  border-color:rgba(0,214,255,.24);
+  box-shadow:inset 0 0 0 1px rgba(0,214,255,.08);
+}
+.doc-tab-btn:disabled{ opacity:.42; cursor:not-allowed; }
+
+#fileListContainer,
+#pagesArea{
+  padding:0 14px 16px;
+  min-height:0;
+}
+#fileListContainer{
+  display:block;
+  flex:1 1 auto;
+  overflow:auto;
+}
+#pagesArea{
+  display:none;
+  flex:1 1 auto;
+  flex-direction:column;
+  overflow:hidden;
+}
+#docViewer.mode-pages #fileListContainer{ display:none; }
+#docViewer.mode-pages #pagesArea{ display:flex; }
+#docViewer.mode-files #fileListContainer{ display:block; }
+#docViewer.mode-files #pagesArea{ display:none; }
+
+#docItems,
+#pageThumbs{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:center;
+}
+.doc-item,
+.page-thumb{
+  width:100%;
+  text-align:left;
+  padding:8px;
+  border-radius:18px;
+  border:1px solid rgba(72,190,255,.18);
+  background:linear-gradient(180deg, rgba(3,16,40,.98), rgba(2,11,28,.99));
+  color:#ebf7ff;
+  cursor:pointer;
+  transition:.18s ease;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.doc-item{ max-width:218px; }
+.page-thumb{
+  max-width:112px;
+  padding:6px;
+  border-radius:16px;
+}
+.doc-item.active,
+.page-thumb.active{
+  border-color:rgba(0,220,255,.78);
+  box-shadow:0 0 0 1px rgba(0,220,255,.24), 0 14px 28px rgba(0,0,0,.26);
+  background:linear-gradient(180deg, rgba(9,32,70,.98), rgba(4,18,42,.98));
+}
+.doc-item-thumb,
+.page-thumb-canvas-wrap{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  background:#031224;
+  border:1px solid rgba(87,188,255,.12);
+  overflow:hidden;
+}
+.doc-item-thumb{
+  min-height:78px;
+  margin-bottom:8px;
+  font-size:2rem;
+  color:#d4ebff;
+}
+.doc-item-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.page-thumb-canvas-wrap{
+  min-height:44px;
+  margin-bottom:6px;
+  padding:3px;
+}
+.page-thumb-canvas-wrap canvas{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:8px;
+  background:#ffffff;
+}
+.doc-item-label,
+.page-thumb .label{
+  font-size:.8rem;
+  font-weight:800;
+  line-height:1.22;
+  color:#eef8ff;
+}
+.page-thumb .label{
+  margin-top:2px;
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  font-size:.72rem;
+  line-height:1.1;
+}
+.pages-title{
+  display:none;
+}
+.pages-hint{ display:none; }
+#pageThumbsContainer{
+  max-height:100%;
+  height:100%;
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  padding-right:6px;
+  padding-top:2px;
+  padding-bottom:6px;
+  scrollbar-gutter:stable both-edges;
+}
+#fileListContainer,
+#pageThumbsContainer{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(59,195,255,.72) rgba(3,18,40,.96);
+}
+#fileListContainer::-webkit-scrollbar,
+#pageThumbsContainer::-webkit-scrollbar{
+  width:10px;
+}
+#fileListContainer::-webkit-scrollbar-track,
+#pageThumbsContainer::-webkit-scrollbar-track{
+  background:rgba(3,18,40,.96);
+  border-radius:999px;
+}
+#fileListContainer::-webkit-scrollbar-thumb,
+#pageThumbsContainer::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg, rgba(38,188,255,.92), rgba(129,92,255,.92));
+  border-radius:999px;
+  border:2px solid rgba(3,18,40,.96);
+}
+.page-msg{
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(0,198,255,0.18);
+  color:#9fbcd1;
+  font-size:0.82rem;
+  line-height:1.35;
+}
+
+#docPreview{
+  min-width:0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  background:linear-gradient(180deg, rgba(1,8,22,.998), rgba(1,7,18,.998));
+}
+#previewStage{
+  flex:1 1 auto;
+  min-height:0;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:auto;
+  background:linear-gradient(180deg, rgba(2,12,30,.995), rgba(1,9,24,.998));
+  border:1px solid rgba(78,173,255,.14);
+  border-radius:18px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+  margin:18px 18px 0;
+}
+#pageCornerBadge{
+  position:absolute;
+  left:18px;
+  top:16px;
+  z-index:3;
+  padding:5px 12px;
+  border-radius:999px;
+  background:rgba(226,240,255,.96);
+  color:#8cb5e9;
+  font-size:.78rem;
+  font-weight:800;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  display:none;
+}
+#pdfWrap{
+  width:100%;
+  height:100%;
+  display:none;
+  overflow:auto;
+  padding:18px 22px 26px;
+  background:#031224;
+}
+#pdfInner{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  width:fit-content;
+  margin:0 auto;
+}
+#pdfCanvas{
+  border-radius:18px;
+  background:#ffffff;
+  box-shadow:0 14px 32px rgba(0,0,0,.24);
+}
+#previewFrame,
+#previewImage,
+#mediaPreview,
+#htmlPreview{
+  width:100%;
+  height:100%;
+  display:none;
+  border:none;
+  background:#020617;
+}
+#previewImage{ object-fit:contain; cursor:zoom-in; padding:18px; }
+#mediaPreview{ overflow:auto; }
+#htmlPreview{ overflow:auto; padding:16px; color:#e5e7eb; }
+
+.doc-page-toolbar{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:10px 14px 0;
+  border-top:1px solid rgba(0,214,255,.10);
+  background:rgba(2,10,24,.98);
+  margin-top:0;
+}
+#docViewer.has-pdf .doc-page-toolbar{ display:flex; }
+
+.doc-bottom-toolbar{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px 14px;
+  justify-content:space-between;
+  border-top:1px solid rgba(0,214,255,.14);
+  background:rgba(2,10,24,.98);
+}
+.doc-bottom-left,
+.doc-bottom-center,
+.doc-bottom-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:nowrap;
+}
+.doc-bottom-left,
+.doc-bottom-right{
+  flex:0 0 auto;
+}
+.doc-bottom-center{
+  min-width:0;
+  justify-content:center;
+}
+.ctrl-btn,
+.nav-btn,
+.download-btn{
+  min-height:42px;
+  border-radius:15px;
+  border:1px solid rgba(72,190,255,.34);
+  padding:0 14px;
+  font-size:.78rem;
+  font-weight:800;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  cursor:pointer;
+  transition:.18s ease;
+  white-space:nowrap;
+  background:linear-gradient(180deg, rgba(8,72,124,.98), rgba(6,41,77,.98));
+  color:#f2fbff;
+  text-decoration:none;
+  border:none;
+}
+.doc-bottom-toolbar .nav-btn,
+.doc-bottom-toolbar .ctrl-btn,
+.doc-bottom-toolbar .download-btn,
+.doc-page-toolbar .ctrl-btn{
+  width:auto;
+  flex:0 0 auto;
+  white-space:nowrap !important;
+  overflow:visible;
+  text-overflow:clip;
+}
+.ctrl-btn.secondary{ background:linear-gradient(180deg, rgba(10,50,84,.98), rgba(4,30,56,.98)); border:1px solid rgba(0,214,255,.34); color:#eef9ff; }
+.ctrl-btn.green,
+.download-btn{ background:linear-gradient(180deg, rgba(16,90,63,.98), rgba(9,63,43,.99)); border:1px solid rgba(37,195,123,.35); color:#e7fff2; }
+.nav-btn{ background:linear-gradient(90deg, rgba(87,180,255,.98), rgba(118,77,255,.98)); border:1px solid rgba(255,255,255,.1); color:#ffffff; box-shadow:0 10px 22px rgba(85,84,255,.22); }
+.ctrl-btn:disabled,
+.nav-btn:disabled,
+.download-btn.disabled{ opacity:.45; cursor:not-allowed; pointer-events:none; }
+.ctrl-pill,
+#pagePill,
+#zoomPill{
+  padding:7px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg, rgba(25,34,63,.96), rgba(13,20,40,.98));
+  color:#dff7ff;
+  font-weight:800;
+  font-size:.8rem;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Unsupported */
+#unsupportedModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10000;
+}
+#unsupportedBox{
+  width:420px;
+  padding:24px;
+  background:#1e1b4b;
+  border-radius:16px;
+  border:1px solid #00c6ff;
+  text-align:center;
+}
+#unsupportedBox h2{ color:#00c6ff; margin-bottom:14px; }
+#unsupportedBox p{ color:#e5e7eb; line-height:1.35; }
+.unsupported-btn{
+  padding:9px 16px;
+  margin-top:12px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+/* ============================================================
+   RESPONSIVE — ENHANCED (ALL REQUESTED BREAKPOINTS)
+============================================================ */
+
+/* ---------- ≥ 1800px ---------- */
+@media (min-width: 1800px){
+  .dashboard-page-viewport{ padding:calc(var(--app-header-offset) + 8px) 10px 14px; }
+  .dashboard-wrapper{ width:min(1900px, calc(100% - 10px)); padding: 14px 28px 24px; }
+  .dashboard-top-sticky{ margin:-14px -28px var(--sticky-stack-gap); padding:14px 28px 12px; }
+  .dashboard-title h1{ font-size: 1.95rem; }
+  .refresh-chip{ font-size: 0.9rem; padding: 10px 14px; }
+  .grid-container{ grid-template-columns:repeat(4,1fr); }
+  thead th{ font-size: 0.96rem; padding: 14px 14px; }
+  table th, table td{ padding: 12px 14px; }
+}
+
+/* ---------- ≥ 1440px ---------- */
+@media (min-width: 1440px){
+  .dashboard-wrapper{ width:min(1800px, calc(100% - 10px)); padding:14px 24px 22px; }
+  .dashboard-top-sticky{ margin:-14px -24px var(--sticky-stack-gap); padding:14px 24px 12px; }
+  .grid-container{ grid-template-columns: repeat(4, 1fr); }
+  thead th{ font-size: 0.92rem; padding: 12px 12px; }
+  table th, table td{ padding: 10px 12px; }
+  .pic-thumb{ width:58px; height:68px; }
+}
+
+/* ---------- ≥ 1024px (Laptop/Desktop baseline) ---------- */
+@media (min-width: 1024px){
+  .grid-container{ grid-template-columns: repeat(4, 1fr); }
+  thead th{
+    font-size:0.86rem;
+    padding:10px 10px;
+    letter-spacing:0.1px;
+  }
+  table th, table td{
+    padding:9px 10px;
+    font-size:0.82rem;
+    line-height:1.18;
+  }
+  .pic-thumb{ width:54px; height:64px; border-radius:10px; }
+  .emp-badge{ font-size:0.72rem; padding:5px 8px; }
+}
+
+/* ---------- 769px – 1023px (Laptop/tablet landscape) ---------- */
+@media (min-width: 769px) and (max-width: 1023px){
+  .dashboard-page-viewport{ padding:calc(var(--app-header-offset) + 4px) 6px 10px; }
+  .dashboard-wrapper{
+    width: calc(100% - 4px);
+    padding: 10px 14px 14px;
+    border-radius: 16px;
+    min-height: calc(100vh - var(--app-header-offset) - 14px);
+  }
+  .dashboard-top-sticky{
+    margin:-10px -14px var(--sticky-stack-gap);
+    padding:10px 14px 10px;
+    border-radius:16px 16px 12px 12px;
+  }
+
+  /* ✅ TWO-ROW GRID CONTROLS (compact) */
+  .controls-bar{
+    display:grid !important;
+    grid-template-columns: repeat(12, 1fr) !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
+
+  /* make inputs compact */
+  .search-field select,
+  .search-box input,
+  .controls-bar select,
+  .controls-bar input[type="date"]{
+    padding: 7px 8px !important;
+    border-radius: 12px !important;
+    font-size: 0.74rem !important;
+  }
+  .search-box i{
+    right: 10px !important;
+    font-size: 0.86rem !important;
+  }
+
+  .search-btn,
+  .reset-btn,
+  .location-btn{
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+    font-size: 0.74rem !important;
+    gap: 6px !important;
+    justify-content:center;
+  }
+
+  .view-toggle{
+    width: 100%;
+  }
+  .view-toggle button{
+    padding: 7px 8px !important;
+    font-size: 0.74rem !important;
+    justify-content:center;
+    width: 50%;
+  }
+
+  .date-inline{
+    gap: 7px !important;
+    padding: 7px 8px !important;
+    border-radius: 12px !important;
+  }
+  .date-inline .date-label{
+    font-size: 0.72rem !important;
+    gap: 6px !important;
+  }
+  .date-inline select,
+  .date-inline input[type="date"]{
+    padding: 7px 8px !important;
+    border-radius: 11px !important;
+    font-size: 0.72rem !important;
+    min-width: 0 !important;
+  }
+  #dateFrom{ min-width: 0 !important; }
+  #dateTo{ min-width: 0 !important; }
+
+  /* Row 1 placements */
+  .search-field{ grid-column: 1 / span 2; grid-row: 1; }
+  .search-box{   grid-column: 3 / span 3; grid-row: 1; }
+  #filterPosition{ grid-column: 6 / span 2; grid-row: 1; width:100%; }
+  #filterCountry{  grid-column: 8 / span 2; grid-row: 1; width:100%; }
+  #filterCity{     grid-column:10 / span 2; grid-row: 1; width:100%; }
+  #filterGender{   grid-column:12 / span 1; grid-row: 1; width:100%; }
+
+  /* Row 2 placements */
+  .date-inline{      grid-column: 1 / span 4; grid-row: 2; width:100%; }
+  #applyFiltersBtn{  grid-column: 5 / span 2; grid-row: 2; width:100%; justify-content:center; }
+  #resetBtn{         grid-column: 7 / span 2; grid-row: 2; width:100%; justify-content:center; }
+  .view-toggle{      grid-column: 9 / span 2; grid-row: 2; }
+  .location-link{    grid-column:11 / span 2; grid-row: 2; width:100%; display:block; }
+  .location-link .location-btn{ width:100%; }
+
+  /* keep grid cards */
+  .grid-container{ grid-template-columns: repeat(3, 1fr); }
+
+  /* TABLE compression (same as your compact setup) */
+  tbody td{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  tbody td:nth-child(6){
+    white-space: normal !important;
+    line-height: 1.05 !important;
+  }
+
+  table{ table-layout: fixed !important; }
+  table th, table td{
+    padding: 4px 5px !important;
+    font-size: 0.70rem !important;
+    line-height: 1.02 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  tbody td:nth-child(6){
+    white-space: normal !important;
+    line-height: 1.05 !important;
+  }
+
+  thead th:nth-child(1),  tbody td:nth-child(1)  { width: 58px; }
+  thead th:nth-child(2),  tbody td:nth-child(2)  { width: 72px; }
+  thead th:nth-child(3),  tbody td:nth-child(3)  { width: 44px; }
+  thead th:nth-child(4),  tbody td:nth-child(4)  { width: 36px; text-align:center; }
+  thead th:nth-child(5),  tbody td:nth-child(5)  { width: 72px; }
+  thead th:nth-child(6),  tbody td:nth-child(6)  { width: 78px; }
+  thead th:nth-child(7),  tbody td:nth-child(7)  { width: 56px; text-align:center; }
+  thead th:nth-child(8),  tbody td:nth-child(8)  { width: 70px; text-align:right; }
+  thead th:nth-child(9),  tbody td:nth-child(9)  { width: 72px; text-align:center; }
+  thead th:nth-child(10), tbody td:nth-child(10) { width: 56px; }
+  thead th:nth-child(11), tbody td:nth-child(11) { width: 64px; }
+  thead th:nth-child(12), tbody td:nth-child(12) { width: 66px; }
+
+  .pic-thumb{
+    width: 38px !important;
+    height: 46px !important;
+    border-radius: 8px !important;
+  }
+  .emp-badge{
+    font-size: 0.62rem !important;
+    padding: 2px 5px !important;
+  }
+
+  .doc-viewer-layout{ grid-template-columns:260px minmax(0,1fr); }
+  #pageThumbsContainer{ max-height: 220px; }
+}
+
+/* ---------- 481px – 768px ---------- */
+@media (min-width: 481px) and (max-width: 768px){
+  .dashboard-page-viewport{ padding:calc(var(--app-header-offset) + 4px) 6px 10px; }
+  .dashboard-wrapper{ width: calc(100% - 4px); padding:12px 16px 16px; border-radius: 18px; min-height: calc(100vh - var(--app-header-offset) - 14px); }
+  .dashboard-top-sticky{ margin:-12px -16px var(--sticky-stack-gap); padding:12px 16px 10px; border-radius:18px 18px 14px 14px; }
+  .controls-bar{ gap:10px; }
+  .search-field, .search-box,
+  #filterPosition, #filterCountry, #filterCity, #filterGender{ flex: 1 1 100%; width: 100%; }
+  table{ min-width:980px; }
+  .grid-container{ grid-template-columns: repeat(2, 1fr); }
+  .doc-viewer-layout{ grid-template-columns:280px minmax(0,1fr); }
+  #pageThumbsContainer{ max-height: 180px; }
+  #sidebarPicture:hover{ transform: translate3d(12px, 6px, 0) scale(1.35); }
+}
+
+/* ---------- RIGHT NAV button wrap tweak ---------- */
+#docNav{
+  width: 130px;
+  padding: 14px 10px;
+  padding-top: 92px;
+}
+.nav-btn{
+  width: 100%;
+  padding: 10px 8px;
+  font-size: 0.78rem;
+  line-height: 1.05;
+  white-space: normal !important;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.doc-bottom-toolbar .nav-btn{
+  width:auto;
+  padding:0 14px;
+  white-space:nowrap !important;
+  word-break:normal;
+  overflow:visible;
+  text-overflow:clip;
+}
+
+/* ---------- ≤ 480px ---------- */
+@media (max-width: 480px){
+  .dashboard-page-viewport{ padding:calc(var(--app-header-offset) + 4px) 4px 8px; }
+  .dashboard-wrapper{ width: calc(100% - 2px); padding:10px 12px 12px; border-radius: 16px; min-height: calc(100vh - var(--app-header-offset) - 10px); }
+  .dashboard-top-sticky{ margin:-10px -12px var(--sticky-stack-gap); padding:10px 12px 9px; border-radius:16px 16px 12px 12px; }
+  table{ min-width:920px; }
+  .grid-container{ grid-template-columns: 1fr; }
+
+  #docViewer{ width:96%; height:94%; }
+  .doc-viewer-head{ padding-top:80px; justify-content:flex-start; }
+  .doc-viewer-title{ max-width:100%; text-align:left; white-space:normal; }
+  .doc-head-actions{ position:absolute; left:18px; right:18px; top:16px; transform:none; max-width:none; justify-content:flex-end; }
+  .doc-viewer-layout,
+  #docViewer.sidebar-hidden .doc-viewer-layout{ grid-template-columns:1fr; }
+  #docList{ border-right:none; border-bottom:1px solid rgba(0,198,255,0.35); max-height:320px; }
+  .doc-bottom-toolbar,
+  .doc-bottom-left,
+  .doc-bottom-center,
+  .doc-bottom-right,
+  .doc-page-toolbar{ flex-direction:column; align-items:stretch; }
+  .nav-btn, .ctrl-btn, .download-btn{ width:100%; }
+  #unsupportedBox{ width: calc(100vw - 40px); max-width: 360px; }
+  #pageThumbsContainer{ max-height: 160px; }
+  #sidebarPicture:hover{ transform: scale(1.22); }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <a href="about.html" id="aboutNavLink">
+        About <i class="fa-solid fa-caret-down nav-caret"></i>
+      </a>
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+        <a href="postedhiring.html">Job Hiring</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <div class="dropdown" id="employerDropdown">
+      <a href="#" id="employerToggle" class="login dropdown-toggle">
+        <i class="fa-solid fa-user-lock"></i> Employer
+        <i class="fa-solid fa-caret-down caret-icon"></i>
+      </a>
+      <div class="dropdown-menu" id="employerMenu">
+        <a href="loginemployer.html"><i class="fa-solid fa-right-to-bracket"></i> Employer Login</a>
+        <a href="subscribe.html"><i class="fa-solid fa-credit-card"></i> Subscribe</a>
+        <a href="subscriptionstatus.html"><i class="fa-solid fa-list-check"></i> Subscription Status</a>
+      </div>
+    </div>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+</header>
+
+<div class="dashboard-page-viewport" id="dashboardPageViewport">
+<div class="dashboard-scroll-shell" id="dashboardScrollShell">
+  <div class="dashboard-wrapper" id="dashboardWrapper">
+
+  <div class="dashboard-top-sticky">
+    <div class="dashboard-title">
+      <h1><i class="fa-solid fa-users"></i> Applicant Directory</h1>
+      <div class="refresh-chip" id="refreshChip">
+        <i class="fa-solid fa-rotate"></i>
+        Auto refresh: 10s
+        <span id="lastRefreshText"></span>
+      </div>
+    </div>
+
+    <div class="controls-bar">
+      <div class="search-field">
+        <select id="searchField">
+          <option value="all">Search: All</option>
+          <option value="name">Search: Name</option>
+          <option value="age">Search: Age</option>
+          <option value="zipcode">Search: Zipcode</option>
+          <option value="employment_status">Search: Employment Status</option>
+          <option value="desired_salary">Search: Desired Salary</option>
+          <option value="position">Search: Position</option>
+        </select>
+      </div>
+
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Type to search..." />
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+
+      <select id="filterPosition"><option value="">Position</option></select>
+      <select id="filterCountry"><option value="">Country</option></select>
+      <select id="filterCity"><option value="">City</option></select>
+
+      <select id="filterGender">
+        <option value="">Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+
+      <div class="date-inline">
+        <div class="date-label">
+          <i class="fa-regular fa-calendar"></i> Date
+        </div>
+
+        <select id="filterDateMode">
+          <option value="">Filter</option>
+          <option value="today">Today</option>
+          <option value="exact">On Date</option>
+          <option value="before">Before</option>
+          <option value="after">After</option>
+          <option value="between">Between</option>
+        </select>
+
+        <input type="date" id="dateFrom" />
+        <input type="date" id="dateTo" style="display:none;" />
+      </div>
+
+      <button class="search-btn" id="applyFiltersBtn">
+        <i class="fa-solid fa-filter"></i> Search
+      </button>
+
+      <button class="reset-btn" id="resetBtn">
+        <i class="fa-solid fa-rotate-left"></i> Reset
+      </button>
+
+      <div class="view-toggle">
+        <button id="tableViewBtn" class="active"><i class="fa-solid fa-table"></i> Table</button>
+        <button id="gridViewBtn"><i class="fa-solid fa-grip"></i> Grid</button>
+      </div>
+
+      <a href="location.html" class="location-link">
+        <button class="location-btn" id="locationBtn" title="Go to Location page">
+          <i class="fa-solid fa-location-dot"></i> Location
+        </button>
+      </a>
+    </div>
+
+    <div id="statusMsg">Loading applicants...</div>
+  </div>
+
+  <div class="dashboard-results-viewport" id="dashboardResultsViewport">
+    <div class="dashboard-views">
+      <div id="tableView">
+        <div class="table-scroll-area" id="tableScrollArea">
+          <table>
+            <thead>
+              <tr>
+                <th>Picture</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Age</th>
+                <th>Position</th>
+                <th>Location</th>
+                <th>Zipcode</th>
+                <th>Desired Salary</th>
+                <th>Employment Status</th>
+                <th>Resume</th>
+                <th>Documents</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div id="pagination" class="pagination"></div>
+      </div>
+
+      <div id="gridOnlyView">
+        <div class="grid-only-shell">
+          <div class="grid-scroll-area" id="gridScrollArea">
+            <div id="gridContainerOnly" class="grid-container"></div>
+          </div>
+          <div id="paginationGridOnly" class="pagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ✅ FILE VIEWER -->
+<div id="docModal">
+  <div id="docViewer" class="mode-files">
+    <div class="doc-viewer-head">
+      <div class="doc-viewer-title">Resume, Profile Picture &amp; Supporting Documents Viewer</div>
+      <div class="doc-head-actions">
+        <button id="toggleContentsBtn" class="doc-head-btn" type="button">
+          <i class="fa-solid fa-eye-slash"></i>
+          <span id="toggleContentsText">Hide Content</span>
+        </button>
+        <button id="closeDocModal" type="button"><i class="fa-solid fa-xmark"></i> Close</button>
+      </div>
+    </div>
+
+    <div class="doc-viewer-layout">
+      <aside id="docList">
+        <div id="sidebarProfile">
+          <img id="sidebarPicture" alt="Applicant picture" />
+          <div class="sidebar-copy">
+            <div id="sidebarName"></div>
+            <div id="sidebarPosition"></div>
+            <div id="profileName"></div>
+          </div>
+        </div>
+
+        <div class="doc-tab-row">
+          <button id="filesTabBtn" class="doc-tab-btn active" type="button">FILES</button>
+          <button id="pagesTabBtn" class="doc-tab-btn" type="button" disabled>PAGES</button>
+        </div>
+
+        <div id="fileListContainer">
+          <div id="docItems"></div>
+        </div>
+
+        <div id="pagesArea">
+          <div class="pages-title">
+            <h3><i class="fa-solid fa-images"></i> Pages</h3>
+            <div class="pages-hint" id="pagesHint">Click a page</div>
+          </div>
+          <div id="pageThumbsContainer">
+            <div id="pageThumbs"></div>
+          </div>
+        </div>
+      </aside>
+
+      <section id="docPreview">
+        <div id="previewStage">
+          <div id="pageCornerBadge" class="page-corner-badge" style="display:none;">Page 1</div>
+          <div id="pdfWrap">
+            <div id="pdfInner">
+              <canvas id="pdfCanvas"></canvas>
+            </div>
+          </div>
+
+          <iframe id="previewFrame"></iframe>
+          <img id="previewImage" alt="Preview" />
+          <div id="mediaPreview"></div>
+          <div id="htmlPreview"></div>
+        </div>
+
+        <div id="pdfPageToolbar" class="doc-page-toolbar">
+          <button class="ctrl-btn secondary" id="prevPageBtn" type="button"><i class="fa-solid fa-chevron-left"></i> Previous Page</button>
+          <span class="ctrl-pill" id="pagePill">Page 1 / 1</span>
+          <button class="ctrl-btn secondary" id="nextPageBtn" type="button">Next Page <i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <div class="doc-bottom-toolbar">
+          <div class="doc-bottom-left">
+            <button class="nav-btn" id="prevDoc" type="button"><i class="fa-solid fa-arrow-left"></i> Previous File</button>
+          </div>
+
+          <div class="doc-bottom-center">
+            <button class="ctrl-btn secondary" id="zoomOutBtn" type="button"><i class="fa-solid fa-magnifying-glass-minus"></i> Zoom Out</button>
+            <span class="ctrl-pill" id="zoomPill">100%</span>
+            <button class="ctrl-btn secondary" id="zoomInBtn" type="button"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom In</button>
+            <button class="ctrl-btn secondary" id="resetZoomBtn" type="button"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+            <button class="ctrl-btn secondary" id="fitPageBtn" type="button"><i class="fa-solid fa-left-right"></i> Fit Page</button>
+            <button class="ctrl-btn green" id="fullPageBtn" type="button"><i class="fa-solid fa-expand"></i> Full Page</button>
+            <a id="downloadCurrentFileBtn" class="download-btn" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-download"></i> Download</a>
+          </div>
+
+          <div class="doc-bottom-right">
+            <button class="nav-btn" id="nextDoc" type="button">Next File <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div id="unsupportedModal">
+  <div id="unsupportedBox">
+    <h2>Unsupported / Restricted Preview</h2>
+    <p id="unsupportedText">This file cannot be previewed directly. Please try the fallback viewer.</p>
+    <button class="unsupported-btn" onclick="closeUnsupported()"><i class="fa-solid fa-xmark"></i> Close</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   PDF.js worker
+============================================================ */
+if (window.pdfjsLib){
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
+
+/* ============================================================
+   GLOBAL STATE + DOM
+============================================================ */
+let allApplicants = [];
+let activeApplicants = [];
+let filtered = [];
+let page = 1;
+
+let currentView = "table";
+let pageSize = 10;
+
+let filtersDirty = false;
+
+const tableBody       = document.getElementById("tableBody");
+const statusMsg       = document.getElementById("statusMsg");
+
+const filterDateMode  = document.getElementById("filterDateMode");
+const dateFrom        = document.getElementById("dateFrom");
+const dateTo          = document.getElementById("dateTo");
+
+const filterPosition  = document.getElementById("filterPosition");
+const filterCountry   = document.getElementById("filterCountry");
+const filterCity      = document.getElementById("filterCity");
+const filterGender    = document.getElementById("filterGender");
+
+const searchFieldEl   = document.getElementById("searchField");
+const searchInput     = document.getElementById("searchInput");
+
+const tableView       = document.getElementById("tableView");
+const gridOnlyView    = document.getElementById("gridOnlyView");
+const dashboardPageViewport = document.getElementById("dashboardPageViewport");
+const dashboardShell = document.getElementById("dashboardScrollShell");
+const dashboardWrapper = document.getElementById("dashboardWrapper");
+const dashboardTopSticky = document.querySelector(".dashboard-top-sticky");
+const dashboardResultsViewport = document.getElementById("dashboardResultsViewport");
+const dashboardViews  = document.querySelector(".dashboard-views");
+const siteHeader = document.querySelector("body > header");
+
+const tableViewBtn    = document.getElementById("tableViewBtn");
+const gridViewBtn     = document.getElementById("gridViewBtn");
+
+const pagination      = document.getElementById("pagination");
+const paginationGridOnly = document.getElementById("paginationGridOnly");
+
+const gridContainerOnly     = document.getElementById("gridContainerOnly");
+
+const applyFiltersBtn = document.getElementById("applyFiltersBtn");
+const resetBtn        = document.getElementById("resetBtn");
+
+const lastRefreshText = document.getElementById("lastRefreshText");
+
+/* ============================================================
+   Helpers
+============================================================ */
+function numOrNull(v){
+  if (v === null || typeof v === "undefined") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+function normalizeEmploymentStatus(v){
+  const s = (v || "").toString().trim().toLowerCase();
+  if (s === "employed") return "Employed";
+  if (s === "unemployed") return "Unemployed";
+  return "";
+}
+function badgeClassForEmployment(v){
+  const s = (v || "").toString().trim().toLowerCase();
+  if (s === "employed") return "employed";
+  if (s === "unemployed") return "unemployed";
+  return "unknown";
+}
+function normalizeStatus(v){
+  if (typeof v === "boolean") return v ? "Active" : "Not Active";
+  if (typeof v === "number") return v === 0 ? "Not Active" : "Active";
+
+  const raw = (v === null || typeof v === "undefined") ? "" : String(v);
+  const s = raw
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_\-]+/g, " ")
+    .replace(/\s+/g, " ");
+
+  if (!s) return "";
+
+  const inactiveExact = new Set([
+    "not active",
+    "inactive",
+    "deactivated",
+    "deactivate",
+    "disabled",
+    "disable",
+    "archived",
+    "archive",
+    "deleted",
+    "delete",
+    "removed",
+    "remove",
+    "blocked",
+    "block",
+    "suspended",
+    "suspend",
+    "closed",
+    "close",
+    "false",
+    "0",
+    "no",
+    "n"
+  ]);
+
+  const activeExact = new Set([
+    "active",
+    "enabled",
+    "enable",
+    "true",
+    "1",
+    "yes",
+    "y"
+  ]);
+
+  if (inactiveExact.has(s)) return "Not Active";
+  if (activeExact.has(s)) return "Active";
+
+  if (
+    s.includes("not active") ||
+    s.includes("inactive") ||
+    s.includes("deactiv") ||
+    s.includes("disabl") ||
+    s.includes("archiv") ||
+    s.includes("delet") ||
+    s.includes("remov") ||
+    s.includes("block") ||
+    s.includes("suspend") ||
+    s.includes("close")
+  ) return "Not Active";
+
+  if (s.includes("active") || s.includes("enable")) return "Active";
+
+  return raw.trim();
+}
+function isFalseLikeFlag(v){
+  if (typeof v === "boolean") return v === false;
+  if (typeof v === "number") return v === 0;
+  const s = String(v ?? "").trim().toLowerCase();
+  return s === "false" || s === "0" || s === "no" || s === "n";
+}
+function isNotActiveStatus(v){
+  return normalizeStatus(v) === "Not Active";
+}
+function deriveApplicantStatus(masterRow, transactionRow){
+  const statusCandidates = [
+    transactionRow?.status,
+    transactionRow?.status_display,
+    transactionRow?.app_status,
+    transactionRow?.application_status,
+    transactionRow?.record_status,
+    transactionRow?.active_status,
+    masterRow?.status,
+    masterRow?.status_display,
+    masterRow?.app_status,
+    masterRow?.application_status,
+    masterRow?.record_status,
+    masterRow?.active_status
+  ];
+
+  for (const statusValue of statusCandidates){
+    if (isNotActiveStatus(statusValue)) return "Not Active";
+  }
+
+  const falseFlags = [
+    transactionRow?.is_active,
+    transactionRow?.active,
+    transactionRow?.enabled,
+    masterRow?.is_active,
+    masterRow?.active,
+    masterRow?.enabled
+  ];
+
+  if (falseFlags.some(isFalseLikeFlag)) return "Not Active";
+
+  return "Active";
+}
+
+/* Salary helpers */
+function parseSalaryText(raw){
+  if (raw === null || typeof raw === "undefined") return { symbol:"", value:null, raw:"" };
+  if (typeof raw === "number") return { symbol:"", value:raw, raw:String(raw) };
+
+  const s = String(raw).trim();
+  const symbol = s.includes("$") ? "$" : (s.includes("₱") ? "₱" : "");
+  const cleaned = s.replace(/[^0-9.,\-]/g, "");
+  const n = Number(cleaned.replace(/,/g, ""));
+  const value = Number.isFinite(n) ? n : null;
+  return { symbol, value, raw:s };
+}
+function formatSalary(raw){
+  const p = parseSalaryText(raw);
+  if (p.value === null) return "—";
+  const formatted = p.value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return p.symbol ? `${p.symbol} ${formatted}` : formatted;
+}
+
+/* Search helpers */
+function normalizeSpace(s){
+  return String(s || "").toLowerCase().trim().replace(/\s+/g," ");
+}
+function parseNumberFromText(text){
+  const s = String(text ?? "").replace(/,/g,"").trim();
+  const m = s.match(/-?\d+(\.\d+)?/);
+  if (!m) return null;
+  const n = Number(m[0]);
+  return Number.isFinite(n) ? n : null;
+}
+function buildLocationText(a){
+  const parts = [];
+  if (a.city) parts.push(a.city);
+  if (a.province) parts.push(a.province);
+  if (a.country) parts.push(a.country);
+  return normalizeSpace(parts.join(" "));
+}
+function matchesEmploymentExact(app, query){
+  const q = normalizeSpace(query);
+  if (q === "employed") return normalizeSpace(app.employment_status) === "employed";
+  if (q === "unemployed") return normalizeSpace(app.employment_status) === "unemployed";
+  return false;
+}
+function matchesFieldSearch(app, field, query){
+  if (!query) return true;
+  const q = normalizeSpace(query);
+
+  if (field === "name") return normalizeSpace(app.full_name).includes(q);
+
+  if (field === "age"){
+    const qNum = parseNumberFromText(query);
+    const av = numOrNull(app.age);
+    if (qNum !== null && av !== null) return av === qNum;
+    return normalizeSpace(app.age).includes(q);
+  }
+
+  if (field === "gender") return normalizeSpace(app.gender).includes(q);
+  if (field === "location") return buildLocationText(app).includes(q);
+  if (field === "zipcode") return normalizeSpace(app.zipcode).includes(q);
+
+  if (field === "employment_status") return matchesEmploymentExact(app, query);
+
+  if (field === "desired_salary"){
+    const qNum = parseNumberFromText(query);
+    const sv = (typeof app.desired_salary_num === "number") ? app.desired_salary_num : null;
+    if (qNum !== null) return (sv !== null) && (sv === qNum);
+    return normalizeSpace(app.desired_salary_display).includes(q) ||
+           normalizeSpace(app.desired_salary_raw).includes(q);
+  }
+
+  if (field === "position") return normalizeSpace(app.position).includes(q);
+
+  const haystack = normalizeSpace([
+    app.full_name, app.gender, app.age, app.position,
+    buildLocationText(app), app.zipcode, app.employment_status, app.desired_salary_display
+  ].join(" "));
+  return haystack.includes(q);
+}
+
+function buildFullAddress(app){
+  const parts = [];
+  const street =
+    app.street || app.street_address || app.address || app.address_line ||
+    app.address1 || app.home_address || app.house_address || "";
+
+  const barangay = app.barangay || app.brgy || "";
+  const subdivision = app.subdivision || "";
+  const district = app.district || "";
+
+  if (street) parts.push(street);
+  if (subdivision) parts.push(subdivision);
+  if (barangay) parts.push(barangay);
+  if (district) parts.push(district);
+
+  if (app.city) parts.push(app.city);
+  if (app.province) parts.push(app.province);
+  if (app.zipcode) parts.push(app.zipcode);
+  if (app.country) parts.push(app.country);
+
+  return parts.filter(Boolean).join(", ").trim();
+}
+
+/* ============================================================
+   PAGE SIZE
+============================================================ */
+function getTablePageSize(){
+  const w = window.innerWidth || 1200;
+  return (w >= 769 && w <= 1023) ? 5 : 10;
+}
+function getGridPageSize(){
+  const w = window.innerWidth || 1200;
+  if (w >= 1440) return 12;
+  if (w >= 1024) return 12;
+  if (w >= 769)  return 9;
+  if (w >= 481)  return 8;
+  return 6;
+}
+function syncPageSizeAndClamp(){
+  pageSize = (currentView === "table") ? getTablePageSize() : getGridPageSize();
+  const totalPages = Math.max(1, Math.ceil((filtered?.length || 0) / pageSize));
+  if (page > totalPages) page = totalPages;
+  if (page < 1) page = 1;
+}
+window.addEventListener("resize", () => {
+  clearTimeout(window.__dashResizeT);
+  window.__dashResizeT = setTimeout(() => {
+    const old = pageSize;
+    syncPageSizeAndClamp();
+    updateDashboardStickyMetrics();
+    if (old !== pageSize) page = 1;
+    render();
+    scrollActiveResultsToTop();
+  }, 140);
+});
+
+/* ============================================================
+   FILTER UI: dirty tracking
+============================================================ */
+function markFiltersDirty(){ filtersDirty = true; }
+function clearFiltersDirty(){ filtersDirty = false; }
+
+function updateDashboardStickyMetrics(){
+  const headerHeight = Math.ceil((siteHeader?.getBoundingClientRect().height || siteHeader?.offsetHeight || 0));
+  if (headerHeight > 0){
+    document.documentElement.style.setProperty("--app-header-offset", `${headerHeight}px`);
+  }
+
+  if (!dashboardTopSticky) return;
+  const stickyHeight = Math.ceil(dashboardTopSticky.getBoundingClientRect().height || dashboardTopSticky.offsetHeight || 0);
+  [document.documentElement, dashboardPageViewport, dashboardShell, dashboardWrapper, dashboardResultsViewport].filter(Boolean).forEach(el => {
+    el.style.setProperty("--controls-sticky-height", `${stickyHeight}px`);
+  });
+}
+
+function scrollActiveResultsToTop(){
+  if (dashboardPageViewport){
+    dashboardPageViewport.scrollTop = 0;
+    dashboardPageViewport.scrollLeft = 0;
+  }
+}
+
+/* ============================================================
+   ✅ LATEST TRANSACTION PICKER (CRITICAL FIX)
+   - Only the latest transaction per master_id is used
+   - If latest status is "Not Active" => applicant fully disappears
+============================================================ */
+function getRowRecencyValue(row){
+  const candidates = [
+    row?.updated_at,
+    row?.modified_at,
+    row?.edited_at,
+    row?.last_updated,
+    row?.last_modified,
+    row?.created_at
+  ];
+
+  for (const value of candidates){
+    const t = new Date(value || 0).getTime();
+    if (Number.isFinite(t) && t > 0) return t;
+  }
+  return 0;
+}
+function getNumericRowId(row){
+  const n = Number(row?.id ?? row?.transaction_id ?? row?.trans_id);
+  return Number.isFinite(n) ? n : 0;
+}
+function isLatestMarker(row){
+  return row?.is_latest === true || row?.is_latest === "true" || row?.is_latest === 1 || row?.is_latest === "1";
+}
+function pickLatestTransactionsByMasterId(transRows){
+  const latest = {};
+
+  (transRows || []).forEach((t, index) => {
+    const key = t.master_id;
+    if (!key) return;
+
+    const candidate = { ...t, __source_index: index };
+    const prev = latest[key];
+    if (!prev){
+      latest[key] = candidate;
+      return;
+    }
+
+    const prevLatest = isLatestMarker(prev);
+    const curLatest = isLatestMarker(candidate);
+    if (curLatest && !prevLatest){
+      latest[key] = candidate;
+      return;
+    }
+    if (!curLatest && prevLatest){
+      return;
+    }
+
+    const prevTime = getRowRecencyValue(prev);
+    const curTime  = getRowRecencyValue(candidate);
+
+    if (curTime > prevTime){
+      latest[key] = candidate;
+      return;
+    }
+
+    if (curTime === prevTime){
+      const prevId = getNumericRowId(prev);
+      const curId = getNumericRowId(candidate);
+
+      if (curId > prevId || (curId === prevId && index > (prev.__source_index || 0))){
+        latest[key] = candidate;
+      }
+    }
+  });
+
+  Object.values(latest).forEach(row => {
+    delete row.__source_index;
+  });
+
+  return latest; // map: master_id -> latest transaction row
+}
+
+/* ============================================================
+   LOAD APPLICANTS
+============================================================ */
+async function loadApplicants(silent, keepPage){
+  try{
+    if (!silent) statusMsg.textContent = "Loading applicants...";
+
+    const { data: master, error: masterError } =
+      await supabase.from("applicant_master_table").select("*");
+
+    if (masterError){
+      console.error("Master table error:", masterError);
+      statusMsg.textContent = "Error loading applicant master data.";
+      return;
+    }
+
+    const { data: trans, error: transError } =
+      await supabase.from("applicant_transaction_table").select("*");
+
+    if (transError){
+      console.error("Transaction table error:", transError);
+      statusMsg.textContent = "Error loading applicant transaction data.";
+      return;
+    }
+
+    if (!master?.length || !trans?.length){
+      allApplicants = [];
+      activeApplicants = [];
+      filtered = [];
+      render();
+      statusMsg.textContent = "No applicants found.";
+      return;
+    }
+
+    const masterMap = {};
+    master.forEach(m => { masterMap[m.id] = m; });
+
+    /* ✅ ONLY LATEST TRANSACTION PER master_id */
+    const latestTxMap = pickLatestTransactionsByMasterId(trans);
+    const latestTxList = Object.values(latestTxMap);
+
+    const mapped = latestTxList.map(t => {
+      const m = masterMap[t.master_id] || {};
+      const full_name = [m.first_name, m.middle_name, m.last_name].filter(Boolean).join(" ");
+
+      const ageVal = numOrNull(t.age);
+
+      const salaryRaw = (t.desired_salary ?? t.desire_salary ?? t.salary_desired ?? t.desiredSalary ?? "");
+      const salaryParsed = parseSalaryText(salaryRaw);
+
+      const empRaw = (t.employment_status ?? t.employmentStatus ?? "");
+      const empNorm = normalizeEmploymentStatus(empRaw);
+
+      const finalStatus = deriveApplicantStatus(m, t);
+
+      const mergedAddress = {
+        street: t.street || m.street || "",
+        street_address: t.street_address || m.street_address || "",
+        address: t.address || m.address || "",
+        address_line: t.address_line || m.address_line || "",
+        address1: t.address1 || m.address1 || "",
+        home_address: t.home_address || m.home_address || "",
+        house_address: t.house_address || m.house_address || "",
+        subdivision: t.subdivision || m.subdivision || "",
+        barangay: t.barangay || m.barangay || t.brgy || m.brgy || "",
+        district: t.district || m.district || ""
+      };
+
+      return {
+        ...t,
+        ...mergedAddress,
+        transaction_id: t.id,
+        master_id: t.master_id,
+
+        full_name,
+        picture: t.pictures,
+        resume: t.resume,
+        documents: Array.isArray(t.documents) ? t.documents : [],
+        zipcode: t.zipcode,
+        province: t.province || "",
+        age: ageVal,
+
+        desired_salary_raw: salaryRaw,
+        desired_salary_num: salaryParsed.value,
+        desired_salary_display: formatSalary(salaryRaw),
+
+        employment_status: empNorm,
+        status: finalStatus,
+
+        createdNice: new Date(t.created_at).toLocaleDateString("en-US", {
+          year:"numeric", month:"long", day:"numeric"
+        })
+      };
+    });
+
+    allApplicants = mapped;
+
+    /* ✅ FINAL SAFETY FILTER: deactivated/inactive applicants must never appear */
+    activeApplicants = allApplicants.filter(a => !isNotActiveStatus(a.status));
+    activeApplicants.sort((a,b) => getRowRecencyValue(b) - getRowRecencyValue(a));
+
+    populateFilters(activeApplicants, true);
+
+    if (!filtersDirty){
+      applyFiltersInternal(activeApplicants, keepPage);
+    } else {
+      render();
+    }
+
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,"0");
+    const mm = String(now.getMinutes()).padStart(2,"0");
+    const ss = String(now.getSeconds()).padStart(2,"0");
+    lastRefreshText.textContent = ` • ${hh}:${mm}:${ss}`;
+
+    if (!silent && filtered.length === 0){
+      statusMsg.textContent = "No applicants match your filters.";
+    }
+
+  } catch(err){
+    console.error("Unexpected loadApplicants error:", err);
+    statusMsg.textContent = "Unexpected error loading applicants.";
+  }
+}
+
+/* ============================================================
+   FILTERS
+============================================================ */
+function populateFilters(activeList, preserveSelections){
+  const prevPos = preserveSelections ? filterPosition.value : "";
+  const prevCountry = preserveSelections ? filterCountry.value : "";
+  const prevCity = preserveSelections ? filterCity.value : "";
+
+  const positions = [...new Set(activeList.map(a => a.position).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+  const countries = [...new Set(activeList.map(a => a.country).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+
+  filterPosition.innerHTML = `<option value="">Position</option>`;
+  positions.forEach(pos => { filterPosition.innerHTML += `<option value="${escapeHTML(pos)}">${escapeHTML(pos)}</option>`; });
+
+  filterCountry.innerHTML = `<option value="">Country</option>`;
+  countries.forEach(c => { filterCountry.innerHTML += `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`; });
+
+  if (preserveSelections){
+    if ([...filterPosition.options].some(o => o.value === prevPos)) filterPosition.value = prevPos;
+    if ([...filterCountry.options].some(o => o.value === prevCountry)) filterCountry.value = prevCountry;
+  }
+
+  updateCityFilter(activeList, preserveSelections ? prevCity : "");
+}
+function updateCityFilter(activeList, tryRestoreCity){
+  const c = (filterCountry.value || "").trim();
+
+  const cities = [...new Set(
+    activeList
+      .filter(a => !c || (String(a.country || "").trim() === c))
+      .map(a => a.city)
+      .filter(Boolean)
+  )].sort((a,b)=>String(a).localeCompare(String(b)));
+
+  filterCity.innerHTML = `<option value="">City</option>`;
+  cities.forEach(city => { filterCity.innerHTML += `<option value="${escapeHTML(city)}">${escapeHTML(city)}</option>`; });
+
+  if (tryRestoreCity && [...filterCity.options].some(o => o.value === tryRestoreCity)){
+    filterCity.value = tryRestoreCity;
+  } else {
+    if (filterCity.value && ![...filterCity.options].some(o => o.value === filterCity.value)){
+      filterCity.value = "";
+    }
+  }
+}
+
+function resetFilters(){
+  clearFiltersDirty();
+
+  searchFieldEl.value  = "all";
+  searchInput.value    = "";
+
+  filterPosition.value = "";
+  filterCountry.value  = "";
+  filterCity.value     = "";
+  filterGender.value   = "";
+
+  filterDateMode.value = "";
+  dateFrom.value       = "";
+  dateTo.value         = "";
+  dateTo.style.display = "none";
+
+  populateFilters(activeApplicants, false);
+
+  page = 1;
+  filtered = [...activeApplicants];
+  syncPageSizeAndClamp();
+  render();
+  scrollActiveResultsToTop();
+}
+
+function getLocalYMDFromValue(value){
+  if (!value) return "";
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function applyFiltersInternal(baseActive, keepPage){
+  const field = (searchFieldEl.value || "all").trim();
+  const query = searchInput.value.trim();
+
+  const priorPage = page;
+
+  const posVal = (filterPosition.value || "").trim();
+  const countryVal = (filterCountry.value || "").trim();
+  const cityVal = (filterCity.value || "").trim();
+  const genderVal = (filterGender.value || "").trim();
+
+  filtered = baseActive.filter(a => {
+    if (posVal && String(a.position || "").trim() !== posVal) return false;
+    if (countryVal && String(a.country || "").trim() !== countryVal) return false;
+    if (cityVal && String(a.city || "").trim() !== cityVal) return false;
+    if (genderVal && String(a.gender || "").trim() !== genderVal) return false;
+
+    if (filterDateMode.value){
+      const rowDateStr = getLocalYMDFromValue(a.created_at);
+      const todayStr   = getLocalYMDFromValue(new Date());
+      const fromStr    = dateFrom.value || "";
+      const toStr      = dateTo.value || "";
+      if (!rowDateStr) return false;
+
+      switch (filterDateMode.value){
+        case "today":
+          if (rowDateStr !== todayStr) return false;
+          break;
+        case "exact":
+          if (!fromStr || rowDateStr !== fromStr) return false;
+          break;
+        case "before":
+          if (!fromStr || !(rowDateStr < fromStr)) return false;
+          break;
+        case "after":
+          if (!fromStr || !(rowDateStr > fromStr)) return false;
+          break;
+        case "between":
+          if (!fromStr || !toStr) return false;
+          const start = fromStr < toStr ? fromStr : toStr;
+          const end   = fromStr < toStr ? toStr : fromStr;
+          if (!(rowDateStr > start && rowDateStr < end)) return false;
+          break;
+      }
+    }
+
+    if (query){
+      if (!matchesFieldSearch(a, field, query)) return false;
+    }
+
+    return true;
+  });
+
+  filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+  if (!keepPage) page = 1;
+  else page = priorPage;
+
+  syncPageSizeAndClamp();
+  render();
+  scrollActiveResultsToTop();
+}
+
+function applyFilters(){
+  clearFiltersDirty();
+  updateCityFilter(activeApplicants, filterCity.value);
+  applyFiltersInternal(activeApplicants, false);
+}
+
+/* ============================================================
+   EVENTS
+============================================================ */
+filterDateMode.addEventListener("change", () => {
+  dateTo.style.display = (filterDateMode.value === "between") ? "inline-block" : "none";
+  if (filterDateMode.value !== "between") dateTo.value = "";
+  markFiltersDirty();
+});
+dateFrom.addEventListener("change", () => {
+  if (!filterDateMode.value) filterDateMode.value = "exact";
+  markFiltersDirty();
+});
+dateTo.addEventListener("change", () => markFiltersDirty());
+
+filterCountry.addEventListener("change", () => {
+  updateCityFilter(activeApplicants, "");
+  markFiltersDirty();
+});
+filterCity.addEventListener("change", () => markFiltersDirty());
+filterPosition.addEventListener("change", () => markFiltersDirty());
+filterGender.addEventListener("change", () => markFiltersDirty());
+searchFieldEl.addEventListener("change", () => markFiltersDirty());
+searchInput.addEventListener("input", () => markFiltersDirty());
+
+searchInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") applyFilters();
+});
+
+applyFiltersBtn.addEventListener("click", applyFilters);
+resetBtn.addEventListener("click", resetFilters);
+
+/* ============================================================
+   VIEW SWITCH
+============================================================ */
+function setView(view){
+  currentView = view;
+  updateDashboardStickyMetrics();
+
+  tableViewBtn.classList.toggle("active", view === "table");
+  gridViewBtn.classList.toggle("active", view === "grid");
+
+  tableView.style.display = (view === "table") ? "block" : "none";
+  gridOnlyView.style.display = (view === "grid") ? "block" : "none";
+
+  page = 1;
+  syncPageSizeAndClamp();
+  render();
+  scrollActiveResultsToTop();
+}
+tableViewBtn.addEventListener("click", () => setView("table"));
+gridViewBtn.addEventListener("click", () => setView("grid"));
+
+/* ============================================================
+   PAGINATION
+============================================================ */
+function paginate(list){
+  return list.slice((page - 1) * pageSize, page * pageSize);
+}
+function renderPagination(total){
+  pagination.innerHTML = "";
+  paginationGridOnly.innerHTML = "";
+
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  function add(container, label, action, disabled, isActive){
+    const btn = document.createElement("button");
+    btn.textContent = label;
+    if (disabled) btn.disabled = true;
+    if (isActive) btn.classList.add("active");
+    btn.onclick = action;
+    container.appendChild(btn);
+  }
+
+  const goPrev = () => { if (page > 1){ page--; render(); scrollActiveResultsToTop(); } };
+  const goNext = () => { if (page < totalPages){ page++; render(); scrollActiveResultsToTop(); } };
+
+  [pagination, paginationGridOnly].forEach(p => add(p, "Prev", goPrev, page === 1, false));
+
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+
+  for (let i = start; i <= end; i++){
+    const go = () => { page = i; render(); scrollActiveResultsToTop(); };
+    [pagination, paginationGridOnly].forEach(p => add(p, String(i), go, false, i === page));
+  }
+
+  [pagination, paginationGridOnly].forEach(p => add(p, "Next", goNext, page === totalPages, false));
+}
+
+/* ============================================================
+   RENDER TABLE
+============================================================ */
+function renderTable(list){
+  tableBody.innerHTML = "";
+
+  list.forEach(app => {
+    const tr = document.createElement("tr");
+    tr.style.cursor = "pointer";
+    tr.onclick = () => openDocs(app);
+
+    const tdPic = document.createElement("td");
+    if (app.picture){
+      const img = document.createElement("img");
+      img.src = app.picture;
+      img.className = "pic-thumb";
+      img.onclick = (e) => { e.stopPropagation(); openDocs(app, "picture"); };
+      tdPic.appendChild(img);
+    } else tdPic.textContent = "—";
+
+    const tdName = document.createElement("td");
+    tdName.textContent = app.full_name || "";
+
+    const tdGender = document.createElement("td");
+    tdGender.textContent = app.gender || "";
+
+    const tdAge = document.createElement("td");
+    tdAge.style.textAlign = "center";
+    tdAge.textContent = (app.age === null || typeof app.age === "undefined") ? "—" : String(app.age);
+
+    const tdPos = document.createElement("td");
+    tdPos.textContent = app.position || "";
+
+    const tdLoc = document.createElement("td");
+    const locParts = [];
+    if (app.city) locParts.push(app.city);
+    if (app.province) locParts.push(app.province);
+    if (app.country) locParts.push(app.country);
+    tdLoc.textContent = locParts.join(", ");
+
+    const tdZip = document.createElement("td");
+    tdZip.style.textAlign = "center";
+    tdZip.textContent = app.zipcode || "";
+
+    const tdSalary = document.createElement("td");
+    tdSalary.style.textAlign = "right";
+    tdSalary.className = "money";
+    tdSalary.textContent = app.desired_salary_display || "—";
+
+    const tdEmp = document.createElement("td");
+    tdEmp.style.textAlign = "center";
+    const empText = app.employment_status || "";
+    const empBadge = document.createElement("span");
+    empBadge.className = `emp-badge ${badgeClassForEmployment(empText)}`;
+    empBadge.textContent = empText || "—";
+    tdEmp.appendChild(empBadge);
+
+    const tdRes = document.createElement("td");
+    if (app.resume){
+      const a = document.createElement("a");
+      a.href = "#";
+      a.textContent = "View Resume";
+      a.onclick = (e) => { e.preventDefault(); e.stopPropagation(); openDocs(app, "resume"); };
+      tdRes.appendChild(a);
+    } else tdRes.textContent = "—";
+
+    const tdDocs = document.createElement("td");
+    if (app.documents && app.documents.length){
+      app.documents.forEach((url, idx) => {
+        const a = document.createElement("a");
+        a.href = "#";
+        a.textContent = `File ${idx + 1}`;
+        a.onclick = (e) => { e.preventDefault(); e.stopPropagation(); openDocs(app, "doc", idx); };
+        tdDocs.appendChild(a);
+        tdDocs.appendChild(document.createElement("br"));
+      });
+    } else tdDocs.textContent = "—";
+
+    const tdDate = document.createElement("td");
+    tdDate.textContent = app.createdNice || "";
+
+    tr.append(tdPic, tdName, tdGender, tdAge, tdPos, tdLoc, tdZip, tdSalary, tdEmp, tdRes, tdDocs, tdDate);
+    tableBody.appendChild(tr);
+  });
+}
+
+/* ============================================================
+   RENDER GRID
+============================================================ */
+function buildApplicantCard(app){
+  const card = document.createElement("div");
+  card.className = "applicant-card";
+  card.onclick = () => openDocs(app);
+
+  const img = document.createElement("img");
+  img.className = "card-pic";
+  img.src = app.picture || "https://via.placeholder.com/110x130?text=No+Photo";
+
+  const body = document.createElement("div");
+  body.className = "card-body";
+
+  const name = document.createElement("div");
+  name.className = "card-name";
+  name.textContent = app.full_name || "";
+
+  const sub = document.createElement("div");
+  sub.className = "card-sub";
+
+  const position = document.createElement("span");
+  position.innerHTML = `<i class="fa-solid fa-briefcase"></i> ${escapeHTML(app.position || "—")}`;
+
+  const gender = document.createElement("span");
+  gender.innerHTML = `<i class="fa-solid fa-venus-mars"></i> ${escapeHTML(app.gender || "—")}`;
+
+  const age = document.createElement("span");
+  age.innerHTML = `<i class="fa-solid fa-user"></i> ${escapeHTML(app.age === null || typeof app.age === "undefined" ? "—" : app.age)}`;
+
+  const salary = document.createElement("span");
+  salary.innerHTML = `<i class="fa-solid fa-sack-dollar"></i> ${escapeHTML(app.desired_salary_display || "—")}`;
+
+  sub.append(position, gender, age, salary);
+
+  const loc = document.createElement("div");
+  loc.className = "card-loc";
+  const locParts = [];
+  if (app.city) locParts.push(app.city);
+  if (app.province) locParts.push(app.province);
+  if (app.country) locParts.push(app.country);
+  loc.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${escapeHTML(locParts.join(", ") || "—")}`;
+
+  const addr = document.createElement("div");
+  addr.className = "card-addr";
+  const fullAddr = buildFullAddress(app);
+  addr.textContent = fullAddr ? fullAddr : "No detailed address field found (using city/province/country).";
+
+  const badgesWrap = document.createElement("div");
+  const empText = app.employment_status || "";
+  const empBadge = document.createElement("span");
+  empBadge.className = `emp-badge ${badgeClassForEmployment(empText)}`;
+  empBadge.textContent = empText ? `Employment: ${empText}` : "Employment: —";
+  badgesWrap.append(empBadge);
+
+  const actions = document.createElement("div");
+  actions.className = "card-actions";
+
+  const viewBtn = document.createElement("button");
+  viewBtn.className = "view-btn";
+  viewBtn.innerHTML = `<i class="fa-solid fa-folder-open"></i> View Files`;
+  viewBtn.onclick = (e) => { e.stopPropagation(); openDocs(app); };
+
+  actions.append(viewBtn);
+
+  body.append(name, sub, loc, addr, badgesWrap, actions);
+  card.append(img, body);
+
+  return card;
+}
+
+function renderGridOnly(list){
+  gridContainerOnly.innerHTML = "";
+  list.forEach(app => gridContainerOnly.appendChild(buildApplicantCard(app)));
+}
+
+/* ============================================================
+   MAIN RENDER
+============================================================ */
+function render(){
+  syncPageSizeAndClamp();
+  updateDashboardStickyMetrics();
+  const items = paginate(filtered);
+
+  renderTable(items);
+  renderGridOnly(items);
+  renderPagination(filtered.length);
+
+  const modeLabel =
+    currentView === "table" ? `Table: ${pageSize} row(s)/page` :
+    `Grid: ${pageSize} card(s)/page`;
+
+  const pending = filtersDirty ? " • Filters pending (click Search)" : "";
+
+  statusMsg.textContent =
+    filtered.length === 0
+      ? `No applicants match your filters.${pending}`
+      : `${modeLabel} — Showing ${items.length} of ${filtered.length} active applicants${pending}`;
+}
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+function escapeHTML(str){
+  return String(str).replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m] || m));
+}
+</script>
+
+<script>
+/* ============================================================
+   FILE VIEWER (ENHANCED: FullPage hides close, no Pages tab)
+============================================================ */
+const docModal         = document.getElementById("docModal");
+const docViewer        = document.getElementById("docViewer");
+const closeDocModal    = document.getElementById("closeDocModal");
+
+const docItems         = document.getElementById("docItems");
+const fileListContainer = document.getElementById("fileListContainer");
+const sidebarPicture   = document.getElementById("sidebarPicture");
+const sidebarName      = document.getElementById("sidebarName");
+const profileName      = document.getElementById("profileName");
+
+const pagesArea        = document.getElementById("pagesArea");
+const pagesHint        = document.getElementById("pagesHint");
+const pageThumbs       = document.getElementById("pageThumbs");
+const pageThumbsContainer = document.getElementById("pageThumbsContainer");
+
+const previewFrame     = document.getElementById("previewFrame");
+const previewImage     = document.getElementById("previewImage");
+const mediaPreview     = document.getElementById("mediaPreview");
+const htmlPreview      = document.getElementById("htmlPreview");
+const pageCornerBadge   = document.getElementById("pageCornerBadge");
+const pdfWrap          = document.getElementById("pdfWrap");
+const pdfCanvas        = document.getElementById("pdfCanvas");
+
+const fullPageBtn      = document.getElementById("fullPageBtn");
+const prevPageBtn      = document.getElementById("prevPageBtn");
+const nextPageBtn      = document.getElementById("nextPageBtn");
+const zoomOutBtn       = document.getElementById("zoomOutBtn");
+const zoomInBtn        = document.getElementById("zoomInBtn");
+const pagePill         = document.getElementById("pagePill");
+const zoomPill         = document.getElementById("zoomPill");
+const sidebarPosition  = document.getElementById("sidebarPosition");
+const filesTabBtn      = document.getElementById("filesTabBtn");
+const pagesTabBtn      = document.getElementById("pagesTabBtn");
+const toggleContentsBtn = document.getElementById("toggleContentsBtn");
+const toggleContentsText = document.getElementById("toggleContentsText");
+const downloadCurrentFileBtn = document.getElementById("downloadCurrentFileBtn");
+const resetZoomBtn     = document.getElementById("resetZoomBtn");
+const fitPageBtn       = document.getElementById("fitPageBtn");
+
+const prevDoc          = document.getElementById("prevDoc");
+const nextDoc          = document.getElementById("nextDoc");
+
+const unsupportedModal = document.getElementById("unsupportedModal");
+const unsupportedText  = document.getElementById("unsupportedText");
+
+/* Viewer state */
+let currentFiles = [];
+let currentIndex = 0;
+let currentApplicantId = null;
+
+/* PDF state */
+let currentPdf = null;
+let currentPdfUrl = "";
+let currentPdfPage = 1;
+let currentPdfTotal = 0;
+let pdfScale = 1.15;
+let currentPreviewKind = "none";
+let currentNonPdfZoom = 1;
+
+/* Universal blob preview state */
+let currentObjectUrl = null;
+
+let currentSidebarMode = "files";
+
+function getCurrentFile(){
+  return currentFiles[currentIndex] || null;
+}
+function getFileIconClass(ext){
+  const e = String(ext || "").toLowerCase();
+  if (FILE_TYPES.image.includes(e)) return "fa-regular fa-image";
+  if (e === "pdf") return "fa-regular fa-file-pdf";
+  if (["doc","docx","odt"].includes(e)) return "fa-regular fa-file-word";
+  if (["xls","xlsx","csv","ods"].includes(e)) return "fa-regular fa-file-excel";
+  if (["ppt","pptx","pps","ppsx","odp"].includes(e)) return "fa-regular fa-file-powerpoint";
+  if (FILE_TYPES.video.includes(e)) return "fa-regular fa-file-video";
+  if (FILE_TYPES.audio.includes(e)) return "fa-regular fa-file-audio";
+  if (ARCHIVE_EXTS.includes(e)) return "fa-regular fa-file-zipper";
+  if (HTML_EXTS.includes(e) || CODE_EXTS.includes(e) || FILE_TYPES.text.includes(e)) return "fa-regular fa-file-lines";
+  return "fa-regular fa-file";
+}
+function updateZoomPill(){
+  if (!zoomPill) return;
+  const zoomValue = currentPdf ? pdfScale : currentNonPdfZoom;
+  zoomPill.textContent = `${Math.round(zoomValue * 100)}%`;
+}
+function updatePagePillBar(){
+  const isPdf = !!currentPdf && currentPdfTotal > 0;
+  docViewer.classList.toggle("has-pdf", isPdf);
+  if (pagePill){
+    pagePill.textContent = isPdf ? `Page ${currentPdfPage} / ${currentPdfTotal}` : "Pages unavailable";
+  }
+  if (pageCornerBadge){
+    pageCornerBadge.style.display = isPdf ? "inline-flex" : "none";
+    pageCornerBadge.textContent = isPdf ? `Page ${currentPdfPage}` : "";
+  }
+  updateZoomPill();
+}
+function setSidebarMode(mode){
+  currentSidebarMode = mode === "pages" ? "pages" : "files";
+  const showPages = currentSidebarMode === "pages";
+  docViewer.classList.toggle("mode-pages", showPages);
+  docViewer.classList.toggle("mode-files", !showPages);
+  filesTabBtn?.classList.toggle("active", !showPages);
+  pagesTabBtn?.classList.toggle("active", showPages);
+  if (fileListContainer) fileListContainer.style.display = showPages ? "none" : "block";
+  if (pagesArea) pagesArea.style.display = showPages && !pagesTabBtn?.disabled ? "block" : "none";
+  if (showPages && typeof pageThumbsContainer !== "undefined" && pageThumbsContainer) pageThumbsContainer.scrollTop = 0;
+  if (!showPages && fileListContainer) fileListContainer.scrollTop = 0;
+}
+function setSidebarHidden(hidden){
+  docViewer.classList.toggle("sidebar-hidden", !!hidden);
+  if (toggleContentsText) toggleContentsText.textContent = hidden ? "Show Content" : "Hide Content";
+  if (toggleContentsBtn){
+    toggleContentsBtn.innerHTML = `<i class="fa-solid ${hidden ? "fa-eye" : "fa-eye-slash"}"></i><span id="toggleContentsText">${hidden ? "Show Content" : "Hide Content"}</span>`;
+    window.setTimeout(() => {
+      const fresh = document.getElementById("toggleContentsText");
+      if (fresh) fresh.textContent = hidden ? "Show Content" : "Hide Content";
+    }, 0);
+  }
+}
+function updateDownloadButton(){
+  const file = getCurrentFile();
+  if (!downloadCurrentFileBtn) return;
+  if (file && file.url){
+    downloadCurrentFileBtn.href = file.url;
+    downloadCurrentFileBtn.classList.remove("disabled");
+    downloadCurrentFileBtn.setAttribute("download", "");
+  } else {
+    downloadCurrentFileBtn.href = "#";
+    downloadCurrentFileBtn.classList.add("disabled");
+    downloadCurrentFileBtn.removeAttribute("download");
+  }
+}
+function applyNonPdfZoom(){
+  const zoom = Math.max(0.5, Math.min(2.5, Number(currentNonPdfZoom || 1)));
+  currentNonPdfZoom = zoom;
+  [previewFrame, previewImage, mediaPreview, htmlPreview].forEach(node => {
+    if (!node) return;
+    node.style.zoom = String(zoom);
+    node.style.transformOrigin = "top center";
+  });
+  updateZoomPill();
+}
+async function fitCurrentPdfToPage(){
+  if (!currentPdf){
+    currentNonPdfZoom = 1;
+    applyNonPdfZoom();
+    return;
+  }
+  try{
+    const pageObj = await currentPdf.getPage(currentPdfPage);
+    const baseViewport = pageObj.getViewport({ scale: 1 });
+    const availableWidth = Math.max(280, pdfWrap.clientWidth - 52);
+    pdfScale = Math.max(0.55, Math.min(2.8, availableWidth / baseViewport.width));
+    await renderPdfPage(currentPdfPage, true);
+  }catch(e){ console.error("Fit page error:", e); }
+}
+function resetZoom(){
+  if (!currentPdf){
+    currentNonPdfZoom = 1;
+    applyNonPdfZoom();
+    return;
+  }
+  pdfScale = 1.15;
+  renderPdfPage(currentPdfPage, true);
+}
+function getPreferredOpenIndex(){
+  const resumeIdx = currentFiles.findIndex(f => f.kind === "resume");
+  if (resumeIdx !== -1) return resumeIdx;
+  const docIdx = currentFiles.findIndex(f => f.kind === "doc");
+  if (docIdx !== -1) return docIdx;
+  const picIdx = currentFiles.findIndex(f => f.kind === "picture");
+  return picIdx !== -1 ? picIdx : 0;
+}
+
+const FILE_TYPES = {
+  image: ["jpg","jpeg","png","gif","webp","jfif","svg","bmp","heic","heif","tif","tiff","avif","ico"],
+  video: ["mp4","webm","ogg","mov","m4v","avi","mkv"],
+  audio: ["mp3","wav","ogg","m4a","aac","flac","oga","opus","weba"],
+  text:  ["txt","csv","json","xml","log","yaml","yml","md","ini","cfg","conf","css","js","ts","tsx","jsx","sql","rtf"]
+};
+const OFFICE_EXTS = ["doc","docx","xls","xlsx","ppt","pptx","pps","ppsx","odt","ods","odp"];
+const HTML_EXTS = ["html","htm"];
+const ARCHIVE_EXTS = ["zip","rar","7z","tar","gz","bz2","xz"];
+const CODE_EXTS = ["css","js","ts","tsx","jsx","json","xml","yaml","yml","sql","md","log","ini","cfg","conf"];
+
+/* ============================================================
+   FullPage: fullscreen + auto hide close + button shows Exit
+============================================================ */
+function setFullPageUI(isOn){
+  docViewer.classList.toggle("is-fullpage", !!isOn);
+
+  if (isOn){
+    fullPageBtn.innerHTML = `<i class="fa-solid fa-compress"></i> Exit Full Page`;
+  } else {
+    fullPageBtn.innerHTML = `<i class="fa-solid fa-expand"></i> Full Page`;
+  }
+}
+
+function toggleViewerFullscreen(){
+  try{
+    const entering = !document.fullscreenElement;
+
+    if (entering){
+      (docViewer.requestFullscreen || docViewer.webkitRequestFullscreen || docViewer.msRequestFullscreen)?.call(docViewer);
+      setFullPageUI(true);
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen)?.call(document);
+      setFullPageUI(false);
+    }
+  }catch(e){}
+}
+fullPageBtn.addEventListener("click", toggleViewerFullscreen);
+
+document.addEventListener("fullscreenchange", () => {
+  const isOn = !!document.fullscreenElement;
+  setFullPageUI(isOn);
+});
+
+/* ============================================================
+   Pages thumbnails area (AUTO, NO BUTTON/TAB)
+   ✅ show only when PDF has MORE THAN 1 page
+============================================================ */
+function showPagesAreaForPdf(on){
+  pagesTabBtn.disabled = !on;
+  pagesArea.style.display = on && currentSidebarMode === "pages" ? "block" : "none";
+  if (!on){
+    pageThumbs.innerHTML = "";
+    setSidebarMode("files");
+  }
+}
+
+/* ============================================================
+   Centering helpers (PDF canvas stays centered)
+============================================================ */
+function centerScrollContainerToMiddle(container){
+  if (!container) return;
+  try{
+    const maxX = container.scrollWidth - container.clientWidth;
+    const maxY = container.scrollHeight - container.clientHeight;
+    if (maxX > 0) container.scrollLeft = Math.floor(maxX / 2);
+    if (maxY > 0) container.scrollTop  = Math.floor(maxY / 2);
+  }catch(e){}
+}
+function centerPdfView(){
+  centerScrollContainerToMiddle(pdfWrap);
+}
+
+/* ============================================================
+   Universal preview cleanup
+============================================================ */
+function revokeObjectUrl(){
+  if (currentObjectUrl){
+    try{ URL.revokeObjectURL(currentObjectUrl); }catch(e){}
+    currentObjectUrl = null;
+  }
+}
+
+/* ============================================================
+   Reset preview area
+============================================================ */
+function resetPreviewArea(){
+  previewFrame.style.display = "none";
+  previewImage.style.display = "none";
+  mediaPreview.style.display = "none";
+  htmlPreview.style.display  = "none";
+  pdfWrap.style.display = "none";
+
+  previewFrame.src = "about:blank";
+  previewImage.src = "";
+  mediaPreview.innerHTML = "";
+  htmlPreview.innerHTML = "";
+
+  revokeObjectUrl();
+
+  currentPdf = null;
+  currentPdfUrl = "";
+  currentPdfPage = 1;
+  currentPdfTotal = 0;
+  pdfScale = 1.15;
+  currentPreviewKind = "none";
+  currentNonPdfZoom = 1;
+
+  [previewFrame, previewImage, mediaPreview, htmlPreview].forEach(node => {
+    if (!node) return;
+    node.style.zoom = "1";
+    node.style.transformOrigin = "top center";
+  });
+
+  if (pagePill) pagePill.textContent = "Pages unavailable";
+  if (pageCornerBadge) pageCornerBadge.style.display = "none";
+  showPagesAreaForPdf(false);
+
+  prevPageBtn.disabled = true;
+  nextPageBtn.disabled = true;
+  zoomOutBtn.disabled = true;
+  zoomInBtn.disabled = true;
+  resetZoomBtn.disabled = true;
+  fitPageBtn.disabled = true;
+  updateZoomPill();
+  updateDownloadButton();
+  docViewer.classList.remove("has-pdf");
+}
+
+/* ============================================================
+   Hardening
+============================================================ */
+function installViewerHardening(){
+  docModal.addEventListener("contextmenu", (e) => {
+    if (docModal.style.display === "flex"){
+      e.preventDefault(); e.stopPropagation(); return false;
+    }
+  }, true);
+
+  ["dragstart"].forEach(ev => {
+    docModal.addEventListener(ev, (e) => {
+      if (docModal.style.display === "flex"){
+        e.preventDefault(); e.stopPropagation();
+      }
+    }, true);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (docModal.style.display !== "flex") return;
+    const key = (e.key || "").toLowerCase();
+    const ctrl = e.ctrlKey || e.metaKey;
+
+    if (ctrl && (key === "s" || key === "p" || key === "u")){
+      e.preventDefault(); e.stopPropagation(); return;
+    }
+  }, true);
+}
+installViewerHardening();
+
+/* ============================================================
+   DOC LIST
+============================================================ */
+function buildFileQueue(app){
+  const files = [];
+  if (app.picture) files.push({ url: app.picture, label: "Profile Picture", kind: "picture" });
+  if (app.resume)  files.push({ url: app.resume,  label: "Resume",          kind: "resume" });
+  (app.documents || []).forEach((url, i) => {
+    files.push({ url, label: `Supporting Document ${i + 1}`, kind: "doc", docIndex: i });
+  });
+  currentFiles = files;
+}
+
+function loadDocList(){
+  docItems.innerHTML = "";
+  currentFiles.forEach((file, index) => {
+    const ext = getExtension(file.url);
+    const item = document.createElement("div");
+    item.className = "doc-item";
+    if (index === currentIndex) item.classList.add("active");
+
+    const thumb = document.createElement("div");
+    thumb.className = "doc-item-thumb";
+    if (file.kind === "picture" && file.url){
+      thumb.innerHTML = `<img src="${escapeHTML(file.url)}" alt="${escapeHTML(file.label)}">`;
+    } else {
+      thumb.innerHTML = `<i class="${getFileIconClass(ext)}"></i>`;
+    }
+
+    const label = document.createElement("div");
+    label.className = "doc-item-label";
+    label.textContent = file.label;
+
+    item.appendChild(thumb);
+    item.appendChild(label);
+    item.onclick = () => { currentIndex = index; showDocument(index); };
+    docItems.appendChild(item);
+  });
+}
+function highlightActiveFile(){
+  docItems.querySelectorAll(".doc-item").forEach((el, i) => {
+    el.classList.toggle("active", i === currentIndex);
+  });
+}
+
+/* ============================================================
+   Open Viewer
+============================================================ */
+function openDocs(app, focusKind, focusDocIndex){
+  currentApplicantId = app.master_id || app.applicant_id || app.id || null;
+
+  if (app.picture){
+    sidebarPicture.src = app.picture;
+    sidebarPicture.style.display = "block";
+  } else {
+    sidebarPicture.style.display = "none";
+  }
+
+  sidebarName.textContent = app.full_name || "";
+  profileName.textContent = app.full_name || "";
+  if (sidebarPosition) sidebarPosition.textContent = app.position || "Applicant Files";
+
+  buildFileQueue(app);
+  if (!currentFiles.length){
+    showUnsupported("No uploaded resume, supporting document, or profile picture was found for this applicant.");
+    return;
+  }
+  loadDocList();
+  setSidebarHidden(false);
+  setSidebarMode("files");
+  showPagesAreaForPdf(false);
+
+  let index = 0;
+  if (focusKind){
+    index = currentFiles.findIndex(f => {
+      if (focusKind === "picture") return f.kind === "picture";
+      if (focusKind === "resume")  return f.kind === "resume";
+      if (focusKind === "doc")     return f.kind === "doc" && f.docIndex === focusDocIndex;
+      return false;
+    });
+    if (index === -1) index = getPreferredOpenIndex();
+  } else {
+    index = getPreferredOpenIndex();
+  }
+
+  currentIndex = index;
+  showDocument(currentIndex);
+  docModal.style.display = "flex";
+}
+
+function getStorageKey(){
+  return currentApplicantId ? `viewer_last_file_${currentApplicantId}` : null;
+}
+function saveLastViewedIndex(index){
+  const key = getStorageKey();
+  if (!key) return;
+  localStorage.setItem(key, String(index));
+}
+function getLastViewedIndex(){
+  const key = getStorageKey();
+  if (!key) return null;
+  const raw = localStorage.getItem(key);
+  if (raw === null) return null;
+  const n = Number(raw);
+  return Number.isNaN(n) ? null : n;
+}
+function isValidIndex(i){
+  return Number.isInteger(i) && i >= 0 && i < currentFiles.length;
+}
+function getExtension(url){
+  const clean = String(url || "").split("#")[0].split("?")[0];
+  const last = clean.split("/").pop() || "";
+  const parts = last.split(".");
+  return (parts.length > 1 ? parts.pop() : "").toLowerCase();
+}
+
+/* ============================================================
+   Pages message
+============================================================ */
+function updatePagePill(){
+  updatePagePillBar();
+}
+
+/* ============================================================
+   Universal viewers
+============================================================ */
+async function openAsBlobInIframe(url){
+  try{
+    const res = await fetch(url, { method:"GET" });
+    if (!res.ok) return false;
+
+    const blob = await res.blob();
+    if (!blob || !blob.size) return false;
+
+    revokeObjectUrl();
+    currentObjectUrl = URL.createObjectURL(blob);
+
+    previewFrame.src = currentObjectUrl;
+    previewFrame.style.display = "block";
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+function openWithOfficeViewer(url){
+  previewFrame.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+  previewFrame.style.display = "block";
+}
+function openWithGoogleViewer(url){
+  previewFrame.src = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
+  previewFrame.style.display = "block";
+}
+function normalizeMimeType(mime){
+  return String(mime || "").split(";")[0].trim().toLowerCase();
+}
+function guessMimeFromExtension(ext){
+  const e = String(ext || "").toLowerCase();
+  if (!e) return "";
+  if (e === "pdf") return "application/pdf";
+  if (FILE_TYPES.image.includes(e)) return `image/${e === "jpg" ? "jpeg" : e === "svg" ? "svg+xml" : e}`;
+  if (FILE_TYPES.video.includes(e)) return `video/${e === "mov" ? "quicktime" : e}`;
+  if (FILE_TYPES.audio.includes(e)) return `audio/${e === "m4a" ? "mp4" : e}`;
+  if (HTML_EXTS.includes(e)) return "text/html";
+  if (["csv"].includes(e)) return "text/csv";
+  if (["json"].includes(e)) return "application/json";
+  if (["xml"].includes(e)) return "application/xml";
+  if (["md","txt","log","ini","cfg","conf","css","js","ts","tsx","jsx","sql","yaml","yml","rtf"].includes(e)) return "text/plain";
+  if (["docx"].includes(e)) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  if (["xlsx"].includes(e)) return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  if (["pptx"].includes(e)) return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+  return "";
+}
+function guessKindFromMeta(ext, mime){
+  const e = String(ext || "").toLowerCase();
+  const m = normalizeMimeType(mime || guessMimeFromExtension(e));
+  if (e === "pdf" || m === "application/pdf") return "pdf";
+  if (FILE_TYPES.image.includes(e) || m.startsWith("image/")) return "image";
+  if (FILE_TYPES.video.includes(e) || m.startsWith("video/")) return "video";
+  if (FILE_TYPES.audio.includes(e) || m.startsWith("audio/")) return "audio";
+  if (HTML_EXTS.includes(e) || m === "text/html") return "html";
+  if (["docx"].includes(e) || m.includes("wordprocessingml.document")) return "docx";
+  if (["xlsx","xls","ods","csv"].includes(e) || m.includes("spreadsheet") || m.includes("excel") || m === "text/csv") return "spreadsheet";
+  if (OFFICE_EXTS.includes(e) || m.includes("presentation") || m.includes("powerpoint") || m.includes("msword") || m.includes("opendocument")) return "office";
+  if (ARCHIVE_EXTS.includes(e) || m.includes("zip") || m.includes("compressed") || m.includes("archive") || m.includes("rar")) return "archive";
+  if (FILE_TYPES.text.includes(e) || CODE_EXTS.includes(e) || m.startsWith("text/") || ["application/json","application/xml","text/xml"].includes(m)) return "text";
+  return "generic";
+}
+async function fetchFileBlob(url){
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Failed to fetch file: ${response.status}`);
+  const blob = await response.blob();
+  const mime = normalizeMimeType(blob.type || response.headers.get("content-type") || "");
+  return { blob, mime };
+}
+function createObjectUrl(blob){
+  revokeObjectUrl();
+  currentObjectUrl = URL.createObjectURL(blob);
+  return currentObjectUrl;
+}
+async function renderHtmlBlob(blob){
+  const objectUrl = createObjectUrl(blob);
+  previewFrame.src = objectUrl;
+  previewFrame.style.display = "block";
+}
+async function renderPlainTextBlob(blob, ext, mime){
+  const textData = await blob.text();
+  htmlPreview.style.display = "block";
+  const isJson = String(ext).toLowerCase() === "json" || mime === "application/json";
+  const displayText = isJson ? JSON.stringify(JSON.parse(textData), null, 2) : String(textData || "");
+  const pre = document.createElement("pre");
+  pre.textContent = displayText;
+  pre.style.whiteSpace = "pre-wrap";
+  pre.style.wordBreak = "break-word";
+  pre.style.background = "rgba(255,255,255,0.03)";
+  pre.style.border = "1px solid rgba(0,198,255,0.18)";
+  pre.style.borderRadius = "14px";
+  pre.style.padding = "14px";
+  pre.style.lineHeight = "1.35";
+  pre.style.fontFamily = "Consolas, Monaco, monospace";
+  pre.style.fontSize = "0.88rem";
+  htmlPreview.appendChild(pre);
+}
+async function renderDocxBlob(blob){
+  if (!window.mammoth) throw new Error("Mammoth library not loaded.");
+  const arrayBuffer = await blob.arrayBuffer();
+  const result = await window.mammoth.convertToHtml({ arrayBuffer });
+  htmlPreview.style.display = "block";
+  htmlPreview.innerHTML = `
+    <div style="max-width:980px;margin:0 auto;background:#fff;color:#111827;border-radius:18px;padding:26px 30px;box-shadow:0 14px 30px rgba(0,0,0,.18);line-height:1.6;overflow:auto;">
+      ${result.value || '<p style="margin:0;">No readable content was found in this DOCX file.</p>'}
+    </div>`;
+}
+async function renderSpreadsheetBlob(blob, ext){
+  if (!window.XLSX) throw new Error("XLSX library not loaded.");
+  const arrayBuffer = await blob.arrayBuffer();
+  const workbook = window.XLSX.read(arrayBuffer, { type: "array" });
+  const firstSheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[firstSheetName];
+  if (!sheet) throw new Error("No readable sheet found.");
+  const sheetHtml = window.XLSX.utils.sheet_to_html(sheet, { editable: false });
+  htmlPreview.style.display = "block";
+  htmlPreview.innerHTML = `
+    <div style="max-width:1080px;margin:0 auto;background:#fff;color:#111827;border-radius:18px;padding:18px 20px;box-shadow:0 14px 30px rgba(0,0,0,.18);overflow:auto;">
+      <div style="font-weight:800;margin-bottom:12px;color:#0f172a;">${escapeHTML(firstSheetName || (ext || 'Spreadsheet').toUpperCase())}</div>
+      <div style="overflow:auto;">${sheetHtml}</div>
+    </div>`;
+  htmlPreview.querySelectorAll("table").forEach(table => {
+    table.style.width = "100%";
+    table.style.borderCollapse = "collapse";
+    table.style.fontSize = "0.86rem";
+  });
+  htmlPreview.querySelectorAll("th,td").forEach(cell => {
+    cell.style.border = "1px solid #d1d5db";
+    cell.style.padding = "6px 8px";
+  });
+}
+async function renderMediaFromBlob(blob, type){
+  const objectUrl = createObjectUrl(blob);
+  if (type === "video"){
+    mediaPreview.innerHTML = `<video controls autoplay style="width:100%;height:100%;background:#020617;"><source src="${objectUrl}" type="${escapeHTML(blob.type || 'video/mp4')}"></video>`;
+  } else {
+    mediaPreview.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#020617;"><audio controls autoplay style="width:min(820px,92%);padding:16px;"><source src="${objectUrl}" type="${escapeHTML(blob.type || 'audio/mpeg')}"></audio></div>`;
+  }
+  mediaPreview.style.display = "block";
+}
+async function universalReadAsIs(url, ext, blob = null, mime = ""){
+  const effectiveExt = String(ext || "").toLowerCase();
+  const effectiveMime = normalizeMimeType(mime || (blob && blob.type) || guessMimeFromExtension(effectiveExt));
+
+  if (blob){
+    const objectUrl = createObjectUrl(blob);
+    previewFrame.src = objectUrl;
+    previewFrame.style.display = "block";
+    return true;
+  }
+
+  const okBlob = await openAsBlobInIframe(url);
+  if (okBlob) return true;
+
+  if (OFFICE_EXTS.includes(effectiveExt)){
+    openWithOfficeViewer(url);
+    return true;
+  }
+
+  if (effectiveMime.startsWith("text/") || effectiveMime === "application/json" || effectiveMime === "application/xml"){
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Unable to fetch text preview.");
+    await renderPlainTextBlob(await response.blob(), effectiveExt, effectiveMime);
+    return true;
+  }
+
+  openWithGoogleViewer(url);
+  return true;
+}
+
+/* ============================================================
+   PDF: load + render + thumbs
+============================================================ */
+async function loadPdfFromUrl(url){
+  if (!window.pdfjsLib) throw new Error("PDF.js not loaded.");
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch PDF.");
+  const buf = await res.arrayBuffer();
+  const loadingTask = pdfjsLib.getDocument({ data: buf });
+  const pdf = await loadingTask.promise;
+  return pdf;
+}
+
+async function renderPdfPage(pageNum, shouldCenter){
+  if (!currentPdf) return;
+
+  currentPdfPage = Math.min(Math.max(1, pageNum), currentPdfTotal);
+  const pageObj = await currentPdf.getPage(currentPdfPage);
+
+  const viewport = pageObj.getViewport({ scale: pdfScale });
+  const ctx = pdfCanvas.getContext("2d");
+
+  pdfCanvas.width = Math.floor(viewport.width);
+  pdfCanvas.height = Math.floor(viewport.height);
+
+  await pageObj.render({ canvasContext: ctx, viewport }).promise;
+
+  updatePagePill();
+  highlightActiveThumb();
+
+  if (shouldCenter) setTimeout(() => centerPdfView(), 0);
+}
+
+function highlightActiveThumb(){
+  pageThumbs.querySelectorAll(".page-thumb").forEach((el) => {
+    const n = Number(el.getAttribute("data-page"));
+    if (Number.isFinite(n) && currentPdf){
+      el.classList.toggle("active", n === currentPdfPage);
+    }
+  });
+}
+
+async function buildPdfThumbs(){
+  pageThumbs.innerHTML = "";
+
+  const MAX_THUMBS = 35;
+  const total = currentPdfTotal;
+  const showCount = Math.min(total, MAX_THUMBS);
+
+  for (let p = 1; p <= showCount; p++){
+    const wrap = document.createElement("div");
+    wrap.className = "page-thumb";
+    wrap.setAttribute("data-page", String(p));
+    wrap.onclick = () => renderPdfPage(p, true);
+
+    const canvasWrap = document.createElement("div");
+    canvasWrap.className = "page-thumb-canvas-wrap";
+
+    const canvas = document.createElement("canvas");
+    canvasWrap.appendChild(canvas);
+
+    const label = document.createElement("div");
+    label.className = "label";
+    label.innerHTML = `<span>Page ${p}</span>`;
+
+    wrap.appendChild(canvasWrap);
+    wrap.appendChild(label);
+    pageThumbs.appendChild(wrap);
+
+    try{
+      const pageObj = await currentPdf.getPage(p);
+      const viewport = pageObj.getViewport({ scale: 0.27 });
+      const ctx = canvas.getContext("2d");
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      await pageObj.render({ canvasContext: ctx, viewport }).promise;
+    }catch(e){}
+  }
+
+  if (total > MAX_THUMBS){
+    const msg = document.createElement("div");
+    msg.className = "page-msg";
+    msg.textContent = `This PDF has ${total} pages. Showing thumbnails for the first ${MAX_THUMBS} pages only.`;
+    pageThumbs.appendChild(msg);
+  }
+
+  highlightActiveThumb();
+}
+
+/* ============================================================
+   HEIC + TIFF
+============================================================ */
+async function renderHeicToImage(url){
+  if (!window.heic2any) throw new Error("heic2any not loaded");
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch HEIC/HEIF");
+
+  const blob = await res.blob();
+  const converted = await heic2any({ blob, toType: "image/jpeg", quality: 0.92 });
+  const outBlob = Array.isArray(converted) ? converted[0] : converted;
+
+  revokeObjectUrl();
+  currentObjectUrl = URL.createObjectURL(outBlob);
+
+  previewImage.src = currentObjectUrl;
+  previewImage.style.display = "block";
+}
+
+async function renderTiffToImage(url){
+  if (!window.Tiff) throw new Error("Tiff.js not loaded");
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch TIFF");
+
+  const buf = await res.arrayBuffer();
+  const tiff = new Tiff({ buffer: buf });
+  const canvas = tiff.toCanvas();
+  if (!canvas) throw new Error("TIFF render failed");
+
+  const dataUrl = canvas.toDataURL("image/png");
+  previewImage.src = dataUrl;
+  previewImage.style.display = "block";
+}
+
+/* ============================================================
+   Switch file
+============================================================ */
+async function showDocument(index){
+  if (!currentFiles[index]) return;
+
+  saveLastViewedIndex(index);
+  resetPreviewArea();
+
+  const file = currentFiles[index];
+  const ext  = getExtension(file.url);
+
+  highlightActiveFile();
+  updateDownloadButton();
+  setSidebarMode("files");
+  showPagesAreaForPdf(false);
+  updatePagePillBar();
+
+  let blobMeta = null;
+  let blob = null;
+  let mime = "";
+  let kind = guessKindFromMeta(ext, mime);
+
+  const needsBlob = ["docx","spreadsheet","text","html","generic"].includes(kind) || !ext;
+  if (needsBlob){
+    try{
+      blobMeta = await fetchFileBlob(file.url);
+      blob = blobMeta.blob;
+      mime = blobMeta.mime;
+      kind = guessKindFromMeta(ext, mime);
+    }catch(fetchError){
+      console.warn("Blob fetch preview fallback:", fetchError);
+    }
+  }
+
+  const isPdf = (kind === "pdf");
+  currentPreviewKind = kind || "generic";
+  prevPageBtn.disabled = !isPdf;
+  nextPageBtn.disabled = !isPdf;
+  zoomOutBtn.disabled = false;
+  zoomInBtn.disabled = false;
+  resetZoomBtn.disabled = false;
+  fitPageBtn.disabled = false;
+
+  try{
+    if (kind === "image"){
+      if (ext === "heic" || ext === "heif"){
+        await renderHeicToImage(file.url);
+      } else if (ext === "tif" || ext === "tiff"){
+        await renderTiffToImage(file.url);
+      } else if (blob){
+        previewImage.src = createObjectUrl(blob);
+        previewImage.style.display = "block";
+      } else {
+        previewImage.src = file.url;
+        previewImage.style.display = "block";
+      }
+      applyNonPdfZoom();
+      updatePagePillBar();
+      return;
+    }
+
+    if (kind === "video"){
+      if (blob){
+        await renderMediaFromBlob(blob, "video");
+      } else {
+        mediaPreview.innerHTML = `<video controls autoplay style="width:100%;height:100%;background:#020617;"><source src="${file.url}"></video>`;
+        mediaPreview.style.display = "block";
+      }
+      applyNonPdfZoom();
+      updatePagePillBar();
+      return;
+    }
+
+    if (kind === "audio"){
+      if (blob){
+        await renderMediaFromBlob(blob, "audio");
+      } else {
+        mediaPreview.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#020617;"><audio controls autoplay style="width:min(820px,92%);padding:16px;"><source src="${file.url}"></audio></div>`;
+        mediaPreview.style.display = "block";
+      }
+      applyNonPdfZoom();
+      updatePagePillBar();
+      return;
+    }
+
+    if (kind === "text"){
+      if (!blob){
+        blobMeta = await fetchFileBlob(file.url);
+        blob = blobMeta.blob;
+        mime = blobMeta.mime;
+      }
+      await renderPlainTextBlob(blob, ext, mime);
+      applyNonPdfZoom();
+      updatePagePillBar();
+      return;
+    }
+
+    if (kind === "html"){
+      if (!blob){
+        blobMeta = await fetchFileBlob(file.url);
+        blob = blobMeta.blob;
+      }
+      await renderHtmlBlob(blob);
+      applyNonPdfZoom();
+      updatePagePillBar();
+      return;
+    }
+
+    if (kind === "docx"){
+      if (!blob){
+        blobMeta = await fetchFileBlob(file.url);
+        blob = blobMeta.blob;
+      }
+      await renderDocxBlob(blob);
+      applyNonPdfZoom();
+      updatePagePillBar();
+      return;
+    }
+
+    if (kind === "spreadsheet"){
+      if (!blob){
+        blobMeta = await fetchFileBlob(file.url);
+        blob = blobMeta.blob;
+      }
+      await renderSpreadsheetBlob(blob, ext);
+      applyNonPdfZoom();
+      updatePagePillBar();
+      return;
+    }
+
+    if (kind === "pdf"){
+      pdfWrap.style.display = "block";
+      currentNonPdfZoom = 1;
+      currentPdfUrl = file.url;
+      currentPdf = await loadPdfFromUrl(file.url);
+      currentPdfTotal = currentPdf.numPages;
+      currentPdfPage = 1;
+      await renderPdfPage(1, true);
+
+      if (currentPdfTotal > 1){
+        showPagesAreaForPdf(true);
+        await buildPdfThumbs();
+        setSidebarMode("pages");
+      }
+
+      updatePagePillBar();
+      return;
+    }
+
+    if (kind === "archive"){
+      showUnsupported("Archive files cannot be previewed directly in the viewer. Please use Download to open this file.");
+      return;
+    }
+
+    if (kind === "office"){
+      await universalReadAsIs(file.url, ext, blob, mime);
+      applyNonPdfZoom();
+      updatePagePillBar();
+      return;
+    }
+
+    await universalReadAsIs(file.url, ext, blob, mime);
+    applyNonPdfZoom();
+    updatePagePillBar();
+  }catch(e){
+    console.error("Generic preview error:", e);
+    showUnsupported("This file type could not be previewed inside the viewer. Please use Download to open the file directly.");
+  }
+}
+
+prevDoc.onclick = () => {
+  if (currentIndex > 0){
+    currentIndex--;
+    showDocument(currentIndex);
+  }
+};
+nextDoc.onclick = () => {
+  if (currentIndex < currentFiles.length - 1){
+    currentIndex++;
+    showDocument(currentIndex);
+  }
+};
+
+/* Page controls (PDF only) */
+prevPageBtn.onclick = () => { if (currentPdf) renderPdfPage(currentPdfPage - 1, true); };
+nextPageBtn.onclick = () => { if (currentPdf) renderPdfPage(currentPdfPage + 1, true); };
+
+zoomOutBtn.onclick = () => {
+  if (currentPdf){
+    pdfScale = Math.max(0.6, pdfScale - 0.1);
+    renderPdfPage(currentPdfPage, true);
+    return;
+  }
+  currentNonPdfZoom = Math.max(0.5, currentNonPdfZoom - 0.1);
+  applyNonPdfZoom();
+};
+zoomInBtn.onclick  = () => {
+  if (currentPdf){
+    pdfScale = Math.min(2.8, pdfScale + 0.1);
+    renderPdfPage(currentPdfPage, true);
+    return;
+  }
+  currentNonPdfZoom = Math.min(2.5, currentNonPdfZoom + 0.1);
+  applyNonPdfZoom();
+};
+resetZoomBtn.onclick = () => resetZoom();
+fitPageBtn.onclick = () => fitCurrentPdfToPage();
+filesTabBtn.onclick = () => setSidebarMode("files");
+pagesTabBtn.onclick = () => { if (!pagesTabBtn.disabled) setSidebarMode("pages"); };
+toggleContentsBtn.onclick = () => setSidebarHidden(!docViewer.classList.contains("sidebar-hidden"));
+downloadCurrentFileBtn.onclick = (e) => {
+  const file = getCurrentFile();
+  if (!file || !file.url){
+    e.preventDefault();
+  }
+};
+
+/* Close viewer */
+closeDocModal.onclick = () => {
+  if (document.fullscreenElement){
+    try{ document.exitFullscreen?.(); }catch(e){}
+  }
+  resetPreviewArea();
+  setSidebarHidden(false);
+  setSidebarMode("files");
+  docModal.style.display = "none";
+};
+
+document.addEventListener("keydown", e => {
+  if (docModal.style.display !== "flex") return;
+
+  if (e.key === "ArrowRight") nextDoc.click();
+  if (e.key === "ArrowLeft")  prevDoc.click();
+  if (e.key === "Escape")     closeDocModal.click();
+
+  if (currentPdf){
+    if (e.key === "PageDown") nextPageBtn.click();
+    if (e.key === "PageUp") prevPageBtn.click();
+  }
+  if (e.key === "+") zoomInBtn.click();
+  if (e.key === "-") zoomOutBtn.click();
+});
+
+/* Unsupported modal */
+function showUnsupported(msg){
+  unsupportedText.textContent = msg || "This file cannot be previewed directly.";
+  unsupportedModal.style.display = "flex";
+}
+function closeUnsupported(){ unsupportedModal.style.display = "none"; }
+
+/* ============================================================
+   AUTO REFRESH EVERY 10 SECONDS
+============================================================ */
+let refreshTimer = null;
+function startAutoRefresh(){
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => {
+    loadApplicants(true, true);
+  }, 10000);
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+syncPageSizeAndClamp();
+updateDashboardStickyMetrics();
+setView("table");
+
+if (window.ResizeObserver && dashboardTopSticky){
+  const dashboardTopStickyObserver = new ResizeObserver(() => updateDashboardStickyMetrics());
+  dashboardTopStickyObserver.observe(dashboardTopSticky);
+}
+
+loadApplicants(false, false).then(() => {
+  filtered = [...activeApplicants];
+  populateFilters(activeApplicants, false);
+  clearFiltersDirty();
+  render();
+  updateDashboardStickyMetrics();
+});
+
+startAutoRefresh();
+</script>
+
+</body>
+</html>

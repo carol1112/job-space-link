@@ -1,0 +1,727 @@
+
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins","Segoe UI",sans-serif;}
+
+  html,body{
+    height:100%;
+    overflow-x:hidden;
+    scroll-behavior:smooth;
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    background:radial-gradient(circle at 10% 20%,#0ea5e9 0%,#312e81 70%);
+    color:#e5e7eb;
+    position:relative;
+  }
+
+  body::before{
+    content:"";
+    position:absolute; inset:0;
+    background:url('https://www.transparenttextures.com/patterns/cubes.png') repeat;
+    opacity:0.04;
+    z-index:-1;
+  }
+  
+/* ============================================
+   BASE HEADER
+============================================ */
+header{
+  background:rgba(15,23,42,0.85);
+  backdrop-filter:blur(12px);
+  border-bottom:2px solid rgba(59,130,246,0.4);
+  box-shadow:0 4px 20px rgba(59,130,246,0.25);
+  padding:20px 6%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:1000;
+  animation:fadeDown 0.7s ease;
+  height:100px;
+}
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Base style for all auth buttons */
+.auth-buttons a {
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  color: #e5e7eb;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.25s ease;
+}
+
+/* 🔥 Highlighted Subscription button */
+.auth-buttons .subscription {
+  border-color: transparent;
+  background: linear-gradient(90deg, #00c6ff, #7c3aed, #ec4899);
+  background-size: 200%;
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.6);
+  font-weight: 600;
+}
+
+.auth-buttons .subscription:hover {
+  background-position: 100% 0;
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(129, 140, 248, 0.9);
+}
+
+/* Optional: subtle hover for Employer & Admin */
+.auth-buttons .login:hover,
+.auth-buttons .admin:hover {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(59, 130, 246, 0.8);
+  transform: translateY(-1px);
+}
+
+
+header .logo img{
+  height:100px;
+  margin-top:5px;
+  filter:drop-shadow(0 0 14px rgba(59,130,246,0.8));
+  transition:transform 0.4s ease, filter 0.4s ease;
+}
+header .logo img:hover{
+  transform:scale(1.07);
+  filter:drop-shadow(0 0 20px rgba(0,198,255,1));
+}
+
+nav a{
+  color:#e5e7eb;
+  text-decoration:none;
+  margin:0 18px;
+  font-weight:500;
+  transition:color 0.3s,text-shadow 0.3s;
+}
+nav a:hover{
+  color:#00c6ff;
+  text-shadow:0 0 10px rgba(0,198,255,0.7);
+}
+/* Default desktop navigation layout */
+#nav-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.auth-buttons a{
+  text-decoration:none;
+  margin-left:12px;
+  padding:8px 16px;
+  border-radius:8px;
+  font-weight:500;
+  color:#fff;
+  transition:all 0.3s ease;
+}
+
+.auth-buttons .login{
+background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
+  background-size:200%;
+  box-shadow:0 0 12px rgba(147,51,234,0.4);
+}
+.auth-buttons .login:hover{
+  background-position:100% 0;
+  transform:translateY(-2px);
+}
+
+.auth-buttons .signup{
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
+  background-size:200%;
+  box-shadow:0 0 12px rgba(147,51,234,0.4);
+}
+.auth-buttons .signup:hover{
+  background-position:100% 0;
+  transform:translateY(-2px);
+}
+
+.auth-buttons .admin{
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
+  background-size:200%;
+  box-shadow:0 0 12px rgba(147,51,234,0.4);
+}
+.auth-buttons .admin:hover{
+  background-position:100% 0;
+  transform:translateY(-2px);
+}
+
+
+/* LOGOUT BUTTON */
+.auth-buttons.logout {
+  margin-left: auto;
+  padding: 10px 18px;
+  border-radius: 14px;
+ background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
+  background-size:200%;
+  box-shadow:0 0 12px rgba(147,51,234,0.4);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s ease;
+  
+}
+
+.auth-buttons.logout:hover {
+  background-position:100% 0;
+  transform:translateY(-2px);
+}
+
+/* AUTH BUTTONS WRAP (if not already styled) */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* DROPDOWN BASE */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* EMPLOYER TOGGLE BUTTON */
+.dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.5);
+  background: rgba(15,23,42,0.85);
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.dropdown-toggle:hover {
+  background: rgba(37,99,235,0.85);
+  border-color: rgba(129,140,248,0.8);
+  color: #fff;
+}
+
+.caret-icon {
+  font-size: 0.75rem;
+}
+
+/* DROPDOWN MENU */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 115%;
+  min-width: 210px;
+  background: rgba(15,23,42,0.98);
+  border-radius: 10px;
+  border: 1px solid rgba(59,130,246,0.55);
+  box-shadow: 0 10px 25px rgba(15,23,42,0.75);
+  padding: 6px 0;
+  display: none;
+  flex-direction: column;
+  z-index: 999;
+}
+
+.dropdown-menu a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+  color: #e5e7eb;
+  text-decoration: none;
+  transition: 0.18s ease;
+}
+
+.dropdown-menu a i {
+  font-size: 0.85rem;
+}
+
+.dropdown-menu a:hover {
+  background: rgba(37,99,235,0.85);
+  color: #fff;
+}
+
+/* SHOW DROPDOWN WHEN OPEN CLASS IS PRESENT */
+.dropdown-menu.open {
+  display: flex;
+}
+
+
+/* ============================================================
+   NEW: NAV DROPDOWN (About -> Why Choose Us + How it Works)
+=========================================================== */
+.nav-dropdown{
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown > a{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-dropdown .nav-caret{
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.nav-dropdown-menu{
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  min-width: 220px;
+  padding: 10px;
+  border-radius: 14px;
+
+  background: rgba(15,23,42,0.95);
+  border: 1px solid rgba(59,130,246,0.35);
+  box-shadow: 0 0 25px rgba(0,198,255,0.22);
+  backdrop-filter: blur(12px);
+
+  display: none;
+  z-index: 9999;
+}
+
+.nav-dropdown-menu a{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #dbeafe;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: 0.25s;
+}
+
+.nav-dropdown-menu a:hover{
+  background: linear-gradient(90deg,#00c6ff,#8b5cf6);
+  color: #061022;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display: block;
+}
+
+@media (max-width: 768px){
+  .nav-dropdown-menu{
+    position: static;
+    margin-top: 10px;
+    width: 100%;
+  }
+}
+
+/* OPTIONAL: on wide screens, allow hover open too */
+@media (min-width: 900px) {
+  .dropdown:hover .dropdown-menu {
+    display: flex;
+  }
+}
+
+
+
+/* =======================================================
+   XXL DESKTOP — 1800px and above
+======================================================= */
+@media (min-width: 1800px) {
+  header { padding: 24px 10%; }
+  header .logo img { height: 130px; }
+  nav a { margin:0 24px; font-size:1.15rem; }
+  .auth-buttons a { padding:10px 20px; font-size:1.05rem; }
+}
+
+
+/* =======================================================
+   LARGE DESKTOP — 1440px to 1799px
+======================================================= */
+@media (min-width: 1440px) and (max-width: 1799px) {
+  header { padding:22px 8%; }
+  header .logo img { height:115px; }
+  nav a { margin:0 20px; }
+}
+
+
+/* =======================================================
+   STANDARD DESKTOP / LAPTOP — 1024px to 1439px
+======================================================= */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  header { padding:18px 5%; }
+  header .logo img { height:90px; }
+  nav a { margin:0 14px; font-size:0.95rem; }
+  .auth-buttons a { padding:6px 14px; font-size:0.9rem; }
+}
+
+
+/* =======================================================
+   TABLET LANDSCAPE — 769px to 1023px
+======================================================= */
+@media (min-width: 769px) and (max-width: 1023px) {
+  header {
+    padding:12px 4%;
+    height:65px;
+  }
+
+  header .logo img { height:70px; }
+
+  nav a {
+    margin:0 5px;
+    font-size:0.9rem;
+  }
+
+  .auth-buttons a {
+    padding:3px 6px;
+    font-size:0.85rem;
+  }
+}
+
+
+/* =======================================================
+   TABLET PORTRAIT — 481px to 768px
+======================================================= */
+@media (min-width: 481px) and (max-width: 768px) {
+  header {
+    padding:14px 4%;
+    flex-direction:column;
+    gap:12px;
+    height:auto;
+  }
+
+  header .logo img { height:75px; }
+
+  nav a {
+    display:inline-block;
+    margin:6px 10px;
+    font-size:0.9rem;
+  }
+
+  .auth-buttons a {
+    padding:6px 12px;
+    font-size:0.85rem;
+  }
+}
+
+
+/* =======================================================
+   MOBILE — 480px and below
+======================================================= */
+@media (max-width: 480px) {
+  header {
+    padding:12px 5%;
+    flex-direction:column;
+    text-align:center;
+    gap:12px;
+    height:auto;
+  }
+
+  header .logo img { height:65px; }
+
+  nav { width:100%; }
+  nav a {
+    display:block;
+    margin:6px 0;
+    font-size:0.9rem;
+  }
+
+  .auth-buttons {
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    gap:8px;
+  }
+
+  .auth-buttons a {
+    width:100%;
+    text-align:center;
+    padding:10px 0;
+    font-size:0.95rem;
+  }
+}
+
+
+.dropdown-menu{
+  display:none;
+}
+.dropdown-menu.show{
+  display:block;
+}
+
+
+
+
+
+
+/* ============================================================
+   FIXED HEADER ABOUT NAV + DROPDOWNS
+============================================================ */
+header{
+  position:fixed;
+
+
+
+
+/* ============================================================
+   FIXED HEADER ABOUT NAV + DROPDOWNS
+============================================================ */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:5000;
+}
+
+header nav{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.nav-dropdown,
+.dropdown{
+  position:relative;
+}
+
+.nav-dropdown{
+  display:inline-flex;
+
+align-items:center;
+  gap:6px;
+}
+
+.nav-dropdown-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  border:none;
+  background:transparent;
+  color:inherit;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px 6px;
+  border-radius:8px;
+  transition:background 0.25s ease, transform 0.25s ease;
+}
+
+.nav-dropdown-toggle:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+.nav-dropdown-toggle:focus-visible{
+  outline:2px solid #38bdf8;
+  outline-offset:2px;
+}
+
+.nav-caret{
+  font-size:0.85rem;
+  transition:transform 0.25s ease;
+}
+
+.nav-dropdown.open .nav-caret{
+  transform:rotate(180deg);
+}
+
+.nav-dropdown-menu,
+.dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  padding:10px;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.45);
+  box-shadow:0 0 24px rgba(15,23,42,0.75);
+  backdrop-filter:blur(14px);
+  z-index:6000;
+}
+
+.nav-dropdown-menu a,
+.dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:10px;
+  color:#dbeafe;
+  text-decoration:none;
+  transition:0.25s;
+  white-space:nowrap;
+}
+
+.nav-dropdown-menu a:hover,
+.dropdown-menu a:hover{
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  color:#fff;
+}
+
+.nav-dropdown-menu.show,
+.dropdown-menu.show{
+  display:block;
+}
+
+@media (min-width:769px){
+  .nav-dropdown:hover .nav-dropdown-menu{
+    display:block;
+  }
+}
+
+@media (max-width:768px){
+  header nav{
+    gap:12px;
+  }
+
+  .nav-dropdown{
+    flex-wrap:wrap;
+  }
+
+  .nav-dropdown-menu,
+  .dropdown-menu{
+    position:static;
+    margin-top:10px;
+    width:100%;
+    min-width:unset;
+  }
+}
+
+  top:0;
+  left:0;
+  width:100%;
+  z-index:5000;
+}
+
+header nav{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.nav-dropdown,
+.dropdown{
+  position:relative;
+}
+
+.nav-dropdown{
+  display:inline-flex;
+
+align-items:center;
+  gap:6px;
+}
+
+.nav-dropdown-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  border:none;
+  background:transparent;
+  color:inherit;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px 6px;
+  border-radius:8px;
+  transition:background 0.25s ease, transform 0.25s ease;
+}
+
+.nav-dropdown-toggle:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+.nav-dropdown-toggle:focus-visible{
+  outline:2px solid #38bdf8;
+  outline-offset:2px;
+}
+
+.nav-caret{
+  font-size:0.85rem;
+  transition:transform 0.25s ease;
+}
+
+.nav-dropdown.open .nav-caret{
+  transform:rotate(180deg);
+}
+
+.nav-dropdown-menu,
+.dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  padding:10px;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.45);
+  box-shadow:0 0 24px rgba(15,23,42,0.75);
+  backdrop-filter:blur(14px);
+  z-index:6000;
+}
+
+.nav-dropdown-menu a,
+.dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:10px;
+  color:#dbeafe;
+  text-decoration:none;
+  transition:0.25s;
+  white-space:nowrap;
+}
+
+.nav-dropdown-menu a:hover,
+.dropdown-menu a:hover{
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  color:#fff;
+}
+
+.nav-dropdown-menu.show,
+.dropdown-menu.show{
+  display:block;
+}
+
+@media (min-width:769px){
+  .nav-dropdown:hover .nav-dropdown-menu{
+    display:block;
+  }
+}
+
+@media (max-width:768px){
+  header nav{
+    gap:12px;
+  }
+
+  .nav-dropdown{
+    flex-wrap:wrap;
+  }
+
+  .nav-dropdown-menu,
+  .dropdown-menu{
+    position:static;
+    margin-top:10px;
+    width:100%;
+    min-width:unset;
+  }
+}

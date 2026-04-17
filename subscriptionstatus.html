@@ -1,0 +1,1245 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Subscription Status | Job Space Link</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+<link rel="stylesheet" href="jobspacelink.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<style>
+:root{ --header-h: 78px; }
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins","Segoe UI",sans-serif;}
+
+html, body {
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+}
+
+body{
+  min-height:100vh;
+  padding-top:var(--header-h);
+  background:radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #020617);
+  color:#e5e7eb;
+}
+
+/* ============================================================
+   INDEX HEADER STYLE
+============================================================ */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+  transform-origin:center center;
+  transition:transform 0.28s ease, filter 0.28s ease;
+}
+
+header .logo:hover img{
+  transform:scale(1.14);
+  filter:drop-shadow(0 0 14px rgba(0,198,255,0.62));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{ font-size:1rem; }
+
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{ display:flex; }
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* ============================================================
+   PAGE CONTENT
+============================================================ */
+.wrap{
+  max-width:1100px;
+  margin:42px auto 40px;
+  padding:26px 28px 30px;
+  border-radius:22px;
+  background:rgba(15,23,42,0.92);
+  border:1px solid rgba(0,198,255,0.5);
+  box-shadow:0 0 28px rgba(0,198,255,0.3);
+}
+
+.title{
+  font-size:1.7rem;
+  font-weight:800;
+  margin-bottom:6px;
+  color:#e0f2fe;
+  text-shadow:0 0 12px rgba(0,198,255,0.6);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.sub{
+  margin-bottom:16px;
+  font-size:0.92rem;
+  color:#cbd5f5;
+  opacity:0.92;
+  line-height:1.35;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap:18px;
+}
+
+.card{
+  background:rgba(15,23,42,0.98);
+  border-radius:18px;
+  border:1px solid rgba(0,198,255,0.4);
+  padding:16px 18px 18px;
+  box-shadow:0 0 16px rgba(15,23,42,0.8);
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:0.85rem;
+  border:1px solid rgba(148,163,184,0.6);
+  background:rgba(148,163,184,0.15);
+}
+
+.badge.active{
+  border-color:rgba(34,197,94,0.8);
+  background:rgba(34,197,94,0.18);
+  color:#bbf7d0;
+}
+
+.badge.expired{
+  border-color:rgba(239,68,68,0.8);
+  background:rgba(239,68,68,0.18);
+  color:#fecaca;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:10px;
+  font-size:0.92rem;
+}
+
+.row span:first-child{color:#9ca3af;}
+.row span:last-child{font-weight:600;color:#e5f7ff;text-align:right;}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.85rem;
+  margin-top:10px;
+}
+
+.table th,.table td{
+  padding:8px 10px;
+  border-bottom:1px solid rgba(148,163,184,0.28);
+  text-align:left;
+}
+
+.table th{color:#cbd5f5;font-weight:700;}
+.table td{color:#e5e7eb;}
+
+.form-row{
+  display:flex;
+  flex-direction:column;
+  margin-bottom:10px;
+}
+
+label{
+  font-size:0.85rem;
+  color:#bfdbfe;
+  margin-bottom:3px;
+}
+
+input{
+  padding:9px 10px;
+  border-radius:10px;
+  border:1px solid rgba(148,163,184,0.5);
+  background:rgba(15,23,42,0.9);
+  color:#e5e7eb;
+  font-size:0.92rem;
+}
+
+input:focus{
+  outline:none;
+  border-color:#0ea5e9;
+  box-shadow:0 0 10px rgba(14,165,233,0.45);
+  background:#020617;
+}
+
+.btn{
+  width:100%;
+  padding:10px 16px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed,#00c6ff);
+  background-size:200%;
+  color:white;
+  font-weight:800;
+  font-size:0.95rem;
+  box-shadow:0 0 16px rgba(59,130,246,0.45);
+  transition:0.3s;
+}
+
+.btn:hover{
+  background-position:100% 0;
+  transform:translateY(-1px);
+  box-shadow:0 0 22px rgba(129,140,248,0.7);
+}
+
+.btn.danger{
+   background:linear-gradient(90deg,#6b7280,#9ca3af);
+  border:none;
+  color:#fff;
+}
+
+.btn.danger:hover{
+   box-shadow:0 0 18px grey;
+}
+
+#msg{
+  margin-top:10px;
+  font-size:0.9rem;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (min-width: 1800px){
+  .wrap{max-width:1300px;margin:54px auto 55px;padding:30px 34px 34px;}
+  .title{font-size:2rem;}
+  .sub{font-size:1rem;}
+  .grid{gap:20px;}
+  .card{padding:18px 20px 20px;}
+  .row{font-size:0.95rem;}
+  .table{font-size:0.88rem;}
+}
+
+@media (min-width: 1440px){
+  .wrap{max-width:1180px;margin:48px auto 50px;padding:28px 30px 32px;}
+  .title{font-size:1.85rem;}
+}
+
+@media (min-width: 1024px){
+  .wrap{max-width:1100px;}
+}
+
+@media (min-width: 769px) and (max-width: 1023px){
+  .wrap{
+    max-width:940px;
+    margin:26px auto 20px;
+    padding:10px;
+    border-radius:18px;
+  }
+  .title{font-size:1.2rem;margin-bottom:2px;}
+  .sub{font-size:0.82rem;margin-bottom:10px;line-height:1.25;}
+  .grid{gap:12px;grid-template-columns:minmax(0, 1.15fr) minmax(0, 0.85fr);}
+  .card{padding:8px;border-radius:14px;}
+  .badge{padding:3px 6px;font-size:0.78rem;}
+  .row{margin-top:4px;font-size:0.82rem;}
+  .table{font-size:0.78rem;margin-top:6px;}
+  .table th,.table td{padding:4px 6px;}
+  .form-row{margin-bottom:5px;}
+  label{font-size:0.78rem;margin-bottom:2px;}
+  input{padding:5px 6px;font-size:0.86rem;border-radius:10px;}
+  .btn{padding:7px 10px;border-radius:12px;font-size:0.88rem;}
+  .btn.danger{margin-top:6px;}
+  #msg{margin-top:6px;font-size:0.82rem;}
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  .wrap{margin:26px 14px 24px;padding:16px 14px 14px;}
+  .title{font-size:1.25rem;}
+  .sub{font-size:0.85rem;margin-bottom:12px;}
+  .grid{grid-template-columns:1fr;gap:12px;}
+  .card{padding:12px;}
+  .row{font-size:0.86rem;margin-top:8px;}
+  .table th,.table td{padding:7px 8px;}
+  .btn{font-size:0.9rem;}
+}
+
+@media (max-width: 1280px){
+  header{gap:10px;padding:0 12px 0 6px;}
+  header .logo img{height:46px;}
+  header nav{gap:10px;margin-left:2px;}
+  header nav > a, header nav .nav-main-link{font-size:0.82rem;}
+  header .auth-buttons{gap:6px;}
+  header .auth-buttons a{padding:0 9px;font-size:0.78rem;}
+}
+
+@media (max-width: 920px){
+  header{justify-content:space-between;padding:0 12px 0 8px;}
+  header nav{display:none;}
+  header .auth-buttons{display:none;}
+  .nav-toggle{display:inline-flex;}
+}
+
+@media (max-width: 480px){
+  :root{ --header-h: 72px; }
+  .wrap{margin:16px 12px 20px;padding:14px 12px 12px;border-radius:18px;}
+  .title{font-size:1.15rem;}
+  .sub{font-size:0.82rem;margin-bottom:10px;line-height:1.25;}
+  .grid{grid-template-columns:1fr;gap:10px;}
+  .card{padding:12px;border-radius:14px;}
+  .badge{font-size:0.78rem;padding:5px 8px;}
+  .row{font-size:0.84rem;margin-top:6px;}
+  .table{display:block;overflow-x:auto;white-space:nowrap;}
+  .table th,.table td{padding:7px 8px;}
+  input{padding:8px 9px;font-size:0.9rem;}
+  .btn{padding:10px 12px;font-size:0.9rem;border-radius:12px;}
+  #msg{font-size:0.82rem;}
+  header{padding:0 10px 0 6px;}
+  header .logo{margin-left:-2px;}
+  header .logo img{height:42px;}
+}
+
+@media(max-width:900px){
+  .wrap{margin-left:14px;margin-right:14px;}
+  .grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+        <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="title"><i class="fa-solid fa-clipboard-check"></i> Subscription Status</div>
+  <div class="sub">
+    This page auto-loads the payment record for the logged-in employer account.
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div id="statusBadge" class="badge"><i class="fa-regular fa-circle-question"></i> No record</div>
+
+      <div class="row"><span>Company</span><span id="vCompany">—</span></div>
+      <div class="row"><span>Email</span><span id="vEmail">—</span></div>
+      <div class="row"><span>Start Date</span><span id="vStart">—</span></div>
+      <div class="row"><span>End Date</span><span id="vEnd">—</span></div>
+      <div class="row"><span>Amount</span><span id="vAmount">—</span></div>
+      <div class="row"><span>Days Remaining</span><span id="vRemain">—</span></div>
+
+      <div style="margin-top:14px;font-weight:800;color:#cbd5f5;">
+        <i class="fa-regular fa-clock"></i> Payment History
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Created</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Remain</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="5">No data.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800;color:#cbd5f5;margin-bottom:10px;">
+        <i class="fa-solid fa-magnifying-glass"></i> Account Subscription
+      </div>
+
+      <div class="form-row">
+        <label for="companyInput">Company Name</label>
+        <input id="companyInput" type="text" placeholder="Auto-loaded company name" readonly />
+      </div>
+
+      <div class="form-row">
+        <label for="emailInput">Company Email</label>
+        <input id="emailInput" type="email" placeholder="Auto-loaded company email" readonly />
+      </div>
+
+      <button class="btn danger" id="logoutBtn">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+      </button>
+
+      <div id="msg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(!dd || !toggle || !menu) return;
+
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openAboutMenu(){
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const isOpen = dd.classList.contains("open");
+    if(isOpen) closeAboutMenu();
+    else openAboutMenu();
+  });
+
+  document.addEventListener("click", function(e){
+    if(!dd.contains(e.target)) closeAboutMenu();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeAboutMenu();
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  });
+})();
+
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  if(!btn || !panel) return;
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth > 920) close();
+  }, { passive:true });
+})();
+
+const companyInput = document.getElementById("companyInput");
+const emailInput   = document.getElementById("emailInput");
+const msg          = document.getElementById("msg");
+const historyBody  = document.getElementById("historyBody");
+
+const statusBadge  = document.getElementById("statusBadge");
+const vCompany     = document.getElementById("vCompany");
+const vEmail       = document.getElementById("vEmail");
+const vStart       = document.getElementById("vStart");
+const vEnd         = document.getElementById("vEnd");
+const vAmount      = document.getElementById("vAmount");
+const vRemain      = document.getElementById("vRemain");
+
+function isSupabaseClient(obj){
+  return !!(
+    obj &&
+    typeof obj.from === "function" &&
+    obj.auth &&
+    typeof obj.auth.getSession === "function"
+  );
+}
+
+function isSupabaseNamespace(obj){
+  return !!(
+    obj &&
+    typeof obj.createClient === "function"
+  );
+}
+
+function resolveSupabaseClient(){
+  if (isSupabaseClient(window.supabase)) return window.supabase;
+  if (window.supabaseClient && isSupabaseClient(window.supabaseClient)) return window.supabaseClient;
+  if (isSupabaseNamespace(window.supabase) && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+    return window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  }
+  return null;
+}
+
+let supabaseClient = resolveSupabaseClient();
+
+function clearUI(){
+  statusBadge.className = "badge";
+  statusBadge.innerHTML = '<i class="fa-regular fa-circle-question"></i> No record';
+
+  vCompany.textContent = "—";
+  vEmail.textContent   = "—";
+  vStart.textContent   = "—";
+  vEnd.textContent     = "—";
+  vAmount.textContent  = "—";
+  vRemain.textContent  = "—";
+  historyBody.innerHTML = '<tr><td colspan="5">No data.</td></tr>';
+
+  msg.textContent = "";
+  msg.innerHTML   = "";
+  msg.style.color = "";
+}
+
+function formatDate(d){
+  if(!d) return "—";
+  const dt = new Date(String(d));
+  if (isNaN(dt)) return String(d);
+  return dt.toLocaleString("en-US", { year:"numeric", month:"short", day:"numeric" });
+}
+
+function formatDateTime(d){
+  if(!d) return "—";
+  const dt = new Date(String(d));
+  if (isNaN(dt)) return String(d);
+  return dt.toLocaleString("en-US", {
+    year:"numeric",
+    month:"short",
+    day:"numeric",
+    hour:"numeric",
+    minute:"2-digit"
+  });
+}
+
+function formatCompanyName(name){
+  if (!name) return "—";
+  return String(name)
+    .trim()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+function normalizeText(value){
+  return String(value || "").trim().toLowerCase();
+}
+
+function normalizeCompanyKey(value){
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function showErr(t){
+  msg.textContent = t;
+  msg.style.color = "#fecaca";
+}
+
+function showOk(t){
+  msg.innerHTML = `<span style="color:#bbf7d0"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(t)}</span>`;
+}
+
+function getTodayStart(){
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function getDaysRemaining(endDateValue){
+  if(!endDateValue) return null;
+  const endDate = new Date(endDateValue);
+  if (isNaN(endDate)) return null;
+
+  const today = getTodayStart();
+  const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+  const diffMs = end.getTime() - today.getTime();
+  return Math.ceil(diffMs / 86400000);
+}
+
+function getRecordField(obj, names, fallback = ""){
+  for(const name of names){
+    if(obj && Object.prototype.hasOwnProperty.call(obj, name) && obj[name] != null && String(obj[name]).trim() !== ""){
+      return obj[name];
+    }
+  }
+  return fallback;
+}
+
+function isStatusActiveValue(value){
+  const s = normalizeText(value);
+  return ["active", "paid", "approved", "current"].includes(s);
+}
+
+function isStatusInactiveValue(value){
+  const s = normalizeText(value);
+  return ["expired", "inactive", "cancelled", "canceled", "not active"].includes(s);
+}
+
+function isRecordActive(record){
+  const statusText = getRecordField(record, ["status", "payment_status", "subscription_status"], "");
+  if(statusText){
+    if(isStatusActiveValue(statusText)) return true;
+    if(isStatusInactiveValue(statusText)) return false;
+  }
+
+  const endValue = getRecordField(record, ["subscription_end_date", "end_date", "date_end", "expiry_date", "expiration_date"], "");
+  const remain = getDaysRemaining(endValue);
+  return remain != null ? remain >= 0 : false;
+}
+
+function setBadge(active){
+  if(active){
+    statusBadge.className = "badge active";
+    statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Active';
+  } else {
+    statusBadge.className = "badge expired";
+    statusBadge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Not Active';
+  }
+}
+
+function scoreRecordForCurrent(record, companyName, email){
+  let score = 0;
+
+  const recordCompany = getRecordField(record, ["company_name", "company", "business_name", "employer_company_name"], "");
+  const recordEmail = getRecordField(record, ["company_email", "email", "contact_email", "employer_email"], "");
+
+  if(normalizeText(recordEmail) === normalizeText(email)) score += 100;
+  if(normalizeCompanyKey(recordCompany) === normalizeCompanyKey(companyName)) score += 60;
+  if(isRecordActive(record)) score += 1000;
+
+  const createdAt = new Date(getRecordField(record, ["created_at", "payment_date", "date_created"], 0)).getTime() || 0;
+  score += createdAt / 1000000000000;
+
+  return score;
+}
+
+function selectCurrentSubscription(records, companyName, email){
+  if(!Array.isArray(records) || !records.length) return null;
+
+  return [...records].sort((a, b) => {
+    return scoreRecordForCurrent(b, companyName, email) - scoreRecordForCurrent(a, companyName, email);
+  })[0];
+}
+
+function render(history, currentRecord, companyName, email){
+  if(!currentRecord){
+    setBadge(false);
+    vCompany.textContent = formatCompanyName(companyName || "—");
+    vEmail.textContent   = email || "—";
+    vStart.textContent   = "—";
+    vEnd.textContent     = "—";
+    vAmount.textContent  = "—";
+    vRemain.textContent  = "—";
+    historyBody.innerHTML = '<tr><td colspan="5">No payment history found.</td></tr>';
+    return;
+  }
+
+  const active = isRecordActive(currentRecord);
+  setBadge(active);
+
+  const amountVal = getRecordField(currentRecord, ["amount", "payment_amount", "subscription_amount", "price"], null);
+  const startVal  = getRecordField(currentRecord, ["subscription_start_date", "start_date", "date_start"], "");
+  const endVal    = getRecordField(currentRecord, ["subscription_end_date", "end_date", "date_end", "expiry_date", "expiration_date"], "");
+  const remainVal = getDaysRemaining(endVal);
+
+  vCompany.textContent = formatCompanyName(companyName || getRecordField(currentRecord, ["company_name", "company", "business_name"], ""));
+  vEmail.textContent   = String(email || getRecordField(currentRecord, ["company_email", "email", "contact_email", "employer_email"], "—")).toLowerCase();
+  vStart.textContent   = formatDate(startVal);
+  vEnd.textContent     = formatDate(endVal);
+  vAmount.textContent  = amountVal != null && amountVal !== "" && !isNaN(Number(amountVal))
+    ? `$${Number(amountVal).toFixed(2)}`
+    : "—";
+  vRemain.textContent  = remainVal != null ? `${remainVal}` : "—";
+
+  if(!history || history.length === 0){
+    historyBody.innerHTML = '<tr><td colspan="5">No history.</td></tr>';
+    return;
+  }
+
+  historyBody.innerHTML = "";
+
+  history.forEach(r => {
+    const createdVal = getRecordField(r, ["created_at", "date_created", "payment_date", "createdon"], "");
+    const start = getRecordField(r, ["subscription_start_date", "start_date", "date_start"], "");
+    const end = getRecordField(r, ["subscription_end_date", "end_date", "date_end", "expiry_date", "expiration_date"], "");
+    const status = getRecordField(r, ["status", "payment_status", "subscription_status"], "");
+    const remain = getDaysRemaining(end);
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(formatDateTime(createdVal))}</td>
+      <td>${escapeHtml(formatDate(start))}</td>
+      <td>${escapeHtml(formatDate(end))}</td>
+      <td>${escapeHtml(remain != null ? String(remain) : "—")}</td>
+      <td>${escapeHtml(String(status || (isRecordActive(r) ? "ACTIVE" : "NOT ACTIVE")).toUpperCase())}</td>
+    `;
+    historyBody.appendChild(tr);
+  });
+}
+
+async function getLoggedInSessionEmail(){
+  if(!supabaseClient) return "";
+
+  const { data, error } = await supabaseClient.auth.getSession();
+  if(error){
+    console.error("Session fetch error:", error);
+    return "";
+  }
+
+  const sessionEmail = data?.session?.user?.email || "";
+  return String(sessionEmail).trim().toLowerCase();
+}
+
+async function getEmployerRecordByEmail(email){
+  if(!supabaseClient) throw new Error("Supabase client is not available.");
+
+  const emailColumns = ["email", "company_email", "contact_email", "employer_email"];
+
+  for(const column of emailColumns){
+    const { data, error } = await supabaseClient
+      .from("employers")
+      .select("*")
+      .eq(column, email)
+      .limit(1);
+
+    if(error){
+      console.warn(`Employers lookup failed on column "${column}":`, error.message || error);
+      continue;
+    }
+
+    if(Array.isArray(data) && data.length){
+      return data[0];
+    }
+  }
+
+  return null;
+}
+
+async function queryTransactionsFromTable(tableName, email){
+  const emailColumns = ["company_email", "email", "contact_email", "employer_email"];
+
+  for(const emailColumn of emailColumns){
+    let result = await supabaseClient
+      .from(tableName)
+      .select("*")
+      .eq(emailColumn, email)
+      .order("created_at", { ascending: false });
+
+    if(result.error){
+      result = await supabaseClient
+        .from(tableName)
+        .select("*")
+        .eq(emailColumn, email);
+    }
+
+    if(result.error){
+      console.warn(`Lookup failed in ${tableName} on ${emailColumn}:`, result.error.message || result.error);
+      continue;
+    }
+
+    if(Array.isArray(result.data) && result.data.length){
+      return result.data;
+    }
+  }
+
+  return [];
+}
+
+async function getPaymentTransactions(companyName, email){
+  if(!supabaseClient) throw new Error("Supabase client is not available.");
+
+  const candidateTables = [
+    "employer_payment_transactions",
+    "employment_payment_transactions"
+  ];
+
+  let allRows = [];
+
+  for(const tableName of candidateTables){
+    const rows = await queryTransactionsFromTable(tableName, email);
+    if(rows.length){
+      allRows = rows;
+      break;
+    }
+  }
+
+  if(!allRows.length){
+    return [];
+  }
+
+  const normalizedEmail = normalizeText(email);
+  const normalizedCompany = normalizeCompanyKey(companyName);
+
+  const filtered = allRows.filter(row => {
+    const rowCompany = normalizeCompanyKey(getRecordField(row, ["company_name", "company", "business_name", "employer_company_name"], ""));
+    const rowEmail = normalizeText(getRecordField(row, ["company_email", "email", "contact_email", "employer_email"], ""));
+    return rowEmail === normalizedEmail && rowCompany === normalizedCompany;
+  });
+
+  const finalRows = filtered.length
+    ? filtered
+    : allRows.filter(row => {
+        const rowEmail = normalizeText(getRecordField(row, ["company_email", "email", "contact_email", "employer_email"], ""));
+        return rowEmail === normalizedEmail;
+      });
+
+  return [...finalRows].sort((a, b) => {
+    const aActive = isRecordActive(a) ? 1 : 0;
+    const bActive = isRecordActive(b) ? 1 : 0;
+    if (bActive !== aActive) return bActive - aActive;
+
+    const aDate = new Date(getRecordField(a, ["created_at", "payment_date", "date_created"], 0)).getTime() || 0;
+    const bDate = new Date(getRecordField(b, ["created_at", "payment_date", "date_created"], 0)).getTime() || 0;
+    return bDate - aDate;
+  });
+}
+
+async function loadLoggedInEmployerSubscription(){
+  clearUI();
+
+  supabaseClient = resolveSupabaseClient();
+
+  if(!supabaseClient){
+    showErr("Supabase client was not detected. Please reload this page.");
+    return;
+  }
+
+  msg.innerHTML = `<span style="color:#cbd5f5"><i class="fa-solid fa-spinner fa-spin"></i> Loading employer account...</span>`;
+
+  const sessionEmail = await getLoggedInSessionEmail();
+
+  if(!sessionEmail){
+    window.location.href = "loginemployer.html";
+    return;
+  }
+
+  const employerRow = await getEmployerRecordByEmail(sessionEmail);
+
+  if(!employerRow){
+    window.location.href = "loginemployer.html";
+    return;
+  }
+
+  const companyName = String(getRecordField(
+    employerRow,
+    ["company_name", "company", "business_name", "employer_name"],
+    ""
+  )).trim();
+
+  const employerEmail = String(getRecordField(
+    employerRow,
+    ["email", "company_email", "contact_email", "employer_email"],
+    sessionEmail
+  )).trim().toLowerCase();
+
+  if(!companyName || !employerEmail){
+    window.location.href = "loginemployer.html";
+    return;
+  }
+
+  companyInput.value = formatCompanyName(companyName);
+  emailInput.value = employerEmail;
+
+  localStorage.setItem("employerCompanyName", companyName);
+  localStorage.setItem("employerEmail", employerEmail);
+  localStorage.setItem("loggedInEmployerCompanyName", companyName);
+  localStorage.setItem("loggedInEmployerEmail", employerEmail);
+
+  msg.innerHTML = `<span style="color:#cbd5f5"><i class="fa-solid fa-spinner fa-spin"></i> Loading payment history...</span>`;
+
+  const transactions = await getPaymentTransactions(companyName, employerEmail);
+
+  if(!transactions.length){
+    render([], null, companyName, employerEmail);
+    showErr("No payment record found for this logged-in employer.");
+    return;
+  }
+
+  const currentRecord = selectCurrentSubscription(transactions, companyName, employerEmail);
+  render(transactions, currentRecord, companyName, employerEmail);
+
+  if(currentRecord && isRecordActive(currentRecord)){
+    showOk("Active subscription loaded.");
+  } else {
+    showErr("No active subscription found for this logged-in employer.");
+  }
+}
+
+async function logoutAndRedirect(){
+  try{
+    supabaseClient = resolveSupabaseClient();
+    if (supabaseClient){
+      await supabaseClient.auth.signOut();
+    }
+  } catch(err){
+    console.warn("Supabase sign out skipped:", err);
+  }
+
+  [
+    "lastSubscribedEmail",
+    "lastSubscribedCompanyName",
+    "employerEmail",
+    "employerCompanyName",
+    "loggedInEmployerEmail",
+    "loggedInEmployerCompanyName",
+    "companyEmail",
+    "companyName",
+    "userEmail",
+    "userCompanyName",
+    "lastEmployerEmail",
+    "lastEmployerCompanyName"
+  ].forEach(key => localStorage.removeItem(key));
+
+  companyInput.value = "";
+  emailInput.value   = "";
+  clearUI();
+
+  window.location.href = "loginemployer.html";
+}
+
+document.getElementById("logoutBtn").addEventListener("click", logoutAndRedirect);
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try{
+    await loadLoggedInEmployerSubscription();
+  }catch(err){
+    console.error(err);
+    showErr("Unable to auto-load subscription data. Please verify your table names, column names, and RLS policies.");
+  }
+});
+</script>
+
+</body>
+</html>

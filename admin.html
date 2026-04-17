@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Login | Job Space Link</title>
+
+<link rel="stylesheet" href="jobspacelink.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<style>
+:root{
+  --header-h:78px;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Poppins","Segoe UI",sans-serif;
+}
+
+html, body{
+  min-height:100%;
+  overflow-x:hidden;
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 16px);
+}
+
+body{
+  background:radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #020617);
+  color:#e5e7eb;
+  padding-top:var(--header-h);
+}
+
+/* ============================================================
+   HEADER - SAME FORMAT AS INDEX
+============================================================ */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+  transition:transform 0.25s ease;
+}
+
+header .logo img:hover{
+  transform:scale(1.03);
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:1rem;
+}
+
+/* ============================================================
+   MOBILE PANEL
+============================================================ */
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+/* ============================================================
+   ABOUT NAV FIX
+============================================================ */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* ============================================================
+   PAGE LAYOUT
+============================================================ */
+.page-shell{
+  min-height:calc(100vh - var(--header-h));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px 12px 26px;
+}
+
+.card{
+  width:390px;
+  max-width:calc(100vw - 24px);
+  background:rgba(15,23,42,0.92);
+  padding:26px 24px;
+  border-radius:18px;
+  border:1px solid rgba(59,130,246,0.4);
+  backdrop-filter:blur(14px);
+  box-shadow:0 0 35px rgba(15,23,42,0.85);
+}
+
+h1{
+  text-align:center;
+  color:#38bdf8;
+  margin-bottom:10px;
+  text-shadow:0 0 12px rgba(56,189,248,0.7);
+  font-size:1.45rem;
+}
+
+p{
+  text-align:center;
+  opacity:0.8;
+  margin-bottom:18px;
+  font-size:0.91rem;
+}
+
+label{
+  display:block;
+  margin:12px 0 6px;
+  font-size:0.84rem;
+  font-weight:600;
+}
+
+input{
+  width:100%;
+  padding:11px 12px;
+  border-radius:12px;
+  background:rgba(2,6,23,0.7);
+  border:1px solid rgba(255,255,255,0.15);
+  color:#fff;
+  font-size:0.93rem;
+}
+
+input:focus{
+  outline:none;
+  border-color:#0ea5e9;
+  box-shadow:0 0 12px rgba(56,189,248,0.55);
+}
+
+button.login-btn{
+  width:100%;
+  margin-top:18px;
+  padding:12px 14px;
+  border-radius:14px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg,#0ea5e9,#7c3aed);
+  box-shadow:0 0 25px rgba(56,189,248,0.55);
+  transition:0.25s;
+  font-size:0.95rem;
+}
+
+button.login-btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 0 30px rgba(129,140,248,0.7);
+}
+
+button.login-btn:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+.footer{
+  text-align:center;
+  margin-top:14px;
+  font-size:0.78rem;
+  opacity:0.6;
+}
+
+/* ========= POST-LOGIN CHOICE OVERLAY ========= */
+.choice-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:18px;
+}
+
+.choice-card{
+  width:100%;
+  max-width:620px;
+  background:rgba(15,23,42,0.96);
+  border-radius:20px;
+  border:1px solid rgba(59,130,246,0.7);
+  box-shadow:0 0 30px rgba(37,99,235,0.7);
+  padding:24px 26px 22px;
+  text-align:center;
+}
+
+.choice-card h2{
+  font-size:1.28rem;
+  margin-bottom:8px;
+  color:#e0f2fe;
+}
+
+.choice-card p{
+  font-size:0.9rem;
+  margin-bottom:16px;
+  opacity:0.9;
+}
+
+.choice-card{
+  position:relative;
+}
+
+.choice-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#ffffff;
+  background:linear-gradient(135deg, rgba(239,68,68,0.9), rgba(124,58,237,0.9));
+  border:1px solid rgba(255,255,255,0.16);
+  box-shadow:0 0 16px rgba(239,68,68,0.22);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+}
+
+.choice-close:hover{
+  transform:translateY(-1px) scale(1.02);
+  box-shadow:0 0 20px rgba(239,68,68,0.34);
+}
+
+.choice-close:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px rgba(56,189,248,0.35), 0 0 20px rgba(239,68,68,0.34);
+}
+
+.choice-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.choice-btn{
+  padding:11px 14px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  font-size:0.9rem;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed,#00c6ff);
+  background-size:200%;
+  color:#fff;
+  box-shadow:0 0 18px rgba(59,130,246,0.55);
+  transition:0.3s;
+}
+
+.choice-btn.secondary{
+  background:linear-gradient(90deg,#22c55e,#16a34a,#22c55e);
+  box-shadow:0 0 16px rgba(34,197,94,0.65);
+}
+
+.choice-btn.match-email{
+  background:linear-gradient(90deg,#f59e0b,#ef4444,#f59e0b);
+  background-size:200%;
+  box-shadow:0 0 16px rgba(245,158,11,0.55);
+}
+
+.choice-btn.applicant-record{
+  background:linear-gradient(90deg,#06b6d4,#2563eb,#06b6d4);
+  background-size:200%;
+  box-shadow:0 0 16px rgba(37,99,235,0.55);
+}
+
+.choice-btn:hover{
+  background-position:100% 0;
+  transform:translateY(-1px);
+}
+
+/* ============================================================
+   MEDIA QUERIES
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{
+    --header-h:84px;
+  }
+
+  header{
+    padding:0 26px 0 16px;
+    gap:18px;
+  }
+
+  header .logo img{
+    height:90px;
+  }
+
+  header nav{
+    gap:20px;
+    margin-left:10px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.96rem;
+  }
+
+  header .auth-buttons{
+    gap:10px;
+  }
+
+  header .auth-buttons a{
+    height:38px;
+    padding:0 14px;
+    font-size:0.86rem;
+  }
+
+  .page-shell{
+    padding:26px 16px 34px;
+  }
+
+  .card{
+    width:500px;
+    padding:40px 38px;
+    border-radius:22px;
+  }
+
+  h1{ font-size:1.9rem; }
+  p{ font-size:1.02rem; margin-bottom:24px; }
+  label{ font-size:0.96rem; margin:16px 0 8px; }
+  input{ padding:15px 16px; font-size:1.05rem; border-radius:14px; }
+  button.login-btn{ padding:16px; font-size:1.08rem; border-radius:16px; margin-top:22px; }
+
+  .choice-card{
+    width:min(96vw, 1100px);
+    max-width:680px;
+    padding:34px 32px 30px;
+    border-radius:24px;
+  }
+
+  .choice-close{
+    top:14px;
+    right:14px;
+    width:42px;
+    height:42px;
+  }
+
+  .choice-card h2{ font-size:1.55rem; }
+  .choice-card p{ font-size:1rem; }
+  .choice-buttons{
+    grid-template-columns:1fr;
+    gap:12px;
+    align-items:stretch;
+  }
+  .choice-btn{
+    width:100%;
+    min-height:56px;
+    padding: 12px 16px;
+    font-size: 0.92rem;
+    border-radius:16px;
+    flex-direction:row;
+    gap:8px;
+    white-space:normal;
+    line-height:1.18;
+    text-align:left;
+  }
+  .choice-btn i{
+    font-size:1rem;
+    flex:0 0 auto;
+  }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  header{
+    padding:0 22px 0 12px;
+    gap:14px;
+  }
+
+  header .logo img{
+    height:82px;
+  }
+
+  header nav{
+    gap:15px;
+    margin-left:8px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.89rem;
+  }
+
+  header .auth-buttons a{
+    height:36px;
+    padding:0 11px;
+    font-size:0.81rem;
+  }
+
+  .page-shell{
+    padding:22px 14px 30px;
+  }
+
+  .card{
+    width:430px;
+    padding:30px 28px;
+  }
+
+  h1{ font-size:1.6rem; }
+  p{ font-size:0.95rem; }
+
+  .choice-card{
+    width:min(96vw, 980px);
+    max-width:660px;
+    padding:28px 26px 24px;
+  }
+
+  .choice-close{
+    top:12px;
+    right:12px;
+    width:40px;
+    height:40px;
+  }
+
+  .choice-buttons{
+    grid-template-columns:1fr;
+    gap:10px;
+    align-items:stretch;
+  }
+
+  .choice-btn{
+    width:100%;
+    min-height:54px;
+    padding: 11px 15px;
+    font-size: 0.88rem;
+    border-radius:15px;
+    flex-direction:row;
+    gap:7px;
+    white-space:normal;
+    line-height:1.16;
+    text-align:left;
+  }
+
+  .choice-btn i{
+    font-size:0.94rem;
+    flex:0 0 auto;
+  }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  header{
+    padding:0 14px 0 8px;
+    gap:10px;
+  }
+
+  header .logo img{
+    height:70px;
+  }
+
+  header nav{
+    gap:10px;
+    margin-left:4px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.78rem;
+  }
+
+  header .auth-buttons{
+    gap:6px;
+  }
+
+  header .auth-buttons a{
+    height:34px;
+    padding:0 8px;
+    font-size:0.73rem;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    padding:16px 12px 22px;
+  }
+
+  .card{
+    width:370px;
+    padding:22px 20px;
+    border-radius:16px;
+  }
+
+  h1{ font-size:1.34rem; margin-bottom:8px; }
+  p{ font-size:0.86rem; margin-bottom:14px; }
+  label{ font-size:0.80rem; margin:10px 0 5px; }
+  input{ padding:10px 11px; font-size:0.88rem; border-radius:10px; }
+  button.login-btn{ padding:11px 12px; font-size:0.90rem; margin-top:15px; }
+
+  .choice-card{
+    width:min(96vw, 900px);
+    max-width:620px;
+    padding:22px 20px 20px;
+  }
+
+  .choice-close{
+    top:10px;
+    right:10px;
+    width:38px;
+    height:38px;
+  }
+
+  .choice-card h2{ font-size:1.18rem; }
+  .choice-card p{ font-size:0.86rem; }
+  .choice-buttons{
+    grid-template-columns:1fr;
+    gap:8px;
+    align-items:stretch;
+  }
+  .choice-btn{
+    width:100%;
+    min-height:52px;
+    font-size: 0.82rem;
+    padding: 10px 14px;
+    border-radius:14px;
+    flex-direction:row;
+    gap:6px;
+    white-space:normal;
+    line-height:1.12;
+    text-align:left;
+  }
+  .choice-btn i{
+    font-size:0.86rem;
+    flex:0 0 auto;
+  }
+}
+
+/* ===== 769px to 1023px ===== */
+/* DESKTOP HEADER ONLY, NO HAMBURGER */
+@media (min-width: 769px) and (max-width: 1023px){
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  header{
+    padding:0 10px 0 6px;
+    gap:8px;
+  }
+
+  header nav{
+    display:flex;
+    gap:8px;
+    margin-left:2px;
+  }
+
+  header .auth-buttons{
+    display:flex;
+    gap:5px;
+  }
+
+  header .logo img{
+    height:60px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.69rem;
+    padding:0 2px;
+    height:34px;
+  }
+
+  .nav-dropdown{
+    height:34px;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px;
+    height:20px;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.72rem;
+  }
+
+  header .auth-buttons a{
+    height:32px;
+    padding:0 7px;
+    font-size:0.66rem;
+    border-radius:8px;
+    gap:4px;
+  }
+
+  .page-shell{
+    align-items:center;
+    justify-content:center;
+    padding:12px 12px 18px;
+  }
+
+  .card{
+    width:340px;
+    max-width:100%;
+    margin:0 auto;
+    padding:18px 16px;
+    border-radius:14px;
+  }
+
+  h1{
+    font-size:1.18rem;
+    margin-bottom:6px;
+  }
+
+  p{
+    font-size:0.78rem;
+    margin-bottom:11px;
+    line-height:1.32;
+  }
+
+  label{
+    font-size:0.75rem;
+    margin:8px 0 4px;
+  }
+
+  input{
+    padding:8px 9px;
+    font-size:0.82rem;
+    border-radius:9px;
+  }
+
+  button.login-btn{
+    margin-top:12px;
+    padding:9px 10px;
+    font-size:0.84rem;
+    border-radius:10px;
+  }
+
+  .footer{
+    margin-top:10px;
+    font-size:0.72rem;
+  }
+
+  .choice-overlay{
+    padding:12px;
+  }
+
+  .choice-card{
+    width:min(390px, calc(100vw - 84px));
+    max-width:390px;
+    padding:12px 12px 10px;
+    border-radius:13px;
+  }
+
+  .choice-close{
+    top:8px;
+    right:8px;
+    width:32px;
+    height:32px;
+    border-radius:10px;
+    font-size:0.78rem;
+  }
+
+  .choice-card h2{
+    font-size:0.90rem;
+    margin-bottom:3px;
+  }
+
+  .choice-card p{
+    font-size:0.70rem;
+    margin-bottom:7px;
+    line-height:1.18;
+  }
+
+  .choice-buttons{
+    grid-template-columns:1fr;
+    gap:7px;
+    align-items:stretch;
+  }
+
+  .choice-btn{
+    width:100%;
+    min-height:38px;
+    padding:8px 10px;
+    font-size:0.68rem;
+    gap:6px;
+    line-height:1.06;
+    border-radius:11px;
+    flex-direction:row;
+    flex-wrap:nowrap;
+    white-space:nowrap;
+    text-align:center;
+  }
+
+  .choice-btn i{
+    font-size:0.76rem;
+    flex:0 0 auto;
+  }
+}
+
+/* ===== 481px to 768px ===== */
+/* SMALL TABLET ONLY = HAMBURGER */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{
+    --header-h:72px;
+  }
+
+  header{
+    padding:0 14px 0 8px;
+    gap:10px;
+  }
+
+  header .logo img{
+    height:54px;
+  }
+
+  header nav{
+    display:none;
+  }
+
+  header .auth-buttons{
+    display:none;
+  }
+
+  .nav-toggle{
+    display:inline-flex;
+    width:40px;
+    height:40px;
+  }
+
+  .mobile-panel{
+    padding:12px 14px 16px;
+  }
+
+  .mobile-panel .mnav a{
+    padding:11px 12px;
+    border-radius:11px;
+    font-size:0.92rem;
+  }
+
+  .page-shell{
+    align-items:flex-start;
+    padding:18px 12px 24px;
+  }
+
+  .card{
+    width:100%;
+    max-width:440px;
+    padding:22px 18px;
+    border-radius:16px;
+  }
+
+  h1{ font-size:1.32rem; }
+  p{ font-size:0.88rem; margin-bottom:15px; }
+  label{ margin:11px 0 6px; }
+  input{ padding:11px 12px; font-size:0.94rem; }
+  button.login-btn{ padding:12px; font-size:0.94rem; }
+
+  .choice-card{
+    max-width:520px;
+    padding:22px 18px 18px;
+    border-radius:18px;
+  }
+
+  .choice-close{
+    top:10px;
+    right:10px;
+    width:36px;
+    height:36px;
+  }
+
+  .choice-buttons{
+    grid-template-columns:1fr;
+  }
+
+  .choice-btn{
+    padding:12px 14px;
+    font-size:0.94rem;
+  }
+}
+
+/* ===== 480px and below ===== */
+/* MOBILE PHONE ONLY = HAMBURGER */
+@media (max-width: 480px){
+  :root{
+    --header-h:70px;
+  }
+
+  header{
+    padding:0 12px 0 8px;
+    gap:8px;
+  }
+
+  header .logo{
+    margin-left:-2px;
+  }
+
+  header .logo img{
+    height:50px;
+  }
+
+  header nav{
+    display:none;
+  }
+
+  header .auth-buttons{
+    display:none;
+  }
+
+  .nav-toggle{
+    display:inline-flex;
+    width:38px;
+    height:38px;
+    border-radius:9px;
+  }
+
+  .mobile-panel{
+    padding:12px 12px 14px;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px;
+  }
+
+  .mobile-panel .mnav a{
+    padding:10px 11px;
+    border-radius:10px;
+    font-size:0.88rem;
+  }
+
+  .page-shell{
+    align-items:flex-start;
+    padding:16px 8px 20px;
+  }
+
+  .card{
+    width:100%;
+    max-width:100%;
+    padding:18px 14px;
+    border-radius:16px;
+  }
+
+  h1{ font-size:1.18rem; }
+  p{ font-size:0.84rem; margin-bottom:14px; }
+  label{ font-size:0.80rem; margin:10px 0 5px; }
+
+  input{
+    padding:11px 12px;
+    font-size:16px;
+    border-radius:11px;
+  }
+
+  button.login-btn{
+    padding:12px 14px;
+    font-size:0.94rem;
+    border-radius:12px;
+  }
+
+  .footer{
+    font-size:0.76rem;
+  }
+
+  .choice-overlay{
+    padding:12px;
+  }
+
+  .choice-card{
+    max-width:100%;
+    padding:18px 14px 16px;
+    border-radius:16px;
+  }
+
+  .choice-close{
+    top:10px;
+    right:10px;
+    width:34px;
+    height:34px;
+    border-radius:10px;
+  }
+
+  .choice-card h2{ font-size:1.12rem; }
+  .choice-card p{ font-size:0.84rem; }
+
+  .choice-buttons{
+    grid-template-columns:1fr;
+  }
+
+  .choice-btn{
+    padding:12px 14px;
+    font-size:0.90rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+        <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="employer_dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<div class="page-shell">
+  <form class="card" id="adminLoginForm" novalidate>
+    <h1><i class="fa-solid fa-user-lock"></i> Admin Login</h1>
+    <p>Administrator access only</p>
+
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="admin@email.com" autocomplete="username" />
+
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+
+    <button class="login-btn" id="loginBtn" type="submit">Login</button>
+    <div class="footer">Admins only</div>
+  </form>
+</div>
+
+<div id="choiceOverlay" class="choice-overlay" aria-hidden="true">
+  <div class="choice-card" role="dialog" aria-modal="true" aria-label="Admin Portal">
+    <button id="btnCloseOverlay" class="choice-close" type="button" aria-label="Exit popup">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <h2><i class="fa-solid fa-gauge-high"></i> Admin Portal</h2>
+    <p>Select what you want to do after login.</p>
+
+    <div class="choice-buttons">
+      <button id="btnViewSubs" class="choice-btn" type="button">
+        <i class="fa-solid fa-table-list"></i>
+        View Employer Subscription Records
+      </button>
+
+      <button id="btnBulkEmail" class="choice-btn secondary" type="button">
+        <i class="fa-solid fa-envelope-circle-check"></i>
+        Send Admin Bulk Messages
+      </button>
+
+      <button id="btnMatchEmail" class="choice-btn match-email" type="button">
+        <i class="fa-solid fa-envelopes-bulk"></i>
+        Admin Match Email
+      </button>
+
+      <button id="btnApplicantRecord" class="choice-btn applicant-record" type="button">
+        <i class="fa-solid fa-folder-open"></i>
+        View Applicant Transaction Record
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const sb = window.sbClient || window.supabaseClient || window.supabase;
+
+const adminLoginForm = document.getElementById("adminLoginForm");
+const loginBtn = document.getElementById("loginBtn");
+const choiceOverlay = document.getElementById("choiceOverlay");
+const btnViewSubs = document.getElementById("btnViewSubs");
+const btnBulkEmail = document.getElementById("btnBulkEmail");
+const btnMatchEmail = document.getElementById("btnMatchEmail");
+const btnApplicantRecord = document.getElementById("btnApplicantRecord");
+const btnCloseOverlay = document.getElementById("btnCloseOverlay");
+
+const emailEl = document.getElementById("email");
+const passEl = document.getElementById("password");
+const loginCard = document.getElementById("adminLoginForm");
+
+let overlayOpen = false;
+let isSubmitting = false;
+let lastFocusedBeforeOverlay = null;
+
+/* ============================================================
+   ABOUT DROPDOWN (Desktop)
+============================================================ */
+(function(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(!dd || !toggle || !menu) return;
+
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openAboutMenu(){
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isOpen = dd.classList.contains("open");
+    if(isOpen){
+      closeAboutMenu();
+    }else{
+      openAboutMenu();
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if(!dd.contains(e.target)){
+      closeAboutMenu();
+    }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !overlayOpen){
+      closeAboutMenu();
+    }
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  });
+})();
+
+/* ============================================================
+   MOBILE MENU
+============================================================ */
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  if(!btn || !panel) return;
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape" && !overlayOpen) close();
+  });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth >= 769) close();
+  }, { passive:true });
+})();
+
+/* =========================
+   OVERLAY HELPERS
+========================= */
+function showChoiceOverlay(){
+  overlayOpen = true;
+  choiceOverlay.style.display = "flex";
+  choiceOverlay.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+
+  lastFocusedBeforeOverlay = document.activeElement;
+  setTimeout(() => btnViewSubs.focus(), 0);
+}
+
+function hideChoiceOverlay(){
+  overlayOpen = false;
+  choiceOverlay.style.display = "none";
+  choiceOverlay.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+
+  if (lastFocusedBeforeOverlay && typeof lastFocusedBeforeOverlay.focus === "function"){
+    lastFocusedBeforeOverlay.focus();
+  } else {
+    emailEl.focus();
+  }
+}
+
+/* =========================
+   LOGIN BUTTON STATE
+========================= */
+function setLoginButtonState(isLoading){
+  loginBtn.disabled = !!isLoading;
+  loginBtn.textContent = isLoading ? "Signing in..." : "Login";
+}
+
+/* =========================
+   OVERLAY NAVIGATION
+========================= */
+function getOverlayButtons(){
+  return [btnCloseOverlay, btnViewSubs, btnBulkEmail, btnMatchEmail, btnApplicantRecord].filter(Boolean);
+}
+
+function focusOverlayIndex(i){
+  const btns = getOverlayButtons();
+  if (!btns.length) return;
+  const idx = (i + btns.length) % btns.length;
+  btns[idx].focus();
+}
+
+function getFocusedOverlayIndex(){
+  const btns = getOverlayButtons();
+  return btns.indexOf(document.activeElement);
+}
+
+btnViewSubs.addEventListener("click", () => {
+  window.location.href = "subscriptionrecord.html";
+});
+
+btnBulkEmail.addEventListener("click", () => {
+  window.location.href = "email2.html";
+});
+
+btnMatchEmail.addEventListener("click", () => {
+  window.location.href = "admin_match_email.html";
+});
+
+btnApplicantRecord.addEventListener("click", () => {
+  window.location.href = "applicantrecord.html";
+});
+
+btnCloseOverlay.addEventListener("click", () => {
+  hideChoiceOverlay();
+});
+
+choiceOverlay.addEventListener("click", (e) => {
+  if (e.target === choiceOverlay) hideChoiceOverlay();
+});
+
+/* =========================
+   KEYBOARD HANDLING
+========================= */
+document.addEventListener("keydown", (e) => {
+  if (overlayOpen){
+    const btns = getOverlayButtons();
+
+    if (e.key === "Escape"){
+      e.preventDefault();
+      hideChoiceOverlay();
+      return;
+    }
+
+    if (!btns.length) return;
+
+    if (e.key === "ArrowDown"){
+      e.preventDefault();
+      const idx = getFocusedOverlayIndex();
+      focusOverlayIndex(idx === -1 ? 0 : idx + 1);
+      return;
+    }
+
+    if (e.key === "ArrowUp"){
+      e.preventDefault();
+      const idx = getFocusedOverlayIndex();
+      focusOverlayIndex(idx === -1 ? 0 : idx - 1);
+      return;
+    }
+
+    if (e.key === "Enter"){
+      const idx = getFocusedOverlayIndex();
+      if (idx >= 0){
+        e.preventDefault();
+        btns[idx].click();
+      }
+      return;
+    }
+
+    if (e.key === "Tab"){
+      e.preventDefault();
+      const idx = getFocusedOverlayIndex();
+      const next = e.shiftKey ? (idx - 1) : (idx + 1);
+      focusOverlayIndex(next);
+      return;
+    }
+
+    return;
+  }
+
+  if (e.key === "Enter"){
+    const active = document.activeElement;
+
+    if (active === emailEl){
+      e.preventDefault();
+      passEl.focus();
+      return;
+    }
+
+    if (active === passEl){
+      e.preventDefault();
+      loginBtn.focus();
+      return;
+    }
+
+    if (active === loginBtn){
+      e.preventDefault();
+      adminLogin();
+      return;
+    }
+
+    if (loginCard.contains(active)){
+      e.preventDefault();
+      if (!emailEl.value.trim()) emailEl.focus();
+      else if (!passEl.value) passEl.focus();
+      else loginBtn.focus();
+    }
+  }
+});
+
+/* =========================
+   AUTOFOCUS
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => emailEl.focus(), 0);
+});
+
+/* =========================
+   FORM SUBMIT
+========================= */
+adminLoginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await adminLogin();
+});
+
+/* =========================
+   ADMIN LOGIN
+========================= */
+async function adminLogin(){
+  if (isSubmitting) return;
+
+  const email = emailEl.value.trim().toLowerCase();
+  const password = passEl.value;
+
+  if (!email || !password){
+    alert("Email and password required");
+    if (!email) emailEl.focus();
+    else passEl.focus();
+    return;
+  }
+
+  if (!sb || !sb.auth){
+    alert("Supabase is not initialized. Check supabase_config.js");
+    return;
+  }
+
+  try{
+    isSubmitting = true;
+    setLoginButtonState(true);
+
+    const { error: signInError } = await sb.auth.signInWithPassword({ email, password });
+
+    if (signInError){
+      alert(signInError.message);
+      passEl.focus();
+      passEl.select?.();
+      return;
+    }
+
+    const { data: { user }, error: userErr } = await sb.auth.getUser();
+
+    if (userErr || !user){
+      alert("Unable to retrieve user. Please try again.");
+      await sb.auth.signOut();
+      emailEl.focus();
+      return;
+    }
+
+    const appMetaRole = String(user?.app_metadata?.role || "").toLowerCase();
+
+    if (appMetaRole !== "admin"){
+      const { data: profile, error: profErr } = await sb
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profErr || String(profile?.role || "").toLowerCase() !== "admin"){
+        alert("Access denied: Admins only");
+        await sb.auth.signOut();
+        emailEl.focus();
+        return;
+      }
+    }
+
+    showChoiceOverlay();
+
+  }catch(err){
+    console.error("Admin login error:", err);
+    alert("Unexpected error during admin login.");
+  }finally{
+    isSubmitting = false;
+    setLoginButtonState(false);
+  }
+}
+</script>
+
+</body>
+</html>

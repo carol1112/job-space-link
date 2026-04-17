@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Employer Signup | Job Space Link</title>
+
+<!-- ICONS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+<link rel="stylesheet" href="jobspacelink.css" />
+<!-- LOAD SUPABASE (ONCE) + GLOBAL CLIENT -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<style>
+/* ===== CONTAINER ===== */
+.signup-container{
+  display:flex;justify-content:center;align-items:center;
+  min-height:calc(100vh - 160px);padding:20px;
+  margin-top: 40px;
+}
+.signup-box{
+  background:rgba(15,23,42,0.9);
+  border:2px solid rgba(59,130,246,0.4);
+  border-radius:20px;
+  box-shadow:0 0 25px rgba(59,130,246,0.3),
+              inset 0 0 20px rgba(147,51,234,0.15);
+  padding:45px 40px;
+  width:100%;max-width:420px;text-align:center;color:#fff;
+}
+
+/* ===== HEADINGS ===== */
+.signup-box h2{
+  font-size:1.9rem;margin-bottom:25px;color:#c0ff33;
+  text-shadow:0 0 15px rgba(147,51,234,0.7);
+}
+
+/* ===== INPUTS ===== */
+.signup-box input{
+  width:100%;padding:12px;border-radius:10px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05);color:#f1f5f9;
+  font-size:0.95rem;margin-bottom:18px;
+  transition:border 0.25s,box-shadow 0.25s;
+}
+.signup-box input:focus{
+  outline:none;border-color:#60a5fa;
+  box-shadow:0 0 12px rgba(59,130,246,0.4);
+  background:rgba(59,130,246,0.15);
+}
+
+/* PASSWORD TOGGLE */
+.toggle-password{
+  cursor:pointer;font-size:0.9em;color:#00c6ff;
+  display:block;margin-bottom:10px;text-align:right;
+}
+
+/* BUTTON */
+.signup-box button{
+  width:100%;padding:12px;border:none;border-radius:10px;
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
+  background-size:200%;color:white;font-size:1rem;font-weight:600;
+  cursor:pointer;transition:all 0.4s ease;
+  box-shadow:0 0 20px rgba(147,51,234,0.35);
+}
+.signup-box button:hover{
+  background-position:100% 0;transform:translateY(-3px);
+  box-shadow:0 0 30px rgba(147,51,234,0.6);
+}
+
+/* SUCCESS MESSAGE */
+.success-message{
+  display:none;position:absolute;top:-60px;left:50%;
+  transform:translateX(-50%);
+  background:#22c55e;color:white;
+  padding:12px 20px;border-radius:8px;font-size:14px;
+}
+
+/* ERROR */
+.error{color:#f87171;font-size:0.9em;margin-bottom:10px;}
+/* ============================================================
+   1800px and ABOVE — Extra Large Screens
+============================================================ */
+@media (min-width: 1800px) {
+  .signup-container {
+    padding-top: 180px;
+  }
+  .signup-box {
+    max-width: 500px;
+    padding: 55px 48px;
+    border-radius: 22px;
+  }
+  .signup-box h2 { font-size: 2.2rem; }
+  .signup-box input { padding: 14px; font-size: 1.05rem; }
+  .signup-box button { padding: 14px; font-size: 1.1rem; }
+}
+
+/* ============================================================
+   1440px to 1799px — Wide Desktop
+============================================================ */
+@media (min-width: 1440px) and (max-width: 1799px) {
+  .signup-container { padding-top: 160px; }
+  .signup-box {
+    max-width: 460px;
+    padding: 50px 42px;
+  }
+  .signup-box h2 { font-size: 2rem; }
+  .signup-box input { padding: 13px; }
+}
+
+/* ============================================================
+   1024px to 1439px — Standard Desktop / Laptop
+============================================================ */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .signup-container { padding-top: 150px; }
+  .signup-box {
+    max-width: 440px;
+    padding: 45px 38px;
+  }
+}
+/* ============================================================
+   769px–1023px — SUPER COMPACT 2-COLUMN SIGNUP FORM
+============================================================ */
+@media (min-width: 769px) and (max-width: 1023px) {
+
+  .signup-container {
+    padding-top: 95px;
+  }
+
+  .signup-box {
+    max-width: 360px;
+    padding: 22px 18px;
+    border-radius: 12px;
+  }
+
+  /* Grid form ultra compact */
+  .signup-box form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px 8px; /* very tight gap */
+    align-items: start;
+  }
+
+  /* Full-width fields */
+  #company_name,
+  #email,
+  .toggle-password,
+  .signup-box button,
+  .signup-box p,
+  .error {
+    grid-column: span 2;
+  }
+
+  .signup-box h2 {
+    font-size: 1.38rem;
+    margin-bottom: 10px;
+    grid-column: span 2;
+  }
+
+  /* Inputs smaller height + padding */
+  .signup-box input {
+    padding: 6px 8px;
+    height: 28px;                 /* smaller height */
+    font-size: 0.78rem;
+    border-radius: 5px;
+    margin-bottom: 4px;
+  }
+
+  /* Toggle password smaller */
+  .toggle-password {
+    font-size: 0.72rem;
+    margin-bottom: 3px;
+  }
+
+  /* Button super compact */
+  .signup-box button {
+    padding: 7px;
+    height: 30px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+
+  /* Bottom text smaller */
+  .signup-box p {
+    font-size: 0.75rem;
+    margin-top: 6px;
+  }
+
+  .error {
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+}
+
+
+/* ============================================================
+   481px to 768px — Tablet Portrait
+============================================================ */
+@media (min-width: 481px) and (max-width: 768px) {
+  .signup-container { padding-top: 120px; }
+
+  .signup-box {
+    max-width: 90%;
+    padding: 30px 24px;
+  }
+
+  .signup-box h2 { font-size: 1.6rem; }
+
+  .signup-box input {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .signup-box button {
+    padding: 11px;
+    font-size: 0.95rem;
+  }
+}
+
+/* ============================================================
+   480px and BELOW — Mobile (Super Compact)
+============================================================ */
+@media (max-width: 480px) {
+  .signup-container { margin-top: 110px; padding: 0 16px; }
+
+  .signup-box {
+    max-width: 100%;
+    padding: 26px 18px;
+    border-radius: 14px;
+  }
+
+  .signup-box h2 {
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+  }
+
+  .signup-box input {
+    padding: 9px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
+  .toggle-password {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .signup-box button {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .signup-box p {
+    font-size: 0.82rem;
+  }
+}
+
+</style>
+</head>
+
+<body>
+ 
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="postjob.html">Post Jobs</a>
+    <a href="postedhiring.html">Job Hiring</a>
+     <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <!-- EMPLOYER DROPDOWN -->
+    <div class="dropdown">
+      <a href="#" id="employerToggle" class="login dropdown-toggle">
+        <i class="fa-solid fa-user-lock"></i>
+        Employer
+        <i class="fa-solid fa-caret-down caret-icon"></i>
+      </a>
+
+      <div class="dropdown-menu" id="employerMenu">
+        <!-- Employer Login (optional, keep or remove as you like) -->
+        <a href="loginemployer.html">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Employer Login
+        </a>
+
+        <!-- Subscribe / Pay -->
+        <a href="subscribe.html">
+          <i class="fa-solid fa-credit-card"></i>
+          Subscribe
+        </a>
+
+        <!-- Subscription Status -->
+        <a href="subscriptionstatus.html">
+          <i class="fa-solid fa-list-check"></i>
+          Subscription Status
+        </a>
+      </div>
+    </div>
+     <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+
+    <!-- Admin stays as separate button -->
+    <a href="admin.html" class="admin">
+      <i class="fa-solid fa-user-lock"></i> Admin
+    </a>
+  </div>
+</header>
+
+<div class="signup-container">
+  <div class="signup-box">
+    <div class="success-message" id="successMsg">
+      ✅ Signup successful! Redirecting...
+    </div>
+
+    <h2><i class="fa-solid fa-user-tie"></i> Employer Signup</h2>
+
+    <form id="signupForm">
+      <input type="text" id="company_name" placeholder="Company Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="password" id="confirm_password" placeholder="Confirm Password" required />
+      <span class="toggle-password" id="togglePassword">Show Passwords</span>
+
+      <div class="error" id="errorMsg"></div>
+
+      <button type="submit"><i class="fa-solid fa-user-plus"></i> Signup</button>
+    </form>
+
+    <p>Already registered? <a href="loginemployer.html">Login here</a></p>
+  </div>
+</div>
+
+<script>
+// ----------------------------------------------------
+// USE GLOBAL SUPABASE CLIENT
+// ----------------------------------------------------
+
+
+// ----------------------------------------------------
+// PASSWORD TOGGLE
+// ----------------------------------------------------
+document.getElementById("togglePassword").addEventListener("click", () => {
+  const pw = document.getElementById("password");
+  const cpw = document.getElementById("confirm_password");
+  const show = pw.type === "password";
+  pw.type = show ? "text" : "password";
+  cpw.type = show ? "text" : "password";
+  togglePassword.textContent = show ? "Hide Passwords" : "Show Passwords";
+});
+
+// ----------------------------------------------------
+// FORM SUBMISSION
+// ----------------------------------------------------
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const errorMsg = document.getElementById("errorMsg");
+  const successMsg = document.getElementById("successMsg");
+
+  errorMsg.textContent = "";
+
+  const company_name = document.getElementById("company_name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirm_password = document.getElementById("confirm_password").value;
+
+  if (password !== confirm_password) {
+    errorMsg.textContent = "Passwords do not match!";
+    return;
+  }
+
+  // STEP 1 — Create Supabase Auth account
+  const { data: signup, error: signupError } = await supabase.auth.signUp({ email, password });
+
+  if (signupError) {
+    errorMsg.textContent = "Signup failed: " + signupError.message;
+    return;
+  }
+
+  const user = signup.user;
+  if (!user) {
+    errorMsg.textContent = "Signup failed: No user returned.";
+    return;
+  }
+
+  // STEP 2 — Insert Employer Profile
+  const { error: insertErr } = await supabase.from("employers").insert([
+    { user_id: user.id, company_name, email }
+  ]);
+
+  if (insertErr) {
+    errorMsg.textContent = "Insert failed: " + insertErr.message;
+    return;
+  }
+
+  // SUCCESS
+  successMsg.style.display = "block";
+
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 1500);
+});
+</script>
+
+</body>
+</html>

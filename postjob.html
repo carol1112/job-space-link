@@ -1,0 +1,5893 @@
+<!-- ======================= PART 1 OF 3 =======================
+     Post Staff Requirement | Job Space Link
+     ✅ ENHANCED / FIXED:
+        ✅ Salary sign auto-switches by Country
+           - Philippines = ₱ / PHP
+           - United States = $ / USD
+        ✅ Salary sign is now prepared to SAVE in DB too
+        ✅ Numeric salary_min and salary_max still save cleanly
+        ✅ Extra currency fields will auto-attempt save if columns exist:
+           - salary_currency
+           - salary_currency_symbol
+           - salary_min_display
+           - salary_max_display
+           - salary_range_display
+        ✅ Smart schema fallback will remove unsupported optional columns automatically
+        ✅ State / Province and Zip Code are readonly
+        ✅ State / Province and Zip Code only change when City changes
+        ✅ Contact Email field (input type=email)
+        ✅ Popup Close button: gradient RED
+        ✅ ApplicantForm-style layout preserved
+        ✅ ENTER key => moves to NEXT field (no accidental submit)
+        ✅ Position is a DROPDOWN (with "Other" text input when needed)
+        ✅ Company Profile Pictures:
+           - File card button is now "SELECT" (opens upload picker)
+           - LEFT Company Picture box = VIEW (opens image viewer)
+           - Viewer has Select/Change + thumbnails + next/prev
+        ✅ Animated paper plane submit effect kept
+================================================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Post Staff Requirement | Job Space Link</title>
+
+<!-- ICONS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+<!-- GLOBAL CSS -->
+<link rel="stylesheet" href="jobspacelink.css" />
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<!-- LOCATION -->
+<script src="locations-us-min1.js"></script>
+<script src="locations-ph-min1.js"></script>
+
+<style>
+:root{
+  --hdrH:78px;
+
+  --ink:#07142e;
+  --muted:#475569;
+  --line: rgba(15,23,42,0.12);
+
+  --neon1:#00c6ff;
+  --neon2:#7c3aed;
+
+  --ok:#22c55e;
+  --bad:#ef4444;
+  --warn:#f59e0b;
+
+  --softShadow:0 20px 40px rgba(2,6,23,0.20);
+  --softShadow2:0 12px 24px rgba(2,6,23,0.16);
+
+  --pageMax:1260px;
+  --pagePad:12px;
+
+  --leftCol:320px;
+  --gridGap:14px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins","Segoe UI",sans-serif;}
+html,body{width:100%;max-width:100%;overflow-x:hidden;}
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(14,165,233,0.92), rgba(30,27,75,0.76) 55%, rgba(2,6,23,1) 100%),
+    radial-gradient(circle at 78% 22%, rgba(124,58,237,0.32), transparent 55%),
+    radial-gradient(circle at 20% 90%, rgba(34,211,238,0.18), transparent 50%);
+  color:var(--ink);
+  padding-bottom:90px;
+}
+
+/* ============================================================
+   HEADER - INDEX FORMAT
+=========================================================== */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--hdrH);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:1rem;
+}
+
+/* Mobile panel */
+.mobile-panel{
+  position:fixed;
+  top:var(--hdrH);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+/* ============================================================
+   ABOUT NAV FIX
+=========================================================== */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* ============================================================
+   HEADER RESPONSIVE
+=========================================================== */
+@media (max-width: 1280px){
+  header{
+    gap:10px;
+    padding:0 12px 0 6px;
+  }
+
+  header .logo img{
+    height:46px;
+  }
+
+  header nav{
+    gap:10px;
+    margin-left:2px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.82rem;
+  }
+
+  header .auth-buttons{
+    gap:6px;
+  }
+
+  header .auth-buttons a{
+    padding:0 9px;
+    font-size:0.78rem;
+  }
+}
+
+@media (max-width: 920px){
+  header{
+    justify-content:space-between;
+    padding:0 12px 0 8px;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none;
+  }
+
+  .nav-toggle{
+    display:inline-flex;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    padding:0 10px 0 6px;
+  }
+
+  header .logo{
+    margin-left:-2px;
+  }
+
+  header .logo img{
+    height:42px;
+  }
+}
+
+/* ===== PAGE WRAP ===== */
+.page{
+  width:var(--pageMax);
+  max-width:calc(100% - (var(--pagePad) * 2));
+  margin:calc(var(--hdrH) + 22px) auto 0;
+}
+.shell{
+  border-radius:26px;
+  padding:18px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06)),
+    radial-gradient(circle at 15% 25%, rgba(0,198,255,0.12), transparent 55%),
+    radial-gradient(circle at 85% 15%, rgba(124,58,237,0.12), transparent 55%);
+  border:1px solid rgba(255,255,255,0.16);
+  box-shadow:0 22px 50px rgba(2,6,23,0.30);
+  backdrop-filter: blur(12px);
+}
+.shell-inner{
+  background:linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.92));
+  border:1px solid rgba(15,23,42,0.08);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:var(--softShadow);
+}
+
+/* ===== TITLE ROW ===== */
+.page-title{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.page-title h1{
+  font-size:2.05rem;
+  font-weight:1100;
+  letter-spacing:.2px;
+  color:#081a3e;
+}
+.pill{
+  font-weight:1000;
+  font-size:.86rem;
+  color:rgba(7,20,46,0.78);
+  background:rgba(0,198,255,0.10);
+  border:1px solid rgba(0,198,255,0.18);
+  padding:10px 12px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  white-space:nowrap;
+}
+.pill.gray{
+  background:rgba(2,6,23,0.04);
+  border:1px solid rgba(15,23,42,0.08);
+  color:#64748b;
+}
+.page-title .right{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+/* ===== TOP BUTTONS ===== */
+.btnTop{
+  border:none;
+  cursor:pointer;
+  border-radius:14px;
+  padding:11px 14px;
+  font-weight:1200;
+  display:inline-flex;
+  gap:10px;
+  align-items:center;
+  box-shadow:0 16px 26px rgba(2,6,23,0.14);
+  transition:transform .14s ease, filter .14s ease, opacity .14s ease;
+}
+.btnTop:hover{transform:translateY(-1px);filter:brightness(1.02);}
+.btnTop:disabled{opacity:.65;cursor:not-allowed;}
+
+
+/* ===== STATUS LINE ===== */
+.status-line{
+  margin:10px 0 12px;
+  display:none;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(14,165,233,0.18);
+  background:rgba(14,165,233,0.08);
+  color:#082f49;
+  font-weight:1000;
+}
+.status-line.error{border-color:rgba(239,68,68,0.20);background:rgba(239,68,68,0.08);color:#7f1d1d;}
+.status-line.success{border-color:rgba(34,197,94,0.22);background:rgba(34,197,94,0.09);color:#14532d;}
+.status-line.warn{border-color:rgba(245,158,11,0.22);background:rgba(245,158,11,0.09);color:#78350f;}
+
+/* ===== MAIN GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns: var(--leftCol) 1fr;
+  gap:var(--gridGap);
+  align-items:start;
+}
+.grid > *{min-width:0;}
+
+/* ===== LEFT CARD ===== */
+.company-card{
+  position:sticky;
+  top:calc(var(--hdrH) + 14px);
+  background:linear-gradient(180deg, rgba(248,250,252,0.92), rgba(241,245,249,0.90));
+  border-radius:18px;
+  padding:12px;
+  border:1px solid rgba(15,23,42,0.10);
+  box-shadow:var(--softShadow2);
+  overflow:hidden;
+}
+.company-card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:linear-gradient(90deg, rgba(0,198,255,0.22), rgba(124,58,237,0.22));
+  filter:blur(18px);
+  opacity:.55;
+  pointer-events:none;
+}
+.company-card > *{position:relative;z-index:2;}
+
+.companyPicBox{
+  border-radius:18px;
+  border:1px solid rgba(148,163,184,0.35);
+  background:linear-gradient(180deg, rgba(226,232,240,0.6), rgba(241,245,249,0.7));
+  overflow:hidden;
+  height:210px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  cursor:pointer;
+  transition:filter .12s ease, transform .12s ease;
+}
+.companyPicBox:hover{
+  filter:brightness(1.02);
+  transform:translateY(-1px);
+}
+.companyPicBox img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+.companyPicOverlay{
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  border-radius:14px;
+  background:rgba(2,6,23,0.72);
+  border:1px solid rgba(255,255,255,0.14);
+  color:#fff;
+  padding:8px 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  font-size:.82rem;
+  font-weight:1000;
+}
+.companyNameBig{
+  margin-top:12px;
+  text-align:center;
+  font-weight:1200;
+  font-size:1.12rem;
+  color:#081a3e;
+}
+.companySub{
+  margin-top:4px;
+  text-align:center;
+  font-weight:900;
+  color:#64748b;
+  font-size:.86rem;
+}
+.companyEmailSub{
+  margin-top:6px;
+  text-align:center;
+  font-weight:1000;
+  color:#334155;
+  font-size:.86rem;
+  opacity:.92;
+  word-break:break-word;
+}
+
+/* ===== SECTIONS ===== */
+.section{
+  background:linear-gradient(180deg, rgba(248,250,252,0.95), rgba(241,245,249,0.92));
+  border-radius:18px;
+  border:1px solid rgba(15,23,42,0.10);
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:var(--softShadow2);
+}
+.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-weight:1200;
+  color:#081a3e;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(15,23,42,0.08);
+  margin-bottom:12px;
+}
+.section-head .left{display:flex;align-items:center;gap:10px;}
+.section-head i{color:#0b2a78;}
+.section-head .chip{
+  font-size:.78rem;
+  font-weight:1100;
+  color:#64748b;
+  background:rgba(2,6,23,0.04);
+  border:1px solid rgba(15,23,42,0.08);
+  padding:7px 10px;
+  border-radius:999px;
+}
+
+.field-grid{display:grid;gap:10px;}
+.row4{display:grid;gap:10px;grid-template-columns:repeat(4,1fr);}
+.row3{display:grid;gap:10px;grid-template-columns:repeat(3,1fr);}
+.row2{display:grid;gap:10px;grid-template-columns:repeat(2,1fr);}
+.row1{display:grid;gap:10px;grid-template-columns:1fr;}
+.field-card{
+  background:linear-gradient(180deg,#ffffff,#fbfdff);
+  border-radius:16px;
+  border:1px solid rgba(15,23,42,0.12);
+  padding:12px 12px 11px;
+  box-shadow:0 2px 10px rgba(2,6,23,0.05);
+  min-width:0;
+}
+.lbl{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:.92rem;
+  font-weight:1200;
+  letter-spacing:.4px;
+  color:#0f172a;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  padding-bottom:8px;
+  border-bottom:1px dashed rgba(15,23,42,0.22);
+  line-height:1.2;
+}
+.lbl i{color:#0b2a78;flex-shrink:0;font-size:1rem;}
+
+.input,.select,.textarea{
+  width:100%;
+  border-radius:12px;
+  border:1px solid rgba(15,23,42,0.16);
+  background:#fff;
+  padding:10px 12px;
+  font-weight:900;
+  color:#0f172a;
+  outline:none;
+  transition:border-color .12s ease, box-shadow .12s ease;
+}
+.input:focus,.select:focus,.textarea:focus{
+  border-color:rgba(0,198,255,0.55);
+  box-shadow:0 0 0 4px rgba(0,198,255,0.12);
+}
+.textarea{min-height:108px;resize:vertical;line-height:1.35;}
+
+/* ===== READONLY AUTO-FILL FIELDS ===== */
+.input.locked{
+  background:linear-gradient(180deg,#f8fafc,#eef2f7);
+  color:#334155;
+  border:1px dashed rgba(100,116,139,0.38);
+  cursor:not-allowed;
+}
+.input.locked:focus{
+  border:1px dashed rgba(100,116,139,0.38);
+  box-shadow:none;
+}
+.autofillNote{
+  margin-top:8px;
+  font-size:.87rem;
+  font-weight:1000;
+  color:#475569;
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  line-height:1.35;
+}
+.autofillNote i{
+  color:#0ea5e9;
+  margin-top:2px;
+}
+
+/* ===== MONEY INPUT ===== */
+.moneyWrap{
+  position:relative;
+}
+.moneySign{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  min-width:22px;
+  height:28px;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.95rem;
+  font-weight:1200;
+  color:#0b2a78;
+  background:rgba(11,42,120,0.08);
+  border:1px solid rgba(11,42,120,0.12);
+  pointer-events:none;
+}
+.moneyWrap .input{
+  padding-left:46px;
+}
+
+/* ===== FILE CARDS ===== */
+.fileGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fileCard{
+  border-radius:18px;
+  border:1px solid rgba(15,23,42,0.12);
+  background:linear-gradient(180deg,#ffffff,#fbfdff);
+  padding:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  box-shadow:0 2px 10px rgba(2,6,23,0.05);
+}
+.fileLeft{display:flex;align-items:center;gap:12px;min-width:0;}
+.fileIcon{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(11,42,120,0.08);
+  border:1px solid rgba(11,42,120,0.10);
+  flex-shrink:0;
+}
+.fileIcon i{color:#0b2a78;font-size:1.2rem;}
+.fileTitle{font-weight:1200;color:#081a3e;}
+.fileSub{
+  margin-top:3px;
+  font-weight:1000;
+  color:#64748b;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:420px;
+  font-size:.90rem;
+}
+.fileActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;flex-shrink:0;}
+.btn-mini{
+  border:none;
+  cursor:pointer;
+  padding:9px 12px;
+  border-radius:14px;
+  font-weight:1200;
+  font-size:.82rem;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:transform .12s ease, filter .12s ease, opacity .12s ease;
+}
+.btn-mini:hover{transform:translateY(-1px);filter:brightness(1.03);}
+.btn-mini:disabled{opacity:.60;cursor:not-allowed;transform:none;filter:none;}
+.btn-mini.select{
+  background:rgba(34,211,238,0.14);
+  border:1px solid rgba(34,211,238,0.28);
+  color:#063a5e;
+}
+.btn-mini.select2{
+  background:rgba(34,211,238,0.14);
+  border:1px solid rgba(34,211,238,0.28);
+  color:#063a5e;
+}
+.smallNote{
+  margin-top:8px;
+  font-size:.90rem;
+  font-weight:1000;
+  color:#475569;
+}
+
+/* ===== BOTTOM BAR ===== */
+.bottom-bar{
+  margin-top:10px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.94));
+  border:1px solid rgba(15,23,42,0.10);
+  border-radius:18px;
+  box-shadow:var(--softShadow2);
+  padding:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.bottom-bar .hint{
+  color:#475569;
+  font-weight:1000;
+  font-size:.90rem;
+}
+#btnSubmit{
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  color:#ffffff;
+  border:none;
+  cursor:pointer;
+  border-radius:16px;
+  padding:13px 16px;
+  font-weight:1200;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-width:168px;
+  box-shadow:0 16px 26px rgba(2,6,23,0.14);
+  transition:transform .14s ease, filter .14s ease, opacity .14s ease, box-shadow .14s ease;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+#btnSubmit::before{
+  content:"";
+  position:absolute;
+  inset:auto;
+  width:120px;
+  height:120%;
+  left:-130px;
+  top:-10%;
+  background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.28), rgba(255,255,255,0));
+  transform:skewX(-22deg);
+  transition:left .45s ease;
+  z-index:0;
+}
+#btnSubmit:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.03);
+  box-shadow:0 18px 30px rgba(2,6,23,0.20);
+}
+#btnSubmit:hover::before{left:calc(100% + 20px);}
+#btnSubmit:disabled{opacity:.82;cursor:not-allowed;transform:none;filter:none;}
+#btnSubmit .btnSubmitInner{
+  position:relative;
+  z-index:2;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+#btnSubmit.launching{
+  box-shadow:0 18px 36px rgba(12,74,110,0.32);
+}
+#btnSubmit.launching .btn-plane-icon{
+  animation:btnPlanePulse .86s ease-in-out infinite;
+}
+@keyframes btnPlanePulse{
+  0%,100%{transform:translateX(0) rotate(0deg) scale(1);}
+  35%{transform:translateX(4px) rotate(-8deg) scale(1.05);}
+  70%{transform:translateX(8px) rotate(12deg) scale(1.10);}
+}
+
+.bottom-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+#btnEditLogout{
+  display:none;
+  background:linear-gradient(90deg,#64748b,#cbd5e1);
+  color:#0f172a;
+  border:none;
+  cursor:pointer;
+  border-radius:16px;
+  padding:13px 16px;
+  font-weight:1200;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-width:168px;
+  box-shadow:0 16px 26px rgba(2,6,23,0.14);
+  transition:transform .14s ease, filter .14s ease, opacity .14s ease, box-shadow .14s ease;
+}
+#btnEditLogout:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.03);
+  box-shadow:0 18px 30px rgba(2,6,23,0.20);
+}
+#btnEditLogout:disabled{
+  opacity:.75;
+  cursor:not-allowed;
+  transform:none;
+  filter:none;
+}
+#btnEditLogout.is-visible{
+  display:inline-flex;
+}
+
+/* ===== SUBMIT PAPER PLANE ANIMATION ===== */
+#submitFlightOverlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:100450;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(2,6,23,0.28);
+  backdrop-filter:blur(6px);
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .20s ease;
+}
+#submitFlightOverlay.active{
+  display:flex;
+  opacity:1;
+}
+.submit-flight-card{
+  position:relative;
+  width:min(760px, calc(100% - 16px));
+  min-height:210px;
+  border-radius:26px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 18% 28%, rgba(56,189,248,0.18), transparent 40%),
+    radial-gradient(circle at 82% 18%, rgba(124,58,237,0.18), transparent 35%),
+    linear-gradient(135deg, rgba(7,20,46,0.97), rgba(12,25,71,0.96));
+  border:1px solid rgba(125,211,252,0.26);
+  box-shadow:0 36px 80px rgba(2,6,23,0.48);
+}
+.submit-flight-card::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:26px;
+  padding:1px;
+  background:linear-gradient(90deg, rgba(56,189,248,0.30), rgba(168,85,247,0.24), rgba(56,189,248,0.30));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+  pointer-events:none;
+}
+.submit-flight-grid{
+  position:relative;
+  min-height:210px;
+  padding:26px 26px 22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+.submit-flight-status{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(56,189,248,0.12);
+  border:1px solid rgba(125,211,252,0.22);
+  color:#7dd3fc;
+  box-shadow:0 10px 24px rgba(2,6,23,0.26);
+  transition:background .22s ease, color .22s ease, transform .22s ease, border-color .22s ease;
+}
+.submit-flight-status i{
+  font-size:1.1rem;
+}
+#submitFlightOverlay.success .submit-flight-status{
+  background:rgba(34,197,94,0.14);
+  border-color:rgba(134,239,172,0.28);
+  color:#bbf7d0;
+  transform:scale(1.08);
+}
+#submitFlightOverlay.error .submit-flight-status{
+  background:rgba(239,68,68,0.14);
+  border-color:rgba(252,165,165,0.30);
+  color:#fecaca;
+  transform:scale(1.08);
+}
+.submit-flight-sky{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+.submit-flight-sky span{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.82);
+  box-shadow:0 0 12px rgba(255,255,255,0.45);
+  opacity:.85;
+}
+.submit-flight-sky span:nth-child(1){top:32px;left:52px;transform:scale(.70);}
+.submit-flight-sky span:nth-child(2){top:58px;left:180px;transform:scale(.45);}
+.submit-flight-sky span:nth-child(3){top:44px;left:320px;transform:scale(.55);}
+.submit-flight-sky span:nth-child(4){top:28px;right:180px;transform:scale(.60);}
+.submit-flight-sky span:nth-child(5){top:72px;right:96px;transform:scale(.42);}
+.submit-flight-sky span:nth-child(6){top:90px;left:430px;transform:scale(.35);}
+
+.submit-flight-track{
+  position:absolute;
+  left:34px;
+  right:34px;
+  top:50%;
+  height:8px;
+  border-radius:999px;
+  transform:translateY(-50%);
+  background:linear-gradient(90deg, rgba(148,163,184,0.18), rgba(148,163,184,0.05));
+  overflow:hidden;
+}
+.submit-flight-track::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,0.00) 0px,
+    rgba(255,255,255,0.00) 18px,
+    rgba(255,255,255,0.22) 18px,
+    rgba(255,255,255,0.22) 34px
+  );
+  opacity:.55;
+}
+.submit-flight-progress{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg, rgba(34,211,238,0.82), rgba(124,58,237,0.86));
+  box-shadow:0 0 18px rgba(56,189,248,0.45);
+}
+#submitFlightOverlay.active .submit-flight-progress{
+  animation:submitFlightProgress 1.35s cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes submitFlightProgress{
+  0%{width:0%;}
+  18%{width:18%;}
+  40%{width:52%;}
+  74%{width:84%;}
+  100%{width:100%;}
+}
+
+.submit-flight-contrail{
+  position:absolute;
+  left:42px;
+  right:34px;
+  top:50%;
+  height:3px;
+  transform:translateY(-50%);
+  pointer-events:none;
+}
+.submit-flight-contrail::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.00), rgba(191,219,254,0.85), rgba(125,211,252,0.35), rgba(255,255,255,0.00));
+  filter:blur(1px);
+}
+#submitFlightOverlay.active .submit-flight-contrail::before{
+  animation:submitContrail 1.35s ease-out forwards;
+}
+@keyframes submitContrail{
+  0%{width:0%;opacity:0;}
+  15%{width:18%;opacity:.5;}
+  45%{width:58%;opacity:.95;}
+  82%{width:88%;opacity:.95;}
+  100%{width:96%;opacity:0;}
+}
+
+.submit-flight-plane{
+  position:absolute;
+  left:-90px;
+  top:50%;
+  transform:translateY(-50%) rotate(-16deg) scale(.86);
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,255,255,0.34), rgba(255,255,255,0.05) 55%, rgba(255,255,255,0.00) 70%),
+    linear-gradient(180deg, rgba(56,189,248,0.26), rgba(124,58,237,0.14));
+  border:1px solid rgba(125,211,252,0.24);
+  box-shadow:0 18px 36px rgba(14,165,233,0.18);
+  color:#ffffff;
+}
+.submit-flight-plane i{
+  font-size:1.58rem;
+  filter:drop-shadow(0 5px 12px rgba(255,255,255,0.24));
+}
+#submitFlightOverlay.active .submit-flight-plane{
+  animation:submitPlaneFly 1.36s cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes submitPlaneFly{
+  0%{
+    left:-90px;
+    opacity:0;
+    transform:translateY(-50%) rotate(-18deg) scale(.76);
+  }
+  10%{
+    opacity:1;
+    transform:translateY(-50%) rotate(-18deg) scale(.88);
+  }
+  24%{
+    transform:translateY(-86px) rotate(-14deg) scale(.96);
+  }
+  46%{
+    transform:translateY(-104px) rotate(-6deg) scale(1.02);
+  }
+  70%{
+    transform:translateY(-68px) rotate(6deg) scale(1.05);
+  }
+  100%{
+    left:calc(100% - 8px);
+    opacity:0;
+    transform:translateY(-138px) rotate(16deg) scale(1.10);
+  }
+}
+
+.submit-flight-cloud{
+  position:absolute;
+  border-radius:999px;
+  background:rgba(255,255,255,0.12);
+  filter:blur(.4px);
+}
+.submit-flight-cloud.c1{width:74px;height:28px;left:74px;top:106px;}
+.submit-flight-cloud.c2{width:112px;height:34px;left:228px;top:86px;}
+.submit-flight-cloud.c3{width:86px;height:26px;right:126px;top:118px;}
+
+.submit-flight-text{
+  position:relative;
+  z-index:3;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.submit-flight-title{
+  color:#f8fafc;
+  font-size:1.26rem;
+  font-weight:1200;
+  letter-spacing:.2px;
+}
+.submit-flight-sub{
+  color:rgba(226,232,240,0.88);
+  font-size:.94rem;
+  font-weight:1000;
+  line-height:1.45;
+  max-width:620px;
+}
+.submit-flight-dots{
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+  margin-left:4px;
+}
+.submit-flight-dots span{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#7dd3fc;
+  opacity:.25;
+  animation:submitDotBlink 1s infinite;
+}
+.submit-flight-dots span:nth-child(2){animation-delay:.18s;}
+.submit-flight-dots span:nth-child(3){animation-delay:.36s;}
+@keyframes submitDotBlink{
+  0%,100%{opacity:.22;transform:translateY(0);}
+  50%{opacity:1;transform:translateY(-2px);}
+}
+
+/* ===== POPUP ===== */
+#messagePopup{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter: blur(8px);
+  justify-content:center;
+  align-items:center;
+  z-index:100500;
+  padding:16px;
+}
+.popup-box{
+  width:min(560px, calc(100% - 20px));
+  background:rgba(2,6,23,0.94);
+  border:1px solid rgba(56,189,248,0.45);
+  box-shadow:0 22px 55px rgba(2,6,23,0.55);
+  border-radius:18px;
+  padding:18px;
+  color:#e5e7eb;
+}
+.popup-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:1200;
+  font-size:1rem;
+}
+.popup-title i{color:#38bdf8;}
+.popup-msg{
+  margin-top:10px;
+  color:rgba(248,250,252,0.90);
+  font-weight:900;
+  font-size:.92rem;
+  line-height:1.35;
+  white-space:pre-wrap;
+}
+.popup-actions{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+.popup-btn{
+  border:none;
+  cursor:pointer;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:1200;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:transform .12s ease, filter .12s ease;
+}
+.popup-btn:hover{transform:translateY(-1px);filter:brightness(1.05);}
+.popup-btn.close{
+  background:linear-gradient(90deg,#ef4444,#fb7185);
+  color:#ffffff;
+}
+
+/* ===== FILE VIEWER (COMPANY PICTURES) ===== */
+#companyPicViewer{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.62);
+  backdrop-filter: blur(10px);
+  z-index:100800;
+  padding:16px;
+  justify-content:center;
+  align-items:center;
+}
+.viewer-box{
+  width:min(980px, calc(100% - 18px));
+  max-height:calc(100vh - 36px);
+  background:rgba(2,6,23,0.94);
+  border:1px solid rgba(56,189,248,0.40);
+  box-shadow:0 24px 70px rgba(2,6,23,0.65);
+  border-radius:18px;
+  color:#e5e7eb;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.viewer-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:14px 14px 12px;
+  border-bottom:1px solid rgba(148,163,184,0.18);
+}
+.viewer-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:1200;
+  letter-spacing:.2px;
+}
+.viewer-title i{color:#38bdf8;}
+.viewer-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.viewer-btn{
+  border:none;
+  cursor:pointer;
+  padding:10px 12px;
+  border-radius:12px;
+  font-weight:1200;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:transform .12s ease, filter .12s ease, opacity .12s ease;
+}
+.viewer-btn:hover{transform:translateY(-1px);filter:brightness(1.05);}
+.viewer-btn:disabled{opacity:.60;cursor:not-allowed;transform:none;filter:none;}
+.viewer-btn.choose{
+  background:rgba(34,197,94,0.14);
+  border:1px solid rgba(34,197,94,0.30);
+  color:#d1fae5;
+}
+.viewer-btn.close{
+  background:linear-gradient(90deg,#ef4444,#fb7185);
+  color:#ffffff;
+}
+.viewer-body{
+  padding:14px;
+  display:grid;
+  grid-template-columns: 1fr 250px;
+  gap:12px;
+  overflow:auto;
+}
+.viewer-main{
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,0.18);
+  background:rgba(15,23,42,0.42);
+  min-height:380px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+.viewer-main img{
+  max-width:100%;
+  max-height:72vh;
+  object-fit:contain;
+  display:none;
+}
+.viewer-empty{
+  text-align:center;
+  padding:18px;
+  color:rgba(248,250,252,0.88);
+  font-weight:1000;
+  line-height:1.35;
+}
+.viewer-thumbs{
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,0.18);
+  background:rgba(15,23,42,0.42);
+  padding:10px;
+  overflow:auto;
+  max-height:72vh;
+}
+.thumb{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:8px;
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,0.14);
+  background:rgba(2,6,23,0.18);
+  cursor:pointer;
+  margin-bottom:8px;
+  transition:transform .12s ease, filter .12s ease, border-color .12s ease;
+}
+.thumb:hover{transform:translateY(-1px);filter:brightness(1.05);}
+.thumb.active{
+  border-color:rgba(56,189,248,0.55);
+  background:rgba(56,189,248,0.10);
+}
+.thumb img{
+  width:52px;height:52px;border-radius:12px;
+  object-fit:cover;
+  border:1px solid rgba(255,255,255,0.14);
+  flex-shrink:0;
+}
+.thumb .meta{
+  min-width:0;
+}
+.thumb .meta .t1{
+  font-weight:1200;
+  color:#e5e7eb;
+  font-size:.92rem;
+}
+.thumb .meta .t2{
+  margin-top:2px;
+  font-weight:1000;
+  color:rgba(226,232,240,0.78);
+  font-size:.80rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.viewer-foot{
+  padding:12px 14px;
+  border-top:1px solid rgba(148,163,184,0.18);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.viewer-nav{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.viewer-pill{
+  font-weight:1100;
+  font-size:.86rem;
+  color:rgba(226,232,240,0.92);
+  background:rgba(56,189,248,0.10);
+  border:1px solid rgba(56,189,248,0.25);
+  padding:8px 10px;
+  border-radius:999px;
+}
+.viewer-btn.nav{
+  background:rgba(34,211,238,0.14);
+  border:1px solid rgba(34,211,238,0.28);
+  color:#e0f2fe;
+}
+
+/* ===== HIDDEN FILE INPUTS ===== */
+.hidden-input{display:none;}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:1024px){
+  .grid{grid-template-columns:1fr;}
+  .company-card{position:relative;top:auto;}
+  .row4{grid-template-columns:repeat(2,1fr);}
+  .row3{grid-template-columns:repeat(2,1fr);}
+  .fileGrid{grid-template-columns:1fr;}
+  .viewer-body{grid-template-columns:1fr;}
+  .viewer-thumbs{max-height:220px;}
+  .submit-flight-grid{padding:22px 20px 20px;}
+  .submit-flight-title{font-size:1.12rem;}
+  .submit-flight-sub{font-size:.90rem;}
+}
+@media (max-width:520px){
+  .page-title h1{font-size:1.75rem;}
+  .row4,.row3,.row2{grid-template-columns:1fr;}
+  .bottom-bar{justify-content:center;text-align:center;}
+  .popup-actions{justify-content:flex-start;}
+  .submit-flight-card{min-height:220px;}
+  .submit-flight-track{left:22px;right:22px;}
+  .submit-flight-contrail{left:28px;right:22px;}
+  .submit-flight-cloud.c2{left:150px;}
+}
+
+/* ============================================================
+   FINAL RESPONSIVE PATCH
+   Exact requested breakpoints + more compressed form
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{
+    --hdrH:82px;
+    --pageMax:1340px;
+    --pagePad:16px;
+    --leftCol:300px;
+    --gridGap:12px;
+  }
+
+  header{
+    padding:0 22px 0 12px;
+    gap:16px;
+  }
+  header .logo img{height:78px;}
+  header nav{gap:18px; margin-left:8px;}
+  header nav > a,
+  header nav .nav-main-link{font-size:0.90rem;}
+  header .auth-buttons{gap:10px;}
+  header .auth-buttons a{
+    min-height:36px;
+    padding:0 12px;
+    font-size:0.81rem;
+  }
+
+  .page{
+    width:var(--pageMax);
+    max-width:calc(100% - 32px);
+    margin:calc(var(--hdrH) + 18px) auto 0;
+  }
+  .shell{padding:14px; border-radius:24px;}
+  .shell-inner{padding:14px; border-radius:20px;}
+
+  .page-title{margin-bottom:12px; gap:10px;}
+  .page-title h1{font-size:1.85rem;}
+  .pill{padding:8px 11px; font-size:0.80rem;}
+
+  .grid{gap:12px;}
+  .company-card{
+    top:calc(var(--hdrH) + 10px);
+    padding:10px;
+    border-radius:16px;
+  }
+  .companyPicBox{
+    height:190px;
+    border-radius:16px;
+  }
+  .companyPicOverlay{
+    left:8px; right:8px; bottom:8px;
+    padding:7px 9px;
+    font-size:.76rem;
+    border-radius:12px;
+  }
+  .companyNameBig{margin-top:10px; font-size:1.02rem;}
+  .companySub{font-size:.80rem;}
+  .companyEmailSub{font-size:.80rem; margin-top:5px;}
+
+  .section{
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:16px;
+  }
+  .section-head{
+    padding-bottom:8px;
+    margin-bottom:10px;
+    gap:8px;
+    font-size:.94rem;
+  }
+  .section-head .chip{
+    font-size:.72rem;
+    padding:6px 9px;
+  }
+
+  .field-grid, .row4, .row3, .row2, .row1{gap:8px;}
+  .field-card{
+    padding:10px 10px 9px;
+    border-radius:14px;
+  }
+  .lbl{
+    font-size:.82rem;
+    gap:6px;
+    margin-bottom:8px;
+    padding-bottom:6px;
+  }
+  .lbl i{font-size:.92rem;}
+
+  .input, .select, .textarea{
+    padding:9px 10px;
+    border-radius:10px;
+    font-size:.86rem;
+  }
+  .textarea{min-height:94px;}
+  .moneySign{
+    left:10px;
+    min-width:20px;
+    height:24px;
+    font-size:.86rem;
+    border-radius:8px;
+  }
+  .moneyWrap .input{padding-left:40px;}
+  .autofillNote,
+  .smallNote{
+    margin-top:6px;
+    font-size:.80rem;
+  }
+
+  .fileGrid{gap:8px;}
+  .fileCard{
+    padding:10px;
+    gap:10px;
+    border-radius:15px;
+  }
+  .fileIcon{
+    width:42px; height:42px;
+    border-radius:12px;
+  }
+  .fileIcon i{font-size:1.05rem;}
+  .fileTitle{font-size:.90rem;}
+  .fileSub{font-size:.80rem;}
+  .fileActions{gap:6px;}
+  .btn-mini{
+    padding:8px 10px;
+    border-radius:11px;
+    font-size:.76rem;
+    gap:6px;
+  }
+
+  .bottom-bar{
+    margin-top:8px;
+    padding:12px;
+    border-radius:16px;
+  }
+  .bottom-bar .hint{font-size:.82rem;}
+  #btnSubmit, #btnEditLogout{
+    min-width:150px;
+    padding:11px 14px;
+    border-radius:14px;
+    gap:8px;
+    font-size:.82rem;
+  }
+
+  .viewer-box{
+    width:min(920px, calc(100% - 20px));
+  }
+  .viewer-head{padding:12px;}
+  .viewer-actions{gap:8px;}
+  .viewer-btn{
+    padding:9px 11px;
+    border-radius:11px;
+    font-size:.78rem;
+  }
+  .viewer-body{
+    grid-template-columns:minmax(0,1fr) 220px;
+    gap:10px;
+    padding:12px;
+  }
+  .viewer-main{min-height:330px;}
+  .viewer-thumbs{max-height:66vh; padding:8px;}
+  .thumb{
+    padding:7px;
+    border-radius:10px;
+    gap:8px;
+    margin-bottom:7px;
+  }
+  .thumb img{width:46px; height:46px; border-radius:10px;}
+  .thumb .meta .t1{font-size:.84rem;}
+  .thumb .meta .t2{font-size:.72rem;}
+  .viewer-foot{padding:10px 12px;}
+  .viewer-pill{padding:7px 9px; font-size:.78rem;}
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{
+    --hdrH:78px;
+    --pageMax:1260px;
+    --pagePad:12px;
+    --leftCol:290px;
+    --gridGap:12px;
+  }
+
+  header{
+    padding:0 16px 0 8px;
+    gap:12px;
+  }
+  header .logo img{height:72px;}
+  header nav{gap:14px;}
+  header nav > a,
+  header nav .nav-main-link{font-size:0.84rem;}
+  header .auth-buttons a{
+    min-height:35px;
+    padding:0 10px;
+    font-size:0.78rem;
+  }
+
+  .page{
+    width:var(--pageMax);
+    max-width:calc(100% - 24px);
+    margin:calc(var(--hdrH) + 18px) auto 0;
+  }
+  .shell{padding:13px; border-radius:24px;}
+  .shell-inner{padding:13px; border-radius:20px;}
+  .page-title{margin-bottom:12px;}
+  .page-title h1{font-size:1.78rem;}
+  .pill{padding:8px 10px; font-size:.79rem;}
+
+  .company-card{padding:10px; border-radius:16px;}
+  .companyPicBox{height:184px; border-radius:16px;}
+  .companyNameBig{font-size:1rem;}
+  .companySub, .companyEmailSub{font-size:.80rem;}
+
+  .section{
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:16px;
+  }
+  .section-head{
+    padding-bottom:8px;
+    margin-bottom:10px;
+    font-size:.92rem;
+  }
+
+  .field-grid, .row4, .row3, .row2, .row1{gap:8px;}
+  .field-card{
+    padding:10px 10px 9px;
+    border-radius:14px;
+  }
+  .lbl{
+    font-size:.81rem;
+    margin-bottom:8px;
+    padding-bottom:6px;
+  }
+  .input, .select, .textarea{
+    padding:9px 10px;
+    border-radius:10px;
+    font-size:.84rem;
+  }
+  .textarea{min-height:92px;}
+  .moneySign{
+    left:10px;
+    min-width:20px;
+    height:24px;
+    font-size:.84rem;
+    border-radius:8px;
+  }
+  .moneyWrap .input{padding-left:40px;}
+
+  .fileCard{
+    padding:10px;
+    gap:10px;
+    border-radius:15px;
+  }
+  .fileIcon{
+    width:42px; height:42px;
+    border-radius:12px;
+  }
+  .fileTitle{font-size:.88rem;}
+  .fileSub{font-size:.79rem;}
+  .btn-mini{
+    padding:8px 10px;
+    border-radius:11px;
+    font-size:.75rem;
+  }
+
+  .bottom-bar{
+    padding:12px;
+    border-radius:16px;
+  }
+  .bottom-bar .hint{font-size:.82rem;}
+  #btnSubmit, #btnEditLogout{
+    min-width:148px;
+    padding:11px 14px;
+    border-radius:14px;
+    font-size:.81rem;
+  }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+
+  :root{
+    --hdrH:76px;
+    --pageMax:1120px;
+    --pagePad:10px;
+    --leftCol:250px;
+    --gridGap:10px;
+  }
+
+  header{
+    padding:0 12px 0 6px;
+    gap:10px;
+  }
+  header .logo img{height:64px;}
+  header nav{gap:9px; margin-left:2px;}
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.76rem;
+    padding:0 2px;
+    height:34px;
+  }
+  .nav-dropdown{height:34px;}
+  .nav-dropdown-trigger{gap:1px;}
+  .nav-dropdown-toggle{width:20px;height:20px;}
+  .nav-dropdown-toggle i{font-size:.74rem;}
+  header .auth-buttons{gap:6px;}
+  header .auth-buttons a{
+    min-height:32px;
+    padding:0 8px;
+    font-size:.71rem;
+    border-radius:9px;
+  }
+
+  .page{
+    width:var(--pageMax);
+    max-width:calc(100% - 20px);
+    margin:calc(var(--hdrH) + 14px) auto 0;
+  }
+  .shell{padding:11px; border-radius:22px;}
+  .shell-inner{padding:11px; border-radius:18px;}
+
+  .page-title{
+    margin-bottom:10px;
+    gap:8px;
+  }
+  .page-title h1{font-size:1.56rem;}
+  .pill{
+    padding:7px 9px;
+    font-size:.73rem;
+    gap:8px;
+  }
+
+  .grid{gap:10px;}
+  .company-card{
+    padding:9px;
+    border-radius:15px;
+    top:calc(var(--hdrH) + 10px);
+  }
+  .companyPicBox{
+    height:162px;
+    border-radius:14px;
+  }
+  .companyPicOverlay{
+    left:7px; right:7px; bottom:7px;
+    padding:6px 8px;
+    border-radius:11px;
+    font-size:.71rem;
+  }
+  .companyNameBig{
+    margin-top:8px;
+    font-size:.92rem;
+  }
+  .companySub{
+    font-size:.75rem;
+  }
+  .companyEmailSub{
+    margin-top:4px;
+    font-size:.75rem;
+  }
+
+  .section{
+    padding:10px;
+    margin-bottom:9px;
+    border-radius:15px;
+  }
+  .section-head{
+    padding-bottom:7px;
+    margin-bottom:8px;
+    gap:8px;
+    font-size:.86rem;
+  }
+  .section-head .chip{
+    font-size:.68rem;
+    padding:5px 8px;
+  }
+
+  .field-grid, .row4, .row3, .row2, .row1{gap:7px;}
+  .field-card{
+    padding:9px 9px 8px;
+    border-radius:13px;
+  }
+  .lbl{
+    font-size:.76rem;
+    gap:6px;
+    margin-bottom:7px;
+    padding-bottom:5px;
+  }
+  .lbl i{font-size:.88rem;}
+
+  .input, .select, .textarea{
+    padding:8px 9px;
+    border-radius:9px;
+    font-size:.78rem;
+  }
+  .textarea{
+    min-height:84px;
+    line-height:1.28;
+  }
+  .moneySign{
+    left:9px;
+    min-width:18px;
+    height:22px;
+    font-size:.78rem;
+    border-radius:7px;
+  }
+  .moneyWrap .input{padding-left:36px;}
+  .autofillNote,
+  .smallNote{
+    margin-top:5px;
+    font-size:.74rem;
+    gap:6px;
+  }
+
+  .fileGrid{gap:7px;}
+  .fileCard{
+    padding:9px;
+    gap:9px;
+    border-radius:14px;
+  }
+  .fileLeft{gap:9px;}
+  .fileIcon{
+    width:38px; height:38px;
+    border-radius:11px;
+  }
+  .fileIcon i{font-size:.96rem;}
+  .fileTitle{font-size:.82rem;}
+  .fileSub{
+    font-size:.73rem;
+    max-width:100%;
+  }
+  .fileActions{gap:6px;}
+  .btn-mini{
+    padding:7px 9px;
+    border-radius:10px;
+    font-size:.70rem;
+    gap:6px;
+  }
+
+  .bottom-bar{
+    margin-top:8px;
+    padding:10px;
+    border-radius:15px;
+    gap:10px;
+  }
+  .bottom-bar .hint{
+    font-size:.76rem;
+  }
+  .bottom-actions{gap:8px;}
+  #btnSubmit, #btnEditLogout{
+    min-width:136px;
+    padding:10px 12px;
+    border-radius:13px;
+    gap:7px;
+    font-size:.75rem;
+  }
+
+  .viewer-box{
+    width:min(880px, calc(100% - 16px));
+  }
+  .viewer-head{
+    padding:10px 11px 9px;
+    gap:8px;
+  }
+  .viewer-title{
+    gap:8px;
+    font-size:.88rem;
+  }
+  .viewer-actions{gap:7px;}
+  .viewer-btn{
+    padding:8px 10px;
+    border-radius:10px;
+    font-size:.73rem;
+    gap:7px;
+  }
+  .viewer-body{
+    grid-template-columns:minmax(0,1fr) 200px;
+    gap:9px;
+    padding:10px;
+  }
+  .viewer-main{min-height:300px;}
+  .viewer-thumbs{
+    max-height:62vh;
+    padding:8px;
+  }
+  .thumb{
+    padding:6px;
+    gap:7px;
+    border-radius:10px;
+    margin-bottom:6px;
+  }
+  .thumb img{
+    width:42px;
+    height:42px;
+    border-radius:9px;
+  }
+  .thumb .meta .t1{font-size:.78rem;}
+  .thumb .meta .t2{font-size:.68rem;}
+  .viewer-foot{
+    padding:9px 10px;
+    gap:8px;
+  }
+  .viewer-nav{gap:8px;}
+  .viewer-pill{
+    padding:6px 8px;
+    font-size:.74rem;
+  }
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+
+  :root{
+    --hdrH:74px;
+    --pageMax:980px;
+    --pagePad:8px;
+    --leftCol:220px;
+    --gridGap:8px;
+  }
+
+  header{
+    padding:0 8px 0 5px;
+    gap:6px;
+  }
+  header .logo{margin-left:-2px;}
+  header .logo img{height:58px;}
+  header nav{
+    display:flex;
+    gap:7px;
+    margin-left:2px;
+  }
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px;
+    padding:0 2px;
+    font-size:0.67rem;
+  }
+  .nav-dropdown{height:31px;}
+  .nav-dropdown-trigger{gap:1px;}
+  .nav-dropdown-toggle{width:18px;height:18px;}
+  .nav-dropdown-toggle i{font-size:.68rem;}
+  header .auth-buttons{
+    display:flex;
+    gap:4px;
+  }
+  header .auth-buttons a{
+    min-height:30px;
+    padding:0 6px;
+    font-size:.62rem;
+    border-radius:8px;
+    gap:4px;
+  }
+
+  .page{
+    width:var(--pageMax);
+    max-width:calc(100% - 16px);
+    margin:calc(var(--hdrH) + 12px) auto 0;
+  }
+  .shell{
+    padding:9px;
+    border-radius:20px;
+  }
+  .shell-inner{
+    padding:9px;
+    border-radius:17px;
+  }
+
+  .page-title{
+    margin-bottom:8px;
+    gap:8px;
+  }
+  .page-title h1{
+    font-size:1.38rem;
+  }
+  .page-title .right{gap:8px;}
+  .pill{
+    padding:6px 8px;
+    font-size:.67rem;
+    gap:6px;
+  }
+
+  .grid{
+    gap:8px;
+    grid-template-columns:220px 1fr;
+  }
+  .company-card{
+    padding:8px;
+    border-radius:14px;
+    top:calc(var(--hdrH) + 8px);
+  }
+  .companyPicBox{
+    height:142px;
+    border-radius:13px;
+  }
+  .companyPicOverlay{
+    left:6px; right:6px; bottom:6px;
+    padding:5px 7px;
+    border-radius:10px;
+    font-size:.66rem;
+    gap:8px;
+  }
+  .companyNameBig{
+    margin-top:7px;
+    font-size:.84rem;
+  }
+  .companySub{font-size:.70rem;}
+  .companyEmailSub{
+    margin-top:4px;
+    font-size:.69rem;
+  }
+
+  .section{
+    padding:9px;
+    margin-bottom:8px;
+    border-radius:14px;
+  }
+  .section-head{
+    padding-bottom:6px;
+    margin-bottom:7px;
+    gap:7px;
+    font-size:.79rem;
+  }
+  .section-head .chip{
+    font-size:.62rem;
+    padding:4px 7px;
+  }
+
+  .field-grid, .row4, .row3, .row2, .row1{gap:6px;}
+  .field-card{
+    padding:8px 8px 7px;
+    border-radius:12px;
+  }
+  .lbl{
+    font-size:.71rem;
+    gap:5px;
+    margin-bottom:6px;
+    padding-bottom:5px;
+  }
+  .lbl i{font-size:.82rem;}
+
+  .input, .select, .textarea{
+    padding:7px 8px;
+    border-radius:8px;
+    font-size:.73rem;
+  }
+  .textarea{
+    min-height:76px;
+    line-height:1.24;
+  }
+  .moneySign{
+    left:8px;
+    min-width:17px;
+    height:20px;
+    font-size:.72rem;
+    border-radius:6px;
+  }
+  .moneyWrap .input{padding-left:33px;}
+  .autofillNote,
+  .smallNote{
+    margin-top:4px;
+    font-size:.69rem;
+    gap:6px;
+    line-height:1.28;
+  }
+
+  .fileGrid{
+    grid-template-columns:1fr;
+    gap:6px;
+  }
+  .fileCard{
+    padding:8px;
+    gap:8px;
+    border-radius:13px;
+  }
+  .fileLeft{gap:8px;}
+  .fileIcon{
+    width:34px; height:34px;
+    border-radius:10px;
+  }
+  .fileIcon i{font-size:.86rem;}
+  .fileTitle{font-size:.76rem;}
+  .fileSub{
+    font-size:.67rem;
+    max-width:100%;
+  }
+  .fileActions{
+    gap:5px;
+    flex-wrap:wrap;
+  }
+  .btn-mini{
+    padding:6px 8px;
+    border-radius:9px;
+    font-size:.66rem;
+    gap:5px;
+  }
+
+  .bottom-bar{
+    margin-top:7px;
+    padding:9px;
+    border-radius:14px;
+    gap:8px;
+  }
+  .bottom-bar .hint{
+    font-size:.71rem;
+  }
+  .bottom-actions{
+    gap:7px;
+  }
+  #btnSubmit, #btnEditLogout{
+    min-width:126px;
+    padding:9px 11px;
+    border-radius:12px;
+    font-size:.71rem;
+    gap:6px;
+  }
+
+  .viewer-box{
+    width:min(840px, calc(100% - 14px));
+  }
+  .viewer-head{
+    padding:9px 10px 8px;
+    gap:7px;
+  }
+  .viewer-title{
+    gap:7px;
+    font-size:.82rem;
+  }
+  .viewer-actions{gap:6px;}
+  .viewer-btn{
+    padding:7px 9px;
+    border-radius:9px;
+    font-size:.68rem;
+    gap:6px;
+  }
+  .viewer-body{
+    grid-template-columns:1fr;
+    gap:8px;
+    padding:9px;
+  }
+  .viewer-main{min-height:260px;}
+  .viewer-thumbs{
+    max-height:170px;
+    padding:7px;
+  }
+  .thumb{
+    padding:6px;
+    gap:7px;
+    border-radius:9px;
+    margin-bottom:6px;
+  }
+  .thumb img{
+    width:40px; height:40px;
+    border-radius:8px;
+  }
+  .thumb .meta .t1{font-size:.74rem;}
+  .thumb .meta .t2{font-size:.65rem;}
+  .viewer-foot{
+    padding:8px 9px;
+    gap:8px;
+  }
+  .viewer-pill{
+    padding:6px 8px;
+    font-size:.70rem;
+  }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{
+    --hdrH:72px;
+    --pageMax:100%;
+    --pagePad:8px;
+    --leftCol:1fr;
+    --gridGap:8px;
+  }
+
+  header{
+    padding:0 12px 0 8px;
+    gap:10px;
+  }
+  header .logo img{height:54px;}
+  header nav{display:none;}
+  header .auth-buttons{display:none;}
+  .nav-toggle{
+    display:inline-flex;
+    width:40px;
+    height:40px;
+  }
+  .mobile-panel{
+    top:var(--hdrH);
+    padding:12px 14px 16px;
+  }
+  .mobile-panel .mnav a{
+    padding:11px 12px;
+    border-radius:11px;
+    font-size:.90rem;
+  }
+
+  .page{
+    width:100%;
+    max-width:calc(100% - 16px);
+    margin:calc(var(--hdrH) + 10px) auto 0;
+  }
+  .shell{
+    padding:8px;
+    border-radius:18px;
+  }
+  .shell-inner{
+    padding:8px;
+    border-radius:16px;
+  }
+
+  .page-title{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:7px;
+    margin-bottom:8px;
+  }
+  .page-title .right{
+    width:100%;
+    justify-content:flex-start;
+    gap:7px;
+  }
+  .page-title h1{
+    font-size:1.28rem;
+  }
+  .pill{
+    padding:6px 8px;
+    font-size:.66rem;
+    gap:6px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .company-card{
+    position:relative;
+    top:auto;
+    padding:8px;
+    border-radius:14px;
+  }
+  .companyPicBox{
+    height:158px;
+    border-radius:13px;
+  }
+  .companyPicOverlay{
+    left:6px; right:6px; bottom:6px;
+    padding:6px 8px;
+    border-radius:10px;
+    font-size:.67rem;
+  }
+  .companyNameBig{
+    margin-top:7px;
+    font-size:.86rem;
+  }
+  .companySub{font-size:.71rem;}
+  .companyEmailSub{font-size:.70rem;}
+
+  .section{
+    padding:8px;
+    margin-bottom:8px;
+    border-radius:14px;
+  }
+  .section-head{
+    padding-bottom:6px;
+    margin-bottom:7px;
+    gap:7px;
+    font-size:.77rem;
+  }
+  .section-head .chip{
+    font-size:.62rem;
+    padding:4px 7px;
+  }
+
+  .field-grid, .row4, .row3, .row2, .row1{
+    gap:6px;
+    grid-template-columns:1fr !important;
+  }
+  .field-card{
+    padding:8px 8px 7px;
+    border-radius:12px;
+  }
+  .lbl{
+    font-size:.70rem;
+    gap:5px;
+    margin-bottom:6px;
+    padding-bottom:5px;
+  }
+  .lbl i{font-size:.82rem;}
+
+  .input, .select, .textarea{
+    padding:8px 8px;
+    border-radius:8px;
+    font-size:.73rem;
+  }
+  .textarea{
+    min-height:74px;
+    line-height:1.24;
+  }
+  .moneySign{
+    left:8px;
+    min-width:17px;
+    height:20px;
+    font-size:.72rem;
+    border-radius:6px;
+  }
+  .moneyWrap .input{padding-left:33px;}
+  .autofillNote,
+  .smallNote{
+    margin-top:4px;
+    font-size:.68rem;
+    gap:6px;
+    line-height:1.28;
+  }
+
+  .fileGrid{
+    grid-template-columns:1fr;
+    gap:6px;
+  }
+  .fileCard{
+    padding:8px;
+    gap:8px;
+    border-radius:13px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .fileLeft{
+    width:100%;
+    gap:8px;
+  }
+  .fileIcon{
+    width:34px; height:34px;
+    border-radius:10px;
+  }
+  .fileIcon i{font-size:.86rem;}
+  .fileTitle{font-size:.75rem;}
+  .fileSub{
+    font-size:.66rem;
+    white-space:normal;
+  }
+  .fileActions{
+    width:100%;
+    justify-content:flex-start;
+    gap:5px;
+  }
+  .btn-mini{
+    padding:6px 8px;
+    border-radius:9px;
+    font-size:.65rem;
+    gap:5px;
+  }
+
+  .bottom-bar{
+    margin-top:7px;
+    padding:8px;
+    border-radius:14px;
+    gap:8px;
+    justify-content:center;
+    text-align:center;
+  }
+  .bottom-bar .hint{
+    font-size:.70rem;
+  }
+  .bottom-actions{
+    width:100%;
+    justify-content:center;
+    gap:7px;
+  }
+  #btnSubmit, #btnEditLogout{
+    width:100%;
+    min-width:0;
+    padding:10px 11px;
+    border-radius:12px;
+    font-size:.72rem;
+    gap:6px;
+  }
+
+  .viewer-box{
+    width:min(100%, calc(100% - 8px));
+    max-height:calc(100vh - 20px);
+  }
+  .viewer-head{
+    padding:8px;
+    gap:7px;
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .viewer-title{
+    gap:7px;
+    font-size:.80rem;
+  }
+  .viewer-actions{
+    width:100%;
+    gap:6px;
+    justify-content:flex-start;
+    flex-wrap:wrap;
+  }
+  .viewer-btn{
+    padding:7px 9px;
+    border-radius:9px;
+    font-size:.67rem;
+    gap:6px;
+  }
+  .viewer-body{
+    grid-template-columns:1fr;
+    gap:8px;
+    padding:8px;
+  }
+  .viewer-main{min-height:230px;}
+  .viewer-thumbs{
+    max-height:150px;
+    padding:7px;
+  }
+  .thumb{
+    padding:6px;
+    gap:7px;
+    border-radius:9px;
+    margin-bottom:6px;
+  }
+  .thumb img{
+    width:40px; height:40px;
+    border-radius:8px;
+  }
+  .thumb .meta .t1{font-size:.72rem;}
+  .thumb .meta .t2{font-size:.64rem;}
+  .viewer-foot{
+    padding:8px;
+    gap:8px;
+    justify-content:center;
+  }
+  .viewer-nav{
+    width:100%;
+    justify-content:center;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .viewer-pill{
+    padding:6px 8px;
+    font-size:.69rem;
+  }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{
+    --hdrH:70px;
+    --pageMax:100%;
+    --pagePad:6px;
+    --leftCol:1fr;
+    --gridGap:7px;
+  }
+
+  header{
+    padding:0 10px 0 6px;
+    gap:8px;
+  }
+  header .logo{margin-left:-2px;}
+  header .logo img{height:50px;}
+  header nav{display:none;}
+  header .auth-buttons{display:none;}
+  .nav-toggle{
+    display:inline-flex;
+    width:38px;
+    height:38px;
+    border-radius:9px;
+  }
+  .mobile-panel{
+    top:var(--hdrH);
+    padding:12px 12px 14px;
+  }
+  .mobile-panel .mnav{
+    gap:7px;
+  }
+  .mobile-panel .mnav a{
+    padding:10px 11px;
+    border-radius:10px;
+    font-size:.86rem;
+  }
+
+  .page{
+    width:100%;
+    max-width:calc(100% - 12px);
+    margin:calc(var(--hdrH) + 8px) auto 0;
+  }
+  .shell{
+    padding:7px;
+    border-radius:16px;
+  }
+  .shell-inner{
+    padding:7px;
+    border-radius:14px;
+  }
+
+  .page-title{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:6px;
+    margin-bottom:7px;
+  }
+  .page-title h1{
+    font-size:1.15rem;
+  }
+  .page-title .right{
+    width:100%;
+    justify-content:flex-start;
+    gap:6px;
+  }
+  .pill{
+    padding:5px 7px;
+    font-size:.62rem;
+    gap:5px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+    gap:7px;
+  }
+  .company-card{
+    position:relative;
+    top:auto;
+    padding:7px;
+    border-radius:13px;
+  }
+  .companyPicBox{
+    height:138px;
+    border-radius:12px;
+  }
+  .companyPicOverlay{
+    left:5px; right:5px; bottom:5px;
+    padding:5px 7px;
+    border-radius:9px;
+    font-size:.62rem;
+    gap:6px;
+  }
+  .companyNameBig{
+    margin-top:6px;
+    font-size:.80rem;
+  }
+  .companySub{font-size:.66rem;}
+  .companyEmailSub{
+    margin-top:3px;
+    font-size:.65rem;
+  }
+
+  .section{
+    padding:7px;
+    margin-bottom:7px;
+    border-radius:13px;
+  }
+  .section-head{
+    padding-bottom:5px;
+    margin-bottom:6px;
+    gap:6px;
+    font-size:.73rem;
+  }
+  .section-head .chip{
+    font-size:.58rem;
+    padding:4px 6px;
+  }
+
+  .field-grid, .row4, .row3, .row2, .row1{
+    gap:5px;
+    grid-template-columns:1fr !important;
+  }
+  .field-card{
+    padding:7px 7px 6px;
+    border-radius:11px;
+  }
+  .lbl{
+    font-size:.66rem;
+    gap:4px;
+    margin-bottom:5px;
+    padding-bottom:4px;
+  }
+  .lbl i{font-size:.78rem;}
+
+  .input, .select, .textarea{
+    padding:7px 8px;
+    border-radius:8px;
+    font-size:.69rem;
+  }
+  .textarea{
+    min-height:68px;
+    line-height:1.2;
+  }
+  .moneySign{
+    left:7px;
+    min-width:16px;
+    height:19px;
+    font-size:.68rem;
+    border-radius:6px;
+  }
+  .moneyWrap .input{padding-left:31px;}
+  .autofillNote,
+  .smallNote{
+    margin-top:4px;
+    font-size:.63rem;
+    gap:5px;
+    line-height:1.24;
+  }
+
+  .fileGrid{
+    grid-template-columns:1fr;
+    gap:5px;
+  }
+  .fileCard{
+    padding:7px;
+    gap:7px;
+    border-radius:12px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .fileLeft{
+    width:100%;
+    gap:7px;
+  }
+  .fileIcon{
+    width:31px; height:31px;
+    border-radius:9px;
+  }
+  .fileIcon i{font-size:.80rem;}
+  .fileTitle{font-size:.70rem;}
+  .fileSub{
+    font-size:.62rem;
+    white-space:normal;
+  }
+  .fileActions{
+    width:100%;
+    justify-content:flex-start;
+    gap:5px;
+  }
+  .btn-mini{
+    padding:6px 7px;
+    border-radius:8px;
+    font-size:.61rem;
+    gap:4px;
+  }
+
+  .bottom-bar{
+    margin-top:6px;
+    padding:7px;
+    border-radius:13px;
+    gap:7px;
+    justify-content:center;
+    text-align:center;
+  }
+  .bottom-bar .hint{
+    font-size:.65rem;
+  }
+  .bottom-actions{
+    width:100%;
+    justify-content:center;
+    gap:6px;
+  }
+  #btnSubmit, #btnEditLogout{
+    width:100%;
+    min-width:0;
+    padding:9px 10px;
+    border-radius:11px;
+    font-size:.67rem;
+    gap:6px;
+  }
+
+  .viewer-box{
+    width:min(100%, calc(100% - 4px));
+    max-height:calc(100vh - 12px);
+    border-radius:14px;
+  }
+  .viewer-head{
+    padding:7px;
+    gap:6px;
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .viewer-title{
+    gap:6px;
+    font-size:.74rem;
+  }
+  .viewer-actions{
+    width:100%;
+    gap:5px;
+    justify-content:flex-start;
+    flex-wrap:wrap;
+  }
+  .viewer-btn{
+    padding:6px 8px;
+    border-radius:8px;
+    font-size:.62rem;
+    gap:5px;
+  }
+  .viewer-body{
+    grid-template-columns:1fr;
+    gap:7px;
+    padding:7px;
+  }
+  .viewer-main{min-height:200px;}
+  .viewer-thumbs{
+    max-height:136px;
+    padding:6px;
+  }
+  .thumb{
+    padding:5px;
+    gap:6px;
+    border-radius:8px;
+    margin-bottom:5px;
+  }
+  .thumb img{
+    width:36px; height:36px;
+    border-radius:7px;
+  }
+  .thumb .meta .t1{font-size:.68rem;}
+  .thumb .meta .t2{font-size:.60rem;}
+  .viewer-foot{
+    padding:7px;
+    gap:7px;
+    justify-content:center;
+  }
+  .viewer-nav{
+    width:100%;
+    justify-content:center;
+    gap:5px;
+    flex-wrap:wrap;
+  }
+  .viewer-pill{
+    padding:5px 7px;
+    font-size:.64rem;
+  }
+
+  .popup-box{
+    width:min(100%, calc(100% - 10px));
+    padding:14px;
+    border-radius:14px;
+  }
+  .popup-title{font-size:.84rem;}
+  .popup-msg{font-size:.74rem;}
+  .popup-actions{
+    margin-top:10px;
+    justify-content:flex-start;
+  }
+  .popup-btn{
+    padding:8px 10px;
+    border-radius:10px;
+    font-size:.68rem;
+    gap:7px;
+  }
+
+  .submit-flight-card{
+    min-height:190px;
+    border-radius:18px;
+  }
+  .submit-flight-grid{
+    padding:18px 14px 16px;
+    min-height:190px;
+  }
+  .submit-flight-status{
+    width:40px;
+    height:40px;
+    top:12px;
+    right:12px;
+  }
+  .submit-flight-title{font-size:.96rem;}
+  .submit-flight-sub{
+    font-size:.74rem;
+    max-width:100%;
+  }
+}
+
+
+/* ============================================================
+   FINAL PATCH V2
+   Extra-compressed form for stronger responsiveness
+============================================================ */
+
+/* Shared tighter defaults */
+.page-title{margin-bottom:6px !important;}
+.page-title .right{gap:6px !important;}
+.pill{gap:5px !important;}
+.grid{gap:7px !important;}
+.section{margin-bottom:7px !important;}
+.section-head{margin-bottom:6px !important;}
+.field-grid,.row4,.row3,.row2,.row1{gap:5px !important;}
+.fileGrid{gap:5px !important;}
+.bottom-bar{gap:7px !important;}
+
+@media (min-width: 1800px){
+  :root{
+    --leftCol:280px !important;
+    --gridGap:10px !important;
+  }
+
+  .shell{padding:11px !important;}
+  .shell-inner{padding:11px !important;}
+
+  .page-title h1{font-size:1.66rem !important;}
+  .pill{padding:7px 10px !important; font-size:.74rem !important;}
+
+  .company-card{padding:8px !important;}
+  .companyPicBox{height:174px !important;}
+  .companyPicOverlay{padding:6px 8px !important; font-size:.70rem !important;}
+  .companyNameBig{font-size:.94rem !important;}
+  .companySub,.companyEmailSub{font-size:.73rem !important;}
+
+  .section{padding:10px !important; border-radius:15px !important;}
+  .section-head{padding-bottom:7px !important; font-size:.86rem !important;}
+  .section-head .chip{font-size:.66rem !important; padding:5px 8px !important;}
+
+  .field-card{padding:8px 8px 7px !important; border-radius:12px !important;}
+  .lbl{font-size:.73rem !important; margin-bottom:6px !important; padding-bottom:5px !important;}
+  .lbl i{font-size:.82rem !important;}
+  .input,.select,.textarea{padding:8px 9px !important; font-size:.76rem !important; border-radius:8px !important;}
+  .textarea{min-height:78px !important;}
+  .moneySign{left:8px !important; min-width:17px !important; height:20px !important; font-size:.72rem !important;}
+  .moneyWrap .input{padding-left:33px !important;}
+  .autofillNote,.smallNote{font-size:.70rem !important; margin-top:4px !important;}
+
+  .fileCard{padding:8px !important; border-radius:13px !important;}
+  .fileIcon{width:34px !important; height:34px !important; border-radius:10px !important;}
+  .fileIcon i{font-size:.86rem !important;}
+  .fileTitle{font-size:.76rem !important;}
+  .fileSub{font-size:.67rem !important;}
+  .btn-mini{padding:6px 8px !important; font-size:.65rem !important; border-radius:9px !important;}
+
+  .bottom-bar{padding:9px !important; border-radius:14px !important;}
+  .bottom-bar .hint{font-size:.71rem !important;}
+  #btnSubmit,#btnEditLogout{min-width:126px !important; padding:9px 11px !important; font-size:.71rem !important; border-radius:12px !important;}
+}
+
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{
+    --leftCol:270px !important;
+    --gridGap:9px !important;
+  }
+
+  .shell{padding:10px !important;}
+  .shell-inner{padding:10px !important;}
+
+  .page-title h1{font-size:1.56rem !important;}
+  .pill{padding:6px 9px !important; font-size:.70rem !important;}
+
+  .company-card{padding:8px !important;}
+  .companyPicBox{height:166px !important;}
+  .companyPicOverlay{padding:6px 8px !important; font-size:.68rem !important;}
+  .companyNameBig{font-size:.90rem !important;}
+  .companySub,.companyEmailSub{font-size:.71rem !important;}
+
+  .section{padding:9px !important; border-radius:14px !important;}
+  .section-head{padding-bottom:6px !important; font-size:.82rem !important;}
+  .section-head .chip{font-size:.63rem !important; padding:4px 7px !important;}
+
+  .field-card{padding:8px 8px 7px !important; border-radius:12px !important;}
+  .lbl{font-size:.70rem !important; margin-bottom:6px !important; padding-bottom:5px !important;}
+  .lbl i{font-size:.80rem !important;}
+  .input,.select,.textarea{padding:7px 8px !important; font-size:.73rem !important; border-radius:8px !important;}
+  .textarea{min-height:76px !important;}
+  .moneySign{left:8px !important; min-width:17px !important; height:20px !important; font-size:.70rem !important;}
+  .moneyWrap .input{padding-left:33px !important;}
+  .autofillNote,.smallNote{font-size:.67rem !important; margin-top:4px !important;}
+
+  .fileCard{padding:8px !important; border-radius:13px !important;}
+  .fileIcon{width:34px !important; height:34px !important; border-radius:10px !important;}
+  .fileIcon i{font-size:.84rem !important;}
+  .fileTitle{font-size:.74rem !important;}
+  .fileSub{font-size:.65rem !important;}
+  .btn-mini{padding:6px 8px !important; font-size:.63rem !important; border-radius:9px !important;}
+
+  .bottom-bar{padding:8px !important; border-radius:14px !important;}
+  .bottom-bar .hint{font-size:.68rem !important;}
+  #btnSubmit,#btnEditLogout{min-width:122px !important; padding:8px 10px !important; font-size:.68rem !important; border-radius:11px !important;}
+}
+
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{
+    --leftCol:228px !important;
+    --gridGap:8px !important;
+  }
+
+  .shell{padding:8px !important; border-radius:18px !important;}
+  .shell-inner{padding:8px !important; border-radius:15px !important;}
+
+  .page-title h1{font-size:1.34rem !important;}
+  .pill{padding:5px 8px !important; font-size:.64rem !important;}
+
+  .company-card{padding:7px !important; border-radius:13px !important;}
+  .companyPicBox{height:142px !important; border-radius:12px !important;}
+  .companyPicOverlay{padding:5px 7px !important; font-size:.64rem !important;}
+  .companyNameBig{font-size:.82rem !important;}
+  .companySub,.companyEmailSub{font-size:.66rem !important;}
+
+  .section{padding:8px !important; border-radius:13px !important;}
+  .section-head{padding-bottom:5px !important; font-size:.76rem !important;}
+  .section-head .chip{font-size:.59rem !important; padding:4px 6px !important;}
+
+  .field-card{padding:7px 7px 6px !important; border-radius:11px !important;}
+  .lbl{font-size:.66rem !important; margin-bottom:5px !important; padding-bottom:4px !important;}
+  .lbl i{font-size:.76rem !important;}
+  .input,.select,.textarea{padding:7px 8px !important; font-size:.68rem !important; border-radius:8px !important;}
+  .textarea{min-height:66px !important;}
+  .moneySign{left:7px !important; min-width:16px !important; height:18px !important; font-size:.66rem !important;}
+  .moneyWrap .input{padding-left:30px !important;}
+  .autofillNote,.smallNote{font-size:.62rem !important; margin-top:3px !important;}
+
+  .fileCard{padding:7px !important; border-radius:12px !important;}
+  .fileLeft{gap:7px !important;}
+  .fileIcon{width:31px !important; height:31px !important; border-radius:9px !important;}
+  .fileIcon i{font-size:.78rem !important;}
+  .fileTitle{font-size:.69rem !important;}
+  .fileSub{font-size:.60rem !important;}
+  .btn-mini{padding:6px 7px !important; font-size:.59rem !important; border-radius:8px !important; gap:4px !important;}
+
+  .bottom-bar{padding:7px !important; border-radius:13px !important;}
+  .bottom-bar .hint{font-size:.63rem !important;}
+  #btnSubmit,#btnEditLogout{min-width:114px !important; padding:8px 9px !important; font-size:.64rem !important; border-radius:10px !important;}
+}
+
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{
+    --leftCol:205px !important;
+    --gridGap:7px !important;
+  }
+
+  .page{
+    max-width:calc(100% - 12px) !important;
+    margin:calc(var(--hdrH) + 10px) auto 0 !important;
+  }
+  .shell{padding:7px !important; border-radius:16px !important;}
+  .shell-inner{padding:7px !important; border-radius:14px !important;}
+
+  .page-title{gap:6px !important;}
+  .page-title h1{font-size:1.18rem !important;}
+  .pill{padding:5px 7px !important; font-size:.60rem !important;}
+
+  .grid{
+    grid-template-columns:205px 1fr !important;
+    gap:7px !important;
+  }
+  .company-card{padding:6px !important; border-radius:12px !important;}
+  .companyPicBox{height:128px !important; border-radius:11px !important;}
+  .companyPicOverlay{padding:4px 6px !important; font-size:.59rem !important;}
+  .companyNameBig{font-size:.76rem !important;}
+  .companySub,.companyEmailSub{font-size:.61rem !important;}
+
+  .section{padding:7px !important; border-radius:12px !important;}
+  .section-head{padding-bottom:5px !important; font-size:.70rem !important;}
+  .section-head .chip{font-size:.55rem !important; padding:3px 6px !important;}
+
+  .field-grid,.row4,.row3,.row2,.row1{gap:5px !important;}
+  .field-card{padding:6px 6px 5px !important; border-radius:10px !important;}
+  .lbl{font-size:.61rem !important; margin-bottom:4px !important; padding-bottom:4px !important;}
+  .lbl i{font-size:.72rem !important;}
+  .input,.select,.textarea{padding:6px 7px !important; font-size:.63rem !important; border-radius:7px !important;}
+  .textarea{min-height:60px !important;}
+  .moneySign{left:6px !important; min-width:14px !important; height:17px !important; font-size:.61rem !important;}
+  .moneyWrap .input{padding-left:27px !important;}
+  .autofillNote,.smallNote{font-size:.58rem !important; margin-top:3px !important;}
+
+  .fileCard{padding:6px !important; border-radius:11px !important;}
+  .fileLeft{gap:6px !important;}
+  .fileIcon{width:28px !important; height:28px !important; border-radius:8px !important;}
+  .fileIcon i{font-size:.72rem !important;}
+  .fileTitle{font-size:.64rem !important;}
+  .fileSub{font-size:.56rem !important;}
+  .btn-mini{padding:5px 6px !important; font-size:.54rem !important; border-radius:7px !important; gap:4px !important;}
+
+  .bottom-bar{padding:6px !important; border-radius:12px !important;}
+  .bottom-bar .hint{font-size:.58rem !important;}
+  #btnSubmit,#btnEditLogout{min-width:104px !important; padding:7px 8px !important; font-size:.58rem !important; border-radius:9px !important;}
+
+  .viewer-main{min-height:210px !important;}
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  .page{
+    max-width:calc(100% - 12px) !important;
+    margin:calc(var(--hdrH) + 8px) auto 0 !important;
+  }
+  .shell{padding:6px !important; border-radius:15px !important;}
+  .shell-inner{padding:6px !important; border-radius:13px !important;}
+
+  .page-title{gap:6px !important; margin-bottom:6px !important;}
+  .page-title h1{font-size:1.08rem !important;}
+  .pill{padding:5px 7px !important; font-size:.58rem !important;}
+
+  .grid{gap:6px !important;}
+  .company-card{padding:6px !important; border-radius:12px !important;}
+  .companyPicBox{height:134px !important; border-radius:11px !important;}
+  .companyPicOverlay{padding:5px 6px !important; font-size:.58rem !important;}
+  .companyNameBig{font-size:.76rem !important;}
+  .companySub,.companyEmailSub{font-size:.60rem !important;}
+
+  .section{padding:6px !important; border-radius:12px !important;}
+  .section-head{padding-bottom:4px !important; margin-bottom:5px !important; font-size:.68rem !important;}
+  .section-head .chip{font-size:.54rem !important; padding:3px 6px !important;}
+
+  .field-grid,.row4,.row3,.row2,.row1{gap:5px !important;}
+  .field-card{padding:6px 6px 5px !important; border-radius:10px !important;}
+  .lbl{font-size:.60rem !important; margin-bottom:4px !important; padding-bottom:4px !important;}
+  .lbl i{font-size:.72rem !important;}
+  .input,.select,.textarea{padding:7px 7px !important; font-size:.62rem !important; border-radius:7px !important;}
+  .textarea{min-height:58px !important;}
+  .moneySign{left:6px !important; min-width:14px !important; height:17px !important; font-size:.60rem !important;}
+  .moneyWrap .input{padding-left:27px !important;}
+  .autofillNote,.smallNote{font-size:.57rem !important; margin-top:3px !important;}
+
+  .fileCard{padding:6px !important; border-radius:11px !important;}
+  .fileLeft{gap:6px !important;}
+  .fileIcon{width:28px !important; height:28px !important; border-radius:8px !important;}
+  .fileIcon i{font-size:.72rem !important;}
+  .fileTitle{font-size:.63rem !important;}
+  .fileSub{font-size:.55rem !important;}
+  .btn-mini{padding:5px 6px !important; font-size:.54rem !important; border-radius:7px !important;}
+
+  .bottom-bar{padding:6px !important; border-radius:12px !important;}
+  .bottom-bar .hint{font-size:.58rem !important;}
+  #btnSubmit,#btnEditLogout{padding:8px 8px !important; font-size:.60rem !important; border-radius:9px !important;}
+
+  .viewer-main{min-height:200px !important;}
+}
+
+@media (max-width: 480px){
+  .page{
+    max-width:calc(100% - 8px) !important;
+    margin:calc(var(--hdrH) + 6px) auto 0 !important;
+  }
+  .shell{padding:5px !important; border-radius:14px !important;}
+  .shell-inner{padding:5px !important; border-radius:12px !important;}
+
+  .page-title{gap:5px !important; margin-bottom:5px !important;}
+  .page-title h1{font-size:0.98rem !important;}
+  .pill{padding:4px 6px !important; font-size:.54rem !important;}
+
+  .grid{gap:5px !important;}
+  .company-card{padding:5px !important; border-radius:11px !important;}
+  .companyPicBox{height:118px !important; border-radius:10px !important;}
+  .companyPicOverlay{padding:4px 6px !important; font-size:.55rem !important;}
+  .companyNameBig{font-size:.70rem !important;}
+  .companySub,.companyEmailSub{font-size:.57rem !important;}
+
+  .section{padding:5px !important; border-radius:11px !important;}
+  .section-head{padding-bottom:4px !important; margin-bottom:5px !important; font-size:.64rem !important;}
+  .section-head .chip{font-size:.50rem !important; padding:3px 5px !important;}
+
+  .field-grid,.row4,.row3,.row2,.row1{gap:4px !important;}
+  .field-card{padding:5px 5px 4px !important; border-radius:9px !important;}
+  .lbl{font-size:.56rem !important; margin-bottom:4px !important; padding-bottom:3px !important;}
+  .lbl i{font-size:.68rem !important;}
+  .input,.select,.textarea{padding:6px 7px !important; font-size:.58rem !important; border-radius:7px !important;}
+  .textarea{min-height:54px !important;}
+  .moneySign{left:6px !important; min-width:13px !important; height:16px !important; font-size:.56rem !important;}
+  .moneyWrap .input{padding-left:25px !important;}
+  .autofillNote,.smallNote{font-size:.53rem !important; margin-top:3px !important;}
+
+  .fileCard{padding:5px !important; border-radius:10px !important;}
+  .fileLeft{gap:5px !important;}
+  .fileIcon{width:26px !important; height:26px !important; border-radius:7px !important;}
+  .fileIcon i{font-size:.68rem !important;}
+  .fileTitle{font-size:.60rem !important;}
+  .fileSub{font-size:.52rem !important;}
+  .btn-mini{padding:5px 6px !important; font-size:.50rem !important; border-radius:7px !important; gap:4px !important;}
+
+  .bottom-bar{padding:5px !important; border-radius:11px !important;}
+  .bottom-bar .hint{font-size:.54rem !important;}
+  #btnSubmit,#btnEditLogout{padding:7px 8px !important; font-size:.55rem !important; border-radius:8px !important;}
+
+  .viewer-main{min-height:182px !important;}
+  .viewer-thumbs{max-height:120px !important;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+        <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="employer_dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin2.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<!-- SUBMIT PAPER PLANE ANIMATION -->
+<div id="submitFlightOverlay" aria-hidden="true">
+  <div class="submit-flight-card">
+    <div class="submit-flight-grid">
+      <div class="submit-flight-status">
+        <i id="submitFlightStatusIcon" class="fa-solid fa-paper-plane"></i>
+      </div>
+
+      <div class="submit-flight-sky">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+
+      <div class="submit-flight-cloud c1"></div>
+      <div class="submit-flight-cloud c2"></div>
+      <div class="submit-flight-cloud c3"></div>
+
+      <div class="submit-flight-track">
+        <div class="submit-flight-progress"></div>
+      </div>
+
+      <div class="submit-flight-contrail"></div>
+
+      <div class="submit-flight-plane">
+        <i class="fa-solid fa-paper-plane"></i>
+      </div>
+
+      <div class="submit-flight-text">
+        <div class="submit-flight-title" id="submitFlightTitle">
+          Submitting your job post...
+          <span class="submit-flight-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+        <div class="submit-flight-sub" id="submitFlightSub">
+          Please wait while we upload files and save the form details.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP -->
+<div id="messagePopup" role="dialog" aria-modal="true">
+  <div class="popup-box">
+    <div class="popup-title" id="popupTitle"><i class="fa-solid fa-circle-info"></i> Message</div>
+    <div class="popup-msg" id="popupMessage">...</div>
+    <div class="popup-actions">
+      <button class="popup-btn close" type="button" id="popupCloseBtn"><i class="fa-solid fa-xmark"></i> Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPANY PICTURE VIEWER (MODAL) -->
+<div id="companyPicViewer" role="dialog" aria-modal="true" aria-label="Company Profile Pictures Viewer">
+  <div class="viewer-box">
+    <div class="viewer-head">
+      <div class="viewer-title"><i class="fa-solid fa-images"></i> Company Profile Pictures</div>
+      <div class="viewer-actions">
+        <button class="viewer-btn choose" type="button" id="viewerChooseBtn"><i class="fa-solid fa-upload"></i> Select / Change</button>
+        <button class="viewer-btn close" type="button" id="viewerCloseBtn"><i class="fa-solid fa-xmark"></i> Close</button>
+      </div>
+    </div>
+
+    <div class="viewer-body">
+      <div class="viewer-main">
+        <div class="viewer-empty" id="viewerEmpty">
+          No images selected.<br>
+          Click <b>Select / Change</b> to choose company profile pictures.
+        </div>
+        <img id="viewerMainImg" alt="Company picture preview" />
+      </div>
+
+      <div class="viewer-thumbs" id="viewerThumbs"></div>
+    </div>
+
+    <div class="viewer-foot">
+      <div class="viewer-nav">
+        <button class="viewer-btn nav" type="button" id="viewerPrevBtn"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+        <button class="viewer-btn nav" type="button" id="viewerNextBtn">Next <i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <div class="viewer-pill" id="viewerIndexPill">0 / 0</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="page">
+  <div class="shell">
+    <div class="shell-inner">
+
+      <div class="page-title">
+        <div>
+          <h1>Post Job Hiring</h1>
+          <div class="pill gray">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <span>Publish your hiring requirement</span>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="pill">
+            <i class="fa-solid fa-shield"></i>
+            <span>Secure Submit</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="statusLine" class="status-line">
+        <i class="fa-solid fa-circle-info"></i>
+        <span id="statusLineText">Ready</span>
+      </div>
+
+      <div class="grid">
+
+        <!-- LEFT CARD -->
+        <div class="company-card">
+          <div class="companyPicBox" id="companyPicBox" title="Click to view company profile picture(s)">
+            <img id="companyPicPreview" alt="Company Profile" />
+            <div class="companyPicOverlay">
+              <span><i class="fa-solid fa-image"></i> Company Profile</span>
+              <span id="companyPicHint">Click to view</span>
+            </div>
+          </div>
+
+          <div class="companyNameBig" id="companyNamePreview">Your Company</div>
+          <div class="companySub">Job posting details</div>
+          <div class="companyEmailSub" id="companyEmailPreview">—</div>
+        </div>
+
+        <!-- RIGHT CONTENT -->
+        <div style="min-width:0;">
+
+          <!-- COMPANY -->
+          <div class="section">
+            <div class="section-head">
+              <div class="left"><i class="fa-solid fa-building"></i><span>Company Information</span></div>
+              <div class="chip">Required</div>
+            </div>
+
+            <div class="field-grid">
+              <div class="row3">
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-building"></i> Company Name</div>
+                  <input class="input" id="companyName" type="text" required autocomplete="organization" placeholder="Company Name">
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-envelope"></i> Contact Email</div>
+                  <input class="input" id="contactEmail" type="email" required autocomplete="email" placeholder="company@email.com">
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-diagram-project"></i> Source Type</div>
+                  <select class="select" id="sourceType" required>
+                    <option value="" selected disabled hidden>Select Source Type</option>
+                    <option value="3rd Party">3rd Party</option>
+                    <option value="Company">Company</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LOCATION -->
+          <div class="section">
+            <div class="section-head">
+              <div class="left"><i class="fa-solid fa-location-dot"></i><span>Job Location</span></div>
+              <div class="chip">Required</div>
+            </div>
+
+            <div class="field-grid">
+              <div class="row4">
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-flag"></i> Country</div>
+                  <select class="select" id="country" required>
+                    <option value="United States">United States</option>
+                    <option value="Philippines">Philippines</option>
+                  </select>
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-city"></i> City</div>
+                  <select class="select" id="city" required>
+                    <option value="" selected disabled hidden>Select City</option>
+                  </select>
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-map"></i> State / Province</div>
+                  <input
+                    class="input locked"
+                    id="state"
+                    type="text"
+                    required
+                    autocomplete="address-level1"
+                    placeholder="Auto-filled when City is selected"
+                    readonly
+                  >
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-hashtag"></i> Zip Code</div>
+                  <input
+                    class="input locked"
+                    id="zipcode"
+                    type="text"
+                    required
+                    inputmode="numeric"
+                    autocomplete="postal-code"
+                    placeholder="Auto-filled when City is selected"
+                    readonly
+                  >
+                </div>
+              </div>
+
+              <div class="row1">
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-location-crosshairs"></i> Full Address</div>
+                  <input class="input" id="address" type="text" required autocomplete="street-address" placeholder="Street / Unit / Building">
+                </div>
+              </div>
+
+              <div class="autofillNote">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>State / Province and Zip Code are readonly and will update only when you change the selected City.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- JOB INFO -->
+          <div class="section">
+            <div class="section-head">
+              <div class="left"><i class="fa-solid fa-briefcase"></i><span>Job Information</span></div>
+              <div class="chip">Required</div>
+            </div>
+
+            <div class="field-grid">
+              <div class="row3">
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-user-tie"></i> Position</div>
+                  <select class="select" id="position" required>
+                    <option value="" selected disabled hidden>Select Position</option>
+                    <option>Virtual Assistant</option>
+                    <option>Executive Assistant</option>
+                    <option>Administrative Assistant</option>
+                    <option>Customer Service Representative</option>
+                    <option>Sales Representative</option>
+                    <option>Account Manager</option>
+                    <option>Customer Success Specialist</option>
+                    <option>Social Media Manager</option>
+                    <option>Marketing Specialist</option>
+                    <option>SEO Specialist</option>
+                    <option>Content Writer</option>
+                    <option>Copywriter</option>
+                    <option>Graphic Designer</option>
+                    <option>Video Editor</option>
+                    <option>Web Developer</option>
+                    <option>Software Developer</option>
+                    <option>QA Tester</option>
+                    <option>Data Analyst</option>
+                    <option>Bookkeeper</option>
+                    <option>Accountant</option>
+                    <option>Payroll Specialist</option>
+                    <option>HR Assistant</option>
+                    <option>Recruiter</option>
+                    <option>Project Manager</option>
+                    <option>Operations Manager</option>
+                    <option>IT Support</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-sitemap"></i> Department</div>
+                  <select class="select" id="department" required>
+                    <option value="" selected disabled hidden>Select Department</option>
+                    <option>IT</option><option>Finance</option><option>Marketing</option><option>Customer Service</option>
+                    <option>HR</option><option>Admin</option><option>Operations</option><option>Business Operations</option>
+                    <option>Office Management</option><option>Facilities</option><option>Security</option><option>Front Desk / Reception</option>
+                    <option>Executive Assistant</option><option>Sales</option><option>Business Development</option><option>Account Management</option>
+                    <option>Customer Success</option><option>Partnerships</option><option>Growth</option><option>Sales Operations</option>
+                    <option>Product Management</option><option>Engineering</option><option>Software Development</option><option>Web Development</option>
+                    <option>Mobile Development</option><option>DevOps</option><option>IT Support / Helpdesk</option><option>Cybersecurity</option>
+                    <option>QA / Testing</option><option>Data Analytics</option><option>Data Science</option><option>AI / Machine Learning</option>
+                    <option>Cloud Infrastructure</option><option>Network Administration</option><option>Design</option><option>UI/UX</option>
+                    <option>Graphic Design</option><option>Content</option><option>Content Writing</option><option>Copywriting</option>
+                    <option>Social Media</option><option>Branding</option><option>Video Editing</option><option>Creative Production</option>
+                    <option>Accounting</option><option>Accounts Payable</option><option>Accounts Receivable</option><option>Payroll</option>
+                    <option>Budgeting</option><option>Procurement</option><option>Legal</option><option>Compliance</option>
+                    <option>Risk Management</option><option>Recruitment / Talent Acquisition</option><option>People Operations</option>
+                    <option>Training & Development</option><option>Compensation & Benefits</option><option>Supply Chain</option>
+                    <option>Logistics</option><option>Warehouse</option><option>Inventory</option><option>Shipping & Receiving</option>
+                    <option>Project Management</option><option>Program Management</option><option>Quality Assurance</option>
+                    <option>Process Improvement</option><option>Research & Development</option><option>Public Relations</option>
+                    <option>Communications</option><option>Community Management</option><option>Other</option>
+                  </select>
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-id-badge"></i> Employment Type</div>
+                  <select class="select" id="employmentType" required>
+                    <option value="" selected disabled hidden>Select Type</option>
+                    <option>Full-Time</option>
+                    <option>Part-Time</option>
+                    <option>Freelance</option>
+                    <option>Contract</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row1" id="otherPositionRow" style="display:none;">
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-pen-to-square"></i> Other Position</div>
+                  <input class="input" id="otherPosition" type="text" placeholder="Type the position title">
+                </div>
+              </div>
+
+              <div class="row4">
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-money-bill-wave"></i> Salary Min</div>
+                  <div class="moneyWrap">
+                    <span class="moneySign" id="salaryMinSign">$</span>
+                    <input class="input" id="salaryMin" type="text" inputmode="decimal" placeholder="e.g. 1200">
+                  </div>
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-money-bill-wave"></i> Salary Max</div>
+                  <div class="moneyWrap">
+                    <span class="moneySign" id="salaryMaxSign">$</span>
+                    <input class="input" id="salaryMax" type="text" inputmode="decimal" placeholder="e.g. 2000">
+                  </div>
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-award"></i> Years Experience</div>
+                  <input class="input" id="experienceLevel" type="number" min="0" max="75" step="1" inputmode="numeric" placeholder="Optional">
+                </div>
+
+                <div class="field-card">
+                  <div class="lbl"><i class="fa-solid fa-note-sticky"></i> Notes</div>
+                  <input class="input" id="skills" type="text" placeholder="Skills / notes (optional)">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FILES -->
+          <div class="section">
+            <div class="section-head">
+              <div class="left"><i class="fa-solid fa-folder-open"></i><span>Attachments</span></div>
+              <div class="chip">Optional</div>
+            </div>
+
+            <div class="fileGrid">
+              <div class="fileCard">
+                <div class="fileLeft">
+                  <div class="fileIcon"><i class="fa-solid fa-image"></i></div>
+                  <div style="min-width:0;">
+                    <div class="fileTitle">Company Profile Pictures</div>
+                    <div class="fileSub" id="companyPicCountText">No files selected</div>
+                  </div>
+                </div>
+                <div class="fileActions">
+                  <button class="btn-mini select2" type="button" id="companyPicSelectBtn">
+                    <i class="fa-solid fa-upload"></i> Select
+                  </button>
+                </div>
+              </div>
+
+              <div class="fileCard">
+                <div class="fileLeft">
+                  <div class="fileIcon"><i class="fa-solid fa-file-pdf"></i></div>
+                  <div style="min-width:0;">
+                    <div class="fileTitle">Job Description Files</div>
+                    <div class="fileSub" id="jdCountText">No files selected</div>
+                  </div>
+                </div>
+                <div class="fileActions">
+                  <button class="btn-mini select" type="button" id="jdBtn"><i class="fa-solid fa-upload"></i> Select</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="smallNote">
+              <i class="fa-solid fa-circle-info"></i>
+              File names are hidden for privacy. Only the count is shown.
+            </div>
+          </div>
+
+          <!-- BOTTOM BAR -->
+          <div class="bottom-bar">
+            <div class="hint"><i class="fa-solid fa-circle-info"></i> Fill required fields then click Submit.</div>
+            <div class="bottom-actions">
+              <button id="btnSubmit" type="button">
+                <span class="btnSubmitInner">
+                  <i class="fa-solid fa-paper-plane btn-plane-icon"></i>
+                  <span>Submit</span>
+                </span>
+              </button>
+              <button id="btnEditLogout" type="button" aria-hidden="true">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- HIDDEN FILE INPUTS -->
+      <input class="hidden-input" type="file" id="companyPic" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.gif">
+      <input class="hidden-input" type="file" id="jobPdf" multiple
+        accept=".pdf,.doc,.docx,.txt,.rtf,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,application/rtf">
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= HEADER MENUS ================= */
+const aboutNavDropdown = document.getElementById("aboutNavDropdown");
+const aboutNavLink = document.getElementById("aboutNavLink");
+const aboutNavToggle = document.getElementById("aboutNavToggle");
+const aboutNavMenu = document.getElementById("aboutNavMenu");
+const navToggle = document.getElementById("navToggle");
+const mobilePanel = document.getElementById("mobilePanel");
+let aboutMenuCloseTimer = null;
+
+function cancelAboutMenuClose(){
+  if(aboutMenuCloseTimer){
+    window.clearTimeout(aboutMenuCloseTimer);
+    aboutMenuCloseTimer = null;
+  }
+}
+
+function setAboutMenuState(isOpen, options = {}){
+  if(!aboutNavDropdown) return;
+  cancelAboutMenuClose();
+  const next = !!isOpen;
+  aboutNavDropdown.classList.toggle("open", next);
+  aboutNavToggle?.setAttribute("aria-expanded", next ? "true" : "false");
+  aboutNavMenu?.setAttribute("aria-hidden", next ? "false" : "true");
+  if(next && options.focusFirst){
+    aboutNavMenu?.querySelector("a")?.focus();
+  }
+}
+
+function openAboutMenu(options = {}){
+  setAboutMenuState(true, options);
+}
+
+function closeAboutMenu(){
+  setAboutMenuState(false);
+}
+
+function scheduleAboutMenuClose(){
+  cancelAboutMenuClose();
+  aboutMenuCloseTimer = window.setTimeout(() => {
+    closeAboutMenu();
+  }, 120);
+}
+
+function toggleAboutMenu(){
+  const isOpen = aboutNavDropdown?.classList.contains("open");
+  setAboutMenuState(!isOpen, { focusFirst: !isOpen });
+}
+
+aboutNavToggle?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  toggleAboutMenu();
+});
+
+aboutNavDropdown?.addEventListener("mouseenter", () => {
+  openAboutMenu();
+});
+aboutNavDropdown?.addEventListener("mouseleave", () => {
+  scheduleAboutMenuClose();
+});
+aboutNavDropdown?.addEventListener("focusin", () => {
+  openAboutMenu();
+});
+aboutNavDropdown?.addEventListener("focusout", (e) => {
+  if(!aboutNavDropdown?.contains(e.relatedTarget)){
+    scheduleAboutMenuClose();
+  }
+});
+
+aboutNavDropdown?.addEventListener("keydown", (e) => {
+  const menuLinks = Array.from(aboutNavMenu?.querySelectorAll("a") || []);
+  const currentIndex = menuLinks.indexOf(document.activeElement);
+
+  if(e.key === "Escape"){
+    e.preventDefault();
+    closeAboutMenu();
+    aboutNavToggle?.focus();
+    return;
+  }
+
+  if((e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") && (e.target === aboutNavToggle)){
+    e.preventDefault();
+    openAboutMenu({ focusFirst: true });
+    return;
+  }
+
+  if(e.key === "ArrowDown" && currentIndex >= 0){
+    e.preventDefault();
+    menuLinks[(currentIndex + 1) % menuLinks.length]?.focus();
+    return;
+  }
+
+  if(e.key === "ArrowUp"){
+    if(currentIndex >= 0){
+      e.preventDefault();
+      menuLinks[(currentIndex - 1 + menuLinks.length) % menuLinks.length]?.focus();
+      return;
+    }
+    if(e.target === aboutNavToggle){
+      e.preventDefault();
+      openAboutMenu();
+      menuLinks[menuLinks.length - 1]?.focus();
+    }
+  }
+});
+
+aboutNavMenu?.addEventListener("click", (e) => {
+  const clickedLink = e.target.closest("a");
+  if(!clickedLink) return;
+  closeAboutMenu();
+});
+
+aboutNavLink?.addEventListener("click", () => {
+  closeAboutMenu();
+});
+
+function closeMobilePanel(){
+  if(!mobilePanel || !navToggle) return;
+  mobilePanel.classList.remove("open");
+  mobilePanel.setAttribute("aria-hidden","true");
+  navToggle.setAttribute("aria-expanded","false");
+}
+/* ================= SUPABASE CLIENT SAFE ================= */
+function getDb(){
+  const cands = [window.supabase, window.supabaseClient, window.client, window.sb].filter(Boolean);
+  for(const c of cands){
+    if(c && typeof c.from === "function") return c;
+  }
+  return null;
+}
+
+const EMPLOYER_DASHBOARD_REFRESH_FLAG = "jobspacelink_employer_dashboard_refresh";
+const EMPLOYER_DASHBOARD_UPDATE_KEY = "jobspacelink_recent_staff_requirement_update";
+const EMPLOYER_DASHBOARD_UPDATE_AT_KEY = "jobspacelink_recent_staff_requirement_update_at";
+const POSTJOB_FORCE_NEW_FLAG = "jobspacelink_postjob_force_new";
+const POSTJOB_EDIT_STORAGE_KEYS = [
+  "jobspacelink_postjob_prefill",
+  "jobspacelink_postjob_prefill_b64",
+  "jobspacelink_postjob_edit_payload",
+  "jobspacelink_postjob_edit_payload_b64",
+  "jobspacelink_postjob_edit_record",
+  "jobspacelink_postjob_edit_record_b64",
+  "jobspacelink_postjob_edit_normalized",
+  "jobspacelink_postjob_edit_normalized_b64",
+  "jobspacelink_postjob_edit_prefill",
+  "jobspacelink_postjob_edit_prefill_b64",
+  "jobspacelink_postjob_edit_id",
+  "jobspacelink_postjob_edit_requirement_id",
+  "jobspacelink_postjob_url",
+  "jobspacelink_postjob_mode",
+  "jobspacelink_postjob_autoload",
+  "postjob_edit_payload",
+  "postjob_edit_payload_b64",
+  "postjob_edit_record",
+  "postjob_edit_record_b64",
+  "postjob_edit_mode",
+  "editJobData",
+  "editJobPayload",
+  "edit_job_payload",
+  "selectedJobForEdit",
+  "currentEditJob",
+  "employer_dashboard_edit_payload",
+  "staff_requirement_edit_payload",
+  "jobspacelink_edit_job_payload",
+  "jobspacelink_edit_job_prefill",
+  "jobspacelink_edit_job_payload_b64",
+  "jobspacelink_edit_job_record",
+  "jobspacelink_edit_job_record_b64",
+  "selected_staff_requirement_payload",
+  "selected_staff_requirement_payload_b64",
+  "selected_staff_requirement_prefill_b64",
+  "selectedJobPayload",
+  "selectedJobPayload_b64",
+  "editingJobPayload",
+  "editingJobData",
+  "staffRequirementsEditPayload",
+  "selected_staff_requirement_id"
+];
+
+function broadcastEmployerDashboardUpdate(updatedRow){
+  const payload = updatedRow && typeof updatedRow === "object" ? updatedRow : {};
+  const serialized = JSON.stringify(payload);
+  const updatedAt = String(payload.updated_at || new Date().toISOString());
+  for(const storageArea of [window.sessionStorage, window.localStorage]){
+    if(!storageArea) continue;
+    try{
+      storageArea.setItem(EMPLOYER_DASHBOARD_REFRESH_FLAG, "1");
+      storageArea.setItem(EMPLOYER_DASHBOARD_UPDATE_KEY, serialized);
+      storageArea.setItem(EMPLOYER_DASHBOARD_UPDATE_AT_KEY, updatedAt);
+    }catch(error){}
+  }
+}
+
+function clearStoredEditContext(){
+  for(const storageArea of [window.sessionStorage, window.localStorage]){
+    if(!storageArea) continue;
+    for(const key of POSTJOB_EDIT_STORAGE_KEYS){
+      try{ storageArea.removeItem(key); }catch(error){}
+    }
+  }
+  try{
+    if(String(window.name || "").startsWith("JOBSPACELINK_EDIT_JOB::")){
+      window.name = "";
+    }
+  }catch(error){}
+}
+
+function consumePostjobForceNewFlag(){
+  let shouldForceNew = false;
+  for(const storageArea of [window.sessionStorage, window.localStorage]){
+    if(!storageArea) continue;
+    try{
+      const value = storageArea.getItem(POSTJOB_FORCE_NEW_FLAG);
+      if(value){
+        shouldForceNew = true;
+        storageArea.removeItem(POSTJOB_FORCE_NEW_FLAG);
+      }
+    }catch(error){}
+  }
+  return shouldForceNew;
+}
+
+/* ================= UI HELPERS ================= */
+const statusLine = document.getElementById("statusLine");
+const statusLineText = document.getElementById("statusLineText");
+
+function showStatus(msg, type="info"){
+  if(!statusLine || !statusLineText) return;
+  statusLine.style.display = "flex";
+  statusLine.className = "status-line";
+  if(type === "error") statusLine.classList.add("error");
+  if(type === "success") statusLine.classList.add("success");
+  if(type === "warn") statusLine.classList.add("warn");
+  statusLineText.textContent = msg;
+}
+
+function sleep(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/* ================= POPUP ================= */
+const popup = document.getElementById("messagePopup");
+const popupTitleEl = document.getElementById("popupTitle");
+const popupMessageEl = document.getElementById("popupMessage");
+const popupCloseBtn = document.getElementById("popupCloseBtn");
+
+function showPopup(title, message, icon="fa-solid fa-circle-check"){
+  popupTitleEl.innerHTML = `<i class="${icon}"></i> ${title}`;
+  popupMessageEl.textContent = message;
+  popup.style.display = "flex";
+}
+function closePopup(){
+  popup.style.display = "none";
+}
+popupCloseBtn?.addEventListener("click", closePopup);
+popup?.addEventListener("click",(e)=>{
+  if(e.target === popup) closePopup();
+});
+document.addEventListener("keydown",(e)=>{
+  if(e.key === "Escape" && popup.style.display === "flex") closePopup();
+});
+
+/* ================= STRING HELPERS ================= */
+function normalizeSpaces(str){
+  return String(str || "").replace(/\s+/g, " ").trim();
+}
+function cleanFolder(str){
+  return String(str || "").trim().replace(/[^a-zA-Z0-9_-]/g, "_").replace(/_+/g, "_");
+}
+function smartTitleCase(str){
+  const s = normalizeSpaces(str);
+  if(!s) return "";
+  const smallWords = new Set(["and","or","the","of","for","to","in","on","at","a","an","with","by"]);
+  const acronyms = new Set(["it","hr","qa","ui","ux","ui/ux","ai","seo","sem","ceo","cfo","cto","vp","r&d"]);
+  const words = s.split(" ");
+  return words.map((w, idx)=>{
+    const raw = w.trim();
+    if(!raw) return "";
+    const low = raw.toLowerCase();
+    if(raw.includes("/") || raw.includes("&")) return raw.toUpperCase();
+    if(acronyms.has(low)) return raw.toUpperCase();
+    if(idx > 0 && smallWords.has(low)) return low;
+    return low.charAt(0).toUpperCase() + low.slice(1);
+  }).join(" ").replace(/\s+/g, " ").trim();
+}
+function safeFileName(name){
+  return String(name || "file").trim().replace(/[^a-zA-Z0-9._-]/g, "_").replace(/_+/g, "_");
+}
+function getFileExt(filename){
+  const name = String(filename || "");
+  const i = name.lastIndexOf(".");
+  return i >= 0 ? name.slice(i + 1).toLowerCase() : "";
+}
+function formatMoneyDisplay(value){
+  if(value === null || value === undefined || value === "") return "";
+  const num = Number(value);
+  if(!Number.isFinite(num)) return "";
+  if(Number.isInteger(num)) return String(num);
+  return num.toFixed(2).replace(/\.00$/,"").replace(/(\.\d*[1-9])0+$/,"$1");
+}
+function getCurrencyMeta(countryValue){
+  const v = normalizeSpaces(countryValue).toLowerCase();
+  if(v.includes("philippines") || v === "ph"){
+    return {
+      sign: "₱",
+      code: "PHP",
+      label: "Philippine Peso"
+    };
+  }
+  return {
+    sign: "$",
+    code: "USD",
+    label: "US Dollar"
+  };
+}
+
+/* ================= VALIDATORS ================= */
+function isAllowedUpload(file){
+  const allowedExt = new Set(["pdf","doc","docx","txt","rtf"]);
+  const ext = getFileExt(file?.name);
+  if(allowedExt.has(ext)) return true;
+
+  const allowedMime = new Set([
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain",
+    "application/rtf"
+  ]);
+  return allowedMime.has(file?.type);
+}
+function isAllowedImage(file){
+  if(!file) return false;
+  const ext = getFileExt(file.name);
+  const allowedExt = new Set(["jpg","jpeg","png","webp","gif"]);
+  if(allowedExt.has(ext)) return true;
+  const allowedMime = new Set(["image/jpeg","image/png","image/webp","image/gif"]);
+  return allowedMime.has(file.type);
+}
+function isValidEmail(email){
+  const e = String(email || "").trim();
+  if(!e) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+/* ================= ELEMENTS ================= */
+const btnSubmit = document.getElementById("btnSubmit");
+const btnEditLogout = document.getElementById("btnEditLogout");
+
+const companyPicBox = document.getElementById("companyPicBox");
+
+const companyName = document.getElementById("companyName");
+const contactEmail = document.getElementById("contactEmail");
+const sourceType = document.getElementById("sourceType");
+
+const country = document.getElementById("country");
+const city = document.getElementById("city");
+const state = document.getElementById("state");
+const zipcode = document.getElementById("zipcode");
+const address = document.getElementById("address");
+
+const position = document.getElementById("position");
+const otherPositionRow = document.getElementById("otherPositionRow");
+const otherPosition = document.getElementById("otherPosition");
+
+const department = document.getElementById("department");
+const employmentType = document.getElementById("employmentType");
+
+const salaryMin = document.getElementById("salaryMin");
+const salaryMax = document.getElementById("salaryMax");
+const salaryMinSign = document.getElementById("salaryMinSign");
+const salaryMaxSign = document.getElementById("salaryMaxSign");
+const experienceLevel = document.getElementById("experienceLevel");
+const skills = document.getElementById("skills");
+
+const companyPicInput = document.getElementById("companyPic");
+const jdInput = document.getElementById("jobPdf");
+
+const companyPicSelectBtn = document.getElementById("companyPicSelectBtn");
+const jdBtn = document.getElementById("jdBtn");
+
+const companyPicCountText = document.getElementById("companyPicCountText");
+const jdCountText = document.getElementById("jdCountText");
+
+const companyNamePreview = document.getElementById("companyNamePreview");
+const companyEmailPreview = document.getElementById("companyEmailPreview");
+const companyPicPreview = document.getElementById("companyPicPreview");
+const companyPicHint = document.getElementById("companyPicHint");
+
+/* ================= VIEWER ELEMENTS ================= */
+const viewerOverlay = document.getElementById("companyPicViewer");
+const viewerChooseBtn = document.getElementById("viewerChooseBtn");
+const viewerCloseBtn  = document.getElementById("viewerCloseBtn");
+const viewerPrevBtn   = document.getElementById("viewerPrevBtn");
+const viewerNextBtn   = document.getElementById("viewerNextBtn");
+const viewerThumbs    = document.getElementById("viewerThumbs");
+const viewerMainImg   = document.getElementById("viewerMainImg");
+const viewerEmpty     = document.getElementById("viewerEmpty");
+const viewerIndexPill = document.getElementById("viewerIndexPill");
+
+/* ================= SUBMIT ANIMATION ELEMENTS ================= */
+const submitFlightOverlay = document.getElementById("submitFlightOverlay");
+const submitFlightTitle = document.getElementById("submitFlightTitle");
+const submitFlightSub = document.getElementById("submitFlightSub");
+const submitFlightStatusIcon = document.getElementById("submitFlightStatusIcon");
+
+const pageTitleHeading = document.querySelector(".page-title h1");
+const bottomHint = document.querySelector(".bottom-bar .hint");
+
+const editState = {
+  isEditMode: false,
+  payload: null,
+  rawRecord: null,
+  fetchedRecord: null,
+  mergedRecord: null,
+  recordId: "",
+  requirementId: "",
+  existingJdUrls: [],
+  existingCompanyProfileUrls: [],
+  originalSnapshot: null
+};
+
+function getSubmitButtonIdleHtml(){
+  return `
+    <span class="btnSubmitInner">
+      <i class="fa-solid fa-paper-plane btn-plane-icon"></i>
+      <span>${editState.isEditMode ? "Update Post" : "Submit"}</span>
+    </span>
+  `;
+}
+
+function getSubmitButtonBusyHtml(){
+  return `
+    <span class="btnSubmitInner">
+      <i class="fa-solid fa-paper-plane btn-plane-icon"></i>
+      <span>${editState.isEditMode ? "Updating Post..." : "Submitting..."}</span>
+    </span>
+  `;
+}
+
+function refreshSubmitButtonText(isBusy = false){
+  if(!btnSubmit) return;
+  btnSubmit.innerHTML = isBusy ? getSubmitButtonBusyHtml() : getSubmitButtonIdleHtml();
+}
+
+function setCompanyNameEditability(){
+  if(!companyName) return;
+  const locked = !!editState.isEditMode;
+  companyName.readOnly = locked;
+  companyName.classList.toggle("locked", locked);
+  companyName.setAttribute("aria-readonly", locked ? "true" : "false");
+  if(locked){
+    companyName.setAttribute("title", "Company Name is locked in edit mode.");
+  }else{
+    companyName.removeAttribute("title");
+  }
+}
+
+function applyPageModeUI(){
+  if(pageTitleHeading){
+    pageTitleHeading.textContent = editState.isEditMode ? "Edit Job Hiring" : "Post Job Hiring";
+  }
+  if(bottomHint){
+    bottomHint.innerHTML = editState.isEditMode
+      ? `<i class="fa-solid fa-pen-to-square"></i> Edit mode is active. Review the loaded job data, then click Update Post.`
+      : `<i class="fa-solid fa-circle-info"></i> Fill required fields then click Submit.`;
+  }
+  setCompanyNameEditability();
+  if(btnEditLogout){
+    btnEditLogout.classList.toggle("is-visible", !!editState.isEditMode);
+    btnEditLogout.setAttribute("aria-hidden", editState.isEditMode ? "false" : "true");
+    btnEditLogout.disabled = false;
+  }
+  refreshSubmitButtonText(false);
+}
+
+function normalizeCompareValue(value){
+  if(value === null || value === undefined) return "";
+  return String(value).trim();
+}
+
+function normalizeCompareArray(values){
+  return [...new Set((Array.isArray(values) ? values : [values])
+    .flatMap(value => flattenToArray(value))
+    .map(value => String(value || "").trim())
+    .filter(Boolean))].sort();
+}
+
+function buildComparableSnapshotFromRecord(record){
+  const row = record && typeof record === "object" ? record : {};
+  return {
+    company_name: smartTitleCase(pickFirstNonEmpty(row, ["company_name","company","business_name","employer_name"], "")),
+    contact_email: normalizeSpaces(pickFirstNonEmpty(row, ["contact_email","company_email","email","contact_email_address"], "")).toLowerCase(),
+    source_type: normalizeCompareValue(pickFirstNonEmpty(row, ["source_type","source"], "")),
+    country: normalizeCountryValue(pickFirstNonEmpty(row, ["country","job_country"], country.value || "United States")),
+    city: normalizeSpaces(pickFirstNonEmpty(row, ["city","job_city"], "")),
+    state: normalizeSpaces(pickFirstNonEmpty(row, ["state","job_state","province"], "")),
+    zipcode: String(pickFirstNonEmpty(row, ["zipcode","zip","postal_code","postal","job_zipcode"], "")).replace(/\D/g, "").trim(),
+    address: normalizeSpaces(pickFirstNonEmpty(row, ["address","street_address","job_location","work_location","location"], "")),
+    position: smartTitleCase(pickFirstNonEmpty(row, ["position","job_title","title","role"], "")),
+    department: smartTitleCase(pickFirstNonEmpty(row, ["department","division","team"], "")),
+    employment_type: normalizeCompareValue(pickFirstNonEmpty(row, ["employment_type","job_type","work_type","type"], "")),
+    salary_min: normalizeCompareValue(formatMoneyDisplay(pickFirstNonEmpty(row, ["salary_min","min_salary"], ""))),
+    salary_max: normalizeCompareValue(formatMoneyDisplay(pickFirstNonEmpty(row, ["salary_max","max_salary"], ""))),
+    experience_level: normalizeCompareValue(pickFirstNonEmpty(row, ["experience_level","experience","years_experience"], "")),
+    skills: normalizeSpaces(pickFirstNonEmpty(row, ["skills","required_skills","job_skills","notes"], "")),
+    existing_jd_urls: normalizeCompareArray(getExistingJdUrlsFromRecord(row)),
+    existing_company_profile_urls: normalizeCompareArray(getExistingCompanyImageUrlsFromRecord(row))
+  };
+}
+
+function getCurrentEditComparableSnapshot(){
+  const selectedVal = String(city.value || "");
+  const info = CITY_VALUE_TO_INFO.get(selectedVal) || null;
+  const cityVal = info ? String(info.city || "").trim() : "";
+  const stateVal = normalizeSpaces(state.value || (info ? info.state : ""));
+  const zipVal = String(zipcode.value || (info ? info.zip : "")).replace(/\D/g, "").trim();
+  return {
+    company_name: smartTitleCase(companyName.value),
+    contact_email: normalizeSpaces(contactEmail.value).toLowerCase(),
+    source_type: normalizeCompareValue(sourceType.value || ""),
+    country: normalizeCountryValue(country.value || "United States"),
+    city: normalizeSpaces(cityVal),
+    state: normalizeSpaces(stateVal),
+    zipcode: zipVal,
+    address: normalizeSpaces(address.value),
+    position: smartTitleCase(getResolvedPositionValue()),
+    department: smartTitleCase(department.value),
+    employment_type: normalizeCompareValue(employmentType.value || ""),
+    salary_min: normalizeCompareValue(formatMoneyDisplay(salaryMin.value)),
+    salary_max: normalizeCompareValue(formatMoneyDisplay(salaryMax.value)),
+    experience_level: normalizeCompareValue(experienceLevel.value || ""),
+    skills: normalizeSpaces(skills.value || ""),
+    existing_jd_urls: normalizeCompareArray(editState.existingJdUrls || []),
+    existing_company_profile_urls: normalizeCompareArray(editState.existingCompanyProfileUrls || [])
+  };
+}
+
+function hasEditModeChanges(){
+  if(!editState.isEditMode) return true;
+  const pendingJdFiles = !!(jdInput.files && jdInput.files.length);
+  const pendingCompanyPics = !!(companyPicInput.files && companyPicInput.files.length);
+  if(pendingJdFiles || pendingCompanyPics) return true;
+  const originalComparable = buildComparableSnapshotFromRecord(editState.originalSnapshot || editState.mergedRecord || editState.fetchedRecord || editState.rawRecord || {});
+  const currentComparable = getCurrentEditComparableSnapshot();
+  return JSON.stringify(originalComparable) !== JSON.stringify(currentComparable);
+}
+
+function safeParseJson(value, fallback = null){
+  try{return JSON.parse(value);}catch(error){return fallback;}
+}
+
+function decodeBase64UrlJson(value){
+  try{
+    const normalized = String(value || "").replace(/-/g, "+").replace(/_/g, "/");
+    const padding = "=".repeat((4 - (normalized.length % 4 || 4)) % 4);
+    const decoded = decodeURIComponent(escape(atob(normalized + padding)));
+    return safeParseJson(decoded, null);
+  }catch(error){
+    return null;
+  }
+}
+
+function pickFirstNonEmpty(source, keys, fallback = ""){
+  const list = Array.isArray(keys) ? keys : [keys];
+  for(const key of list){
+    const value = source && source[key];
+    if(value === null || value === undefined) continue;
+    if(Array.isArray(value) && value.length) return value;
+    const text = String(value).trim();
+    if(text) return value;
+  }
+  return fallback;
+}
+
+function uniqueNonEmpty(values){
+  return [...new Set((Array.isArray(values) ? values : [values]).map(v => String(v || "").trim()).filter(Boolean))];
+}
+
+function flattenToArray(value){
+  if(value === null || value === undefined || value === "") return [];
+  if(Array.isArray(value)) return value.flatMap(flattenToArray);
+  if(typeof value === "object") return [value];
+  const text = String(value).trim();
+  if(!text) return [];
+  if((text.startsWith("[") && text.endsWith("]")) || (text.startsWith("{") && text.endsWith("}"))){
+    const parsed = safeParseJson(text, null);
+    if(parsed !== null) return flattenToArray(parsed);
+  }
+  return [text];
+}
+
+function normalizeUrlArray(...sources){
+  const out = [];
+  for(const source of sources){
+    const values = flattenToArray(source);
+    for(const value of values){
+      if(value && typeof value === "object"){
+        const candidate = pickFirstNonEmpty(value, ["url","publicUrl","path","href","src","file_url"], "");
+        if(candidate) out.push(String(candidate).trim());
+        continue;
+      }
+      const text = String(value || "").trim();
+      if(!text) continue;
+      out.push(text);
+    }
+  }
+  return [...new Set(out.filter(Boolean))];
+}
+
+function makeFileCountLabel(count, noun = "file"){
+  return count <= 0 ? "No files selected" : `${count} ${noun}${count === 1 ? "" : "s"} loaded`;
+}
+
+function setCompanyPreviewFromUrl(url){
+  revokeCompanyPreviewUrl();
+  const next = String(url || "").trim();
+  if(!next){
+    companyPicPreview.style.display = "none";
+    companyPicPreview.removeAttribute("src");
+    return;
+  }
+  companyPicPreview.src = next;
+  companyPicPreview.style.display = "block";
+}
+
+function getViewerSources(){
+  const currentFiles = companyPicInput.files ? Array.from(companyPicInput.files) : [];
+  if(currentFiles.length){
+    return currentFiles.map((file, index) => ({
+      url: viewerObjectUrls[index] || "",
+      label: file?.name || `Image ${index + 1}`,
+      meta: `${(getFileExt(file?.name || "") || "image").toUpperCase()} • ${file?.size ? Math.round(file.size / 1024) : 0} KB`
+    }));
+  }
+  return (editState.existingCompanyProfileUrls || []).map((url, index) => ({
+    url: String(url || "").trim(),
+    label: `Existing Image ${index + 1}`,
+    meta: "Loaded from saved job record"
+  })).filter(item => item.url);
+}
+
+function getEditSearchParams(){
+  try{return new URLSearchParams(window.location.search || "");}catch(error){return new URLSearchParams();}
+}
+
+function readFromStorages(keys){
+  const list = Array.isArray(keys) ? keys : [keys];
+  for(const storageArea of [window.sessionStorage, window.localStorage]){
+    if(!storageArea) continue;
+    for(const key of list){
+      try{
+        const value = storageArea.getItem(key);
+        if(value !== null && value !== undefined && String(value).trim() !== "") return String(value);
+      }catch(error){}
+    }
+  }
+  return "";
+}
+
+function detectEditIntent(){
+  const params = getEditSearchParams();
+  const editFlag = String(params.get("edit") || "").trim().toLowerCase();
+  const mode = String(params.get("mode") || readFromStorages(["jobspacelink_postjob_mode","postjob_edit_mode"]) || "").trim().toLowerCase();
+  const autoload = String(params.get("autoload") || params.get("prefill") || readFromStorages(["jobspacelink_postjob_autoload"]) || "").trim().toLowerCase();
+  if(["1","true","yes","edit"].includes(editFlag)) return true;
+  if(mode === "edit") return true;
+  if(["1","true","yes"].includes(autoload)) return true;
+  try{return String(window.name || "").startsWith("JOBSPACELINK_EDIT_JOB::");}catch(error){return false;}
+}
+
+function collectEditContext(){
+  const params = getEditSearchParams();
+  const payloadKeys = [
+    "jobspacelink_postjob_edit_payload","jobspacelink_postjob_prefill","postjob_edit_payload","postjob_edit_data","postjob_prefill_payload","postjob_prefill_data","editJobData","editJobPayload","edit_job_payload","selectedJobForEdit","currentEditJob","employer_dashboard_edit_payload","staff_requirement_edit_payload",
+    "jobspacelink_edit_job_payload","jobspacelink_edit_job_prefill","selected_staff_requirement_payload","selectedJobPayload","editingJobPayload","staffRequirementsEditPayload"
+  ];
+  const payloadB64Keys = [
+    "jobspacelink_postjob_edit_payload_b64","jobspacelink_postjob_prefill_b64","postjob_edit_payload_b64","postjob_prefill_payload_b64","edit_job_payload_b64","jobspacelink_edit_job_payload_b64","jobspacelink_edit_job_prefill_b64","selected_staff_requirement_payload_b64","selected_staff_requirement_prefill_b64","selectedJobPayload_b64","editingJobPayload_b64","staffRequirementsEditPayload_b64"
+  ];
+  const recordKeys = [
+    "jobspacelink_postjob_edit_record","postjob_edit_record","postjob_prefill_record","editJobRecord","edit_job_record","selectedJobRecordForEdit","currentEditJobRecord","selected_job_post_record","selected_staff_requirement","employer_dashboard_edit_record","staff_requirement_edit_record",
+    "jobspacelink_edit_job_record","selectedJobData","editingJobData","staffRequirementsEditRecord"
+  ];
+  const recordB64Keys = [
+    "jobspacelink_postjob_edit_record_b64","postjob_edit_record_b64","edit_job_record_b64","jobspacelink_edit_job_record_b64"
+  ];
+
+  let payload = null;
+  const encodedPayload = params.get("payload") || params.get("edit_payload") || params.get("prefill_payload") || params.get("job_payload") || "";
+  if(encodedPayload) payload = decodeBase64UrlJson(encodedPayload);
+  if(!payload){
+    const stored = readFromStorages(payloadKeys);
+    if(stored) payload = safeParseJson(stored, null);
+  }
+  if(!payload){
+    const storedB64 = readFromStorages(payloadB64Keys);
+    if(storedB64) payload = decodeBase64UrlJson(storedB64);
+  }
+  if(!payload){
+    try{
+      const name = String(window.name || "");
+      if(name.startsWith("JOBSPACELINK_EDIT_JOB::")) payload = safeParseJson(name.slice("JOBSPACELINK_EDIT_JOB::".length), null);
+    }catch(error){}
+  }
+
+  let rawRecord = safeParseJson(readFromStorages(recordKeys), null);
+  if(!rawRecord){
+    const rawB64 = readFromStorages(recordB64Keys);
+    if(rawB64) rawRecord = decodeBase64UrlJson(rawB64);
+  }
+
+  const normalized = payload && payload.normalized && typeof payload.normalized === "object" ? payload.normalized : {};
+  const prefill = payload && payload.prefill && typeof payload.prefill === "object" ? payload.prefill : {};
+  const raw = payload && payload.raw && typeof payload.raw === "object" ? payload.raw : (rawRecord || {});
+
+  const ids = uniqueNonEmpty([
+    params.get("id"), params.get("job_id"), params.get("post_id"), params.get("record_id"), params.get("row_id"), params.get("edit_id"), params.get("selected_id"),
+    params.get("requirement_id"), params.get("staff_requirement_id"), params.get("staff_id"), params.get("selected_staff_requirement_id"), params.get("edit_requirement_id"),
+    readFromStorages(["jobspacelink_postjob_selected_job_id","jobspacelink_edit_job_id","jobspacelink_postjob_edit_id","selected_staff_requirement_id"]),
+    readFromStorages(["jobspacelink_postjob_selected_requirement_id","jobspacelink_edit_job_requirement_id","jobspacelink_postjob_edit_requirement_id"]),
+    payload?.jobId, payload?.requirementId, payload?.recordId, payload?.rowId, payload?.staffRequirementId,
+    normalized?.id, normalized?.requirement_id, normalized?.staff_requirement_id,
+    prefill?.id, prefill?.requirement_id, prefill?.staff_requirement_id,
+    raw?.id, raw?.requirement_id, raw?.staff_requirement_id, raw?.job_id, raw?.post_id, raw?.record_id, raw?.row_id
+  ]);
+
+  return {
+    isEdit: detectEditIntent(),
+    payload,
+    rawRecord: rawRecord || raw,
+    normalized,
+    prefill,
+    ids,
+    companyName: normalizeSpaces(params.get("company_name") || params.get("employer_name") || payload?.companyName || normalized?.company_name || prefill?.company_name || raw?.company_name || raw?.company || ""),
+    contactEmail: normalizeSpaces(params.get("company_email") || params.get("contact_email") || payload?.contactEmail || normalized?.contact_email || prefill?.contact_email || raw?.contact_email || raw?.company_email || "").toLowerCase(),
+    position: normalizeSpaces(params.get("position") || params.get("job_title") || payload?.position || normalized?.position || normalized?.job_title || prefill?.position || prefill?.job_title || raw?.position || raw?.job_title || "")
+  };
+}
+
+async function fetchEditRecord(context){
+  const db = getDb();
+  if(!db) return null;
+
+  const ids = uniqueNonEmpty(context?.ids || []);
+  const email = normalizeSpaces(context?.contactEmail || "").toLowerCase();
+  const position = normalizeSpaces(context?.position || "").toLowerCase();
+  const companyName = normalizeSpaces(context?.companyName || "").toLowerCase();
+  const searchColumns = ["id","requirement_id","staff_requirement_id","job_id","post_id","record_id","row_id"];
+
+  const scoreRecord = (record)=>{
+    const row = record && typeof record === 'object' ? record : {};
+    const rowIds = uniqueNonEmpty([row.id, row.requirement_id, row.staff_requirement_id, row.job_id, row.post_id, row.record_id, row.row_id]);
+    const rowEmails = uniqueNonEmpty([row.contact_email, row.company_email, row.contact_email_address, row.email]).map(v => String(v).toLowerCase());
+    const rowNames = uniqueNonEmpty([row.company_name, row.company, row.business_name, row.employer_name]).map(v => String(v).toLowerCase());
+    const rowPositions = uniqueNonEmpty([row.position, row.job_title, row.title, row.role]).map(v => String(v).toLowerCase());
+    let score = 0;
+    if(ids.length && rowIds.some(v => ids.includes(String(v)))) score += 200;
+    if(email && rowEmails.includes(email)) score += 70;
+    if(companyName && rowNames.includes(companyName)) score += 35;
+    if(position && rowPositions.includes(position)) score += 45;
+    return score;
+  };
+
+  const chooseBest = (rows)=>{
+    const list = Array.isArray(rows) ? rows.filter(Boolean) : [];
+    if(!list.length) return null;
+    return [...list].sort((a, b) => scoreRecord(b) - scoreRecord(a))[0] || null;
+  };
+
+  for(const id of ids){
+    for(const column of searchColumns){
+      try{
+        const { data, error } = await db.from("staff_requirements").select("*").eq(column, id).order("created_at", { ascending:false, nullsFirst:false }).limit(20);
+        if(!error && Array.isArray(data) && data.length){
+          const best = chooseBest(data);
+          if(best) return best;
+        }
+      }catch(error){}
+    }
+  }
+
+  if(email){
+    for(const emailColumn of ["contact_email","company_email","contact_email_address","email"]){
+      try{
+        const { data, error } = await db.from("staff_requirements").select("*").eq(emailColumn, email).order("created_at", { ascending:false, nullsFirst:false }).limit(50);
+        if(!error && Array.isArray(data) && data.length){
+          const exact = chooseBest(data);
+          if(exact && scoreRecord(exact) >= 70) return exact;
+          if(exact && !position && !companyName) return exact;
+        }
+      }catch(error){}
+    }
+  }
+
+  if(companyName && position){
+    try{
+      const { data, error } = await db.from("staff_requirements").select("*").eq("position", smartTitleCase(context?.position || "")).order("created_at", { ascending:false, nullsFirst:false }).limit(50);
+      if(!error && Array.isArray(data) && data.length){
+        const exact = chooseBest(data);
+        if(exact && scoreRecord(exact) >= 80) return exact;
+      }
+    }catch(error){}
+  }
+
+  return null;
+}
+
+function buildMergedEditRecord(context, fetchedRecord){
+  const payload = context?.payload || {};
+  const normalized = payload && payload.normalized && typeof payload.normalized === "object" ? payload.normalized : {};
+  const raw = payload && payload.raw && typeof payload.raw === "object" ? payload.raw : (context?.rawRecord && typeof context.rawRecord === "object" ? context.rawRecord : {});
+  return { ...normalized, ...raw, ...(fetchedRecord && typeof fetchedRecord === "object" ? fetchedRecord : {}) };
+}
+
+function findMatchingOptionValue(selectEl, targetValue){
+  const goal = normalizeSpaces(targetValue).toLowerCase();
+  if(!selectEl || !goal) return "";
+  const options = Array.from(selectEl.options || []);
+  const exact = options.find(option => normalizeSpaces(option.value || option.textContent).toLowerCase() === goal);
+  if(exact) return exact.value;
+  const byText = options.find(option => normalizeSpaces(option.textContent).toLowerCase() === goal);
+  return byText ? byText.value : "";
+}
+
+function setSelectValueAllowCustom(selectEl, value){
+  if(!selectEl) return;
+  const text = normalizeSpaces(value);
+  if(!text){ selectEl.value = ""; return; }
+  const match = findMatchingOptionValue(selectEl, text);
+  if(match){ selectEl.value = match; return; }
+  const customOption = document.createElement("option");
+  customOption.value = text;
+  customOption.textContent = text;
+  customOption.dataset.customAdded = "1";
+  selectEl.appendChild(customOption);
+  selectEl.value = text;
+}
+
+function applyPositionValue(positionValue){
+  const text = smartTitleCase(positionValue);
+  if(!text){
+    position.value = "";
+    otherPosition.value = "";
+    updateOtherPositionVisibility();
+    return;
+  }
+  const match = findMatchingOptionValue(position, text);
+  if(match){
+    position.value = match;
+    otherPosition.value = "";
+  }else{
+    position.value = "Other";
+    otherPosition.value = text;
+  }
+  updateOtherPositionVisibility();
+}
+
+function createOrSelectCityOption(cityText, stateText, zipText){
+  const cityNormalized = normalizeSpaces(cityText).toLowerCase();
+  const stateNormalized = normalizeSpaces(stateText).toLowerCase();
+  const zipNormalized = String(zipText || "").replace(/\D/g, "");
+  let fallbackMatch = "";
+  for(const [valueKey, info] of CITY_VALUE_TO_INFO.entries()){
+    const infoCity = normalizeSpaces(info?.city || "").toLowerCase();
+    const infoState = normalizeSpaces(info?.state || "").toLowerCase();
+    const infoZip = String(info?.zip || "").replace(/\D/g, "");
+    if(infoCity !== cityNormalized) continue;
+    if(stateNormalized && zipNormalized && infoState === stateNormalized && infoZip === zipNormalized) return valueKey;
+    if(stateNormalized && infoState === stateNormalized) fallbackMatch = valueKey;
+    else if(zipNormalized && infoZip === zipNormalized && !fallbackMatch) fallbackMatch = valueKey;
+    else if(!fallbackMatch) fallbackMatch = valueKey;
+  }
+  if(fallbackMatch) return fallbackMatch;
+  const customValue = `${normalizeSpaces(cityText)}||${normalizeSpaces(stateText)}||${zipNormalized}`;
+  CITY_VALUE_TO_INFO.set(customValue, { city: normalizeSpaces(cityText), state: normalizeSpaces(stateText), zip: zipNormalized });
+  const customOption = document.createElement("option");
+  customOption.value = customValue;
+  customOption.textContent = zipNormalized ? `${normalizeSpaces(cityText)} (${normalizeSpaces(stateText) || "State/Province"}) - ${zipNormalized}` : `${normalizeSpaces(cityText)} (${normalizeSpaces(stateText) || "State/Province"})`;
+  customOption.dataset.customAdded = "1";
+  city.appendChild(customOption);
+  return customValue;
+}
+
+function applyLocationValues(record){
+  const countryValue = normalizeCountryValue(pickFirstNonEmpty(record, ["country","job_country"], "United States") || "United States");
+  country.value = countryValue;
+  handleCountryChange();
+  const cityValue = pickFirstNonEmpty(record, ["city","job_city"], "");
+  const stateValue = pickFirstNonEmpty(record, ["state","job_state","province"], "");
+  const zipValue = pickFirstNonEmpty(record, ["zipcode","zip","postal_code","postal","job_zipcode"], "");
+  const addressValue = pickFirstNonEmpty(record, ["address","street_address","job_location","work_location","location"], "");
+  if(cityValue){
+    city.value = createOrSelectCityOption(cityValue, stateValue, zipValue);
+    applyAutofillFromCity();
+  }
+  if(stateValue) state.value = normalizeSpaces(stateValue);
+  if(zipValue) zipcode.value = String(zipValue).replace(/\D/g, "").slice(0, 10);
+  address.value = normalizeSpaces(addressValue);
+}
+
+function getExistingJdUrlsFromRecord(record){
+  return normalizeUrlArray(pickFirstNonEmpty(record, ["pdf_urls"], []), pickFirstNonEmpty(record, ["pdf_url"], ""), pickFirstNonEmpty(record, ["job_description_files","job_description_documents","job_files","files","documents"], []), pickFirstNonEmpty(record, ["job_description_file","job_description_document","job_file","file","document"], ""));
+}
+
+function getExistingCompanyImageUrlsFromRecord(record){
+  return normalizeUrlArray(pickFirstNonEmpty(record, ["company_profile_urls","company_logo_urls","image_urls","photo_urls"], []), pickFirstNonEmpty(record, ["company_profile_url","company_logo_url","logo_url","image_url","picture","photo_url"], ""));
+}
+
+function applyRecordToForm(record, context = {}, options = {}){
+  const merged = record && typeof record === "object" ? record : {};
+  companyName.value = smartTitleCase(pickFirstNonEmpty(merged, ["company_name","company","business_name","employer_name"], context.companyName || ""));
+  contactEmail.value = normalizeSpaces(pickFirstNonEmpty(merged, ["contact_email","company_email","email","contact_email_address"], context.contactEmail || "")).toLowerCase();
+  setSelectValueAllowCustom(sourceType, pickFirstNonEmpty(merged, ["source_type","source"], ""));
+  applyLocationValues(merged);
+  applyPositionValue(pickFirstNonEmpty(merged, ["position","job_title","title","role"], context.position || ""));
+  setSelectValueAllowCustom(department, pickFirstNonEmpty(merged, ["department","division","team"], ""));
+  setSelectValueAllowCustom(employmentType, pickFirstNonEmpty(merged, ["employment_type","job_type","work_type","type"], ""));
+  salaryMin.value = formatMoneyDisplay(pickFirstNonEmpty(merged, ["salary_min","min_salary"], ""));
+  salaryMax.value = formatMoneyDisplay(pickFirstNonEmpty(merged, ["salary_max","max_salary"], ""));
+  experienceLevel.value = normalizeSpaces(pickFirstNonEmpty(merged, ["experience_level","experience","years_experience"], ""));
+  skills.value = normalizeSpaces(pickFirstNonEmpty(merged, ["skills","required_skills","job_skills","notes"], ""));
+  companyNamePreview.textContent = companyName.value || "Your Company";
+  companyEmailPreview.textContent = contactEmail.value || "—";
+  editState.existingJdUrls = getExistingJdUrlsFromRecord(merged);
+  editState.existingCompanyProfileUrls = getExistingCompanyImageUrlsFromRecord(merged);
+  if(editState.existingCompanyProfileUrls.length){
+    setCompanyPreviewFromUrl(editState.existingCompanyProfileUrls[0]);
+    companyPicHint.textContent = "Click to view";
+  }else if(!(companyPicInput.files && companyPicInput.files.length)){
+    clearCompanyPreview();
+    companyPicHint.textContent = "Click to view";
+  }
+  if(!(companyPicInput.files && companyPicInput.files.length)) companyPicCountText.textContent = makeFileCountLabel(editState.existingCompanyProfileUrls.length, "existing image");
+  if(!(jdInput.files && jdInput.files.length)) jdCountText.textContent = makeFileCountLabel(editState.existingJdUrls.length, "existing file");
+  updateCurrencyUI();
+  updateOtherPositionVisibility();
+  if(!options.skipSnapshot){ editState.originalSnapshot = JSON.parse(JSON.stringify(merged)); }
+}
+
+async function initializeEditModeIfNeeded(){
+  const context = collectEditContext();
+  if(!context.isEdit) return;
+  editState.isEditMode = true;
+  editState.payload = context.payload || null;
+  editState.rawRecord = context.rawRecord || null;
+  editState.requirementId = String(pickFirstNonEmpty(context.payload || {}, ["requirementId"], context.ids[1] || context.ids[0] || ""));
+  const fetched = await fetchEditRecord(context);
+  const merged = buildMergedEditRecord(context, fetched || null);
+  editState.fetchedRecord = fetched || null;
+  editState.mergedRecord = merged;
+  editState.recordId = String(pickFirstNonEmpty(fetched || merged, ["id","record_id","row_id"], context.ids[0] || "")).trim();
+  editState.requirementId = String(pickFirstNonEmpty(fetched || merged, ["requirement_id","staff_requirement_id","job_id","post_id"], editState.requirementId || context.ids[1] || context.ids[0] || "")).trim();
+  applyRecordToForm(merged, context);
+  applyPageModeUI();
+  showStatus("Edit mode active. The selected job post data has been loaded into the form.", "success");
+}
+
+/* ======================= PART 2 OF 3 ======================= */
+/* ================= LIVE PREVIEW (LEFT CARD) ================= */
+companyName.addEventListener("input", ()=>{
+  companyNamePreview.textContent = normalizeSpaces(companyName.value) || "Your Company";
+});
+companyName.addEventListener("blur", ()=>{
+  companyName.value = smartTitleCase(companyName.value);
+  companyNamePreview.textContent = companyName.value || "Your Company";
+});
+
+contactEmail.addEventListener("input", ()=>{
+  const v = normalizeSpaces(contactEmail.value).toLowerCase();
+  companyEmailPreview.textContent = v ? v : "—";
+});
+contactEmail.addEventListener("blur", ()=>{
+  contactEmail.value = normalizeSpaces(contactEmail.value).toLowerCase();
+  companyEmailPreview.textContent = contactEmail.value ? contactEmail.value : "—";
+});
+
+/* ================= POSITION DROPDOWN (OTHER) ================= */
+function updateOtherPositionVisibility(){
+  const v = String(position.value || "").trim();
+  if(v === "Other"){
+    otherPositionRow.style.display = "grid";
+    otherPosition.required = true;
+  }else{
+    otherPositionRow.style.display = "none";
+    otherPosition.required = false;
+    otherPosition.value = "";
+  }
+}
+position.addEventListener("change", updateOtherPositionVisibility);
+
+/* ================= FILE PICKERS (COUNT ONLY) ================= */
+function updateCountLabel(el, files){
+  const list = files ? Array.from(files) : [];
+  if(!list.length){
+    el.textContent = "No files selected";
+    return;
+  }
+  el.textContent = list.length === 1 ? "1 file selected" : `${list.length} files selected`;
+}
+
+/* ================= COUNTRY / CURRENCY UI ================= */
+function updateCurrencyUI(){
+  const meta = getCurrencyMeta(country.value || "United States");
+  salaryMinSign.textContent = meta.sign;
+  salaryMaxSign.textContent = meta.sign;
+
+  if(meta.code === "PHP"){
+    salaryMin.placeholder = "e.g. 25000";
+    salaryMax.placeholder = "e.g. 40000";
+  }else{
+    salaryMin.placeholder = "e.g. 1200";
+    salaryMax.placeholder = "e.g. 2000";
+  }
+}
+
+function buildSalaryDisplay(minVal, maxVal, countryVal){
+  const meta = getCurrencyMeta(countryVal);
+  const minTxt = minVal != null ? `${meta.sign}${formatMoneyDisplay(minVal)}` : "";
+  const maxTxt = maxVal != null ? `${meta.sign}${formatMoneyDisplay(maxVal)}` : "";
+  return {
+    currency_code: meta.code,
+    currency_symbol: meta.sign,
+    currency_label: meta.label,
+    salary_min_display: minTxt || null,
+    salary_max_display: maxTxt || null,
+    salary_range_display: (minTxt && maxTxt) ? `${minTxt} - ${maxTxt}` : (minTxt || maxTxt || null)
+  };
+}
+
+/* ================= SUBMIT PAPER PLANE ANIMATION HELPERS ================= */
+function resetSubmitFlightVisual(){
+  submitFlightOverlay.classList.remove("active","success","error");
+  submitFlightTitle.innerHTML = `
+    Submitting your job post...
+    <span class="submit-flight-dots" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </span>
+  `;
+  submitFlightSub.textContent = "Please wait while we upload files and save the form details.";
+  submitFlightStatusIcon.className = "fa-solid fa-paper-plane";
+}
+
+function startSubmitFlight(){
+  resetSubmitFlightVisual();
+  submitFlightOverlay.style.display = "flex";
+  requestAnimationFrame(()=>{
+    submitFlightOverlay.classList.add("active");
+  });
+  btnSubmit.classList.add("launching");
+  return Date.now();
+}
+
+async function ensureSubmitAnimationMinimum(startedAt, minimumMs = 1400){
+  const elapsed = Date.now() - startedAt;
+  if(elapsed < minimumMs){
+    await sleep(minimumMs - elapsed);
+  }
+}
+
+async function finishSubmitFlight(kind = "success"){
+  if(kind === "success"){
+    submitFlightOverlay.classList.add("success");
+    submitFlightTitle.textContent = "Submission completed";
+    submitFlightSub.textContent = "Your job requirement was posted successfully.";
+    submitFlightStatusIcon.className = "fa-solid fa-circle-check";
+    await sleep(700);
+  }else{
+    submitFlightOverlay.classList.add("error");
+    submitFlightTitle.textContent = "Submission stopped";
+    submitFlightSub.textContent = "Please review the form details, then try again.";
+    submitFlightStatusIcon.className = "fa-solid fa-circle-exclamation";
+    await sleep(620);
+  }
+
+  submitFlightOverlay.classList.remove("active","success","error");
+  submitFlightOverlay.style.display = "none";
+  btnSubmit.classList.remove("launching");
+  resetSubmitFlightVisual();
+}
+
+/* ================= COMPANY PICTURE VIEWER LOGIC ================= */
+let viewerIndex = 0;
+let viewerObjectUrls = [];
+let openViewerAfterPick = false;
+let currentCompanyPreviewUrl = "";
+
+function revokeViewerUrls(){
+  for(const u of viewerObjectUrls){
+    try{ URL.revokeObjectURL(u); }catch(e){}
+  }
+  viewerObjectUrls = [];
+}
+
+function revokeCompanyPreviewUrl(){
+  if(currentCompanyPreviewUrl){
+    try{ URL.revokeObjectURL(currentCompanyPreviewUrl); }catch(e){}
+    currentCompanyPreviewUrl = "";
+  }
+}
+
+function clearCompanyPreview(){
+  revokeCompanyPreviewUrl();
+  companyPicPreview.style.display = "none";
+  companyPicPreview.src = "";
+}
+
+function setCompanyPreviewFromFile(file){
+  clearCompanyPreview();
+  if(!file) return;
+  currentCompanyPreviewUrl = URL.createObjectURL(file);
+  companyPicPreview.src = currentCompanyPreviewUrl;
+  companyPicPreview.style.display = "block";
+}
+
+function buildViewerUrlsFromFiles(files){
+  revokeViewerUrls();
+  const list = files ? Array.from(files) : [];
+  viewerObjectUrls = list.map(f => URL.createObjectURL(f));
+}
+
+function renderViewer(){
+  const sources = getViewerSources();
+  const count = sources.length;
+
+  viewerThumbs.innerHTML = "";
+  viewerMainImg.style.display = "none";
+  viewerEmpty.style.display = "block";
+  viewerPrevBtn.disabled = true;
+  viewerNextBtn.disabled = true;
+  viewerIndexPill.textContent = `0 / 0`;
+
+  if(!count){
+    viewerEmpty.innerHTML = `No images selected.<br>Click <b>Select / Change</b> to choose company profile pictures.`;
+    return;
+  }
+
+  if(viewerIndex < 0) viewerIndex = 0;
+  if(viewerIndex > count - 1) viewerIndex = Math.max(0, count - 1);
+
+  viewerEmpty.style.display = "none";
+  viewerMainImg.style.display = "block";
+  viewerMainImg.src = sources[viewerIndex]?.url || "";
+  viewerIndexPill.textContent = `${viewerIndex + 1} / ${count}`;
+
+  viewerPrevBtn.disabled = (viewerIndex <= 0);
+  viewerNextBtn.disabled = (viewerIndex >= count - 1);
+
+  for(let i = 0; i < count; i++){
+    const item = sources[i];
+
+    const thumb = document.createElement("div");
+    thumb.className = "thumb" + (i === viewerIndex ? " active" : "");
+    thumb.setAttribute("role", "button");
+    thumb.setAttribute("tabindex", "0");
+
+    const img = document.createElement("img");
+    img.alt = "Thumbnail";
+    img.src = item.url;
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+
+    const t1 = document.createElement("div");
+    t1.className = "t1";
+    t1.textContent = item.label || `Image ${i + 1}`;
+
+    const t2 = document.createElement("div");
+    t2.className = "t2";
+    t2.textContent = item.meta || "Loaded image";
+
+    meta.appendChild(t1);
+    meta.appendChild(t2);
+
+    thumb.appendChild(img);
+    thumb.appendChild(meta);
+
+    thumb.addEventListener("click", ()=>{
+      viewerIndex = i;
+      renderViewer();
+    });
+
+    thumb.addEventListener("keydown",(e)=>{
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        viewerIndex = i;
+        renderViewer();
+      }
+    });
+
+    viewerThumbs.appendChild(thumb);
+  }
+
+  viewerThumbs.querySelector(".thumb.active")?.scrollIntoView({ block:"nearest" });
+}
+
+function openCompanyPicViewer(){
+  const files = companyPicInput.files ? Array.from(companyPicInput.files) : [];
+  buildViewerUrlsFromFiles(files);
+
+  const count = files.length || (editState.existingCompanyProfileUrls || []).length;
+  if(count === 0) viewerIndex = 0;
+  if(viewerIndex >= count) viewerIndex = Math.max(0, count - 1);
+
+  viewerOverlay.style.display = "flex";
+  renderViewer();
+}
+
+function closeCompanyPicViewer(){
+  viewerOverlay.style.display = "none";
+  revokeViewerUrls();
+}
+
+companyPicBox?.addEventListener("click", openCompanyPicViewer);
+
+companyPicSelectBtn?.addEventListener("click", ()=>{
+  openViewerAfterPick = true;
+  companyPicInput.click();
+});
+
+viewerCloseBtn?.addEventListener("click", closeCompanyPicViewer);
+viewerChooseBtn?.addEventListener("click", ()=> companyPicInput.click());
+
+viewerPrevBtn?.addEventListener("click", ()=>{
+  viewerIndex = Math.max(0, viewerIndex - 1);
+  renderViewer();
+});
+
+viewerNextBtn?.addEventListener("click", ()=>{
+  const count = getViewerSources().length;
+  viewerIndex = Math.min(Math.max(0, count - 1), viewerIndex + 1);
+  renderViewer();
+});
+
+viewerOverlay?.addEventListener("click",(e)=>{
+  if(e.target === viewerOverlay) closeCompanyPicViewer();
+});
+
+document.addEventListener("keydown",(e)=>{
+  if(viewerOverlay.style.display !== "flex") return;
+
+  if(e.key === "Escape"){
+    e.preventDefault();
+    closeCompanyPicViewer();
+    return;
+  }
+  if(e.key === "ArrowLeft"){
+    e.preventDefault();
+    viewerPrevBtn.click();
+    return;
+  }
+  if(e.key === "ArrowRight"){
+    e.preventDefault();
+    viewerNextBtn.click();
+    return;
+  }
+});
+
+/* ================= FILE INPUT CHANGE HANDLERS ================= */
+companyPicInput.addEventListener("change", ()=>{
+  updateCountLabel(companyPicCountText, companyPicInput.files);
+
+  const list = Array.from(companyPicInput.files || []);
+  for(const img of list){
+    if(!isAllowedImage(img)){
+      showPopup("Validation Error","Company picture must be JPG, PNG, WEBP, or GIF.","fa-solid fa-triangle-exclamation");
+      companyPicInput.value = "";
+      updateCountLabel(companyPicCountText, companyPicInput.files);
+      clearCompanyPreview();
+      companyPicHint.textContent = "Click to view";
+      openViewerAfterPick = false;
+      return;
+    }
+  }
+
+  const first = list[0] || null;
+  if(first){
+    setCompanyPreviewFromFile(first);
+  }else{
+    clearCompanyPreview();
+  }
+
+  companyPicHint.textContent = "Click to view";
+
+  if(openViewerAfterPick){
+    openViewerAfterPick = false;
+    openCompanyPicViewer();
+    return;
+  }
+
+  if(viewerOverlay.style.display === "flex"){
+    buildViewerUrlsFromFiles(list);
+    if(viewerIndex >= list.length) viewerIndex = Math.max(0, list.length - 1);
+    renderViewer();
+  }
+});
+
+jdBtn?.addEventListener("click", ()=> jdInput.click());
+
+jdInput.addEventListener("change", ()=>{
+  updateCountLabel(jdCountText, jdInput.files);
+
+  const list = Array.from(jdInput.files || []);
+  for(const f of list){
+    if(!isAllowedUpload(f)){
+      showPopup("Validation Error","Allowed JD types: PDF, DOC, DOCX, TXT, RTF.","fa-solid fa-triangle-exclamation");
+      jdInput.value = "";
+      updateCountLabel(jdCountText, jdInput.files);
+      return;
+    }
+  }
+});
+
+/* ================= SALARY / INPUT SANITIZERS ================= */
+function sanitizeMoneyInput(el){
+  let value = String(el.value || "").replace(/[^\d.]/g, "");
+  const parts = value.split(".");
+  if(parts.length > 2){
+    value = parts[0] + "." + parts.slice(1).join("");
+  }
+  el.value = value;
+}
+
+salaryMin.addEventListener("input", ()=> sanitizeMoneyInput(salaryMin));
+salaryMax.addEventListener("input", ()=> sanitizeMoneyInput(salaryMax));
+
+experienceLevel.addEventListener("input", ()=>{
+  experienceLevel.value = String(experienceLevel.value || "").replace(/\D/g,"");
+});
+
+address.addEventListener("blur", ()=>{ address.value = normalizeSpaces(address.value); });
+otherPosition.addEventListener("blur", ()=>{ otherPosition.value = smartTitleCase(otherPosition.value); });
+
+/* ================= ENTER KEY => NEXT FIELD ================= */
+/* state and zipcode are excluded because they are readonly auto-filled fields */
+function setupEnterToNextFieldNavigation(){
+  const focusOrder = [
+    companyName, contactEmail, sourceType,
+    country, city, address,
+    position, otherPosition,
+    department, employmentType,
+    salaryMin, salaryMax, experienceLevel, skills
+  ].filter(Boolean);
+
+  function isVisible(el){
+    if(!el) return false;
+    if(el.disabled) return false;
+    return el.offsetParent !== null;
+  }
+
+  function focusNext(current){
+    const idx = focusOrder.indexOf(current);
+    if(idx < 0) return;
+
+    for(let i = idx + 1; i < focusOrder.length; i++){
+      const next = focusOrder[i];
+      if(isVisible(next)){
+        next.focus();
+        if(next.tagName === "INPUT" && typeof next.select === "function") next.select();
+        return;
+      }
+    }
+    if(btnSubmit) btnSubmit.focus();
+  }
+
+  for(const el of focusOrder){
+    el.addEventListener("keydown",(e)=>{
+      if(e.key !== "Enter") return;
+      if(e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) return;
+      if(el.tagName === "TEXTAREA") return;
+
+      e.preventDefault();
+      focusNext(el);
+    });
+  }
+}
+
+/* ================= LOCATION DATABASE ================= */
+let CITY_VALUE_TO_INFO = new Map();
+
+function normalizeCountryValue(v){
+  const s = normalizeSpaces(v).toLowerCase();
+  if(s === "usa" || s === "us" || s.includes("united states")) return "United States";
+  if(s.includes("philippines") || s === "ph") return "Philippines";
+  return v;
+}
+
+function getUsDataObject(){
+  if(typeof window.usData === "object" && window.usData) return window.usData;
+  try{
+    if(typeof usData === "object" && usData) return usData;
+  }catch(e){}
+  return null;
+}
+
+function getPhDataObject(){
+  if(typeof window.phData === "object" && window.phData) return window.phData;
+  try{
+    if(typeof phData === "object" && phData) return phData;
+  }catch(e){}
+  return null;
+}
+
+function clearCitySelectKeepPlaceholder(){
+  city.innerHTML = `<option value="" selected disabled hidden>Select City</option>`;
+}
+
+function clearLockedLocationFields(){
+  state.value = "";
+  zipcode.value = "";
+  state.placeholder = "Auto-filled when City is selected";
+  zipcode.placeholder = "Auto-filled when City is selected";
+}
+
+function applyLockedFieldBehavior(){
+  state.setAttribute("readonly","readonly");
+  zipcode.setAttribute("readonly","readonly");
+  state.classList.add("locked");
+  zipcode.classList.add("locked");
+}
+
+function setAutoFilledLocationFields(info){
+  const stateText = normalizeSpaces(info?.state || "");
+  const zipText = String(info?.zip || "").replace(/\D/g,"").slice(0,10);
+
+  state.value = stateText;
+  zipcode.value = zipText;
+
+  state.placeholder = stateText ? "" : "No state/province found for selected city";
+  zipcode.placeholder = zipText ? "" : "No zip code found for selected city";
+}
+
+function normalizeLocationRows(countryVal){
+  const countryNorm = normalizeCountryValue(countryVal);
+
+  if(countryNorm === "United States"){
+    const dataObj = getUsDataObject();
+    if(!dataObj || typeof dataObj !== "object"){
+      return { ok:false, rows:[], message:"US city data not loaded (usData not found)" };
+    }
+
+    const rows = [];
+    for(const stateName of Object.keys(dataObj)){
+      const list = dataObj[stateName];
+      if(!Array.isArray(list)) continue;
+      for(const r of list){
+        const c = String(r?.city || "").trim();
+        const z = String(r?.zip || r?.zipcode || "").trim();
+        if(!c) continue;
+        rows.push({ city:c, region:String(stateName || "").trim(), zip:z });
+      }
+    }
+    return { ok:true, rows };
+  }
+
+  if(countryNorm === "Philippines"){
+    const data = getPhDataObject();
+    if(!data){
+      return { ok:false, rows:[], message:"PH city data not loaded (phData not found)" };
+    }
+
+    const rows = [];
+
+    if(Array.isArray(data)){
+      for(const r of data){
+        const province = String(r?.province || r?.state || r?.region || r?.prov || "").trim();
+        const c = String(r?.city || r?.municipality || r?.town || "").trim();
+        const z = String(r?.zip || r?.zipcode || r?.postal || "").trim();
+        if(!c) continue;
+        rows.push({ city:c, region:province || "Province", zip:z });
+      }
+      return { ok:true, rows };
+    }
+
+    if(typeof data === "object"){
+      if(Array.isArray(data.provinces)){
+        for(const p of data.provinces){
+          const provName = String(p?.name || p?.province || p?.prov || "").trim();
+          const cities = Array.isArray(p?.cities) ? p.cities : (Array.isArray(p?.municipalities) ? p.municipalities : []);
+          for(const c of cities){
+            const name = String(c?.name || c?.city || c?.municipality || "").trim();
+            const z = String(c?.zip || c?.zipcode || c?.postal || "").trim();
+            if(!name) continue;
+            rows.push({ city:name, region:provName || "Province", zip:z });
+          }
+        }
+        return { ok:true, rows };
+      }
+
+      for(const provName of Object.keys(data)){
+        const list = data[provName];
+        if(!Array.isArray(list)) continue;
+        for(const r of list){
+          const name = String(r?.city || r?.municipality || r?.town || r?.name || "").trim();
+          const z = String(r?.zip || r?.zipcode || r?.postal || "").trim();
+          if(!name) continue;
+          rows.push({ city:name, region:String(provName || "").trim(), zip:z });
+        }
+      }
+      return { ok:true, rows };
+    }
+
+    return { ok:false, rows:[], message:"Unsupported phData format" };
+  }
+
+  return { ok:false, rows:[], message:"Unknown country" };
+}
+
+function populateCitiesForCountry(countryVal){
+  clearCitySelectKeepPlaceholder();
+  CITY_VALUE_TO_INFO.clear();
+  clearLockedLocationFields();
+
+  const norm = normalizeLocationRows(countryVal);
+  if(!norm.ok){
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = norm.message || "City data not loaded";
+    opt.disabled = true;
+    city.appendChild(opt);
+    return;
+  }
+
+  const options = [];
+  for(const r of norm.rows){
+    const c = String(r.city || "").trim();
+    const region = String(r.region || "").trim();
+    const z = String(r.zip || "").trim();
+    if(!c) continue;
+
+    const valueKey = `${c}||${region}||${z}`;
+    const label = z ? `${c} (${region}) - ${z}` : `${c} (${region})`;
+    CITY_VALUE_TO_INFO.set(valueKey, { city:c, state:region, zip:z });
+    options.push({ value:valueKey, label });
+  }
+
+  options.sort((a,b)=> a.label.localeCompare(b.label));
+
+  for(const item of options){
+    const opt = document.createElement("option");
+    opt.value = item.value;
+    opt.textContent = item.label;
+    city.appendChild(opt);
+  }
+
+  if(!options.length){
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "No cities found in location database";
+    opt.disabled = true;
+    city.appendChild(opt);
+  }
+}
+
+function applyAutofillFromCity(){
+  const val = String(city.value || "");
+  if(!val){
+    clearLockedLocationFields();
+    return;
+  }
+
+  const info = CITY_VALUE_TO_INFO.get(val);
+  if(!info){
+    clearLockedLocationFields();
+    state.placeholder = "No state/province found for selected city";
+    zipcode.placeholder = "No zip code found for selected city";
+    return;
+  }
+
+  setAutoFilledLocationFields(info);
+}
+
+function handleCountryChange(){
+  const c = normalizeCountryValue(country.value || "United States");
+  country.value = c;
+
+  city.value = "";
+  clearLockedLocationFields();
+  populateCitiesForCountry(c);
+  updateCurrencyUI();
+}
+
+city.addEventListener("change", applyAutofillFromCity);
+country.addEventListener("change", handleCountryChange);
+
+/* hard lock: if browser/autofill tries to modify, restore from selected city */
+state.addEventListener("input", ()=> applyAutofillFromCity());
+zipcode.addEventListener("input", ()=> applyAutofillFromCity());
+
+/* ================= SALARY RANGE OPTIONAL VALIDATION ================= */
+function validateSalaryRangeOptional(showPop = true){
+  const minRaw = String(salaryMin.value || "").trim();
+  const maxRaw = String(salaryMax.value || "").trim();
+
+  if(!minRaw && !maxRaw){
+    return { ok:true, min:null, max:null };
+  }
+
+  if(minRaw && !maxRaw){
+    if(showPop) showPopup("Validation Error","Salary MAX is required if you provide Salary MIN.","fa-solid fa-triangle-exclamation");
+    return { ok:false };
+  }
+  if(!minRaw && maxRaw){
+    if(showPop) showPopup("Validation Error","Salary MIN is required if you provide Salary MAX.","fa-solid fa-triangle-exclamation");
+    return { ok:false };
+  }
+
+  const minNum = Number(minRaw);
+  const maxNum = Number(maxRaw);
+
+  if(Number.isNaN(minNum) || minNum <= 0){
+    if(showPop) showPopup("Validation Error","Salary MIN must be a number greater than 0.","fa-solid fa-triangle-exclamation");
+    return { ok:false };
+  }
+  if(Number.isNaN(maxNum) || maxNum <= 0){
+    if(showPop) showPopup("Validation Error","Salary MAX must be a number greater than 0.","fa-solid fa-triangle-exclamation");
+    return { ok:false };
+  }
+  if(maxNum <= minNum){
+    if(showPop) showPopup("Validation Error","Salary MAX must be greater than Salary MIN.","fa-solid fa-triangle-exclamation");
+    return { ok:false };
+  }
+
+  return { ok:true, min:minNum, max:maxNum };
+}
+
+/* ================= UPLOAD HELPERS ================= */
+async function uploadFilesToBucket(files, folder, prefix, bucketName = "job_pdfs"){
+  const db = getDb();
+  if(!db) throw new Error("Supabase client not initialized. Check supabase_config.js.");
+
+  const outUrls = [];
+  const timeBase = Date.now();
+
+  for(let i = 0; i < files.length; i++){
+    const file = files[i];
+    const ext = getFileExt(file.name) || "bin";
+    const safeName = safeFileName(file.name);
+    const baseNoExt = safeName.replace(/\.[a-z0-9]+$/i, "");
+    const path = `${folder}/${prefix}_${timeBase}_${i + 1}_${baseNoExt}.${ext}`;
+
+    const { error: upErr } = await db.storage
+      .from(bucketName)
+      .upload(path, file, { upsert:true, contentType:file.type || undefined });
+
+    if(upErr) throw upErr;
+
+    const { data:urlData, error:urlErr } = db.storage.from(bucketName).getPublicUrl(path);
+    if(urlErr) throw urlErr;
+
+    outUrls.push(urlData.publicUrl);
+  }
+
+  return outUrls;
+}
+
+function getResolvedPositionValue(){
+  const p = String(position.value || "").trim();
+  if(!p) return "";
+  if(p === "Other"){
+    return smartTitleCase(otherPosition.value);
+  }
+  return smartTitleCase(p);
+}
+
+function buildOptionalCurrencyColumns(basePayload, salaryDisplay){
+  return {
+    ...basePayload,
+    salary_currency: salaryDisplay.currency_code,
+    salary_currency_symbol: salaryDisplay.currency_symbol,
+    salary_min_display: salaryDisplay.salary_min_display,
+    salary_max_display: salaryDisplay.salary_max_display,
+    salary_range_display: salaryDisplay.salary_range_display
+  };
+}
+
+/* ======================= PART 3 OF 3 ======================= */
+
+/* ================= DB INSERT WITH SMART OPTIONAL-COLUMN FALLBACK ================= */
+async function insertStaffRequirementWithFallback(db, payload){
+  const optionalColumnsInDropOrder = [
+    "salary_range_display",
+    "salary_max_display",
+    "salary_min_display",
+    "salary_currency_symbol",
+    "salary_currency",
+    "company_email",
+    "contact_email"
+  ];
+
+  let workingPayload = { ...payload };
+
+  for(let attempt = 0; attempt <= optionalColumnsInDropOrder.length; attempt++){
+    const { error } = await db.from("staff_requirements").insert([workingPayload]);
+    if(!error) return true;
+
+    const msg = String(error.message || error || "").toLowerCase();
+    const missingColumnMatch =
+      msg.match(/column\s+"?([a-zA-Z0-9_]+)"?\s+of\s+relation/i) ||
+      msg.match(/could not find the ['"]?([a-zA-Z0-9_]+)['"]? column/i) ||
+      msg.match(/column ['"]?([a-zA-Z0-9_]+)['"]? does not exist/i);
+
+    if(missingColumnMatch && missingColumnMatch[1]){
+      const badColumn = missingColumnMatch[1];
+      if(Object.prototype.hasOwnProperty.call(workingPayload, badColumn)){
+        delete workingPayload[badColumn];
+        continue;
+      }
+    }
+
+    let removedSomething = false;
+    for(const col of optionalColumnsInDropOrder){
+      if(Object.prototype.hasOwnProperty.call(workingPayload, col)){
+        delete workingPayload[col];
+        removedSomething = true;
+        break;
+      }
+    }
+
+    if(removedSomething){
+      continue;
+    }
+
+    throw error;
+  }
+
+  throw new Error("Unable to insert data into staff_requirements.");
+}
+
+function extractMissingColumnName(error){
+  const message = String(error?.message || error || "");
+  const match =
+    message.match(/column\s+"?([a-zA-Z0-9_]+)"?\s+of\s+relation/i) ||
+    message.match(/could not find the ['"]?([a-zA-Z0-9_]+)['"]? column/i) ||
+    message.match(/column ['"]?([a-zA-Z0-9_]+)['"]? does not exist/i);
+  return match && match[1] ? String(match[1]).trim() : "";
+}
+
+function buildUpdateMatchCandidates(identifiers = {}, payload = {}){
+  const row = identifiers && typeof identifiers.row === "object" ? identifiers.row : {};
+  const seen = new Set();
+  const out = [];
+  const add = (column, value)=>{
+    const nextValue = String(value || "").trim();
+    if(!column || !nextValue) return;
+    const key = `${column}::${nextValue}`;
+    if(seen.has(key)) return;
+    seen.add(key);
+    out.push({ column, value: nextValue });
+  };
+
+  add("id", identifiers.recordId);
+  add("id", row.id);
+  add("requirement_id", identifiers.requirementId || payload?.requirement_id);
+  add("requirement_id", row.requirement_id);
+  add("staff_requirement_id", identifiers.staffRequirementId || payload?.staff_requirement_id);
+  add("staff_requirement_id", row.staff_requirement_id);
+  add("job_id", identifiers.jobId || payload?.job_id);
+  add("job_id", row.job_id);
+  add("post_id", identifiers.postId || payload?.post_id);
+  add("post_id", row.post_id);
+  add("record_id", identifiers.rowRecordId || row.record_id);
+  add("row_id", identifiers.rowId || row.row_id);
+
+  return out;
+}
+
+async function updateStaffRequirementWithFallback(db, identifiers, payload){
+  const matchCandidates = buildUpdateMatchCandidates(identifiers, payload);
+  if(!matchCandidates.length){
+    throw new Error("Unable to update because the selected job record id is missing.");
+  }
+
+  const optionalColumnsInDropOrder = [
+    "salary_range_display",
+    "salary_max_display",
+    "salary_min_display",
+    "salary_currency_symbol",
+    "salary_currency",
+    "company_email",
+    "contact_email",
+    "updated_at"
+  ];
+
+  let workingPayload = { ...payload };
+  let candidatePairs = [...matchCandidates];
+
+  for(let attempt = 0; attempt <= (optionalColumnsInDropOrder.length + candidatePairs.length + 8); attempt++){
+    let lastError = null;
+    let retryImmediately = false;
+
+    for(const pair of candidatePairs){
+      try{
+        const { error } = await db.from("staff_requirements").update(workingPayload).eq(pair.column, pair.value);
+        if(!error){
+          return { matchedColumn: pair.column, matchedValue: pair.value };
+        }
+        lastError = error;
+      }catch(error){
+        lastError = error;
+      }
+
+      const badColumn = extractMissingColumnName(lastError);
+      if(badColumn){
+        if(Object.prototype.hasOwnProperty.call(workingPayload, badColumn)){
+          delete workingPayload[badColumn];
+          retryImmediately = true;
+          break;
+        }
+
+        const nextPairs = candidatePairs.filter(candidate => candidate.column !== badColumn);
+        if(nextPairs.length !== candidatePairs.length){
+          candidatePairs = nextPairs;
+          retryImmediately = true;
+          break;
+        }
+      }
+    }
+
+    if(retryImmediately){
+      if(!candidatePairs.length){
+        throw lastError || new Error("Unable to update the selected staff requirement.");
+      }
+      continue;
+    }
+
+    let removedSomething = false;
+    for(const col of optionalColumnsInDropOrder){
+      if(Object.prototype.hasOwnProperty.call(workingPayload, col)){
+        delete workingPayload[col];
+        removedSomething = true;
+        break;
+      }
+    }
+
+    if(removedSomething){
+      continue;
+    }
+
+    throw lastError || new Error("Unable to update the selected staff requirement.");
+  }
+
+  throw new Error("Unable to update the selected staff requirement.");
+}
+
+/* ================= FORM RESET ================= */
+function resetForm(showMessage = true){
+  companyName.value = "";
+  contactEmail.value = "";
+  sourceType.value = "";
+
+  country.value = "United States";
+  city.value = "";
+  address.value = "";
+
+  clearLockedLocationFields();
+  applyLockedFieldBehavior();
+  updateCurrencyUI();
+  populateCitiesForCountry(country.value);
+
+  position.value = "";
+  otherPosition.value = "";
+  otherPositionRow.style.display = "none";
+  otherPosition.required = false;
+
+  department.value = "";
+  employmentType.value = "";
+
+  salaryMin.value = "";
+  salaryMax.value = "";
+  experienceLevel.value = "";
+  skills.value = "";
+
+  companyPicInput.value = "";
+  jdInput.value = "";
+  openViewerAfterPick = false;
+
+  editState.existingJdUrls = [];
+  editState.existingCompanyProfileUrls = [];
+
+  updateCountLabel(companyPicCountText, companyPicInput.files);
+  updateCountLabel(jdCountText, jdInput.files);
+
+  companyNamePreview.textContent = "Your Company";
+  companyEmailPreview.textContent = "—";
+
+  clearCompanyPreview();
+  companyPicHint.textContent = "Click to view";
+
+  closeCompanyPicViewer();
+
+  if(showMessage){
+    showStatus("Form reset.", "success");
+  }
+}
+
+function exitEditMode(options = {}){
+  const reset = options.reset !== false;
+  editState.isEditMode = false;
+  editState.payload = null;
+  editState.rawRecord = null;
+  editState.fetchedRecord = null;
+  editState.mergedRecord = null;
+  editState.recordId = "";
+  editState.requirementId = "";
+  editState.existingJdUrls = [];
+  editState.existingCompanyProfileUrls = [];
+  editState.originalSnapshot = null;
+  clearStoredEditContext();
+  if(options.cleanUrl !== false){
+    try{
+      const url = new URL(window.location.href);
+      [
+        "edit","mode","source","autoload","from","table","update_table","edit_table","record_source",
+        "require_exact_row","load_from_storage","storage_payload_key","storage_raw_key","window_name_key",
+        "id","job_id","post_id","record_id","row_id","edit_id","selected_id",
+        "requirement_id","staff_requirement_id","staff_id","edit_requirement_id",
+        "company_name","company","business_name","employer_name",
+        "company_email","contact_email","email","contact_email_address",
+        "position","job_title","title","role"
+      ].forEach(key => url.searchParams.delete(key));
+      const nextUrl = `${url.pathname}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}${url.hash || ""}`;
+      window.history.replaceState({}, document.title, nextUrl);
+    }catch(error){}
+  }
+  if(reset){
+    resetForm(false);
+  }
+  applyPageModeUI();
+  refreshSubmitButtonText(false);
+}
+
+/* ================= MAIN SUBMIT ================= */
+async function submitStaffRequirement(){
+  if(editState.isEditMode && !hasEditModeChanges()){
+    showStatus("No changes to save.", "warn");
+    showPopup("No Changes To Save", "No changes were detected in edit mode. Update Post was not saved because nothing changed.", "fa-solid fa-circle-info");
+    refreshSubmitButtonText(false);
+    return;
+  }
+
+  btnSubmit.disabled = true;
+  if(btnEditLogout) btnEditLogout.disabled = true;
+  refreshSubmitButtonText(true);
+  btnSubmit.classList.add("launching");
+
+  const animationStartedAt = startSubmitFlight();
+  showStatus(editState.isEditMode ? "Saving post changes…" : "Submitting job requirement…", "warn");
+
+  try{
+    const db = getDb();
+    if(!db) throw new Error("Supabase client not initialized. Check supabase_config.js.");
+
+    const companyVal = smartTitleCase(companyName.value);
+    const emailVal = normalizeSpaces(contactEmail.value).toLowerCase();
+    const srcVal = String(sourceType.value || "").trim();
+
+    if(!companyVal) throw new Error("Company Name is required.");
+    if(!emailVal) throw new Error("Contact Email is required.");
+    if(!isValidEmail(emailVal)) throw new Error("Please enter a valid email address.");
+    if(!srcVal) throw new Error("Source Type is required.");
+
+    const posVal = getResolvedPositionValue();
+    if(!posVal) throw new Error("Position is required.");
+    if(String(position.value || "") === "Other" && !normalizeSpaces(otherPosition.value)){
+      throw new Error("Please type the Other Position title.");
+    }
+
+    const deptVal = smartTitleCase(department.value);
+    const empVal = String(employmentType.value || "").trim();
+
+    if(!deptVal) throw new Error("Department is required.");
+    if(!empVal) throw new Error("Employment Type is required.");
+
+    const countryVal = normalizeCountryValue(country.value || "United States");
+    const addrVal = normalizeSpaces(address.value);
+
+    const selectedVal = String(city.value || "");
+    const info = CITY_VALUE_TO_INFO.get(selectedVal) || null;
+
+    const cityVal = info ? String(info.city || "").trim() : "";
+    const stateVal = normalizeSpaces(state.value || (info ? info.state : ""));
+    const zipVal = String(zipcode.value || (info ? info.zip : "")).replace(/\D/g, "").trim();
+
+    if(!countryVal) throw new Error("Country is required.");
+    if(!selectedVal) throw new Error("Please select a City.");
+    if(!cityVal) throw new Error("City is required.");
+    if(!stateVal){
+      throw new Error(countryVal === "Philippines"
+        ? "Province was not auto-filled. Please choose another city or check your Philippines location dataset."
+        : "State was not auto-filled. Please choose another city or check your United States location dataset."
+      );
+    }
+    if(!zipVal){
+      throw new Error("Zip Code was not auto-filled. Please choose another city or check your location dataset.");
+    }
+    if(!addrVal) throw new Error("Address is required.");
+
+    const jdFiles = jdInput.files ? Array.from(jdInput.files) : [];
+    const companyPics = companyPicInput.files ? Array.from(companyPicInput.files) : [];
+
+    for(const f of jdFiles){
+      if(!isAllowedUpload(f)){
+        throw new Error("Invalid Job Description file. Allowed: PDF, DOC, DOCX, TXT, RTF.");
+      }
+    }
+
+    for(const img of companyPics){
+      if(!isAllowedImage(img)){
+        throw new Error("Invalid company image. Allowed: JPG, PNG, WEBP, GIF.");
+      }
+    }
+
+    if(editState.isEditMode && !editState.recordId){
+      throw new Error("Edit mode is active, but the selected posted job record id could not be found.");
+    }
+
+    const sal = validateSalaryRangeOptional(true);
+    if(!sal.ok) throw new Error("Salary range invalid.");
+
+    let expNum = null;
+    const expRaw = String(experienceLevel.value || "").trim();
+    if(expRaw){
+      const num = Number(expRaw);
+      if(!Number.isInteger(num) || num < 0 || num > 75){
+        throw new Error("Years of experience must be 0 to 75.");
+      }
+      expNum = num;
+    }
+
+    const folder = cleanFolder(companyVal || "COMPANY");
+
+    let jdUrls = editState.isEditMode ? [...(editState.existingJdUrls || [])] : [];
+    if(jdFiles.length){
+      jdUrls = await uploadFilesToBucket(jdFiles, folder, "JD", "job_pdfs");
+    }
+
+    let companyProfileUrls = editState.isEditMode ? [...(editState.existingCompanyProfileUrls || [])] : [];
+    if(companyPics.length){
+      companyProfileUrls = await uploadFilesToBucket(companyPics, folder, "PROFILE", "job_pdfs");
+    }
+
+    const salaryDisplay = buildSalaryDisplay(sal.min, sal.max, countryVal);
+
+    const basePayload = {
+      company_name: companyVal,
+      company_email: emailVal,
+      contact_email: emailVal,
+      position: posVal,
+      department: deptVal,
+      employment_type: empVal,
+
+      country: countryVal,
+      address: addrVal,
+      city: cityVal,
+      state: stateVal,
+      zipcode: zipVal,
+
+      experience_level: expNum,
+      source_type: srcVal,
+
+      salary_min: sal.min,
+      salary_max: sal.max,
+      updated_at: new Date().toISOString(),
+
+      skills: normalizeSpaces(skills.value || "") || null,
+
+      pdf_url: jdUrls.length ? jdUrls[0] : null,
+      pdf_urls: jdUrls.length ? jdUrls : [],
+
+      company_profile_url: companyProfileUrls.length ? companyProfileUrls[0] : null,
+      company_profile_urls: companyProfileUrls.length ? companyProfileUrls : []
+    };
+
+    const payload = buildOptionalCurrencyColumns(basePayload, salaryDisplay);
+    if(editState.isEditMode && editState.requirementId){
+      payload.requirement_id = editState.requirementId;
+    }
+
+    if(editState.isEditMode){
+      await updateStaffRequirementWithFallback(db, {
+        recordId: editState.recordId,
+        requirementId: editState.requirementId,
+        staffRequirementId: editState.requirementId,
+        jobId: editState.recordId,
+        postId: editState.recordId,
+        rowRecordId: (editState.mergedRecord || {}).record_id || "",
+        rowId: (editState.mergedRecord || {}).row_id || "",
+        row: editState.mergedRecord || editState.fetchedRecord || editState.rawRecord || {}
+      }, payload);
+      editState.existingJdUrls = [...jdUrls];
+      editState.existingCompanyProfileUrls = [...companyProfileUrls];
+      editState.mergedRecord = { ...(editState.mergedRecord || {}), ...payload, id: editState.recordId, requirement_id: editState.requirementId || (editState.mergedRecord || {}).requirement_id || "", updated_at: payload.updated_at };
+      editState.originalSnapshot = JSON.parse(JSON.stringify(editState.mergedRecord));
+
+      await ensureSubmitAnimationMinimum(animationStartedAt, 1400);
+      await finishSubmitFlight("success");
+
+      companyPicCountText.textContent = makeFileCountLabel(editState.existingCompanyProfileUrls.length, "existing image");
+      jdCountText.textContent = makeFileCountLabel(editState.existingJdUrls.length, "existing file");
+      if(editState.existingCompanyProfileUrls.length && !companyPics.length){
+        setCompanyPreviewFromUrl(editState.existingCompanyProfileUrls[0]);
+      }
+      showStatus("Post updated successfully.", "success");
+
+      broadcastEmployerDashboardUpdate(editState.mergedRecord || payload);
+      try{
+        sessionStorage.setItem(EMPLOYER_DASHBOARD_REFRESH_FLAG, "1");
+        localStorage.setItem(EMPLOYER_DASHBOARD_REFRESH_FLAG, "1");
+      }catch(error){}
+
+      showPopup(
+        "Post Updated Successfully!",
+        `The posted job for "${posVal}" at "${companyVal}" has been updated.
+` +
+        `Contact Email: ${emailVal}
+` +
+        `Location: ${cityVal}, ${stateVal} ${zipVal} (${countryVal})
+` +
+        `Salary Range: ${salaryDisplay.salary_range_display || "Not provided"}
+` +
+        `Currency Saved: ${salaryDisplay.currency_code} (${salaryDisplay.currency_symbol})
+` +
+        `Source Type: ${srcVal}
+` +
+        `Saved JD files: ${jdUrls.length}
+` +
+        `Saved company pics: ${companyProfileUrls.length}`,
+        "fa-solid fa-pen-to-square"
+      );
+    }else{
+      await insertStaffRequirementWithFallback(db, payload);
+
+      await ensureSubmitAnimationMinimum(animationStartedAt, 1400);
+      await finishSubmitFlight("success");
+
+      resetForm(false);
+      showStatus("Job posted successfully.", "success");
+
+      showPopup(
+        "Job Posted Successfully!",
+        `The job for "${posVal}" at "${companyVal}" has been saved.
+` +
+        `Contact Email: ${emailVal}
+` +
+        `Location: ${cityVal}, ${stateVal} ${zipVal} (${countryVal})
+` +
+        `Salary Range: ${salaryDisplay.salary_range_display || "Not provided"}
+` +
+        `Currency Saved: ${salaryDisplay.currency_code} (${salaryDisplay.currency_symbol})
+` +
+        `Source Type: ${srcVal}
+` +
+        `Uploaded JD files: ${jdUrls.length}
+` +
+        `Uploaded company pics: ${companyProfileUrls.length}`,
+        "fa-solid fa-clipboard-check"
+      );
+    }
+
+  }catch(err){
+    console.error(err);
+
+    await ensureSubmitAnimationMinimum(animationStartedAt, 950);
+    await finishSubmitFlight("error");
+
+    showStatus(`Error: ${err?.message || err}`, "error");
+    showPopup("Error", String(err?.message || err), "fa-solid fa-circle-xmark");
+  }finally{
+    btnSubmit.disabled = false;
+    if(btnEditLogout) btnEditLogout.disabled = false;
+    btnSubmit.classList.remove("launching");
+    refreshSubmitButtonText(false);
+  }
+}
+
+/* ================= BUTTONS ================= */
+btnSubmit.addEventListener("click", submitStaffRequirement);
+
+btnEditLogout?.addEventListener("click", ()=>{
+  if(!editState.isEditMode) return;
+  exitEditMode({ reset:true });
+  showStatus("Edit mode logged out. The form has been cleared and returned to new job posting mode.", "success");
+  showPopup(
+    "Logged Out From Edit Mode",
+    "The loaded job post data has been cleared and the page has returned to new job posting mode.",
+    "fa-solid fa-right-from-bracket"
+  );
+});
+
+
+
+/* ================= INIT ================= */
+window.addEventListener("load", async ()=>{
+  country.value = "United States";
+
+  applyLockedFieldBehavior();
+  clearLockedLocationFields();
+  updateCurrencyUI();
+  handleCountryChange();
+  applyPageModeUI();
+
+  updateCountLabel(companyPicCountText, companyPicInput.files);
+  updateCountLabel(jdCountText, jdInput.files);
+  companyEmailPreview.textContent = "—";
+  companyPicHint.textContent = "Click to view";
+  refreshSubmitButtonText(false);
+
+  updateOtherPositionVisibility();
+  setupEnterToNextFieldNavigation();
+
+  const forceNewMode = consumePostjobForceNewFlag();
+  if(forceNewMode){
+    exitEditMode({ reset:true });
+    showStatus("Employer logout detected. The form has been cleared and returned to new job posting mode.", "success");
+    return;
+  }
+
+  try{
+    await initializeEditModeIfNeeded();
+  }catch(error){
+    console.error("Edit-mode initialization failed:", error);
+    showStatus(`Unable to load the selected posted job data: ${error?.message || error}`, "error");
+  }
+
+  if(!editState.isEditMode){
+    showStatus("Ready.", "success");
+  }
+});
+
+window.addEventListener("storage", event => {
+  if(event.key === POSTJOB_FORCE_NEW_FLAG && event.newValue){
+    exitEditMode({ reset:true });
+    showStatus("Employer logout detected. The form has been cleared and returned to new job posting mode.", "success");
+  }
+});
+
+window.addEventListener("focus", ()=>{
+  if(consumePostjobForceNewFlag()){
+    exitEditMode({ reset:true });
+    showStatus("Employer logout detected. The form has been cleared and returned to new job posting mode.", "success");
+  }
+});
+
+window.addEventListener("pageshow", ()=>{
+  if(consumePostjobForceNewFlag()){
+    exitEditMode({ reset:true });
+    showStatus("Employer logout detected. The form has been cleared and returned to new job posting mode.", "success");
+  }
+});
+
+window.addEventListener("beforeunload", ()=>{
+  revokeViewerUrls();
+  revokeCompanyPreviewUrl();
+});
+</script>
+
+</body>
+</html>

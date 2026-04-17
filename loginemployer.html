@@ -1,0 +1,2191 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employer Login | Job Space Link</title>
+
+  <!-- ICONS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="jobspacelink.css" />
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase_config.js"></script>
+
+  <style>
+    :root{
+      --header-h:78px;
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:"Poppins","Segoe UI",sans-serif;
+    }
+
+    html, body{
+      min-height:100%;
+      overflow-x:hidden;
+    }
+
+    html{
+      scroll-behavior:smooth;
+      scroll-padding-top:calc(var(--header-h) + 16px);
+    }
+
+    body{
+      min-height:100vh;
+      background: radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #020617);
+      color:#e5e7eb;
+      padding-top:var(--header-h);
+    }
+
+    /* ============================================================
+       HEADER - SAME FORMAT AS INDEX
+    ============================================================ */
+    header{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:0 16px 0 8px;
+      background:rgba(15,23,42,0.92);
+      border-bottom:1px solid rgba(59,130,246,0.28);
+      backdrop-filter:blur(14px);
+      box-shadow:0 8px 24px rgba(0,0,0,0.18);
+      z-index:1500;
+    }
+
+    header .logo{
+      flex:0 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      margin-left:-4px;
+    }
+
+    header .logo img{
+      height:80px;
+      width:auto;
+      display:block;
+      object-fit:contain;
+      filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+    }
+
+    header nav{
+      flex:1 1 auto;
+      min-width:0;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:12px;
+      margin-left:4px;
+      white-space:nowrap;
+    }
+
+    header nav > a,
+    header nav .nav-main-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:36px;
+      padding:0 4px;
+      color:#e5e7eb;
+      text-decoration:none;
+      font-size:0.88rem;
+      font-weight:600;
+      transition:color 0.25s ease, text-shadow 0.25s ease;
+    }
+
+    header nav > a:hover,
+    header nav .nav-main-link:hover{
+      color:#ffffff;
+      text-shadow:0 0 12px rgba(0,198,255,0.55);
+    }
+
+    header .auth-buttons{
+      flex:0 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+      white-space:nowrap;
+    }
+
+    header .auth-buttons a{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      height:36px;
+      padding:0 11px;
+      border-radius:10px;
+      text-decoration:none;
+      font-size:0.82rem;
+      font-weight:700;
+      color:#ffffff;
+      border:1px solid rgba(255,255,255,0.14);
+      background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+      box-shadow:0 0 14px rgba(0,198,255,0.10);
+      transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    header .auth-buttons a:hover{
+      transform:translateY(-2px);
+      box-shadow:0 0 20px rgba(0,198,255,0.22);
+      border-color:rgba(0,198,255,0.35);
+    }
+
+    .nav-toggle{
+      display:none;
+      width:40px;
+      height:40px;
+      border:none;
+      border-radius:10px;
+      background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+      color:#fff;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      flex:0 0 auto;
+      border:1px solid rgba(255,255,255,0.14);
+      box-shadow:0 0 14px rgba(0,198,255,0.10);
+    }
+
+    .nav-toggle i{
+      font-size:1rem;
+    }
+
+    /* ============================================================
+       MOBILE PANEL
+    ============================================================ */
+    .mobile-panel{
+      position:fixed;
+      top:var(--header-h);
+      left:0;
+      right:0;
+      background:rgba(15,23,42,0.97);
+      border-top:1px solid rgba(59,130,246,0.25);
+      border-bottom:1px solid rgba(59,130,246,0.25);
+      box-shadow:0 10px 28px rgba(0,0,0,0.28);
+      backdrop-filter:blur(12px);
+      padding:14px 16px 18px;
+      transform:translateY(-10px);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 0.25s ease, transform 0.25s ease;
+      z-index:1400;
+    }
+
+    .mobile-panel.open{
+      opacity:1;
+      transform:translateY(0);
+      pointer-events:auto;
+    }
+
+    .mobile-panel .mnav{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .mobile-panel .mnav a{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      border-radius:12px;
+      text-decoration:none;
+      color:#e5e7eb;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      font-weight:600;
+      transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    }
+
+    .mobile-panel .mnav a:hover{
+      background:rgba(0,198,255,0.12);
+      color:#fff;
+      transform:translateX(3px);
+    }
+
+    /* ============================================================
+       ABOUT NAV DROPDOWN
+    ============================================================ */
+    .nav-dropdown{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      height:36px;
+      flex:0 0 auto;
+    }
+
+    .nav-dropdown-trigger{
+      display:inline-flex;
+      align-items:center;
+      gap:2px;
+      height:100%;
+    }
+
+    .nav-main-link{
+      display:inline-flex;
+      align-items:center;
+      text-decoration:none;
+    }
+
+    .nav-dropdown-toggle{
+      appearance:none;
+      -webkit-appearance:none;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:#ffffff;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:24px;
+      height:24px;
+      padding:0;
+      margin:0;
+      line-height:1;
+    }
+
+    .nav-dropdown-toggle i{
+      pointer-events:none;
+      color:#ffffff;
+      font-size:0.9rem;
+    }
+
+    .nav-dropdown-menu{
+      position:absolute;
+      top:calc(100% + 12px);
+      left:0;
+      min-width:220px;
+      display:none;
+      flex-direction:column;
+      gap:0;
+      padding:10px 0;
+      border-radius:14px;
+      background:rgba(15,23,42,0.96);
+      border:1px solid rgba(59,130,246,0.35);
+      box-shadow:0 12px 34px rgba(0,0,0,0.35);
+      backdrop-filter:blur(12px);
+      z-index:1200;
+    }
+
+    .nav-dropdown.open .nav-dropdown-menu{
+      display:flex;
+    }
+
+    .nav-dropdown-menu a{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 16px;
+      color:#e5e7eb;
+      text-decoration:none;
+      white-space:nowrap;
+      transition:background 0.25s ease, color 0.25s ease;
+    }
+
+    .nav-dropdown-menu a:hover{
+      background:rgba(0,198,255,0.12);
+      color:#ffffff;
+    }
+
+    .nav-dropdown-menu i{
+      width:18px;
+      text-align:center;
+    }
+
+    .page-wrap{
+      min-height:calc(100vh - var(--header-h));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px 18px 70px;
+    }
+
+    .login-box{
+      width:min(520px, 94vw);
+      background: rgba(15,23,42,0.82);
+      border: 1px solid rgba(59,130,246,0.35);
+      border-radius: 20px;
+      padding: 42px 34px;
+      box-shadow: 0 0 30px rgba(2,6,23,0.7);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .login-box:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0,198,255,0.22), transparent 55%),
+        radial-gradient(circle at 80% 70%, rgba(124,58,237,0.25), transparent 60%);
+      pointer-events:none;
+    }
+
+    .login-box > *{
+      position:relative;
+      z-index:2;
+    }
+
+    .login-box h2{
+      font-size:2rem;
+      margin-bottom:12px;
+      letter-spacing:.3px;
+    }
+
+    .subtext{
+      color:#94a3b8;
+      font-size:14px;
+      margin-bottom:20px;
+      line-height:1.5;
+    }
+
+    .field{
+      margin-bottom:14px;
+    }
+
+    label{
+      display:block;
+      font-size:13px;
+      color:#cbd5e1;
+      margin-bottom:8px;
+      font-weight:700;
+    }
+
+    .input-wrap{
+      position:relative;
+    }
+
+    input{
+      width:100%;
+      padding:14px 44px 14px 14px;
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,0.25);
+      background: rgba(2,6,23,0.55);
+      color:#fff;
+      outline:none;
+      font-weight:600;
+      transition:.2s ease;
+    }
+
+    input:focus{
+      border-color: rgba(0,198,255,0.55);
+      box-shadow: 0 0 0 4px rgba(0,198,255,0.12);
+    }
+
+    .toggle-pass{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform: translateY(-50%);
+      border:none;
+      background:transparent;
+      color:#a5b4fc;
+      cursor:pointer;
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      transition:.2s ease;
+    }
+
+    .toggle-pass:hover{
+      background: rgba(124,58,237,0.14);
+      color:#fff;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      margin-top:18px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding:12px 16px;
+      border-radius:14px;
+      font-weight:900;
+      letter-spacing:.2px;
+      transition:.2s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      text-decoration:none;
+    }
+
+    .btn-primary{
+      background: linear-gradient(135deg,#00c6ff,#7c3aed);
+      color:#fff;
+      flex: 1 1 160px;
+      box-shadow: 0 0 18px rgba(124,58,237,0.25);
+    }
+
+    .btn-primary:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 0 26px rgba(124,58,237,0.4);
+    }
+
+    .btn-secondary{
+      background: rgba(2,6,23,0.55);
+      color:#cbd5e1;
+      border:1px solid rgba(148,163,184,0.25);
+      flex: 1 1 160px;
+    }
+
+    .btn-secondary:hover{
+      background: rgba(59,130,246,0.14);
+      color:#fff;
+    }
+
+    .hint-links{
+      margin-top:18px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      font-size:13px;
+      color:#94a3b8;
+    }
+
+    .hint-links a{
+      color:#93c5fd;
+      text-decoration:none;
+      font-weight:800;
+    }
+
+    .hint-links a:hover{
+      text-decoration:underline;
+    }
+
+    .modal-backdrop{
+      position:fixed;
+      top:var(--header-h);
+      left:0;
+      right:0;
+      bottom:0;
+      min-height:calc(100vh - var(--header-h));
+      background: rgba(0,0,0,0.58);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:1490;
+      padding:14px 18px 18px;
+      backdrop-filter: blur(5px);
+      overflow:auto;
+    }
+
+    .modal{
+      width:min(480px, calc(100vw - 34px));
+      max-height:calc(100vh - var(--header-h) - 34px);
+      overflow:auto;
+      border-radius:18px;
+      background: rgba(15,23,42,0.95);
+      border:1px solid rgba(239,68,68,0.45);
+      box-shadow: 0 0 28px rgba(239,68,68,0.18);
+      padding:16px 16px 14px;
+    }
+
+    .modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .modal-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      color:#fecaca;
+      letter-spacing:.2px;
+    }
+
+    .modal-close{
+      border:none;
+      cursor:pointer;
+      background: rgba(239,68,68,0.12);
+      border:1px solid rgba(239,68,68,0.35);
+      color:#fecaca;
+      border-radius:12px;
+      width:38px;
+      height:38px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:.2s ease;
+    }
+
+    .modal-close:hover{
+      transform:translateY(-1px);
+      background: rgba(239,68,68,0.2);
+    }
+
+    .modal-body{
+      color:#e5e7eb;
+      line-height:1.55;
+      font-size:14px;
+      margin-bottom:12px;
+    }
+
+    .modal-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .modal-actions .btn{
+      flex:1 1 150px;
+    }
+
+    /* EMPLOYER PORTAL MODAL */
+    #portalModal{
+      background: rgba(0,0,0,0.62);
+    }
+
+    #portalModal .portal-modal{
+      width:min(500px, calc(100vw - 34px));
+      max-height:calc(100vh - var(--header-h) - 34px);
+      overflow:auto;
+      border-radius:22px;
+      padding:22px 20px 18px;
+      position:relative;
+      background:
+        radial-gradient(circle at top left, rgba(0,198,255,0.10), transparent 38%),
+        radial-gradient(circle at bottom right, rgba(124,58,237,0.18), transparent 45%),
+        rgba(8,20,48,0.96);
+      border:1px solid rgba(37,99,235,0.72);
+      box-shadow:
+        0 0 0 1px rgba(59,130,246,0.08) inset,
+        0 0 30px rgba(37,99,235,0.22),
+        0 20px 46px rgba(2,6,23,0.58);
+    }
+
+    #portalModal .portal-modal::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 100%, rgba(14,165,233,0.06), transparent 40%),
+        radial-gradient(circle at 50% 0%, rgba(124,58,237,0.08), transparent 42%);
+    }
+
+    .portal-inner{
+      position:relative;
+      z-index:2;
+    }
+
+    .portal-title{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-size:1.02rem;
+      font-weight:1000;
+      color:#eaf3ff;
+      text-align:center;
+      margin-bottom:8px;
+    }
+
+    .portal-subtext{
+      text-align:center;
+      color:#d9e5f6;
+      font-size:13px;
+      line-height:1.5;
+      margin-bottom:10px;
+    }
+
+    .portal-status{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+      width:fit-content;
+      max-width:100%;
+      margin:0 auto 14px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.2px;
+      background: rgba(255,255,255,0.07);
+      border:1px solid rgba(255,255,255,0.10);
+      color:#e5eefc;
+      text-align:center;
+    }
+
+    .portal-status.active{
+      background: rgba(34,197,94,0.14);
+      border-color: rgba(34,197,94,0.30);
+      color:#d1fae5;
+      box-shadow: 0 0 18px rgba(34,197,94,0.12);
+    }
+
+    .portal-status.inactive{
+      background: rgba(251,191,36,0.14);
+      border-color: rgba(251,191,36,0.30);
+      color:#fde68a;
+      box-shadow: 0 0 18px rgba(251,191,36,0.12);
+    }
+
+    .portal-options{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    .portal-action{
+      width:100%;
+      border:none;
+      cursor:pointer;
+      color:#fff;
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:48px;
+      border-radius:999px;
+      padding:10px 16px;
+      font-size:0.94rem;
+      font-weight:1000;
+      letter-spacing:.2px;
+      transition:transform .18s ease, box-shadow .18s ease, filter .18s ease, opacity .18s ease;
+      box-shadow: 0 10px 24px rgba(2,6,23,0.22);
+      text-align:center;
+    }
+
+    .portal-action:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.04);
+    }
+
+    .portal-action i{
+      font-size:1rem;
+    }
+
+    .portal-action.dashboard-applicant{
+      background: linear-gradient(135deg, #1dcfff, #7c3aed);
+      box-shadow: 0 0 22px rgba(59,130,246,0.22);
+    }
+
+    .portal-action.dashboard-employer{
+      background: linear-gradient(135deg, #22c55e, #22c55e);
+      box-shadow: 0 0 22px rgba(34,197,94,0.20);
+    }
+
+    .portal-action.subscribe{
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      box-shadow: 0 0 22px rgba(249,115,22,0.20);
+    }
+
+    .portal-action.subscription-status{
+      background: linear-gradient(135deg, #22d3ee, #2563eb);
+      box-shadow: 0 0 22px rgba(37,99,235,0.22);
+    }
+
+    .portal-close{
+      position:absolute;
+      top:12px;
+      right:12px;
+      width:40px;
+      height:40px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      color:#ffffff;
+      background:linear-gradient(135deg, rgba(239,68,68,0.9), rgba(124,58,237,0.9));
+      border:1px solid rgba(255,255,255,0.16);
+      box-shadow:0 0 16px rgba(239,68,68,0.22);
+      transition:transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+    }
+
+    .portal-close:hover{
+      transform:translateY(-1px) scale(1.02);
+      box-shadow:0 0 20px rgba(239,68,68,0.34);
+    }
+
+    .portal-close:focus-visible{
+      outline:none;
+      box-shadow:0 0 0 3px rgba(56,189,248,0.35), 0 0 20px rgba(239,68,68,0.34);
+    }
+
+    .portal-close i{
+      font-size:1rem;
+    }
+
+    .portal-note{
+      margin-top:12px;
+      text-align:center;
+      color:#9fb5d8;
+      font-size:12px;
+      line-height:1.45;
+    }
+
+    /* ============================================================
+       RESPONSIVE MEDIA QUERIES
+    ============================================================ */
+    @media (min-width: 1800px){
+      .page-wrap{
+        padding:60px 18px 90px;
+      }
+
+      .login-box{
+        width:620px;
+        padding:52px 44px;
+        border-radius:24px;
+      }
+
+      .login-box h2{
+        font-size:2.25rem;
+      }
+
+      .subtext{
+        font-size:15px;
+      }
+
+      input{
+        padding:16px 48px 16px 16px;
+        font-size:1rem;
+      }
+
+      .btn{
+        padding:14px 18px;
+        font-size:1rem;
+      }
+
+      #portalModal .portal-modal{
+        width:620px;
+      }
+    }
+
+    @media (max-width:1280px){
+      header{
+        gap:10px;
+        padding:0 12px 0 6px;
+      }
+
+      header .logo img{
+        height:46px;
+      }
+
+      header nav{
+        gap:10px;
+        margin-left:2px;
+      }
+
+      header nav > a,
+      header nav .nav-main-link{
+        font-size:0.82rem;
+      }
+
+      header .auth-buttons{
+        gap:6px;
+      }
+
+      header .auth-buttons a{
+        padding:0 9px;
+        font-size:0.78rem;
+      }
+    }
+
+    @media (min-width: 1440px){
+      .page-wrap{
+        padding:56px 18px 80px;
+      }
+
+      .login-box{
+        width:560px;
+        padding:46px 38px;
+      }
+
+      .login-box h2{
+        font-size:2.1rem;
+      }
+    }
+
+    @media (min-width: 1024px){
+      .page-wrap{
+        padding:42px 18px 70px;
+      }
+
+      .login-box{
+        width:520px;
+      }
+    }
+
+    @media (max-width:920px){
+      header{
+        justify-content:space-between;
+        padding:0 12px 0 8px;
+      }
+
+      header nav{
+        display:none;
+      }
+
+      header .auth-buttons{
+        display:none;
+      }
+
+      .nav-toggle{
+        display:inline-flex;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1023px){
+      .page-wrap{
+        padding:20px 14px 40px;
+        align-items:flex-start;
+      }
+
+      .modal-backdrop{
+        padding:12px 14px 16px;
+      }
+
+      .modal{
+        width:min(420px, calc(100vw - 28px));
+        max-height:calc(100vh - var(--header-h) - 28px);
+        padding:14px 14px 12px;
+        border-radius:16px;
+      }
+
+      .login-box{
+        width:min(440px, 92vw);
+        padding:22px 18px;
+        border-radius:16px;
+        box-shadow: 0 0 22px rgba(2,6,23,0.6);
+      }
+
+      .login-box h2{
+        font-size:1.55rem;
+        margin-bottom:8px;
+      }
+
+      .subtext{
+        font-size:13px;
+        margin-bottom:14px;
+        line-height:1.4;
+      }
+
+      .field{
+        margin-bottom:7px;
+      }
+
+      label{
+        font-size:10px;
+        margin-bottom:4px;
+      }
+
+      input{
+        padding:8px 35px 8px 10px;
+        border-radius:12px;
+        font-size:0.92rem;
+      }
+
+      .toggle-pass{
+        width:32px;
+        height:32px;
+        border-radius:10px;
+      }
+
+      .actions{
+        margin-top:9px;
+        gap:10px;
+      }
+
+      .btn{
+        padding:10px 12px;
+        border-radius:12px;
+        font-size:0.92rem;
+        gap:8px;
+      }
+
+      .hint-links{
+        margin-top:12px;
+        font-size:12px;
+      }
+
+      #portalModal .portal-modal{
+        width:min(400px, calc(100vw - 24px));
+        max-height:none;
+        overflow:visible;
+        padding:14px 12px 12px;
+        border-radius:16px;
+      }
+
+      .portal-title{
+        font-size:0.94rem;
+        gap:8px;
+        margin-bottom:6px;
+      }
+
+      .portal-subtext{
+        font-size:11.6px;
+        line-height:1.32;
+        margin-bottom:8px;
+      }
+
+      .portal-status{
+        font-size:10.8px;
+        line-height:1.28;
+        padding:6px 10px;
+        margin:0 auto 10px;
+        gap:6px;
+      }
+
+      .portal-options{
+        gap:8px;
+        margin-top:2px;
+      }
+
+      .portal-action{
+        min-height:42px;
+        padding:8px 10px;
+        font-size:0.82rem;
+        gap:8px;
+      }
+
+      .portal-action i{
+        font-size:0.86rem;
+      }
+
+      .portal-note{
+        margin-top:10px;
+        font-size:10.8px;
+        line-height:1.32;
+      }
+
+      .portal-close{
+        width:34px;
+        height:34px;
+        top:10px;
+        right:10px;
+        border-radius:10px;
+      }
+    }
+
+    @media (min-width: 481px) and (max-width: 768px){
+      .page-wrap{
+        padding:18px 14px 46px;
+        align-items:flex-start;
+      }
+
+      .login-box{
+        width:min(420px, 94vw);
+        padding:24px 18px;
+        border-radius:16px;
+      }
+
+      .login-box h2{
+        font-size:1.48rem;
+      }
+
+      .subtext{
+        font-size:13px;
+        margin-bottom:12px;
+      }
+
+      .field{
+        margin-bottom:10px;
+      }
+
+      input{
+        padding:11px 42px 11px 12px;
+        border-radius:12px;
+        font-size:0.92rem;
+      }
+
+      .actions{
+        gap:10px;
+        margin-top:12px;
+      }
+
+      .btn{
+        padding:10px 12px;
+        border-radius:12px;
+        font-size:0.92rem;
+      }
+
+      .hint-links{
+        margin-top:12px;
+        font-size:12px;
+      }
+
+      #portalModal .portal-modal{
+        width:min(420px, calc(100vw - 26px));
+        max-height:calc(100vh - var(--header-h) - 24px);
+        padding:18px 14px 16px;
+        border-radius:18px;
+      }
+
+      .portal-title{
+        font-size:1.04rem;
+      }
+
+      .portal-subtext{
+        font-size:13px;
+      }
+
+      .portal-action{
+        min-height:50px;
+        font-size:.92rem;
+        padding:12px 14px;
+      }
+    }
+
+    @media (max-width:480px){
+      :root{
+        --header-h:72px;
+      }
+
+      .page-wrap{
+        padding:16px 12px 40px;
+        align-items:flex-start;
+      }
+
+      header{
+        padding:0 10px 0 6px;
+      }
+
+      header .logo{
+        margin-left:-2px;
+      }
+
+      header .logo img{
+        height:42px;
+      }
+
+      .login-box{
+        width:100%;
+        padding:20px 14px;
+        border-radius:16px;
+      }
+
+      .login-box h2{
+        font-size:1.32rem;
+        margin-bottom:8px;
+      }
+
+      .subtext{
+        font-size:12.5px;
+        margin-bottom:12px;
+      }
+
+      .field{
+        margin-bottom:10px;
+      }
+
+      label{
+        font-size:12px;
+        margin-bottom:6px;
+      }
+
+      input{
+        padding:11px 40px 11px 12px;
+        border-radius:12px;
+        font-size:0.92rem;
+      }
+
+      .toggle-pass{
+        width:32px;
+        height:32px;
+        border-radius:10px;
+      }
+
+      .actions{
+        flex-direction:column;
+        margin-top:12px;
+      }
+
+      .btn{
+        width:100%;
+        padding:11px 12px;
+        border-radius:12px;
+      }
+
+      .hint-links{
+        margin-top:12px;
+        font-size:12px;
+        flex-direction:column;
+        gap:8px;
+      }
+
+      .modal{
+        width:100%;
+        max-height:calc(100vh - var(--header-h) - 22px);
+        padding:14px 14px 12px;
+      }
+
+      .modal-actions{
+        flex-direction:column;
+      }
+
+      .modal-actions .btn{
+        width:100%;
+      }
+
+      #portalModal .portal-modal{
+        width:100%;
+        max-height:calc(100vh - var(--header-h) - 22px);
+        padding:18px 12px 16px;
+        border-radius:18px;
+      }
+
+      .portal-title{
+        font-size:1rem;
+      }
+
+      .portal-subtext{
+        font-size:12.5px;
+        margin-bottom:10px;
+      }
+
+      .portal-status{
+        font-size:11.5px;
+        padding:8px 10px;
+        margin-bottom:14px;
+      }
+
+      .portal-options{
+        gap:11px;
+      }
+
+      .portal-action{
+        min-height:48px;
+        font-size:.88rem;
+        padding:11px 12px;
+        gap:10px;
+      }
+
+      .portal-note{
+        font-size:11.5px;
+      }
+
+      .portal-close{
+        width:34px;
+        height:34px;
+        top:10px;
+        right:10px;
+        border-radius:10px;
+      }
+    }
+  
+/* ============================================================
+   FINAL HEADER RESPONSIVE PATCH
+   Exact requested breakpoints
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:2px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+
+  header .logo{
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:15px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:9px !important;
+    padding:0 12px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:66px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:9px !important;
+    margin-left:3px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:34px !important;
+    padding:0 2px !important;
+    font-size:0.75rem !important;
+  }
+
+  .nav-dropdown{
+    height:34px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    height:20px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.74rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:5px !important;
+  }
+
+  header .auth-buttons a{
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:7px !important;
+    padding:0 8px 0 5px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-dropdown{
+    height:31px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:10px !important;
+    padding:0 12px 0 8px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 10px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+            <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="employer_dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<main class="page-wrap">
+  <section class="login-box">
+    <h2><i class="fa-solid fa-right-to-bracket"></i> Employer Login</h2>
+    <div class="subtext">
+      Login to continue. <b>Employer dashboard requires an active subscription</b>.
+    </div>
+
+    <form id="loginForm" autocomplete="on">
+      <div class="field">
+        <label for="email">Email</label>
+        <div class="input-wrap">
+          <input id="email" type="email" placeholder="you@company.com" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <input id="password" type="password" placeholder="••••••••" required />
+          <button type="button" class="toggle-pass" id="togglePassword" aria-label="Toggle password">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="loginBtn" type="submit">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+        </button>
+      </div>
+
+      <div class="hint-links">
+        <span>New employer? <a href="signup2.html">Create account</a></span>
+        <span><a href="forgetpassword2.html">Forgot password?</a></span>
+      </div>
+    </form>
+  </section>
+</main>
+
+<!-- ACCESS / WARNING MODAL -->
+<div class="modal-backdrop" id="gateModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        Access Restricted
+      </div>
+      <button class="modal-close" id="closeModal" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body" id="modalMessage">
+      Sign up first before you can login. To open employer dashboard, you also need an active subscription.
+    </div>
+
+    <div class="modal-actions">
+      <a class="btn btn-secondary" href="signup2.html">
+        <i class="fa-solid fa-user-plus"></i> Sign Up
+      </a>
+      <a class="btn btn-primary" href="subscribe.html">
+        <i class="fa-solid fa-credit-card"></i> Subscribe
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYER PORTAL POPUP -->
+<div class="modal-backdrop" id="portalModal">
+  <div class="portal-modal">
+    <div class="portal-inner">
+      <button type="button" class="portal-close" id="closePortalModal" aria-label="Exit popup">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="portal-title">
+        <i class="fa-solid fa-briefcase"></i>
+        Employer Portal
+      </div>
+
+      <div class="portal-subtext" id="portalSubtext">
+        Select what you want to do after login.
+      </div>
+
+      <div class="portal-status inactive" id="portalStatusLine">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        Checking subscription status...
+      </div>
+
+      <div class="portal-options">
+        <button type="button" class="portal-action dashboard-applicant" id="goApplicantDashboard">
+          <i class="fa-solid fa-user"></i>
+          View Applicant Dashboard
+        </button>
+
+        <button type="button" class="portal-action dashboard-employer" id="goEmployerDashboard">
+          <i class="fa-solid fa-building"></i>
+          View Employer Dashboard
+        </button>
+
+        <button type="button" class="portal-action subscribe" id="goSubscribe">
+          <i class="fa-solid fa-credit-card"></i>
+          Subscribe
+        </button>
+
+        <button type="button" class="portal-action subscription-status" id="goSubscriptionStatus">
+          <i class="fa-solid fa-list-check"></i>
+          Subscription Status
+        </button>
+      </div>
+
+      <div class="portal-note">
+        Employer dashboard opens only when subscription is active.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     HEADER DROPDOWN (Desktop)
+  ============================================================ */
+  (function(){
+    const dd = document.getElementById("aboutNavDropdown");
+    const toggle = document.getElementById("aboutNavToggle");
+    const menu = document.getElementById("aboutNavMenu");
+
+    if(!dd || !toggle || !menu) return;
+
+    function closeAboutMenu(){
+      dd.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+
+    function openAboutMenu(){
+      dd.classList.add("open");
+      toggle.setAttribute("aria-expanded", "true");
+    }
+
+    toggle.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+
+      const isOpen = dd.classList.contains("open");
+      if(isOpen){
+        closeAboutMenu();
+      }else{
+        openAboutMenu();
+      }
+    });
+
+    document.addEventListener("click", function(e){
+      if(!dd.contains(e.target)){
+        closeAboutMenu();
+      }
+    });
+
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape"){
+        closeAboutMenu();
+      }
+    });
+
+    menu.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click", function(){
+        closeAboutMenu();
+      });
+    });
+  })();
+
+  /* ============================================================
+     MOBILE MENU
+  ============================================================ */
+  (function(){
+    const btn = document.getElementById("navToggle");
+    const panel = document.getElementById("mobilePanel");
+    if(!btn || !panel) return;
+
+    function close(){
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden","true");
+      btn.setAttribute("aria-expanded","false");
+    }
+
+    btn.addEventListener("click", ()=>{
+      const open = panel.classList.toggle("open");
+      panel.setAttribute("aria-hidden", open ? "false" : "true");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+    document.addEventListener("click", (e)=>{
+      if(panel.classList.contains("open")){
+        const header = document.querySelector("header");
+        if(header && header.contains(e.target)) return;
+        if(panel.contains(e.target)) return;
+        close();
+      }
+    });
+
+    window.addEventListener("resize", ()=>{
+      if(window.innerWidth >= 769) close();
+    }, { passive:true });
+  })();
+
+  const loginForm = document.getElementById("loginForm");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const loginBtn = document.getElementById("loginBtn");
+  const togglePassword = document.getElementById("togglePassword");
+
+  const gateModal = document.getElementById("gateModal");
+  const closeModal = document.getElementById("closeModal");
+  const modalMessage = document.getElementById("modalMessage");
+
+  const portalModal = document.getElementById("portalModal");
+  const portalSubtext = document.getElementById("portalSubtext");
+  const portalStatusLine = document.getElementById("portalStatusLine");
+  const closePortalModal = document.getElementById("closePortalModal");
+
+  const goApplicantDashboard = document.getElementById("goApplicantDashboard");
+  const goEmployerDashboard = document.getElementById("goEmployerDashboard");
+  const goSubscribe = document.getElementById("goSubscribe");
+  const goSubscriptionStatus = document.getElementById("goSubscriptionStatus");
+
+  let currentEmployerUserId = null;
+  let currentSubscriptionInfo = {
+    active: false,
+    reason: "unknown",
+    record: null,
+    remaining: 0
+  };
+
+  function openModal(msg){
+    modalMessage.textContent = msg || "Sign up first before you can login. To open employer dashboard, you also need an active subscription.";
+    gateModal.style.display = "flex";
+  }
+
+  function hideModal(){
+    gateModal.style.display = "none";
+  }
+
+  function openPortalModal(){
+    portalModal.style.display = "flex";
+  }
+
+  function hidePortalModal(){
+    portalModal.style.display = "none";
+  }
+
+  if (closePortalModal) {
+    closePortalModal.addEventListener("click", hidePortalModal);
+  }
+
+  if (portalModal) {
+    portalModal.addEventListener("click", function(e){
+      if (e.target === portalModal) hidePortalModal();
+    });
+  }
+
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape") {
+      hidePortalModal();
+    }
+  });
+
+  function setPortalStatusUI(info){
+    const remaining = Number(info?.remaining || 0);
+
+    if (info?.active) {
+      portalStatusLine.className = "portal-status active";
+      portalStatusLine.innerHTML = `
+        <i class="fa-solid fa-circle-check"></i>
+        Active Subscription • ${remaining} day${remaining === 1 ? "" : "s"} remaining
+      `;
+      portalSubtext.textContent = "Select what you want to do after login.";
+    } else {
+      portalStatusLine.className = "portal-status inactive";
+
+      let message = "No active subscription found. Subscribe first to open employer dashboard.";
+      if (info?.reason === "expired") {
+        message = "Subscription expired. Renew subscription to open employer dashboard.";
+      } else if (info?.reason === "inactive") {
+        message = "Subscription is inactive. Check subscription status or subscribe again.";
+      } else if (info?.reason === "no_subscription") {
+        message = "No subscription found. Subscribe to open employer dashboard.";
+      }
+
+      portalStatusLine.innerHTML = `
+        <i class="fa-solid fa-circle-exclamation"></i>
+        ${message}
+      `;
+      portalSubtext.textContent = "You are logged in. Choose where you want to go next.";
+    }
+  }
+
+  closeModal.addEventListener("click", hideModal);
+  gateModal.addEventListener("click", (e) => {
+    if (e.target === gateModal) hideModal();
+  });
+
+  togglePassword.addEventListener("click", () => {
+    const isPass = passwordInput.type === "password";
+    passwordInput.type = isPass ? "text" : "password";
+    togglePassword.innerHTML = isPass
+      ? '<i class="fa-solid fa-eye-slash"></i>'
+      : '<i class="fa-solid fa-eye"></i>';
+  });
+
+  function localYYYYMMDD(d = new Date()){
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  async function employerProfileExists(userId){
+    const { data, error } = await supabase
+      .from("employers")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Employers lookup error:", error);
+      return false;
+    }
+
+    return !!data;
+  }
+
+  async function getLatestSubscriptionByEmployerId(userId){
+    const { data: rows, error } = await supabase
+      .from("employer_payment_transactions")
+      .select("*")
+      .eq("employer_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (error) {
+      console.error("Subscription fetch error:", error);
+      return null;
+    }
+
+    return (rows && rows.length) ? rows[0] : null;
+  }
+
+  function analyzeSubscriptionRecord(sub){
+    if (!sub) {
+      return {
+        active: false,
+        reason: "no_subscription",
+        record: null,
+        remaining: 0
+      };
+    }
+
+    const todayStr = localYYYYMMDD(new Date());
+    const status = String(sub.status || "").toLowerCase();
+    const remaining = Number(sub.days_remaining || 0);
+    const endStr = sub.subscription_end_date ? String(sub.subscription_end_date).slice(0, 10) : null;
+
+    if (endStr && todayStr > endStr) {
+      return {
+        active: false,
+        reason: "expired",
+        record: sub,
+        remaining
+      };
+    }
+
+    if (status !== "active" || remaining <= 0) {
+      return {
+        active: false,
+        reason: status === "active" ? "expired" : "inactive",
+        record: sub,
+        remaining
+      };
+    }
+
+    return {
+      active: true,
+      reason: "active",
+      record: sub,
+      remaining
+    };
+  }
+
+  async function getSubscriptionSnapshot(userId){
+    const sub = await getLatestSubscriptionByEmployerId(userId);
+    return analyzeSubscriptionRecord(sub);
+  }
+
+  async function deductSubscriptionDayIfNeeded(userId){
+    const sub = await getLatestSubscriptionByEmployerId(userId);
+    if (!sub) {
+      return { ok:false, reason:"no_subscription" };
+    }
+
+    const checked = analyzeSubscriptionRecord(sub);
+    if (!checked.active) {
+      return { ok:false, reason:checked.reason };
+    }
+
+    const todayStr = localYYYYMMDD(new Date());
+    const lastLogin = sub.last_login_date ? String(sub.last_login_date).slice(0, 10) : null;
+
+    if (lastLogin === todayStr) {
+      return { ok:true };
+    }
+
+    const currentRemaining = Number(sub.days_remaining || 0);
+    const newRemaining = Math.max(0, currentRemaining - 1);
+    const newStatus = newRemaining > 0 ? "active" : "expired";
+
+    const { error: updErr } = await supabase
+      .from("employer_payment_transactions")
+      .update({
+        days_remaining: newRemaining,
+        status: newStatus,
+        last_login_date: todayStr
+      })
+      .eq("id", sub.id);
+
+    if (updErr) {
+      console.error("Deduction update failed:", updErr);
+      return { ok:false, reason:"update_failed" };
+    }
+
+    currentSubscriptionInfo = {
+      active: newRemaining > 0,
+      reason: newRemaining > 0 ? "active" : "expired",
+      record: {
+        ...sub,
+        days_remaining: newRemaining,
+        status: newStatus,
+        last_login_date: todayStr
+      },
+      remaining: newRemaining
+    };
+
+    setPortalStatusUI(currentSubscriptionInfo);
+    return { ok:true };
+  }
+
+  async function processEmployerLoginSuccess(user){
+    currentEmployerUserId = user.id;
+
+    const isSignedUp = await employerProfileExists(user.id);
+    if (!isSignedUp) {
+      await supabase.auth.signOut();
+      currentEmployerUserId = null;
+      currentSubscriptionInfo = {
+        active: false,
+        reason: "unknown",
+        record: null,
+        remaining: 0
+      };
+      openModal("Sign up first before you can login to employer portal.");
+      return;
+    }
+
+    currentSubscriptionInfo = await getSubscriptionSnapshot(user.id);
+    setPortalStatusUI(currentSubscriptionInfo);
+
+    /* POPUP APPEARS ONLY AFTER SUCCESSFUL LOGIN */
+    openPortalModal();
+  }
+
+  goApplicantDashboard.addEventListener("click", function(){
+    window.location.href = "dashboard.html";
+  });
+
+  goSubscribe.addEventListener("click", function(){
+    window.location.href = "subscribe.html";
+  });
+
+  goSubscriptionStatus.addEventListener("click", function(){
+    window.location.href = "subscriptionstatus.html";
+  });
+
+  goEmployerDashboard.addEventListener("click", async function(){
+    if (!currentEmployerUserId) {
+      openModal("Login session not found. Please login again.");
+      hidePortalModal();
+      return;
+    }
+
+    const latestSnapshot = await getSubscriptionSnapshot(currentEmployerUserId);
+    currentSubscriptionInfo = latestSnapshot;
+    setPortalStatusUI(currentSubscriptionInfo);
+
+    if (!latestSnapshot.active) {
+      openModal("Employer dashboard requires an active subscription. Please click Subscribe or Subscription Status.");
+      return;
+    }
+
+    const deductResult = await deductSubscriptionDayIfNeeded(currentEmployerUserId);
+    if (!deductResult.ok) {
+      if (deductResult.reason === "update_failed") {
+        openModal("Subscription found but remaining days could not be updated. Please contact admin.");
+      } else {
+        openModal("Employer dashboard requires an active subscription. Please click Subscribe or Subscription Status.");
+      }
+      return;
+    }
+
+    window.location.href = "employer_dashboard.html";
+  });
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!window.supabase) {
+      openModal("Supabase client not found. Please check supabase_config.js.");
+      return;
+    }
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Logging in...`;
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error || !data?.user) {
+        openModal("Invalid login credentials. Please try again.");
+        return;
+      }
+
+      await processEmployerLoginSuccess(data.user);
+
+    } catch (err) {
+      console.error(err);
+      openModal("Unable to login right now. Please try again.");
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = `<i class="fa-solid fa-arrow-right-to-bracket"></i> Login`;
+    }
+  });
+
+  /* REMOVED AUTO POPUP ON PAGE LOAD
+     USER MUST LOGIN FIRST BEFORE PORTAL POPUP APPEARS */
+</script>
+
+</body>
+</html>

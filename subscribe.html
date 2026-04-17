@@ -1,0 +1,1814 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Subscribe | Job Space Link</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+<link rel="stylesheet" href="jobspacelink.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins","Segoe UI",sans-serif;}
+
+:root{
+  --header-h:78px;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+  min-height:100%;
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 16px);
+}
+
+body{
+  min-height:100vh;
+  padding-top:var(--header-h);
+  background:radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #020617);
+  color:#e5e7eb;
+  overflow-x:hidden;
+}
+
+/* ============================================================
+   HEADER - INDEX STYLE
+=========================================================== */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:1rem;
+}
+
+/* Mobile panel */
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+/* ============================================================
+   ABOUT NAV FIX
+=========================================================== */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* ============================================================
+   PAGE
+=========================================================== */
+.wrap{
+  max-width:820px;
+  margin:40px auto 40px;
+  padding:28px 30px 34px;
+  border-radius:22px;
+  background:rgba(15,23,42,0.92);
+  border:1px solid rgba(0,198,255,0.5);
+  box-shadow:0 0 28px rgba(0,198,255,0.3);
+}
+
+.title{
+  font-size:1.7rem;
+  font-weight:800;
+  margin-bottom:6px;
+  color:#e0f2fe;
+  text-shadow:0 0 12px rgba(0,198,255,0.6);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.sub{
+  margin-bottom:16px;
+  font-size:0.92rem;
+  color:#cbd5f5;
+  opacity:0.92;
+  line-height:1.35;
+}
+
+.card{
+  background:rgba(15,23,42,0.98);
+  border-radius:18px;
+  border:1px solid rgba(0,198,255,0.4);
+  padding:18px 20px 22px;
+  box-shadow:0 0 16px rgba(15,23,42,0.8);
+}
+
+.plan{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(8,47,73,0.9);
+  border:1px solid rgba(56,189,248,0.8);
+  font-size:0.82rem;
+  margin-bottom:12px;
+}
+.plan strong{color:#e0f2fe;}
+
+.row{display:flex;flex-direction:column;margin-bottom:10px;}
+label{font-size:0.85rem;color:#bfdbfe;margin-bottom:3px;}
+input{
+  padding:9px 10px;
+  border-radius:10px;
+  border:1px solid rgba(148,163,184,0.5);
+  background:rgba(15,23,42,0.9);
+  color:#e5e7eb;
+  font-size:0.92rem;
+}
+input:focus{
+  outline:none;
+  border-color:#0ea5e9;
+  box-shadow:0 0 10px rgba(14,165,233,0.45);
+  background:#020617;
+}
+input[readonly]{
+  opacity:0.92;
+}
+
+#subForm{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  align-items:start;
+}
+#subForm .row{ margin-bottom:0; }
+
+.action-row{
+  grid-column: 1 / -1;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+  margin-top:6px;
+}
+
+#payBtn,
+#logoutBtn{
+  width:100%;
+  padding:10px 16px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  font-size:0.98rem;
+  transition:0.3s;
+}
+
+#payBtn{
+  background:linear-gradient(90deg,#00c6ff,#7c3aed,#00c6ff);
+  background-size:200%;
+  color:white;
+  box-shadow:0 0 16px rgba(59,130,246,0.45);
+}
+
+#payBtn:hover:not(:disabled){
+  background-position:100% 0;
+  transform:translateY(-1px);
+  box-shadow:0 0 22px rgba(129,140,248,0.7);
+}
+
+#payBtn:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+#logoutBtn{
+  background:linear-gradient(90deg,#6b7280,#9ca3af);
+  border:none;
+  color:#fff;
+}
+
+#logoutBtn:hover{
+
+  box-shadow:0 0 18px grey;
+}
+
+#logoutBtn:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+#msg{margin-top:10px;font-size:0.9rem;}
+.note{margin-top:10px;font-size:0.82rem;color:#9ca3af;line-height:1.35;}
+
+#msg, .note{ grid-column: 1 / -1; }
+
+#cardNumber{ letter-spacing: .3px; }
+
+/* ============================================================
+   MEDIA QUERIES
+============================================================ */
+@media (min-width: 1800px){
+  .wrap{max-width:920px;margin:50px auto 60px;padding:34px 36px 40px;}
+  .title{font-size:2rem;}
+  .sub{font-size:1rem;}
+  .card{padding:22px 24px 26px;}
+  input{padding:11px 12px;font-size:0.98rem;}
+  #payBtn,#logoutBtn{padding:12px 18px;font-size:1.05rem;}
+}
+
+@media (min-width: 1440px){
+  .wrap{max-width:860px;margin:44px auto 50px;padding:30px 32px 36px;}
+  .title{font-size:1.85rem;}
+}
+
+@media (max-width: 1280px){
+  header{
+    gap:10px;
+    padding:0 12px 0 6px;
+  }
+
+  header .logo img{
+    height:46px;
+  }
+
+  header nav{
+    gap:10px;
+    margin-left:2px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.82rem;
+  }
+
+  header .auth-buttons{
+    gap:6px;
+  }
+
+  header .auth-buttons a{
+    padding:0 9px;
+    font-size:0.78rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px){
+  .wrap{
+    max-width:660px;
+    margin:28px auto 28px;
+    padding:6px 6px 8px;
+    border-radius:16px;
+  }
+  .title{font-size:1.15rem;margin-bottom:2px;}
+  .sub{font-size:0.84rem;margin-bottom:6px;line-height:1.25;}
+  .card{padding:10px 10px 10px;border-radius:14px;}
+  .plan{margin-bottom:10px;font-size:0.76rem;padding:4px 8px;}
+  label{font-size:0.76rem;margin-bottom:2px;}
+  input{padding:7px 8px;font-size:0.86rem;border-radius:9px;}
+  #subForm{ gap: 6px 8px; }
+  .action-row{ gap:8px; }
+  #payBtn,#logoutBtn{ padding: 9px 12px; border-radius: 12px; font-size: 0.92rem; }
+}
+
+@media (max-width: 920px){
+  header{
+    justify-content:space-between;
+    padding:0 12px 0 8px;
+  }
+
+  header nav{
+    display:none;
+  }
+
+  header .auth-buttons{
+    display:none;
+  }
+
+  .nav-toggle{
+    display:inline-flex;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  .wrap{
+    width:94%;
+    margin:28px auto 30px;
+    padding:18px 16px 18px;
+  }
+  .title{font-size:1.4rem;}
+  .sub{font-size:0.88rem;margin-bottom:12px;}
+  .card{padding:14px 14px 16px;}
+  input{padding:9px 10px;font-size:0.92rem;}
+  #payBtn,#logoutBtn{padding:10px 14px;border-radius:12px;}
+}
+
+@media (max-width: 480px){
+  :root{
+    --header-h:72px;
+  }
+
+  header{
+    padding:0 10px 0 6px;
+  }
+
+  header .logo{
+    margin-left:-2px;
+  }
+
+  header .logo img{
+    height:42px;
+  }
+
+  .wrap{
+    width:94%;
+    margin:18px auto 26px;
+    padding:16px 14px 16px;
+    border-radius:18px;
+  }
+  .title{font-size:1.25rem;}
+  .sub{font-size:0.85rem;}
+  .card{padding:12px 12px 14px;border-radius:14px;}
+  label{font-size:0.8rem;}
+  input{padding:9px 10px;font-size:0.92rem;}
+
+  #subForm{ grid-template-columns: 1fr; gap: 10px; }
+  .action-row{ grid-template-columns: 1fr; gap:10px; }
+  #payBtn,#logoutBtn{font-size:0.95rem;}
+}
+
+/* ============================================================
+   FINAL RESPONSIVE PATCH
+   Exact breakpoints + more compressed subscribe form
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{
+    --header-h:82px;
+  }
+
+  header{
+    padding:0 18px 0 10px !important;
+    gap:14px !important;
+  }
+  header .logo img{height:76px !important;}
+  header nav{gap:18px !important; margin-left:8px !important;}
+  header nav > a,
+  header nav .nav-main-link{font-size:0.86rem !important; padding:0 5px !important;}
+  header .auth-buttons{gap:9px !important;}
+  header .auth-buttons a{
+    height:35px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+  }
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+
+  .wrap{
+    max-width:860px !important;
+    margin:26px auto 34px !important;
+    padding:20px 20px 22px !important;
+    border-radius:18px !important;
+  }
+  .title{
+    font-size:1.42rem !important;
+    margin-bottom:4px !important;
+    gap:8px !important;
+  }
+  .sub{
+    margin-bottom:10px !important;
+    font-size:0.82rem !important;
+    line-height:1.25 !important;
+  }
+  .card{
+    padding:14px 14px 16px !important;
+    border-radius:14px !important;
+  }
+  .plan{
+    margin-bottom:8px !important;
+    padding:5px 8px !important;
+    font-size:0.74rem !important;
+    gap:6px !important;
+  }
+
+  #subForm{
+    gap:7px 10px !important;
+  }
+  label{
+    font-size:0.74rem !important;
+    margin-bottom:2px !important;
+  }
+  input{
+    padding:7px 8px !important;
+    border-radius:8px !important;
+    font-size:0.82rem !important;
+  }
+  .action-row{
+    gap:8px !important;
+    margin-top:4px !important;
+  }
+  #payBtn,
+  #logoutBtn{
+    padding:9px 12px !important;
+    border-radius:11px !important;
+    font-size:0.86rem !important;
+  }
+  #msg{margin-top:8px !important; font-size:0.80rem !important;}
+  .note{margin-top:8px !important; font-size:0.72rem !important;}
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{
+    --header-h:78px;
+  }
+
+  header{
+    padding:0 14px 0 8px !important;
+    gap:12px !important;
+  }
+  header .logo img{height:70px !important;}
+  header nav{gap:14px !important; margin-left:6px !important;}
+  header nav > a,
+  header nav .nav-main-link{font-size:0.80rem !important; padding:0 4px !important;}
+  header .auth-buttons{gap:7px !important;}
+  header .auth-buttons a{
+    height:34px !important;
+    padding:0 10px !important;
+    font-size:0.76rem !important;
+  }
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+
+  .wrap{
+    max-width:760px !important;
+    margin:22px auto 28px !important;
+    padding:16px 16px 18px !important;
+    border-radius:17px !important;
+  }
+  .title{
+    font-size:1.26rem !important;
+    margin-bottom:3px !important;
+    gap:8px !important;
+  }
+  .sub{
+    margin-bottom:8px !important;
+    font-size:0.78rem !important;
+    line-height:1.23 !important;
+  }
+  .card{
+    padding:12px 12px 14px !important;
+    border-radius:13px !important;
+  }
+  .plan{
+    margin-bottom:7px !important;
+    padding:5px 8px !important;
+    font-size:0.70rem !important;
+  }
+  #subForm{
+    gap:6px 8px !important;
+  }
+  label{
+    font-size:0.70rem !important;
+    margin-bottom:2px !important;
+  }
+  input{
+    padding:7px 8px !important;
+    border-radius:8px !important;
+    font-size:0.78rem !important;
+  }
+  .action-row{
+    gap:8px !important;
+    margin-top:4px !important;
+  }
+  #payBtn,
+  #logoutBtn{
+    padding:8px 11px !important;
+    border-radius:10px !important;
+    font-size:0.82rem !important;
+  }
+  #msg{margin-top:8px !important; font-size:0.77rem !important;}
+  .note{margin-top:7px !important; font-size:0.69rem !important;}
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{
+    --header-h:76px;
+  }
+
+  header{
+    padding:0 10px 0 6px !important;
+    gap:9px !important;
+  }
+  header .logo img{height:62px !important;}
+  header nav{
+    display:flex !important;
+    gap:9px !important;
+    margin-left:3px !important;
+  }
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.73rem !important;
+    padding:0 2px !important;
+    height:33px !important;
+  }
+  .nav-dropdown{height:33px !important;}
+  .nav-dropdown-trigger{gap:1px !important;}
+  .nav-dropdown-toggle{width:20px !important; height:20px !important;}
+  .nav-dropdown-toggle i{font-size:0.72rem !important;}
+  header .auth-buttons{
+    display:flex !important;
+    gap:5px !important;
+  }
+  header .auth-buttons a{
+    height:31px !important;
+    padding:0 7px !important;
+    font-size:0.68rem !important;
+    border-radius:8px !important;
+  }
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+
+  .wrap{
+    max-width:640px !important;
+    margin:18px auto 22px !important;
+    padding:10px 10px 12px !important;
+    border-radius:15px !important;
+  }
+  .title{
+    font-size:1.08rem !important;
+    margin-bottom:2px !important;
+    gap:7px !important;
+  }
+  .sub{
+    margin-bottom:6px !important;
+    font-size:0.72rem !important;
+    line-height:1.18 !important;
+  }
+  .card{
+    padding:9px 9px 10px !important;
+    border-radius:12px !important;
+  }
+  .plan{
+    margin-bottom:6px !important;
+    padding:4px 7px !important;
+    font-size:0.66rem !important;
+    gap:5px !important;
+  }
+
+  #subForm{
+    gap:5px 7px !important;
+    grid-template-columns:1fr 1fr !important;
+  }
+  .row{margin-bottom:0 !important;}
+  label{
+    font-size:0.66rem !important;
+    margin-bottom:2px !important;
+  }
+  input{
+    padding:6px 7px !important;
+    border-radius:7px !important;
+    font-size:0.72rem !important;
+  }
+  .action-row{
+    grid-column:1 / -1 !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:7px !important;
+    margin-top:3px !important;
+  }
+  #payBtn,
+  #logoutBtn{
+    padding:8px 9px !important;
+    border-radius:9px !important;
+    font-size:0.76rem !important;
+  }
+  #msg{margin-top:7px !important; font-size:0.72rem !important;}
+  .note{margin-top:6px !important; font-size:0.64rem !important;}
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{
+    --header-h:74px;
+  }
+
+  header{
+    padding:0 8px 0 5px !important;
+    gap:6px !important;
+  }
+  header .logo{margin-left:-2px !important;}
+  header .logo img{height:58px !important;}
+  header nav{
+    display:flex !important;
+    gap:7px !important;
+    margin-left:2px !important;
+  }
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+  .nav-dropdown{height:31px !important;}
+  .nav-dropdown-trigger{gap:1px !important;}
+  .nav-dropdown-toggle{width:18px !important; height:18px !important;}
+  .nav-dropdown-toggle i{font-size:0.68rem !important;}
+  header .auth-buttons{
+    display:flex !important;
+    gap:4px !important;
+  }
+  header .auth-buttons a{
+    height:29px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+
+  .wrap{
+    max-width:560px !important;
+    margin:14px auto 18px !important;
+    padding:7px 7px 8px !important;
+    border-radius:14px !important;
+  }
+  .title{
+    font-size:0.98rem !important;
+    margin-bottom:2px !important;
+    gap:6px !important;
+  }
+  .sub{
+    margin-bottom:5px !important;
+    font-size:0.66rem !important;
+    line-height:1.14 !important;
+  }
+  .card{
+    padding:7px 7px 8px !important;
+    border-radius:11px !important;
+  }
+  .plan{
+    margin-bottom:5px !important;
+    padding:4px 6px !important;
+    font-size:0.61rem !important;
+    gap:5px !important;
+  }
+
+  #subForm{
+    gap:4px 6px !important;
+    grid-template-columns:1fr 1fr !important;
+  }
+  label{
+    font-size:0.61rem !important;
+    margin-bottom:1px !important;
+  }
+  input{
+    padding:5px 6px !important;
+    border-radius:7px !important;
+    font-size:0.66rem !important;
+  }
+  .action-row{
+    grid-column:1 / -1 !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:6px !important;
+    margin-top:3px !important;
+  }
+  #payBtn,
+  #logoutBtn{
+    padding:7px 8px !important;
+    border-radius:9px !important;
+    font-size:0.70rem !important;
+  }
+  #msg{margin-top:6px !important; font-size:0.66rem !important;}
+  .note{margin-top:5px !important; font-size:0.60rem !important;}
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{
+    --header-h:72px;
+  }
+
+  header{
+    padding:0 12px 0 8px !important;
+    gap:10px !important;
+  }
+  header .logo img{height:54px !important;}
+  header nav{display:none !important;}
+  header .auth-buttons{display:none !important;}
+  .nav-toggle{
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+  }
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+  .mobile-panel .mnav a{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .wrap{
+    width:94% !important;
+    max-width:none !important;
+    margin:14px auto 18px !important;
+    padding:9px 9px 10px !important;
+    border-radius:14px !important;
+  }
+  .title{
+    font-size:1.02rem !important;
+    margin-bottom:2px !important;
+    gap:6px !important;
+  }
+  .sub{
+    margin-bottom:6px !important;
+    font-size:0.68rem !important;
+    line-height:1.16 !important;
+  }
+  .card{
+    padding:8px 8px 9px !important;
+    border-radius:11px !important;
+  }
+  .plan{
+    margin-bottom:5px !important;
+    padding:4px 6px !important;
+    font-size:0.62rem !important;
+    gap:5px !important;
+  }
+
+  #subForm{
+    gap:5px 6px !important;
+    grid-template-columns:1fr 1fr !important;
+  }
+  label{
+    font-size:0.62rem !important;
+    margin-bottom:1px !important;
+  }
+  input{
+    padding:6px 6px !important;
+    border-radius:7px !important;
+    font-size:0.67rem !important;
+  }
+  .action-row{
+    grid-column:1 / -1 !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:6px !important;
+    margin-top:3px !important;
+  }
+  #payBtn,
+  #logoutBtn{
+    padding:7px 8px !important;
+    border-radius:9px !important;
+    font-size:0.72rem !important;
+  }
+  #msg{margin-top:6px !important; font-size:0.67rem !important;}
+  .note{margin-top:5px !important; font-size:0.60rem !important;}
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{
+    --header-h:70px;
+  }
+
+  header{
+    padding:0 10px 0 6px !important;
+    gap:8px !important;
+  }
+  header .logo{margin-left:-2px !important;}
+  header .logo img{height:50px !important;}
+  header nav{display:none !important;}
+  header .auth-buttons{display:none !important;}
+  .nav-toggle{
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+  }
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+  .mobile-panel .mnav a{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .wrap{
+    width:95% !important;
+    max-width:none !important;
+    margin:10px auto 14px !important;
+    padding:7px 7px 8px !important;
+    border-radius:13px !important;
+  }
+  .title{
+    font-size:0.90rem !important;
+    margin-bottom:2px !important;
+    gap:6px !important;
+  }
+  .sub{
+    margin-bottom:5px !important;
+    font-size:0.62rem !important;
+    line-height:1.12 !important;
+  }
+  .card{
+    padding:6px 6px 7px !important;
+    border-radius:10px !important;
+  }
+  .plan{
+    margin-bottom:5px !important;
+    padding:4px 6px !important;
+    font-size:0.58rem !important;
+    gap:5px !important;
+  }
+
+  #subForm{
+    grid-template-columns:1fr !important;
+    gap:4px !important;
+  }
+  label{
+    font-size:0.58rem !important;
+    margin-bottom:1px !important;
+  }
+  input{
+    padding:5px 6px !important;
+    border-radius:7px !important;
+    font-size:0.62rem !important;
+  }
+  .action-row{
+    grid-template-columns:1fr !important;
+    gap:5px !important;
+    margin-top:3px !important;
+  }
+  #payBtn,
+  #logoutBtn{
+    padding:7px 8px !important;
+    border-radius:8px !important;
+    font-size:0.66rem !important;
+  }
+  #msg{margin-top:5px !important; font-size:0.62rem !important;}
+  .note{margin-top:4px !important; font-size:0.56rem !important;}
+}
+
+
+/* ============================================================
+   DESKTOP CENTERING PATCH
+   Keep the form centered on desktop screens
+============================================================ */
+@media (min-width: 1024px){
+  body.subscribe-page{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:100vh;
+  }
+
+  .wrap{
+    margin:0 auto !important;
+  }
+}
+
+</style>
+</head>
+
+<body class="subscribe-page">
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+        <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<!-- MOBILE PANEL -->
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="title"><i class="fa-solid fa-credit-card"></i> Employer Subscription</div>
+  <div class="sub">
+    If an employer account is logged in, the <b>company name</b> and <b>company email</b> will auto-fill. Expired subscriptions are also auto-marked as <b>not active</b>.
+  </div>
+
+  <div class="card">
+    <div class="plan"><i class="fa-solid fa-star"></i><span>Plan: <strong>$10 / month</strong> (+30 days)</span></div>
+
+    <form id="subForm" autocomplete="off">
+      <div class="row">
+        <label for="companyName">Company Name</label>
+        <input id="companyName" type="text" required />
+      </div>
+
+      <div class="row">
+        <label for="companyEmail">Company Email</label>
+        <input id="companyEmail" type="email" required />
+      </div>
+
+      <div class="row">
+        <label for="cardName">Cardholder Name</label>
+        <input id="cardName" type="text" required />
+      </div>
+
+      <div class="row">
+        <label for="cardNumber">Card Number</label>
+        <input id="cardNumber" type="text" maxlength="19" placeholder="1234 5678 9012 3456" required />
+      </div>
+
+      <div class="row">
+        <label for="cardExpiry">Expiry (MM/YY)</label>
+        <input id="cardExpiry" type="text" maxlength="5" placeholder="08/27" required />
+      </div>
+
+      <div class="row">
+        <label for="cardCvv">CVV</label>
+        <input id="cardCvv" type="password" maxlength="4" required />
+      </div>
+
+      <div class="action-row">
+        <button id="payBtn" type="submit"><i class="fa-solid fa-shield"></i> Pay $10 Now</button>
+        <button id="logoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+      </div>
+    </form>
+
+    <div id="msg"></div>
+    <div class="note">After payment, you’ll be redirected to Subscription Status.</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ABOUT DROPDOWN
+=========================================================== */
+(function(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(!dd || !toggle || !menu) return;
+
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openAboutMenu(){
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isOpen = dd.classList.contains("open");
+    if(isOpen){
+      closeAboutMenu();
+    }else{
+      openAboutMenu();
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if(!dd.contains(e.target)){
+      closeAboutMenu();
+    }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      closeAboutMenu();
+    }
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  });
+})();
+
+/* ============================================================
+   MOBILE MENU
+=========================================================== */
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  if(!btn || !panel) return;
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth >= 769) close();
+  }, { passive:true });
+})();
+
+/* ============================================================
+   SUPABASE CLIENT RESOLUTION
+=========================================================== */
+function isSupabaseClient(obj){
+  return !!(
+    obj &&
+    typeof obj.from === "function" &&
+    obj.auth &&
+    typeof obj.auth.getSession === "function"
+  );
+}
+
+function isSupabaseNamespace(obj){
+  return !!(
+    obj &&
+    typeof obj.createClient === "function"
+  );
+}
+
+function resolveSupabaseClient(){
+  if (isSupabaseClient(window.supabase)) return window.supabase;
+  if (window.supabaseClient && isSupabaseClient(window.supabaseClient)) return window.supabaseClient;
+  if (isSupabaseNamespace(window.supabase) && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+    return window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  }
+  return null;
+}
+
+let supabaseClient = resolveSupabaseClient();
+
+/* ============================================================
+   ELEMENTS
+=========================================================== */
+const form = document.getElementById("subForm");
+const msg = document.getElementById("msg");
+const payBtn = document.getElementById("payBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+const companyNameInput = document.getElementById("companyName");
+const companyEmailInput = document.getElementById("companyEmail");
+const cardNameInput = document.getElementById("cardName");
+const cardNumberInput = document.getElementById("cardNumber");
+const cardExpiryInput = document.getElementById("cardExpiry");
+const cardCvvInput = document.getElementById("cardCvv");
+
+/* ============================================================
+   HELPERS
+=========================================================== */
+function clearMessage(){
+  msg.textContent = "";
+  msg.innerHTML = "";
+  msg.style.color = "";
+}
+
+function showErr(t){
+  msg.textContent = t;
+  msg.style.color = "#fecaca";
+}
+
+function showOk(t){
+  msg.innerHTML = `<span style="color:#bbf7d0"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(t)}</span>`;
+}
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function normalizeText(value){
+  return String(value || "").trim().toLowerCase();
+}
+
+function normalizeCompanyKey(value){
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function formatCompanyName(name){
+  if (!name) return "";
+  return String(name)
+    .trim()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+function getRecordField(obj, names, fallback = ""){
+  for(const name of names){
+    if(obj && Object.prototype.hasOwnProperty.call(obj, name) && obj[name] != null && String(obj[name]).trim() !== ""){
+      return obj[name];
+    }
+  }
+  return fallback;
+}
+
+function toDateOnly(value){
+  if(!value) return null;
+  const d = new Date(value);
+  if(isNaN(d)) return null;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+function getTodayDateOnly(){
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function isExpiredByEndDate(record){
+  const endValue = getRecordField(record, [
+    "subscription_end_date",
+    "end_date",
+    "date_end",
+    "expiry_date",
+    "expiration_date"
+  ], "");
+
+  const endDate = toDateOnly(endValue);
+  if(!endDate) return false;
+
+  const today = getTodayDateOnly();
+  return endDate < today;
+}
+
+function isActiveStatus(record){
+  const statusText = normalizeText(getRecordField(record, [
+    "status",
+    "payment_status",
+    "subscription_status"
+  ], ""));
+
+  return ["active", "paid", "approved", "current"].includes(statusText);
+}
+
+function setupCardFormatting(){
+  cardNumberInput.addEventListener("input", () => {
+    let v = cardNumberInput.value.replace(/\D/g,"").substring(0,16);
+    const groups = v.match(/.{1,4}/g) || [];
+    cardNumberInput.value = groups.join(" ");
+  });
+
+  cardExpiryInput.addEventListener("input", () => {
+    let v = cardExpiryInput.value.replace(/\D/g,"").substring(0,4);
+    if (v.length >= 3) v = v.substring(0,2) + "/" + v.substring(2);
+    cardExpiryInput.value = v;
+  });
+}
+
+/* ============================================================
+   FORM RESET
+=========================================================== */
+function clearFormPreserveIdentity(){
+  cardNameInput.value = "";
+  cardNumberInput.value = "";
+  cardExpiryInput.value = "";
+  cardCvvInput.value = "";
+  clearMessage();
+  payBtn.disabled = false;
+  logoutBtn.disabled = false;
+  payBtn.innerHTML = `<i class="fa-solid fa-shield"></i> Pay $10 Now`;
+  logoutBtn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout`;
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  clearFormPreserveIdentity();
+  setupCardFormatting();
+
+  try{
+    await autofillEmployerIfLoggedIn();
+  }catch(err){
+    console.error("Autofill load error:", err);
+  }
+});
+
+window.addEventListener("pageshow", () => {
+  clearFormPreserveIdentity();
+});
+
+/* ============================================================
+   AUTO FILL LOGGED-IN EMPLOYER
+=========================================================== */
+async function getLoggedInSessionEmail(){
+  if(!supabaseClient) return "";
+
+  const { data, error } = await supabaseClient.auth.getSession();
+  if(error){
+    console.error("Session fetch error:", error);
+    return "";
+  }
+
+  return String(data?.session?.user?.email || "").trim().toLowerCase();
+}
+
+async function getEmployerRecordByEmail(email){
+  if(!supabaseClient || !email) return null;
+
+  const emailColumns = ["email", "company_email", "contact_email", "employer_email"];
+
+  for(const column of emailColumns){
+    const { data, error } = await supabaseClient
+      .from("employers")
+      .select("*")
+      .eq(column, email)
+      .limit(1);
+
+    if(error){
+      console.warn(`Employers lookup failed on "${column}":`, error.message || error);
+      continue;
+    }
+
+    if(Array.isArray(data) && data.length){
+      return data[0];
+    }
+  }
+
+  return null;
+}
+
+async function autofillEmployerIfLoggedIn(){
+  supabaseClient = resolveSupabaseClient();
+
+  if(!supabaseClient) return;
+
+  const sessionEmail = await getLoggedInSessionEmail();
+  if(!sessionEmail) return;
+
+  const employerRow = await getEmployerRecordByEmail(sessionEmail);
+
+  if(!employerRow){
+    companyEmailInput.value = sessionEmail;
+    return;
+  }
+
+  const companyName = String(getRecordField(
+    employerRow,
+    ["company_name", "company", "business_name", "employer_name"],
+    ""
+  )).trim();
+
+  const companyEmail = String(getRecordField(
+    employerRow,
+    ["email", "company_email", "contact_email", "employer_email"],
+    sessionEmail
+  )).trim().toLowerCase();
+
+  if(companyName){
+    companyNameInput.value = formatCompanyName(companyName);
+  }
+
+  if(companyEmail){
+    companyEmailInput.value = companyEmail;
+  }
+
+  localStorage.setItem("employerCompanyName", companyName);
+  localStorage.setItem("employerEmail", companyEmail);
+
+  const updateResult = await autoMarkExpiredSubscriptions(companyName, companyEmail);
+  if(updateResult.updated > 0){
+    showOk(`${updateResult.updated} expired subscription record(s) were updated to not active.`);
+  }
+}
+
+/* ============================================================
+   AUTO-MARK EXPIRED SUBSCRIPTIONS
+=========================================================== */
+async function fetchEmployerPaymentRowsByEmail(email){
+  if(!supabaseClient || !email) return [];
+
+  const emailColumns = ["company_email", "email", "contact_email", "employer_email"];
+
+  for(const emailColumn of emailColumns){
+    let result = await supabaseClient
+      .from("employer_payment_transactions")
+      .select("*")
+      .eq(emailColumn, email)
+      .order("created_at", { ascending: false });
+
+    if(result.error){
+      result = await supabaseClient
+        .from("employer_payment_transactions")
+        .select("*")
+        .eq(emailColumn, email);
+    }
+
+    if(result.error){
+      console.warn(`Payment lookup failed on "${emailColumn}":`, result.error.message || result.error);
+      continue;
+    }
+
+    if(Array.isArray(result.data) && result.data.length){
+      return result.data;
+    }
+  }
+
+  return [];
+}
+
+async function updateSingleRowNotActive(rowId){
+  if(!rowId) return false;
+
+  const { error } = await supabaseClient
+    .from("employer_payment_transactions")
+    .update({ status: "not active" })
+    .eq("id", rowId);
+
+  if(error){
+    console.error("Failed updating row to not active:", error);
+    return false;
+  }
+
+  return true;
+}
+
+async function autoMarkExpiredSubscriptions(companyName, companyEmail){
+  const result = { updated: 0 };
+
+  if(!supabaseClient || !companyEmail) return result;
+
+  const rows = await fetchEmployerPaymentRowsByEmail(companyEmail);
+  if(!rows.length) return result;
+
+  const normalizedCompany = normalizeCompanyKey(companyName);
+
+  const matchingRows = rows.filter(row => {
+    const rowCompany = normalizeCompanyKey(getRecordField(row, [
+      "company_name",
+      "company",
+      "business_name",
+      "employer_company_name"
+    ], ""));
+
+    const rowEmail = normalizeText(getRecordField(row, [
+      "company_email",
+      "email",
+      "contact_email",
+      "employer_email"
+    ], ""));
+
+    const companyMatches = !normalizedCompany || rowCompany === normalizedCompany;
+    const emailMatches = rowEmail === normalizeText(companyEmail);
+
+    return companyMatches && emailMatches;
+  });
+
+  for(const row of matchingRows){
+    if(isExpiredByEndDate(row) && isActiveStatus(row)){
+      const updated = await updateSingleRowNotActive(row.id);
+      if(updated) result.updated += 1;
+    }
+  }
+
+  return result;
+}
+
+/* ============================================================
+   LOGOUT
+=========================================================== */
+async function logoutAndRedirect(){
+  clearMessage();
+
+  try{
+    supabaseClient = resolveSupabaseClient();
+
+    payBtn.disabled = true;
+    logoutBtn.disabled = true;
+    logoutBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Logging out...`;
+
+    if(supabaseClient && supabaseClient.auth && typeof supabaseClient.auth.signOut === "function"){
+      await supabaseClient.auth.signOut();
+    }
+  } catch(err){
+    console.warn("Logout signOut skipped:", err);
+  }
+
+  [
+    "lastSubscribedEmail",
+    "lastSubscribedCompanyName",
+    "employerEmail",
+    "employerCompanyName",
+    "loggedInEmployerEmail",
+    "loggedInEmployerCompanyName",
+    "companyEmail",
+    "companyName",
+    "userEmail",
+    "userCompanyName",
+    "lastEmployerEmail",
+    "lastEmployerCompanyName"
+  ].forEach(key => localStorage.removeItem(key));
+
+  companyNameInput.value = "";
+  companyEmailInput.value = "";
+  cardNameInput.value = "";
+  cardNumberInput.value = "";
+  cardExpiryInput.value = "";
+  cardCvvInput.value = "";
+
+  window.location.href = "loginemployer.html";
+}
+
+logoutBtn.addEventListener("click", logoutAndRedirect);
+
+/* ============================================================
+   SUBMIT
+=========================================================== */
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  clearMessage();
+
+  supabaseClient = resolveSupabaseClient();
+
+  const company_name  = companyNameInput.value.trim();
+  const company_email = companyEmailInput.value.trim().toLowerCase();
+
+  const cardholderName = cardNameInput.value.trim();
+  const cardNumber     = cardNumberInput.value.replace(/\s+/g, "");
+  const cardExpiry     = cardExpiryInput.value.trim();
+  const cardCvv        = cardCvvInput.value.trim();
+
+  if (!company_name) return showErr("Company name is required.");
+  if (!company_email || !/^\S+@\S+\.\S+$/.test(company_email)) return showErr("Valid company email is required.");
+  if (!cardholderName || cardNumber.length < 12 || !/^\d+$/.test(cardNumber)) return showErr("Enter a valid card number.");
+  if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) return showErr("Expiry must be MM/YY.");
+  if (cardCvv.length < 3 || cardCvv.length > 4) return showErr("Invalid CVV.");
+
+  payBtn.disabled = true;
+  logoutBtn.disabled = true;
+  payBtn.textContent = "Processing...";
+
+  try {
+    await autoMarkExpiredSubscriptions(company_name, company_email);
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/manual-subscribe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+      },
+      body: JSON.stringify({ company_name, company_email })
+    });
+
+    const json = await res.json();
+
+    if (!res.ok || !json.ok) {
+      console.error("manual-subscribe error:", json);
+      showErr(json.error || "Failed to record subscription.");
+      return;
+    }
+
+    msg.innerHTML = `<span style="color:#bbf7d0">
+      <i class="fa-solid fa-circle-check"></i>
+      Subscription ${json.mode === "renewed" ? "renewed" : "created"}! Redirecting to status...
+    </span>`;
+
+    localStorage.setItem("lastSubscribedEmail", company_email);
+    localStorage.setItem("lastSubscribedCompanyName", company_name);
+
+    setTimeout(() => {
+      clearFormPreserveIdentity();
+      window.location.href = `subscriptionstatus.html?email=${encodeURIComponent(company_email)}`;
+    }, 900);
+
+  } catch (err) {
+    console.error(err);
+    showErr("Network error. Please try again.");
+  } finally {
+    payBtn.disabled = false;
+    logoutBtn.disabled = false;
+    payBtn.innerHTML = `<i class="fa-solid fa-shield"></i> Pay $10 Now`;
+    logoutBtn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout`;
+  }
+});
+</script>
+
+</body>
+</html>

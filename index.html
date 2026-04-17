@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Space Link | Remote Work Opportunities</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="jobspacelink.css" />
+  
+
+  <style>
+/* ============================================================
+   PAGE RESET + FIXED FOOTER SPACING + SCROLL OFFSET
+=========================================================== */
+:root{ --header-h: 78px; }
+
+html, body {
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+  height:100%;
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+
+body{
+  padding-top: var(--header-h);
+  padding-bottom:100px;
+  background:#0f172a;
+  color:white;
+  font-family:"Poppins",sans-serif;
+}
+
+/* ============================================================
+   HEADER - COMPRESSED
+=========================================================== */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:1rem;
+}
+
+/* Mobile panel */
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+/* ============================================================
+   ABOUT NAV FIX
+=========================================================== */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* ============================================================
+   FLOATING WORKERS ONLY ON SECTIONS (NOT HEADER)
+=========================================================== */
+.bg-workers{
+  position:fixed;
+  left:0;
+  right:0;
+  top:var(--header-h);
+  height:calc(100vh - var(--header-h));
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.bg-workers::before{
+  content:"";
+  position:absolute;
+  inset:-25%;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(0,198,255,0.14), transparent 56%),
+    radial-gradient(circle at 78% 25%, rgba(139,92,246,0.12), transparent 58%),
+    radial-gradient(circle at 50% 92%, rgba(14,165,233,0.10), transparent 62%),
+    radial-gradient(circle at 50% 50%, rgba(15,23,42,0.18), rgba(15,23,42,0.66));
+}
+
+.worker-float{
+  position:absolute;
+  opacity:0.20;
+  transform: translate3d(0,0,0);
+  will-change: transform, filter, opacity;
+  user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+  animation: workerFloat 12s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(0,198,255,0.18));
+}
+
+.worker-float.depth-far{
+  opacity:0.14;
+  filter: blur(0.4px) drop-shadow(0 0 14px rgba(0,198,255,0.14));
+}
+
+.worker-float.depth-mid{
+  opacity:0.18;
+  filter: blur(0.15px) drop-shadow(0 0 18px rgba(0,198,255,0.16));
+}
+
+.worker-float.depth-near{
+  opacity:0.22;
+  filter: blur(0px) drop-shadow(0 0 22px rgba(0,198,255,0.18));
+}
+
+.worker-float.w1{ animation-duration: 18s; animation-delay:-3s; }
+.worker-float.w2{ animation-duration: 22s; animation-delay:-9s; }
+.worker-float.w3{ animation-duration: 20s; animation-delay:-6s; }
+.worker-float.w4{ animation-duration: 26s; animation-delay:-12s; }
+.worker-float.w5{ animation-duration: 24s; animation-delay:-10s; }
+.worker-float.w6{ animation-duration: 21s; animation-delay:-8s; }
+
+@keyframes workerFloat{
+  0%,100%{ transform: translate3d(var(--px, 0px), calc(var(--py, 0px) + 0px), 0) scale(var(--s, 1)); }
+  50%{ transform: translate3d(calc(var(--px, 0px) + 10px), calc(var(--py, 0px) - 18px), 0) scale(var(--s, 1)); }
+}
+
+section, footer, .slanted-divider{
+  position:relative;
+  z-index:2;
+}
+
+/* ============================================================
+   HERO / SECTIONS
+=========================================================== */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes fadeInText{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes rotateGlow{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+.hero{
+  flex-grow:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:60px 20px 80px;
+  position:relative;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  width:170%;
+  height:170%;
+  top:-35%;
+  left:-35%;
+  background:radial-gradient(circle,#00c6ff20,#8b5cf620,#0ea5e930);
+  animation:rotateGlow 20s linear infinite;
+  z-index:-1;
+}
+
+.hero h1{
+  font-size:3.2rem;
+  font-weight:800;
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 30px rgba(0,198,255,0.4);
+  animation:fadeInText 1s ease;
+}
+
+.hero p{
+  max-width:720px;
+  margin-top:25px;
+  font-size:1.3rem;
+  opacity:0;
+  animation:fadeUp 1.4s 0.3s forwards;
+}
+
+.slanted-divider{
+  width:100%;
+  height:70px;
+  background:linear-gradient(135deg,#00c6ff40,#8b5cf640);
+  clip-path:polygon(0 0,100% 20%,100% 100%,0 80%);
+  backdrop-filter:blur(10px);
+  border-top:1px solid rgba(147,51,234,0.45);
+  border-bottom:1px solid rgba(0,198,255,0.35);
+  box-shadow:0 0 25px rgba(147,51,234,0.35);
+}
+
+.about-section{
+  max-width:1200px;
+  margin:0 auto;
+  padding:100px 25px 60px;
+  text-align:center;
+  animation:fadeUp 1s ease;
+}
+
+.about-section h2{
+  font-size:2.7rem;
+  margin-bottom:40px;
+  text-shadow:0 0 18px #00c6ff;
+}
+
+.about-section p{
+  max-width:900px;
+  margin:0 auto;
+  font-size:1.15rem;
+  color:#e5e7eb;
+  line-height:1.7;
+}
+
+.about-cards{
+  margin-top:50px;
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  flex-wrap:wrap;
+}
+
+.about-card{
+  width:320px;
+  background:rgba(15,23,42,0.7);
+  border:1px solid rgba(59,130,246,0.35);
+  border-radius:15px;
+  padding:25px 20px;
+  text-align:center;
+  box-shadow:0 0 25px rgba(0,198,255,0.2);
+  transition:0.35s ease;
+  backdrop-filter:blur(10px);
+}
+
+.about-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(0,198,255,0.45);
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+}
+
+.about-card i{
+  font-size:2.5rem;
+  color:#00c6ff;
+  margin-bottom:15px;
+}
+
+.about-card h3{
+  font-size:1.3rem;
+  margin-bottom:10px;
+  color:#fff;
+}
+
+.about-card p{
+  font-size:0.95rem;
+  color:#d4d7dc;
+  line-height:1.6;
+}
+
+#why-choose{
+  padding:120px 20px;
+  text-align:center;
+}
+
+#why-choose h2{
+  font-size:2.4rem;
+  margin-bottom:40px;
+  text-shadow:0 0 18px #00c6ff;
+}
+
+.why-grid{
+  max-width:1200px;
+  margin:auto;
+  display:grid;
+  gap:28px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.why-card{
+  padding:28px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 20px rgba(0,198,255,0.25);
+  transition:0.3s;
+}
+
+.why-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(0,198,255,0.45);
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+}
+
+.why-card i{
+  font-size:2.2rem;
+  margin-bottom:12px;
+  color:#00c6ff;
+}
+
+.employer-cta{
+  width:100%;
+  padding:100px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,#0ea5e955,#8b5cf655);
+  border-top:1px solid rgba(0,198,255,0.4);
+  border-bottom:1px solid rgba(147,51,234,0.35);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 30px rgba(0,198,255,0.25);
+  margin-top:80px;
+  animation:fadeUp 0.8s ease;
+}
+
+.employer-cta .cta-content{
+  max-width:900px;
+  margin:auto;
+}
+
+.employer-cta h2{
+  font-size:2.4rem;
+  font-weight:700;
+  margin-bottom:18px;
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 18px rgba(0,198,255,0.5);
+}
+
+.employer-cta p{
+  font-size:1.15rem;
+  color:#dbeafe;
+  max-width:700px;
+  margin:0 auto 28px;
+  line-height:1.6;
+}
+
+.cta-button{
+  display:inline-block;
+  padding:14px 40px;
+  font-size:1.1rem;
+  font-weight:600;
+  border-radius:12px;
+  text-decoration:none;
+  color:white;
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
+  background-size:200%;
+  transition:0.35s ease;
+  box-shadow:0 0 30px rgba(147,51,234,0.45);
+}
+
+.cta-button:hover{
+  background-position:100% 0;
+  transform:translateY(-4px);
+  box-shadow:0 0 40px rgba(147,51,234,0.6);
+}
+
+#how-it-works{
+  padding:120px 20px;
+  text-align:center;
+}
+
+#how-it-works h2{
+  font-size:2.4rem;
+  margin-bottom:40px;
+  text-shadow:0 0 18px #00c6ff;
+}
+
+.steps{
+  max-width:1100px;
+  margin:auto;
+  display:grid;
+  gap:35px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.step{
+  padding:30px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);
+  transition:0.3s;
+}
+
+.step:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(0,198,255,0.45);
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+}
+
+.step span{
+  display:inline-block;
+  font-size:2rem;
+  padding:10px 18px;
+  background:#00c6ff;
+  color:#000;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+.applicant-cta{
+  width:100%;
+  padding:100px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,#8b5cf655,#00c6ff55);
+  border-top:1px solid rgba(147,51,234,0.45);
+  border-bottom:1px solid rgba(0,198,255,0.45);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 35px rgba(0,198,255,0.22);
+  margin-top:80px;
+  animation:fadeUp 0.9s ease;
+}
+
+.applicant-cta .cta-content{
+  max-width:900px;
+  margin:auto;
+}
+
+.applicant-cta h2{
+  font-size:2.4rem;
+  font-weight:700;
+  margin-bottom:18px;
+  background:linear-gradient(90deg,#8b5cf6,#00c6ff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 18px rgba(147,51,234,0.55);
+}
+
+.applicant-cta p{
+  font-size:1.15rem;
+  color:#dce3ff;
+  max-width:700px;
+  margin:0 auto 28px;
+  line-height:1.6;
+}
+
+.cta-button.applicant{
+  display:inline-block;
+  padding:14px 40px;
+  font-size:1.1rem;
+  font-weight:600;
+  border-radius:12px;
+  text-decoration:none;
+  color:white;
+  background:linear-gradient(90deg,#8b5cf6,#00c6ff,#8b5cf6);
+  background-size:200%;
+  transition:0.35s ease;
+  box-shadow:0 0 30px rgba(0,198,255,0.45);
+}
+
+.cta-button.applicant:hover{
+  background-position:100% 0;
+  transform:translateY(-4px);
+  box-shadow:0 0 40px rgba(0,198,255,0.8);
+}
+
+/* Footer */
+.footer-simple{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:rgba(15,23,42,0.9);
+  border-top:1px solid rgba(59,130,246,0.4);
+  height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:40px;
+  padding:0 20px;
+  color:#cbd5e1;
+  backdrop-filter:blur(10px);
+  z-index:999;
+}
+
+.footer-simple .footer-logo img{
+  height:55px;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.45));
+  transition:transform 0.3s ease, filter 0.3s ease;
+}
+
+.footer-simple .footer-logo img:hover{
+  transform:scale(1.12);
+  filter:drop-shadow(0 0 14px rgba(0,198,255,0.9));
+}
+
+.footer-simple .footer-bottom{
+  font-size:0.85rem;
+  color:#94a3b8;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   RESPONSIVE
+=========================================================== */
+@media (max-width: 1280px){
+  header{
+    gap:10px;
+    padding:0 12px 0 6px;
+  }
+
+  header .logo img{
+    height:46px;
+  }
+
+  header nav{
+    gap:10px;
+    margin-left:2px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.82rem;
+  }
+
+  header .auth-buttons{
+    gap:6px;
+  }
+
+  header .auth-buttons a{
+    padding:0 9px;
+    font-size:0.78rem;
+  }
+}
+
+@media (max-width: 920px){
+  header{
+    justify-content:space-between;
+    padding:0 12px 0 8px;
+  }
+
+  header nav{
+    display:none;
+  }
+
+  header .auth-buttons{
+    display:none;
+  }
+
+  .nav-toggle{
+    display:inline-flex;
+  }
+}
+
+@media (max-width: 480px){
+  :root{ --header-h: 72px; }
+
+  body{
+    padding-bottom:170px;
+  }
+
+  header{
+    padding:0 10px 0 6px;
+  }
+
+  header .logo{
+    margin-left:-2px;
+  }
+
+  header .logo img{
+    height:42px;
+  }
+
+  .footer-simple{
+    flex-direction:column;
+    height:auto;
+    padding:10px 0 15px;
+    gap:10px;
+  }
+
+  .footer-simple .footer-logo img{
+    height:40px;
+  }
+
+  .worker-float.w3,
+  .worker-float.w4,
+  .worker-float.w5,
+  .worker-float.w6{
+    display:none;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .worker-float{
+    animation:none !important;
+    transform:none !important;
+  }
+
+  .hero::before{
+    animation:none !important;
+  }
+}
+  
+/* ============================================================
+   FINAL HEADER RESPONSIVE PATCH
+   Exact requested breakpoints
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:2px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+
+  header .logo{
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:15px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:9px !important;
+    padding:0 12px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:66px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:9px !important;
+    margin-left:3px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:34px !important;
+    padding:0 2px !important;
+    font-size:0.75rem !important;
+  }
+
+  .nav-dropdown{
+    height:34px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    height:20px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.74rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:5px !important;
+  }
+
+  header .auth-buttons a{
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:7px !important;
+    padding:0 8px 0 5px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-dropdown{
+    height:31px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:10px !important;
+    padding:0 12px 0 8px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 10px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+        <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<!-- BACKGROUND WORKERS LAYER -->
+<div class="bg-workers" aria-hidden="true">
+  <img class="worker-float w1 depth-far" data-depth="0.14" src="w1.jpg" alt="" style="left:6%; top:18%; width:180px; --s:1;" />
+  <img class="worker-float w2 depth-far" data-depth="0.16" src="w2.jpg" alt="" style="left:74%; top:10%; width:210px; --s:1;" />
+  <img class="worker-float w3 depth-mid" data-depth="0.24" src="w7.jpg" alt="" style="left:12%; top:62%; width:240px; --s:1;" />
+  <img class="worker-float w4 depth-mid" data-depth="0.28" src="w4.jpg" alt="" style="left:80%; top:58%; width:260px; --s:1;" />
+  <img class="worker-float w5 depth-near" data-depth="0.38" src="w5.jpg" alt="" style="left:46%; top:26%; width:320px; --s:1;" />
+  <img class="worker-float w6 depth-near" data-depth="0.32" src="w6.jpg" alt="" style="left:36%; top:76%; width:260px; --s:1;" />
+</div>
+
+<!-- Mobile panel -->
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <h1>Job Space Link</h1>
+  <p>Connecting global employers with talented remote professionals — anytime, anywhere.</p>
+</section>
+
+<div class="slanted-divider"></div>
+
+<!-- ABOUT SECTION -->
+<section class="about-section" id="about">
+  <h2>What is Job Space Link?</h2>
+  <p>
+    Job Space Link is a global platform designed to connect international employers
+    with talented remote professionals. Whether you're searching for flexible work-from-home
+    opportunities or seeking world-class remote staff, Job Space Link provides a smooth,
+    secure, and efficient hiring experience.
+  </p>
+
+  <div class="about-cards">
+    <div class="about-card">
+      <i class="fa-solid fa-laptop-code"></i>
+      <h3>Remote Talent Marketplace</h3>
+      <p>Find skilled remote workers for customer service, admin support, IT, marketing, and more.</p>
+    </div>
+
+    <div class="about-card">
+      <i class="fa-solid fa-briefcase"></i>
+      <h3>Fast Hiring Process</h3>
+      <p>Employers can post jobs instantly and receive qualified applicants in real time.</p>
+    </div>
+
+    <div class="about-card">
+      <i class="fa-solid fa-globe"></i>
+      <h3>Global Opportunities</h3>
+      <p>Discover remote career opportunities with companies worldwide — no boundaries.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE -->
+<section class="hero">
+  <h1>Why Choose Job Space Link</h1>
+  <p>We make hiring and getting hired easier, safer, and faster — for global remote work.</p>
+</section>
+
+<section id="why-choose">
+  <h2>Our Advantages</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <i class="fa-solid fa-earth-americas"></i>
+      <h3>Global Talent Pool</h3>
+      <p>Hire or get hired by companies across the world.</p>
+    </div>
+    <div class="why-card">
+      <i class="fa-solid fa-bolt"></i>
+      <h3>Fast Hiring</h3>
+      <p>Streamlined posting and matching system for employers.</p>
+    </div>
+    <div class="why-card">
+      <i class="fa-solid fa-user-shield"></i>
+      <h3>Secure & Verified</h3>
+      <p>We ensure secure accounts and safe applicant verification.</p>
+    </div>
+    <div class="why-card">
+      <i class="fa-solid fa-filter-circle-dollar"></i>
+      <h3>Better Matching</h3>
+      <p>Smarter filtering to connect the right talent with the right job.</p>
+    </div>
+    <div class="why-card">
+      <i class="fa-solid fa-headset"></i>
+      <h3>Support Ready</h3>
+      <p>Clear guidance for both employers and applicants whenever needed.</p>
+    </div>
+    <div class="why-card">
+      <i class="fa-solid fa-clock"></i>
+      <h3>Time-Saving</h3>
+      <p>Less time searching — more time hiring and working.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EMPLOYER CTA SECTION -->
+<section class="employer-cta">
+  <div class="cta-content">
+    <h2>Ready to Hire Top Remote Talent?</h2>
+    <p>Post your first job in minutes and start receiving qualified applicants instantly.</p>
+    <a href="postjob.html" class="cta-button">
+      <i class="fa-solid fa-briefcase"></i> Post a Job Now
+    </a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="hero">
+  <h1>How It Works</h1>
+  <p>Simple steps for applicants and employers — from posting to getting matched.</p>
+</section>
+
+<section id="how-it-works">
+  <h2>Steps to Get Started</h2>
+  <div class="steps">
+    <div class="step">
+      <span>1</span>
+      <h3>Create an Account</h3>
+      <p>Sign up as an applicant or employer in seconds. Complete your profile to increase visibility.</p>
+    </div>
+    <div class="step">
+      <span>2</span>
+      <h3>Post or Apply</h3>
+      <p>Employers post job openings. Applicants apply instantly and upload resumes and supporting documents.</p>
+    </div>
+    <div class="step">
+      <span>3</span>
+      <h3>Get Matched</h3>
+      <p>Our system helps connect the right talent with the right jobs — faster and easier.</p>
+    </div>
+    <div class="step">
+      <span>4</span>
+      <h3>Interview & Hire</h3>
+      <p>Employers contact shortlisted applicants, schedule interviews, and hire remotely.</p>
+    </div>
+    <div class="step">
+      <span>5</span>
+      <h3>Start Working</h3>
+      <p>Applicants begin their remote work journey with flexible schedules and global opportunities.</p>
+    </div>
+    <div class="step">
+      <span>6</span>
+      <h3>Grow Together</h3>
+      <p>Build long-term remote teams and careers with tools designed for smooth hiring and matching.</p>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICANT CTA SECTION -->
+<section class="applicant-cta">
+  <div class="cta-content">
+    <h2>Looking for a Remote Job?</h2>
+    <p>Join thousands of applicants finding flexible, high-paying remote opportunities worldwide.</p>
+    <a href="applicantform.html" class="cta-button applicant">
+      <i class="fa-solid fa-paper-plane"></i> Apply Now
+    </a>
+  </div>
+</section>
+
+<!-- FIXED-BOTTOM FOOTER -->
+<footer class="footer-simple">
+  <div class="footer-logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+  <p class="footer-bottom">© 2025 Job Space Link</p>
+</footer>
+
+<script>
+/* ============================================================
+   ABOUT DROPDOWN (Desktop)
+=========================================================== */
+(function(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(!dd || !toggle || !menu) return;
+
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openAboutMenu(){
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isOpen = dd.classList.contains("open");
+    if(isOpen){
+      closeAboutMenu();
+    }else{
+      openAboutMenu();
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if(!dd.contains(e.target)){
+      closeAboutMenu();
+    }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      closeAboutMenu();
+    }
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  });
+})();
+
+/* ============================================================
+   EMPLOYER DROPDOWN (Desktop)
+=========================================================== */
+(function(){
+  const wrap = document.getElementById("employerDropdown");
+  const toggle = document.getElementById("employerToggle");
+  const menu = document.getElementById("employerMenu");
+  if(!wrap || !toggle || !menu) return;
+
+  toggle.addEventListener("click", (e)=>{
+    e.preventDefault();
+    wrap.classList.toggle("open");
+  });
+
+  document.addEventListener("click", (e)=>{
+    if(!wrap.contains(e.target)) wrap.classList.remove("open");
+  });
+
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") wrap.classList.remove("open");
+  });
+
+  menu.querySelectorAll("a").forEach(a =>
+    a.addEventListener("click", ()=> wrap.classList.remove("open"))
+  );
+})();
+
+/* ============================================================
+   MOBILE MENU
+=========================================================== */
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  if(!btn || !panel) return;
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth >= 769) close();
+  }, { passive:true });
+})();
+
+/* ============================================================
+   PARALLAX DEPTH (mouse + scroll)
+=========================================================== */
+(function(){
+  const items = Array.from(document.querySelectorAll(".worker-float"));
+  if(!items.length) return;
+
+  const reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduceMotion) return;
+
+  let mouseX = 0, mouseY = 0;
+  let tx = 0, ty = 0;
+  let raf = null;
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  function onMove(e){
+    const w = window.innerWidth || 1;
+    const h = window.innerHeight || 1;
+    const cx = w / 2;
+    const cy = h / 2;
+    mouseX = clamp((e.clientX - cx) / cx, -1, 1);
+    mouseY = clamp((e.clientY - cy) / cy, -1, 1);
+    if(!raf) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(){
+    raf = null;
+
+    tx += (mouseX - tx) * 0.07;
+    ty += (mouseY - ty) * 0.07;
+
+    const scrollInfluence = clamp((window.scrollY || 0) * 0.00035, 0, 0.35);
+
+    items.forEach(el=>{
+      const depth = parseFloat(el.dataset.depth || "0.2");
+      const baseX = 55 * depth;
+      const baseY = 42 * depth;
+
+      const moveX = tx * baseX;
+      const moveY = (ty * baseY) + (scrollInfluence * 40 * depth);
+
+      el.style.setProperty("--px", moveX.toFixed(2) + "px");
+      el.style.setProperty("--py", moveY.toFixed(2) + "px");
+    });
+
+    raf = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener("mousemove", onMove, { passive:true });
+  window.addEventListener("scroll", ()=>{
+    if(!raf) raf = requestAnimationFrame(tick);
+  }, { passive:true });
+
+  tick();
+})();
+</script>
+
+</body>
+</html>

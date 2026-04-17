@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>All Employer Subscriptions | Job Space Link</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+<link rel="stylesheet" href="jobspacelink.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<style>
+:root{
+  --header-h:72px;
+  --rows-per-page:6;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Poppins","Segoe UI",sans-serif;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+}
+
+body{
+  min-height:100vh;
+  padding-top:var(--header-h);
+  background:radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 58%, #020617);
+  color:#e5e7eb;
+  overflow-x:hidden;
+}
+
+/* ============================================================
+   HEADER
+============================================================ */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:0 12px 0 8px;
+  background:rgba(15,23,42,0.94);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+.header-left{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+  overflow:hidden;
+}
+
+.header-right{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:72px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:34px;
+  padding:0 3px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.80rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  height:34px;
+  padding:0 10px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.76rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 12px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 18px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:0.96rem;
+}
+
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+/* ============================================================
+   ABOUT NAV FIX
+============================================================ */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:34px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;
+  height:22px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.84rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 10px);
+  left:0;
+  min-width:210px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:8px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:11px 15px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* ============================================================
+   PAGE CONTENT
+============================================================ */
+.wrap{
+  max-width:1220px;
+  margin:24px auto 30px;
+  padding:16px 16px 18px;
+  border-radius:20px;
+  background:rgba(15,23,42,0.94);
+  border:1px solid rgba(0,198,255,0.44);
+  box-shadow:0 0 22px rgba(0,198,255,0.24);
+}
+
+.title{
+  font-size:1.35rem;
+  font-weight:800;
+  margin-bottom:4px;
+  color:#e0f2fe;
+  text-shadow:0 0 10px rgba(0,198,255,0.55);
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.sub{
+  font-size:0.84rem;
+  color:#cbd5f5;
+  opacity:0.92;
+  margin-bottom:12px;
+}
+
+.filter-bar{
+  display:grid;
+  grid-template-columns:repeat(6, minmax(0, 1fr));
+  gap:8px;
+  margin-bottom:12px;
+  align-items:center;
+}
+
+.filter-bar input,
+.filter-bar select{
+  width:100%;
+  padding:7px 9px;
+  border-radius:10px;
+  border:1px solid rgba(148,163,184,0.52);
+  background:rgba(15,23,42,0.92);
+  color:#e5e7eb;
+  font-size:0.82rem;
+  min-height:37px;
+}
+
+.filter-bar input:focus,
+.filter-bar select:focus{
+  outline:none;
+  border-color:#0ea5e9;
+  box-shadow:0 0 10px rgba(14,165,233,0.32);
+}
+
+.filter-bar input::placeholder{
+  color:#94a3b8;
+}
+
+.filter-bar select option{
+  background:#0f172a;
+  color:#e5e7eb;
+}
+
+.filter-bar button{
+  width:100%;
+  padding:7px 10px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed,#00c6ff);
+  background-size:200%;
+  color:#fff;
+  font-weight:700;
+  font-size:0.80rem;
+  min-height:37px;
+  box-shadow:0 0 12px rgba(59,130,246,0.32);
+  transition:0.3s;
+}
+
+.filter-bar button:hover{
+  background-position:100% 0;
+  transform:translateY(-1px);
+  box-shadow:0 0 18px rgba(129,140,248,0.52);
+}
+
+.table-wrap{
+  margin-top:4px;
+  border-radius:16px;
+  border:1px solid rgba(148,163,184,0.36);
+  overflow-x:auto;
+  overflow-y:hidden;
+  background:rgba(15,23,42,0.98);
+  box-shadow:0 0 16px rgba(15,23,42,0.82);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.76rem;
+  min-width:980px;
+}
+
+thead{
+  background:linear-gradient(90deg,#020617,#0f172a);
+}
+
+th,
+td{
+  padding:7px 8px;
+  border-bottom:1px solid rgba(55,65,81,0.68);
+  text-align:left;
+  vertical-align:middle;
+}
+
+th{
+  font-weight:700;
+  color:#cbd5f5;
+  white-space:nowrap;
+  font-size:0.74rem;
+}
+
+tbody tr:nth-child(even){
+  background:rgba(15,23,42,0.95);
+}
+
+tbody tr:nth-child(odd){
+  background:rgba(15,23,42,0.88);
+}
+
+tbody tr:hover{
+  background:rgba(30,64,175,0.55);
+}
+
+.badge-status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:3px 8px;
+  border-radius:999px;
+  font-size:0.68rem;
+  border:1px solid rgba(148,163,184,0.7);
+  white-space:nowrap;
+}
+
+.badge-status.active{
+  border-color:rgba(34,197,94,0.8);
+  background:rgba(34,197,94,0.12);
+  color:#bbf7d0;
+}
+
+.badge-status.expired,
+.badge-status.inactive{
+  border-color:rgba(239,68,68,0.8);
+  background:rgba(239,68,68,0.16);
+  color:#fecaca;
+}
+
+.table-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.rows-note{
+  font-size:0.78rem;
+  color:#cbd5f5;
+}
+
+.pagination{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.pagination button,
+.pagination span{
+  min-width:34px;
+  height:34px;
+  padding:0 10px;
+  border-radius:9px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.78rem;
+  font-weight:700;
+}
+
+.pagination button{
+  border:1px solid rgba(148,163,184,0.35);
+  background:rgba(15,23,42,0.96);
+  color:#e5e7eb;
+  cursor:pointer;
+  transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled){
+  transform:translateY(-1px);
+  border-color:rgba(0,198,255,0.38);
+  box-shadow:0 0 12px rgba(0,198,255,0.18);
+}
+
+.pagination button.active{
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  color:#ffffff;
+  border-color:transparent;
+}
+
+.pagination button:disabled{
+  opacity:0.45;
+  cursor:not-allowed;
+}
+
+.pagination .ellipsis{
+  color:#94a3b8;
+  min-width:auto;
+  padding:0 2px;
+}
+
+#statusMsg{
+  margin-top:10px;
+  font-size:0.82rem;
+  color:#cbd5f5;
+  line-height:1.5;
+}
+
+@media (min-width:1440px){
+  .wrap{
+    max-width:1260px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.82rem;
+  }
+
+  header .auth-buttons a{
+    font-size:0.77rem;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  .wrap{
+    max-width:1160px;
+    padding:14px 14px 16px;
+  }
+
+  header{
+    padding:0 10px 0 6px;
+  }
+
+  header .logo img{
+    height:66px;
+  }
+
+  header nav{
+    gap:8px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.75rem;
+  }
+
+  header .auth-buttons{
+    gap:5px;
+  }
+
+  header .auth-buttons a{
+    padding:0 8px;
+    font-size:0.72rem;
+  }
+
+  .filter-bar{
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width:1023px){
+  .wrap{
+    margin:18px 12px 24px;
+    padding:14px 12px 16px;
+  }
+
+  .filter-bar{
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  :root{
+    --header-h:64px;
+  }
+
+  header{
+    gap:6px;
+    padding:0 8px 0 4px;
+  }
+
+  .header-left{
+    gap:6px;
+  }
+
+  .header-right{
+    gap:4px;
+  }
+
+  header .logo{
+    margin-left:-2px;
+  }
+
+  header .logo img{
+    height:54px;
+  }
+
+  header nav{
+    gap:5px;
+    overflow:visible;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:28px;
+    padding:0 1px;
+    font-size:0.61rem;
+    letter-spacing:-0.01em;
+  }
+
+  .nav-dropdown{
+    height:28px;
+  }
+
+  .nav-dropdown-trigger{
+    gap:0;
+  }
+
+  .nav-dropdown-toggle{
+    width:16px;
+    height:16px;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.62rem;
+  }
+
+  header .auth-buttons{
+    display:flex;
+    gap:4px;
+  }
+
+  header .auth-buttons a{
+    height:28px;
+    padding:0 6px;
+    border-radius:8px;
+    gap:3px;
+    font-size:0.61rem;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .wrap{
+    max-width:none;
+    margin:14px 8px 18px;
+    padding:12px 10px 14px;
+    border-radius:16px;
+  }
+
+  .title{
+    font-size:1.08rem;
+    gap:7px;
+  }
+
+  .sub,
+  #statusMsg,
+  .rows-note{
+    font-size:0.72rem;
+  }
+
+  .filter-bar{
+    grid-template-columns:1.15fr 1.28fr .95fr .72fr .72fr .9fr .9fr .9fr .9fr .72fr .72fr;
+    gap:4px;
+    margin-bottom:8px;
+  }
+
+  .filter-bar > *{
+    min-width:0;
+  }
+
+  .filter-bar input,
+  .filter-bar select,
+  .filter-bar button{
+    height:30px;
+    min-height:30px;
+    padding:4px 6px;
+    border-radius:8px;
+    font-size:0.62rem;
+  }
+
+  .table-wrap{
+    overflow-x:hidden;
+    border-radius:12px;
+  }
+
+  table{
+    width:100%;
+    min-width:0;
+    table-layout:fixed;
+    font-size:0.60rem;
+  }
+
+  th,
+  td{
+    padding:5px 4px;
+    font-size:0.60rem;
+    line-height:1.08;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  th{
+    font-size:0.58rem;
+  }
+
+  th:nth-child(1), td:nth-child(1){ width:3.5%; }
+  th:nth-child(2), td:nth-child(2){ width:14%; }
+  th:nth-child(3), td:nth-child(3){ width:15%; }
+  th:nth-child(4), td:nth-child(4){ width:7.5%; }
+  th:nth-child(5), td:nth-child(5){ width:7.5%; }
+  th:nth-child(6), td:nth-child(6){ width:8.5%; }
+  th:nth-child(7), td:nth-child(7){ width:8.5%; }
+  th:nth-child(8), td:nth-child(8){ width:7%; }
+  th:nth-child(9), td:nth-child(9){ width:9.5%; }
+  th:nth-child(10), td:nth-child(10){ width:9%; }
+  th:nth-child(11), td:nth-child(11){ width:10%; }
+
+  .badge-status{
+    max-width:100%;
+    padding:2px 5px;
+    gap:3px;
+    font-size:0.52rem;
+  }
+
+  .badge-status i{
+    font-size:0.44rem;
+  }
+
+  .table-footer{
+    margin-top:8px;
+    gap:8px;
+  }
+
+  .pagination{
+    gap:4px;
+  }
+
+  .pagination button,
+  .pagination span{
+    min-width:28px;
+    height:28px;
+    padding:0 7px;
+    font-size:0.68rem;
+  }
+}
+
+@media (max-width:768px){
+  header{
+    padding:0 10px 0 8px;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none;
+  }
+
+  .nav-toggle{
+    display:inline-flex;
+  }
+}
+
+@media (max-width:768px){
+  :root{
+    --header-h:68px;
+  }
+
+  .title{
+    font-size:1.15rem;
+  }
+
+  .sub,
+  #statusMsg,
+  .rows-note{
+    font-size:0.78rem;
+  }
+
+  .filter-bar{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+
+  .table-footer{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .pagination{
+    justify-content:flex-start;
+  }
+
+  header .logo img{
+    height:54px;
+  }
+}
+
+@media (max-width:480px){
+  :root{
+    --header-h:64px;
+  }
+
+  .wrap{
+    margin:14px 10px 20px;
+    padding:12px 10px 14px;
+    border-radius:16px;
+  }
+
+  .filter-bar{
+    grid-template-columns:1fr;
+  }
+
+  .pagination button,
+  .pagination span{
+    min-width:32px;
+    height:32px;
+    font-size:0.74rem;
+  }
+
+  header .logo img{
+    height:50px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="logo">
+      <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+    </div>
+
+    <nav>
+      <a href="index.html">Home</a>
+
+      <div class="nav-dropdown" id="aboutNavDropdown">
+        <div class="nav-dropdown-trigger">
+          <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+          <button
+            type="button"
+            class="nav-dropdown-toggle"
+            id="aboutNavToggle"
+            aria-expanded="false"
+            aria-controls="aboutNavMenu"
+            aria-label="Toggle About menu"
+          >
+            <i class="fa-solid fa-caret-down nav-caret"></i>
+          </button>
+        </div>
+
+        <div class="nav-dropdown-menu" id="aboutNavMenu">
+          <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+          <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+        </div>
+      </div>
+
+      <a href="postedhiring.html">Job Hiring</a>
+      <a href="dashboard.html">Jobseeker</a>
+      <a href="postjob.html">Post Jobs</a>
+      <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+    </nav>
+  </div>
+
+  <div class="header-right">
+    <div class="auth-buttons">
+      <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+      <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+      <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+    </div>
+
+    <button
+      type="button"
+      class="nav-toggle"
+      id="navToggle"
+      aria-label="Open mobile menu"
+      aria-expanded="false"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="title">
+    <i class="fa-solid fa-table-list"></i>
+    All Employer Subscriptions
+  </div>
+  <div class="sub">
+    Admin view of every record in <b>employer_payment_transactions</b>.
+  </div>
+
+  <div class="filter-bar">
+    <input id="searchCompany" type="text" placeholder="Search company..." />
+    <input id="searchEmail" type="text" placeholder="Search email..." />
+
+    <select id="filterStatus" title="Filter by status">
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="not active">Not Active / Inactive</option>
+      <option value="expired">Expired</option>
+    </select>
+
+    <input id="amountMin" type="number" step="0.01" placeholder="Min amount" />
+    <input id="amountMax" type="number" step="0.01" placeholder="Max amount" />
+
+    <input id="startDateFrom" type="date" title="Subscription start date from" />
+    <input id="startDateTo" type="date" title="Subscription start date to" />
+
+    <input id="endDateFrom" type="date" title="Subscription end date from" />
+    <input id="endDateTo" type="date" title="Subscription end date to" />
+
+    <button id="btnApplyFilter"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    <button id="btnResetFilter"><i class="fa-solid fa-rotate"></i> Reset</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Company</th>
+          <th>Email</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Days Purchased</th>
+          <th>Days Remaining</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Last Login</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody id="subsBody">
+        <tr><td colspan="11">Loading records...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <div class="rows-note">Rows per page: 6</div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <div id="statusMsg"></div>
+</div>
+
+<script>
+/* ============================================================
+   ABOUT DROPDOWN (Desktop)
+============================================================ */
+(function(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(!dd || !toggle || !menu) return;
+
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openAboutMenu(){
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isOpen = dd.classList.contains("open");
+    if(isOpen){
+      closeAboutMenu();
+    }else{
+      openAboutMenu();
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if(!dd.contains(e.target)){
+      closeAboutMenu();
+    }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      closeAboutMenu();
+    }
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  });
+})();
+
+/* ============================================================
+   MOBILE MENU
+============================================================ */
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  if(!btn || !panel) return;
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth > 768) close();
+  }, { passive:true });
+})();
+
+const ROWS_PER_PAGE = 6;
+const subsBody      = document.getElementById("subsBody");
+const statusMsg     = document.getElementById("statusMsg");
+const paginationEl  = document.getElementById("pagination");
+const searchCompany = document.getElementById("searchCompany");
+const searchEmail   = document.getElementById("searchEmail");
+const filterStatus  = document.getElementById("filterStatus");
+const amountMin     = document.getElementById("amountMin");
+const amountMax     = document.getElementById("amountMax");
+const startDateFrom = document.getElementById("startDateFrom");
+const startDateTo   = document.getElementById("startDateTo");
+const endDateFrom   = document.getElementById("endDateFrom");
+const endDateTo     = document.getElementById("endDateTo");
+const btnApply      = document.getElementById("btnApplyFilter");
+const btnReset      = document.getElementById("btnResetFilter");
+
+let allSubs = [];
+let filteredSubs = [];
+let currentPage = 1;
+let lastSyncSummary = "";
+
+function fmtDate(d){
+  if (!d) return "—";
+
+  const s = String(d);
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m){
+    const isoMidnightUTC = `${m[1]}-${m[2]}-${m[3]}T00:00:00Z`;
+    const dt = new Date(isoMidnightUTC);
+    if (!isNaN(dt)) {
+      return dt.toLocaleDateString("en-US", {
+        year:"numeric",
+        month:"short",
+        day:"numeric",
+        timeZone:"UTC"
+      });
+    }
+  }
+
+  const dt = new Date(s);
+  if (isNaN(dt)) return s;
+  return dt.toLocaleDateString("en-US", { year:"numeric", month:"short", day:"numeric" });
+}
+
+function fmtAmount(a){
+  if (a == null || a === "") return "—";
+  const n = Number(a);
+  if (isNaN(n)) return String(a);
+  return `$${n.toFixed(2)}`;
+}
+
+function extractYMD(value){
+  if (!value) return "";
+  const s = String(value).trim();
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[1]}-${m[2]}-${m[3]}` : "";
+}
+
+function getTodayYMDLocal(){
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function toUtcDateFromYMD(ymd){
+  if (!ymd) return null;
+  const [y, m, d] = ymd.split("-").map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
+function calculateDaysRemaining(endYMD, todayYMD = getTodayYMDLocal()){
+  const endDate = toUtcDateFromYMD(endYMD);
+  const todayDate = toUtcDateFromYMD(todayYMD);
+  if (!endDate || !todayDate) return null;
+
+  const diffMs = endDate.getTime() - todayDate.getTime();
+  const diffDays = Math.floor(diffMs / 86400000);
+  return diffDays > 0 ? diffDays : 0;
+}
+
+function normalizeStatusValue(status){
+  return String(status || "").trim().toLowerCase();
+}
+
+function normalizeSubscriptionRow(row){
+  const normalized = { ...row };
+  const endYMD = extractYMD(normalized.subscription_end_date);
+  const todayYMD = getTodayYMDLocal();
+
+  if (endYMD){
+    const remaining = calculateDaysRemaining(endYMD, todayYMD);
+    if (remaining !== null) normalized.days_remaining = remaining;
+
+    if (todayYMD >= endYMD){
+      normalized.status = "not active";
+      normalized.days_remaining = 0;
+    }
+  }
+
+  return normalized;
+}
+
+function toTitleCase(str){
+  if (!str) return "—";
+  const s = String(str).trim();
+  if (!s) return "—";
+
+  return s
+    .toLowerCase()
+    .split(/(\s+|[-'’.])/g)
+    .map(part => {
+      if (/^\s+$/.test(part) || part === "-" || part === "'" || part === "’" || part === ".") return part;
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join("");
+}
+
+function getStatusBadgeClass(status){
+  const s = normalizeStatusValue(status);
+  let statusClass = "badge-status";
+  if (s === "active") statusClass += " active";
+  else if (s === "expired") statusClass += " expired";
+  else if (s === "not active" || s === "inactive") statusClass += " inactive";
+  return statusClass;
+}
+
+function getTotalPages(totalRows){
+  return Math.max(1, Math.ceil(totalRows / ROWS_PER_PAGE));
+}
+
+function clampCurrentPage(){
+  const totalPages = getTotalPages(filteredSubs.length);
+  if (currentPage < 1) currentPage = 1;
+  if (currentPage > totalPages) currentPage = totalPages;
+}
+
+function buildStatusText(filteredCount, totalCount){
+  const totalPages = getTotalPages(filteredCount);
+  const safePage = filteredCount === 0 ? 1 : currentPage;
+  const parts = [
+    `Showing ${filteredCount} of ${totalCount} record(s).`,
+    `Page ${safePage} of ${totalPages}.`
+  ];
+
+  if (lastSyncSummary) parts.push(lastSyncSummary);
+  return parts.join(" ");
+}
+
+function createPageButton(label, page, disabled = false, isActive = false){
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.textContent = label;
+  btn.disabled = disabled;
+  if (isActive) btn.classList.add("active");
+
+  if (!disabled && page != null){
+    btn.addEventListener("click", () => {
+      currentPage = page;
+      renderCurrentPage();
+    });
+  }
+
+  return btn;
+}
+
+function getVisiblePages(totalPages, page){
+  if (totalPages <= 7){
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const visible = [1];
+  const start = Math.max(2, page - 1);
+  const end = Math.min(totalPages - 1, page + 1);
+
+  if (start > 2) visible.push("...");
+  for (let i = start; i <= end; i += 1) visible.push(i);
+  if (end < totalPages - 1) visible.push("...");
+
+  visible.push(totalPages);
+  return visible;
+}
+
+function renderPagination(totalRows){
+  paginationEl.innerHTML = "";
+
+  const totalPages = getTotalPages(totalRows);
+  const noRows = totalRows === 0;
+
+  paginationEl.appendChild(createPageButton("Prev", currentPage - 1, noRows || currentPage === 1));
+
+  getVisiblePages(totalPages, currentPage).forEach(item => {
+    if (item === "..."){
+      const ellipsis = document.createElement("span");
+      ellipsis.className = "ellipsis";
+      ellipsis.textContent = "...";
+      paginationEl.appendChild(ellipsis);
+      return;
+    }
+
+    paginationEl.appendChild(createPageButton(String(item), item, false, item === currentPage));
+  });
+
+  paginationEl.appendChild(createPageButton("Next", currentPage + 1, noRows || currentPage === totalPages));
+}
+
+function renderCurrentPage(){
+  clampCurrentPage();
+
+  if (!filteredSubs || filteredSubs.length === 0){
+    subsBody.innerHTML = `<tr><td colspan="11">No subscription records found.</td></tr>`;
+    renderPagination(0);
+    statusMsg.textContent = buildStatusText(0, allSubs.length);
+    return;
+  }
+
+  const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+  const pageRows = filteredSubs.slice(startIndex, startIndex + ROWS_PER_PAGE);
+
+  subsBody.innerHTML = "";
+  pageRows.forEach((row, idx) => {
+    const r = normalizeSubscriptionRow(row);
+    const tr = document.createElement("tr");
+
+    const lastLoginValue =
+      r.last_login_date ??
+      r.last_login ??
+      r.last_login_at ??
+      r.last_login_time ??
+      null;
+
+    tr.innerHTML = `
+      <td>${startIndex + idx + 1}</td>
+      <td>${toTitleCase(r.company_name)}</td>
+      <td>${r.company_email || "—"}</td>
+      <td>${fmtDate(r.subscription_start_date)}</td>
+      <td>${fmtDate(r.subscription_end_date)}</td>
+      <td>${r.days_purchased ?? "—"}</td>
+      <td>${r.days_remaining ?? "—"}</td>
+      <td>${fmtAmount(r.amount)}</td>
+      <td>
+        <span class="${getStatusBadgeClass(r.status)}">
+          <i class="fa-solid fa-circle"></i>
+          ${String(r.status || "—").toUpperCase()}
+        </span>
+      </td>
+      <td>${fmtDate(lastLoginValue)}</td>
+      <td>${fmtDate(r.created_at)}</td>
+    `;
+
+    subsBody.appendChild(tr);
+  });
+
+  renderPagination(filteredSubs.length);
+  statusMsg.textContent = buildStatusText(filteredSubs.length, allSubs.length);
+}
+
+function matchesAmountRange(rowAmount, minValue, maxValue){
+  if (minValue === "" && maxValue === "") return true;
+  const n = Number(rowAmount);
+  if (isNaN(n)) return false;
+  if (minValue !== "" && n < Number(minValue)) return false;
+  if (maxValue !== "" && n > Number(maxValue)) return false;
+  return true;
+}
+
+function matchesDateRange(recordYMD, fromYMD, toYMD){
+  if (!fromYMD && !toYMD) return true;
+  if (!recordYMD) return false;
+  if (fromYMD && recordYMD < fromYMD) return false;
+  if (toYMD && recordYMD > toYMD) return false;
+  return true;
+}
+
+function matchesStatusFilter(rowStatus, wantedStatus){
+  if (!wantedStatus) return true;
+  const status = normalizeStatusValue(rowStatus);
+  if (wantedStatus === "not active") return status === "not active" || status === "inactive";
+  return status === wantedStatus;
+}
+
+function applyFilter(){
+  const companyQuery = searchCompany.value.trim().toLowerCase();
+  const emailQuery = searchEmail.value.trim().toLowerCase();
+  const wantedStatus = filterStatus.value;
+  const minAmount = amountMin.value.trim();
+  const maxAmount = amountMax.value.trim();
+  const startFrom = startDateFrom.value;
+  const startTo = startDateTo.value;
+  const endFrom = endDateFrom.value;
+  const endTo = endDateTo.value;
+
+  filteredSubs = allSubs.filter(row => {
+    const normalized = normalizeSubscriptionRow(row);
+    const companyName = String(normalized.company_name || "").toLowerCase();
+    const email = String(normalized.company_email || "").toLowerCase();
+    const rowStartYMD = extractYMD(normalized.subscription_start_date);
+    const rowEndYMD = extractYMD(normalized.subscription_end_date);
+
+    if (companyQuery && !companyName.includes(companyQuery)) return false;
+    if (emailQuery && !email.includes(emailQuery)) return false;
+    if (!matchesStatusFilter(normalized.status, wantedStatus)) return false;
+    if (!matchesAmountRange(normalized.amount, minAmount, maxAmount)) return false;
+    if (!matchesDateRange(rowStartYMD, startFrom, startTo)) return false;
+    if (!matchesDateRange(rowEndYMD, endFrom, endTo)) return false;
+
+    return true;
+  });
+
+  currentPage = 1;
+  renderCurrentPage();
+}
+
+function resetFilter(){
+  searchCompany.value = "";
+  searchEmail.value = "";
+  filterStatus.value = "";
+  amountMin.value = "";
+  amountMax.value = "";
+  startDateFrom.value = "";
+  startDateTo.value = "";
+  endDateFrom.value = "";
+  endDateTo.value = "";
+
+  filteredSubs = [...allSubs];
+  currentPage = 1;
+  renderCurrentPage();
+}
+
+function getNormalizedUpdatePayload(originalRow, normalizedRow){
+  const payload = {};
+
+  const currentStatus = normalizeStatusValue(originalRow.status);
+  const nextStatus = normalizeStatusValue(normalizedRow.status);
+  if (nextStatus && nextStatus !== currentStatus){
+    payload.status = normalizedRow.status;
+  }
+
+  const currentDays = originalRow.days_remaining == null || originalRow.days_remaining === ""
+    ? null
+    : Number(originalRow.days_remaining);
+  const nextDays = normalizedRow.days_remaining == null || normalizedRow.days_remaining === ""
+    ? null
+    : Number(normalizedRow.days_remaining);
+
+  if (nextDays !== null && !Number.isNaN(nextDays)){
+    if (currentDays === null || Number.isNaN(currentDays) || currentDays !== nextDays){
+      payload.days_remaining = nextDays;
+    }
+  }
+
+  return payload;
+}
+
+async function updateSingleSubscriptionRecord(client, originalRow, normalizedRow){
+  const payload = getNormalizedUpdatePayload(originalRow, normalizedRow);
+  if (!Object.keys(payload).length) return { skipped: true };
+
+  let query = client.from("employer_payment_transactions").update(payload);
+
+  if (originalRow.id != null && String(originalRow.id).trim() !== ""){
+    query = query.eq("id", originalRow.id);
+  } else {
+    const email = String(originalRow.company_email || "").trim();
+    const startYMD = extractYMD(originalRow.subscription_start_date);
+    const endYMD = extractYMD(originalRow.subscription_end_date);
+
+    if (!email || !startYMD || !endYMD){
+      return { skipped: true, reason: "missing-key-fields" };
+    }
+
+    query = query
+      .eq("company_email", email)
+      .eq("subscription_start_date", startYMD)
+      .eq("subscription_end_date", endYMD);
+
+    if (originalRow.created_at){
+      query = query.eq("created_at", originalRow.created_at);
+    }
+  }
+
+  const { data, error } = await query.select("id");
+  if (error) return { error };
+
+  return { updatedCount: Array.isArray(data) ? data.length : 1 };
+}
+
+async function syncStatusesToDatabase(rows){
+  const client = window.supabase || supabase;
+  if (!client) return { updated: 0, failed: 0, skipped: 0 };
+
+  let updated = 0;
+  let failed = 0;
+  let skipped = 0;
+
+  for (const originalRow of rows){
+    const normalizedRow = normalizeSubscriptionRow(originalRow);
+    const result = await updateSingleSubscriptionRecord(client, originalRow, normalizedRow);
+
+    if (result?.error){
+      failed += 1;
+      console.error("Failed to sync subscription row:", result.error, originalRow);
+      continue;
+    }
+
+    if (result?.skipped){
+      skipped += 1;
+      continue;
+    }
+
+    updated += result.updatedCount || 1;
+  }
+
+  return { updated, failed, skipped };
+}
+
+function makeSyncSummary(syncResult){
+  if (!syncResult) return "";
+
+  const parts = [];
+  if (syncResult.updated > 0) parts.push(`DB sync updated ${syncResult.updated} record(s).`);
+  if (syncResult.failed > 0) parts.push(`DB sync failed on ${syncResult.failed} record(s).`);
+  if (!parts.length) parts.push("DB sync found no record changes.");
+  return parts.join(" ");
+}
+
+async function loadSubscriptions(){
+  statusMsg.textContent = "Loading subscription records...";
+  subsBody.innerHTML = `<tr><td colspan="11">Loading records...</td></tr>`;
+  paginationEl.innerHTML = "";
+
+  const client = window.supabase || supabase;
+  if (!client){
+    statusMsg.textContent = "Supabase client is not initialized. Check supabase_config.js.";
+    return;
+  }
+
+  const { data: { session }, error: sessionErr } = await client.auth.getSession();
+  if (sessionErr || !session){
+    subsBody.innerHTML = `<tr><td colspan="11">Please log in as admin to view records.</td></tr>`;
+    statusMsg.textContent = "No active session. Admin login required.";
+    return;
+  }
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-list-employer-subscriptions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify({})
+    });
+
+    const json = await res.json();
+
+    if (!res.ok || !json.ok){
+      console.error("Function error:", json);
+      subsBody.innerHTML = `<tr><td colspan="11">Error loading subscriptions from Edge Function.</td></tr>`;
+      statusMsg.textContent = json.error || "Error loading subscription records.";
+      return;
+    }
+
+    const rawRows = Array.isArray(json.rows) ? json.rows : [];
+    const syncResult = await syncStatusesToDatabase(rawRows);
+    lastSyncSummary = makeSyncSummary(syncResult);
+
+    allSubs = rawRows.map(normalizeSubscriptionRow);
+    filteredSubs = [...allSubs];
+    currentPage = 1;
+    renderCurrentPage();
+
+  } catch (err){
+    console.error(err);
+    subsBody.innerHTML = `<tr><td colspan="11">Network error loading records.</td></tr>`;
+    statusMsg.textContent = "Network error.";
+  }
+}
+
+btnApply.addEventListener("click", applyFilter);
+btnReset.addEventListener("click", resetFilter);
+filterStatus.addEventListener("change", applyFilter);
+
+[
+  searchCompany,
+  searchEmail,
+  amountMin,
+  amountMax,
+  startDateFrom,
+  startDateTo,
+  endDateFrom,
+  endDateTo
+].forEach(el => {
+  el.addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      applyFilter();
+    }
+  });
+
+  if (el.type === "date" || el.type === "number"){
+    el.addEventListener("change", applyFilter);
+  }
+});
+
+document.addEventListener("DOMContentLoaded", loadSubscriptions);
+</script>
+
+</body>
+</html>
