@@ -926,7 +926,8 @@ button.login-btn:disabled{
   .page-shell{
     align-items:center;
     justify-content:center;
-    padding:12px 12px 18px;
+    min-height:calc(100vh - var(--header-h));
+    padding:16px 12px 18px;
   }
 
   .card{
@@ -1097,8 +1098,10 @@ button.login-btn:disabled{
   }
 
   .page-shell{
-    align-items:flex-start;
-    padding:18px 12px 24px;
+    align-items:center;
+    justify-content:center;
+    min-height:calc(100vh - var(--header-h));
+    padding:20px 12px 24px;
   }
 
   .card{
@@ -1106,6 +1109,7 @@ button.login-btn:disabled{
     max-width:440px;
     padding:22px 18px;
     border-radius:16px;
+    margin:0 auto;
   }
 
   h1{ font-size:1.32rem; }
@@ -1209,8 +1213,10 @@ button.login-btn:disabled{
   }
 
   .page-shell{
-    align-items:flex-start;
-    padding:16px 8px 20px;
+    align-items:center;
+    justify-content:center;
+    min-height:calc(100vh - var(--header-h));
+    padding:18px 10px 20px;
   }
 
   .card{
@@ -1218,6 +1224,7 @@ button.login-btn:disabled{
     max-width:100%;
     padding:18px 14px;
     border-radius:16px;
+    margin:0 auto;
   }
 
   h1{ font-size:1.18rem; }
@@ -1305,8 +1312,7 @@ button.login-btn:disabled{
     </div>
 
     <a href="postedhiring.html">Job Hiring</a>
-        <a href="dashboard.html">Jobseeker</a>
-
+    <a href="dashboard.html">Jobseeker</a>
     <a href="postjob.html">Post Jobs</a>
     <a href="applicantform.html?source=jobspacelink">Post Resume</a>
   </nav>
@@ -1327,7 +1333,6 @@ button.login-btn:disabled{
     <i class="fa-solid fa-bars"></i>
   </button>
 </header>
-
 
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
@@ -1364,7 +1369,6 @@ button.login-btn:disabled{
     <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
-
 
 <div class="page-shell">
   <form class="card" id="adminLoginForm" novalidate>
