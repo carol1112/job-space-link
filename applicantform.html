@@ -313,12 +313,10 @@ header .auth-buttons a:hover{
   flex:0 0 48px;
   width:48px;
   min-width:48px;
-  width:100%;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:12px 14px;
+  justify-content:center;
+  padding:12px 0;
   border-radius:12px;
   border:1px solid rgba(255,255,255,0.08);
   background:rgba(255,255,255,0.04);
@@ -333,12 +331,6 @@ header .auth-buttons a:hover{
   background:rgba(0,198,255,0.12);
   color:#fff;
   transform:translateX(3px);
-}
-
-.mobile-panel .mnav-toggle .mnav-toggle-left{
-  display:inline-flex;
-  align-items:center;
-  gap:12px;
 }
 
 .mobile-panel .mnav-toggle .mnav-caret{
@@ -2611,6 +2603,11 @@ header .auth-buttons a:hover{
     border-radius:11px !important;
     font-size:0.88rem !important;
   }
+  .mobile-panel .mnav-toggle{
+    width:48px !important;
+    min-width:48px !important;
+    padding:11px 0 !important;
+  }
   .mobile-panel .mnav-submenu{
     padding-left:12px !important;
   }
@@ -2851,6 +2848,11 @@ header .auth-buttons a:hover{
     padding:10px 11px !important;
     border-radius:10px !important;
     font-size:0.84rem !important;
+  }
+  .mobile-panel .mnav-toggle{
+    width:46px !important;
+    min-width:46px !important;
+    padding:10px 0 !important;
   }
   .mobile-panel .mnav-submenu{
     padding-left:10px !important;
@@ -3102,18 +3104,19 @@ header .auth-buttons a:hover{
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
-      <button
-        type="button"
-        class="mnav-toggle"
-        id="mobileAboutToggle"
-        aria-expanded="false"
-        aria-controls="mobileAboutMenu"
-      >
-        <span class="mnav-toggle-left">
-          <span>About</span>
-        </span>
-        <i class="fa-solid fa-caret-down mnav-caret"></i>
-      </button>
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
 
       <div class="mnav-submenu" id="mobileAboutMenu">
         <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
