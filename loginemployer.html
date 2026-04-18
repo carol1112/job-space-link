@@ -1587,12 +1587,17 @@
 
   header{
     height:var(--header-h) !important;
-    gap:10px !important;
+    gap:2px !important;
     padding:0 12px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
   header .logo{
-    margin-left:-2px !important;
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
   }
 
   header .logo img{
@@ -1603,10 +1608,15 @@
   header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
+    order:2 !important;
     display:inline-flex !important;
     width:40px !important;
     height:40px !important;
     border-radius:10px !important;
+    margin-left:1px !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
   .mobile-panel{
@@ -1643,12 +1653,20 @@
 
   header{
     height:var(--header-h) !important;
-    gap:8px !important;
-    padding:0 10px 0 6px !important;
+    gap:1px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
   header .logo{
-    margin-left:-2px !important;
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
   }
 
   header .logo img{
@@ -1659,10 +1677,15 @@
   header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
+    order:2 !important;
     display:inline-flex !important;
     width:38px !important;
     height:38px !important;
     border-radius:9px !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
   .mobile-panel{
