@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,20 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Employee Login | Job Space Link</title>
 
-<!-- ICONS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
-
-<!-- GLOBAL CSS -->
 <link rel="stylesheet" href="jobspacelink.css" />
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase_config.js"></script>
 
 <style>
-/* ==========================================================
-   BASE / BACKGROUND
-========================================================== */
 :root{
   --header-h:78px;
   --hdrH:78px;
@@ -56,7 +48,7 @@ body{
 }
 
 /* ============================================================
-   HEADER - SAME FORMAT AS INDEX
+   HEADER
 ============================================================ */
 header{
   position:fixed;
@@ -182,7 +174,7 @@ header .auth-buttons a:hover{
 }
 
 /* ============================================================
-   MOBILE PANEL
+   MOBILE PANEL - INDEX STYLE
 ============================================================ */
 .mobile-panel{
   position:fixed;
@@ -235,8 +227,90 @@ header .auth-buttons a:hover{
   transform:translateX(3px);
 }
 
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  min-width:48px;
+  width:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03);
+}
+
 /* ============================================================
-   ABOUT NAV FIX
+   ABOUT NAV DROPDOWN
 ============================================================ */
 .nav-dropdown{
   position:relative;
@@ -422,9 +496,6 @@ header .auth-buttons a:hover{
   box-shadow:0 0 0 4px rgba(34,197,94,0.10);
 }
 
-/* ==========================================================
-   PASSWORD FIELD
-========================================================== */
 .pass-wrap{
   width:100%;
 }
@@ -574,9 +645,6 @@ header .auth-buttons a:hover{
   font-weight:1000;
 }
 
-/* ==========================================================
-   POST-LOGIN CHOICE MODAL
-========================================================== */
 #choiceModal{
   display:none;
   position:fixed;
@@ -673,262 +741,74 @@ header .auth-buttons a:hover{
 /* ============================================================
    RESPONSIVE
 ============================================================ */
-
-/* ===== 1800px and above ===== */
 @media (min-width: 1800px){
   :root{
     --header-h:84px;
     --hdrH:84px;
   }
 
-  header{
-    padding:0 28px 0 18px;
-    gap:18px;
-  }
+  header{ padding:0 28px 0 18px; gap:18px; }
+  header .logo img{ height:88px; }
+  header nav{ gap:20px; margin-left:10px; }
+  header nav > a, header nav .nav-main-link{ font-size:0.95rem; }
+  header .auth-buttons{ gap:10px; }
+  header .auth-buttons a{ height:38px; padding:0 14px; font-size:0.84rem; }
 
-  header .logo img{
-    height:88px;
-  }
-
-  header nav{
-    gap:20px;
-    margin-left:10px;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    font-size:0.95rem;
-  }
-
-  header .auth-buttons{
-    gap:10px;
-  }
-
-  header .auth-buttons a{
-    height:38px;
-    padding:0 14px;
-    font-size:0.84rem;
-  }
-
-  .page{
-    width:1500px;
-    max-width:calc(100% - 48px);
-    padding:20px 0 34px;
-  }
-
-  .login-wrap{
-    min-height:calc(100vh - var(--hdrH) - 24px);
-    padding:18px 0 28px;
-  }
-
-  .card{
-    width:min(640px, 100%);
-    padding:24px 24px;
-    border-radius:22px;
-  }
-
-  .card-title{
-    font-size:1.95rem;
-  }
-
-  .card-sub{
-    font-size:0.96rem;
-  }
-
-  .form{
-    gap:13px;
-  }
-
-  .input{
-    padding:13px 14px;
-    font-size:0.98rem;
-  }
-
-  .btn{
-    padding:13px 15px;
-    font-size:0.98rem;
-  }
+  .page{ width:1500px; max-width:calc(100% - 48px); padding:20px 0 34px; }
+  .login-wrap{ min-height:calc(100vh - var(--hdrH) - 24px); padding:18px 0 28px; }
+  .card{ width:min(640px, 100%); padding:24px 24px; border-radius:22px; }
+  .card-title{ font-size:1.95rem; }
+  .card-sub{ font-size:0.96rem; }
+  .form{ gap:13px; }
+  .input{ padding:13px 14px; font-size:0.98rem; }
+  .btn{ padding:13px 15px; font-size:0.98rem; }
 }
 
-/* ===== 1440px to 1799px ===== */
 @media (min-width: 1440px) and (max-width: 1799px){
-  header{
-    padding:0 22px 0 12px;
-    gap:14px;
-  }
+  header{ padding:0 22px 0 12px; gap:14px; }
+  header .logo img{ height:82px; }
+  header nav{ gap:15px; margin-left:8px; }
+  header nav > a, header nav .nav-main-link{ font-size:0.88rem; }
+  header .auth-buttons a{ height:36px; padding:0 11px; font-size:0.80rem; }
 
-  header .logo img{
-    height:82px;
-  }
-
-  header nav{
-    gap:15px;
-    margin-left:8px;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    font-size:0.88rem;
-  }
-
-  header .auth-buttons a{
-    height:36px;
-    padding:0 11px;
-    font-size:0.80rem;
-  }
-
-  .page{
-    width:1320px;
-    max-width:calc(100% - 34px);
-    padding:14px 0 28px;
-  }
-
-  .login-wrap{
-    min-height:calc(100vh - var(--hdrH) - 18px);
-    padding:10px 0 24px;
-  }
-
-  .card{
-    width:min(600px, 100%);
-    padding:22px 22px;
-  }
-
-  .card-title{
-    font-size:1.85rem;
-  }
-
-  .card-sub{
-    font-size:0.93rem;
-    margin-bottom:16px;
-  }
-
-  .form{
-    gap:13px;
-  }
-
-  .input{
-    padding:13px 14px;
-    font-size:0.97rem;
-  }
-
-  .btn{
-    padding:13px 15px;
-    font-size:0.97rem;
-  }
+  .page{ width:1320px; max-width:calc(100% - 34px); padding:14px 0 28px; }
+  .login-wrap{ min-height:calc(100vh - var(--hdrH) - 18px); padding:10px 0 24px; }
+  .card{ width:min(600px, 100%); padding:22px 22px; }
+  .card-title{ font-size:1.85rem; }
+  .card-sub{ font-size:0.93rem; margin-bottom:16px; }
+  .form{ gap:13px; }
+  .input{ padding:13px 14px; font-size:0.97rem; }
+  .btn{ padding:13px 15px; font-size:0.97rem; }
 }
 
-/* ===== 1024px to 1439px ===== */
 @media (min-width: 1024px) and (max-width: 1439px){
-  header{
-    padding:0 14px 0 8px;
-    gap:10px;
-  }
+  header{ padding:0 14px 0 8px; gap:10px; }
+  header .logo img{ height:70px; }
+  header nav{ gap:10px; margin-left:4px; }
+  header nav > a, header nav .nav-main-link{ font-size:0.79rem; }
+  header .auth-buttons{ gap:6px; }
+  header .auth-buttons a{ height:34px; padding:0 8px; font-size:0.73rem; }
 
-  header .logo img{
-    height:70px;
-  }
+  .nav-toggle{ display:none !important; }
 
-  header nav{
-    gap:10px;
-    margin-left:4px;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    font-size:0.79rem;
-  }
-
-  header .auth-buttons{
-    gap:6px;
-  }
-
-  header .auth-buttons a{
-    height:34px;
-    padding:0 8px;
-    font-size:0.73rem;
-  }
-
-  .nav-toggle{
-    display:none !important;
-  }
-
-  .page{
-    width:1020px;
-    max-width:calc(100% - 28px);
-    padding:10px 0 22px;
-  }
-
-  .login-wrap{
-    min-height:calc(100vh - var(--hdrH) - 16px);
-    padding:8px 0 20px;
-  }
-
-  .card{
-    width:min(520px, 100%);
-    padding:20px 18px;
-    border-radius:18px;
-  }
-
-  .card-title{
-    gap:10px;
-    font-size:1.65rem;
-    margin-bottom:6px;
-  }
-
-  .card-sub{
-    font-size:0.88rem;
-    margin-bottom:14px;
-  }
-
-  .form{
-    gap:12px;
-  }
-
-  .field label{
-    font-size:0.84rem;
-    margin-bottom:7px;
-  }
-
-  .input{
-    padding:12px 13px;
-    font-size:0.94rem;
-    border-radius:13px;
-  }
-
-  .pass-row .input{
-    padding-right:58px;
-  }
-
-  .pass-eye{
-    width:40px;
-    height:40px;
-  }
-
-  .actions{
-    gap:10px;
-  }
-
-  .btn{
-    padding:12px 14px;
-    font-size:0.94rem;
-    border-radius:13px;
-  }
-
-  .bottom-row{
-    margin-top:8px;
-  }
+  .page{ width:1020px; max-width:calc(100% - 28px); padding:10px 0 22px; }
+  .login-wrap{ min-height:calc(100vh - var(--hdrH) - 16px); padding:8px 0 20px; }
+  .card{ width:min(520px, 100%); padding:20px 18px; border-radius:18px; }
+  .card-title{ gap:10px; font-size:1.65rem; margin-bottom:6px; }
+  .card-sub{ font-size:0.88rem; margin-bottom:14px; }
+  .form{ gap:12px; }
+  .field label{ font-size:0.84rem; margin-bottom:7px; }
+  .input{ padding:12px 13px; font-size:0.94rem; border-radius:13px; }
+  .pass-row .input{ padding-right:58px; }
+  .pass-eye{ width:40px; height:40px; }
+  .actions{ gap:10px; }
+  .btn{ padding:12px 14px; font-size:0.94rem; border-radius:13px; }
+  .bottom-row{ margin-top:8px; }
 }
 
-/* ===== 769px to 1023px ===== */
-/* SAME DESKTOP HEADER + WIDER/SHORTER FORM */
 @media (min-width: 769px) and (max-width: 1023px){
-  .nav-toggle{
-    display:none !important;
-  }
-
-  .mobile-panel{
-    display:none !important;
-  }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
 
   header{
     flex-wrap:nowrap;
@@ -936,14 +816,8 @@ header .auth-buttons a:hover{
     gap:6px;
   }
 
-  header .logo{
-    margin-left:0;
-  }
-
-  header .logo img{
-    height:60px;
-  }
-
+  header .logo{ margin-left:0; }
+  header .logo img{ height:60px; }
   header nav{
     display:flex;
     flex:1 1 auto;
@@ -962,466 +836,175 @@ header .auth-buttons a:hover{
     letter-spacing:-0.01em;
   }
 
-  .nav-dropdown{
-    height:34px;
-  }
+  .nav-dropdown{ height:34px; }
+  .nav-dropdown-toggle{ width:20px; height:20px; }
+  .nav-dropdown-toggle i{ font-size:0.78rem; }
 
-  .nav-dropdown-toggle{
-    width:20px;
-    height:20px;
-  }
+  header .auth-buttons{ display:flex; gap:5px; }
+  header .auth-buttons a{ height:32px; padding:0 7px; font-size:0.68rem; border-radius:9px; gap:4px; }
 
-  .nav-dropdown-toggle i{
-    font-size:0.78rem;
-  }
-
-  header .auth-buttons{
-    display:flex;
-    gap:5px;
-  }
-
-  header .auth-buttons a{
-    height:32px;
-    padding:0 7px;
-    font-size:0.68rem;
-    border-radius:9px;
-    gap:4px;
-  }
-
-  .page{
-    width:100%;
-    max-width:calc(100% - 26px);
-    padding:4px 0 12px;
-  }
-
-  .login-wrap{
-    min-height:calc(100vh - var(--hdrH) - 6px);
-    padding:2px 0 10px;
-  }
-
-  .card{
-    width:min(640px, 100%);
-    padding:13px 14px;
-    border-radius:16px;
-  }
-
-  .card-title{
-    gap:8px;
-    font-size:1.22rem;
-    margin-bottom:4px;
-  }
-
-  .card-sub{
-    font-size:0.77rem;
-    margin-bottom:9px;
-    line-height:1.22;
-  }
-
-  .form{
-    gap:8px;
-  }
-
-  .field label{
-    font-size:0.76rem;
-    margin-bottom:4px;
-    line-height:1.1;
-  }
-
-  .input{
-    padding:8px 10px;
-    font-size:0.86rem;
-    border-radius:10px;
-  }
-
-  .pass-row .input{
-    padding-right:46px;
-  }
-
-  .pass-eye{
-    width:32px;
-    height:32px;
-    right:7px;
-    border-radius:8px;
-  }
-
-  .note-pill,
-  .prefill-pill{
-    margin-top:6px;
-    padding:8px 9px;
-    font-size:0.76rem;
-    border-radius:10px;
-    line-height:1.18;
-  }
-
-  .loading,
-  .msg{
-    margin-top:7px;
-    padding:8px 9px;
-    font-size:0.76rem;
-    border-radius:10px;
-    line-height:1.18;
-  }
-
-  .actions{
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:3px;
-  }
-
-  .btn{
-    padding:9px 10px;
-    font-size:0.84rem;
-    border-radius:10px;
-    gap:6px;
-    min-height:40px;
-  }
-
-  .bottom-row{
-    justify-content:center;
-    margin-top:1px;
-    gap:8px;
-  }
-
-  .forgot{
-    font-size:0.80rem;
-    text-align:center;
-  }
-
-  #choiceModal .choice-box{
-    width:min(500px, 88vw);
-  }
-
-  .choice-top{
-    padding:12px 14px;
-  }
-
-  .choice-body{
-    padding:14px;
-  }
-
-  .choice-grid{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  .choice-link{
-    min-width:0;
-    padding:12px 10px;
-    font-size:0.84rem;
-    border-radius:12px;
-    text-align:center;
-  }
-
-  .choice-title{
-    font-size:0.96rem;
-  }
-
-  .choice-sub{
-    font-size:0.82rem;
-  }
+  .page{ width:100%; max-width:calc(100% - 26px); padding:4px 0 12px; }
+  .login-wrap{ min-height:calc(100vh - var(--hdrH) - 6px); padding:2px 0 10px; }
+  .card{ width:min(640px, 100%); padding:13px 14px; border-radius:16px; }
+  .card-title{ gap:8px; font-size:1.22rem; margin-bottom:4px; }
+  .card-sub{ font-size:0.77rem; margin-bottom:9px; line-height:1.22; }
+  .form{ gap:8px; }
+  .field label{ font-size:0.76rem; margin-bottom:4px; line-height:1.1; }
+  .input{ padding:8px 10px; font-size:0.86rem; border-radius:10px; }
+  .pass-row .input{ padding-right:46px; }
+  .pass-eye{ width:32px; height:32px; right:7px; border-radius:8px; }
+  .note-pill, .prefill-pill, .loading, .msg{ margin-top:6px; padding:8px 9px; font-size:0.76rem; border-radius:10px; line-height:1.18; }
+  .actions{ grid-template-columns:1fr 1fr; gap:8px; margin-top:3px; }
+  .btn{ padding:9px 10px; font-size:0.84rem; border-radius:10px; gap:6px; min-height:40px; }
+  .bottom-row{ justify-content:center; margin-top:1px; gap:8px; }
+  .forgot{ font-size:0.80rem; text-align:center; }
+  #choiceModal .choice-box{ width:min(500px, 88vw); }
+  .choice-top{ padding:12px 14px; }
+  .choice-body{ padding:14px; }
+  .choice-grid{ grid-template-columns:1fr 1fr; gap:10px; }
+  .choice-link{ min-width:0; padding:12px 10px; font-size:0.84rem; border-radius:12px; text-align:center; }
+  .choice-title{ font-size:0.96rem; }
+  .choice-sub{ font-size:0.82rem; }
 }
 
-/* ===== 481px to 768px ===== */
-/* SMALL TABLET = HAMBURGER */
+/* INDEX-LIKE MOBILE HAMBURGER DISPLAY */
 @media (min-width: 481px) and (max-width: 768px){
-  :root{
-    --header-h:72px;
-    --hdrH:72px;
-  }
+  :root{ --header-h:72px !important; --hdrH:72px; }
 
   header{
-    padding:0 14px 0 8px;
-    gap:10px;
+    height:var(--header-h) !important;
+    gap:2px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
-  header .logo img{
-    height:54px;
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
   }
 
-  header nav{
-    display:none;
-  }
-
-  header .auth-buttons{
-    display:none;
-  }
+  header .logo img{ height:54px !important; }
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
-    display:inline-flex;
-    width:40px;
-    height:40px;
+    order:2 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:1px !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
-  .mobile-panel{
-    padding:12px 14px 16px;
+  .mobile-panel{ top:var(--header-h) !important; padding:12px 14px 16px !important; }
+  .mobile-panel .mnav{ gap:8px !important; }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
   }
+  .mobile-panel .mnav-submenu{ padding-left:12px !important; }
 
-  .mobile-panel .mnav a{
-    padding:11px 12px;
-    border-radius:11px;
-    font-size:0.92rem;
-  }
-
-  .page{
-    width:100%;
-    max-width:calc(100% - 18px);
-    padding:6px 0 16px;
-  }
-
-  .login-wrap{
-    min-height:calc(100vh - var(--hdrH) - 10px);
-    padding:4px 0 14px;
-  }
-
-  .card{
-    width:min(430px, 100%);
-    padding:16px 14px;
-    border-radius:17px;
-  }
-
-  .card-title{
-    gap:9px;
-    font-size:1.36rem;
-    margin-bottom:6px;
-  }
-
-  .card-sub{
-    font-size:0.83rem;
-    margin-bottom:12px;
-  }
-
-  .form{
-    gap:10px;
-  }
-
-  .field label{
-    font-size:0.81rem;
-    margin-bottom:6px;
-  }
-
-  .input{
-    padding:10px 12px;
-    font-size:0.90rem;
-    border-radius:11px;
-  }
-
-  .pass-row .input{
-    padding-right:54px;
-  }
-
-  .pass-eye{
-    width:36px;
-    height:36px;
-    border-radius:10px;
-    right:9px;
-  }
-
-  .note-pill,
-  .prefill-pill,
-  .loading,
-  .msg{
-    padding:10px 11px;
-    font-size:0.85rem;
-    border-radius:12px;
-  }
-
-  .actions{
-    grid-template-columns:1fr;
-    gap:9px;
-    margin-top:4px;
-  }
-
-  .btn{
-    padding:10px 13px;
-    font-size:0.90rem;
-    border-radius:11px;
-  }
-
-  .bottom-row{
-    justify-content:center;
-    margin-top:4px;
-  }
-
-  .forgot{
-    font-size:0.88rem;
-  }
-
-  .choice-grid{
-    grid-template-columns:1fr;
-  }
-
-  .choice-title{
-    font-size:1rem;
-  }
-
-  .choice-sub{
-    font-size:0.84rem;
-  }
+  .page{ width:100%; max-width:calc(100% - 18px); padding:6px 0 16px; }
+  .login-wrap{ min-height:calc(100vh - var(--hdrH) - 10px); padding:4px 0 14px; }
+  .card{ width:min(430px, 100%); padding:16px 14px; border-radius:17px; }
+  .card-title{ gap:9px; font-size:1.36rem; margin-bottom:6px; }
+  .card-sub{ font-size:0.83rem; margin-bottom:12px; }
+  .form{ gap:10px; }
+  .field label{ font-size:0.81rem; margin-bottom:6px; }
+  .input{ padding:10px 12px; font-size:0.90rem; border-radius:11px; }
+  .pass-row .input{ padding-right:54px; }
+  .pass-eye{ width:36px; height:36px; border-radius:10px; right:9px; }
+  .note-pill, .prefill-pill, .loading, .msg{ padding:10px 11px; font-size:0.85rem; border-radius:12px; }
+  .actions{ grid-template-columns:1fr; gap:9px; margin-top:4px; }
+  .btn{ padding:10px 13px; font-size:0.90rem; border-radius:11px; }
+  .bottom-row{ justify-content:center; margin-top:4px; }
+  .forgot{ font-size:0.88rem; }
+  .choice-grid{ grid-template-columns:1fr; }
+  .choice-title{ font-size:1rem; }
+  .choice-sub{ font-size:0.84rem; }
 }
 
-/* ===== 480px and below ===== */
-/* MOBILE PHONE = HAMBURGER */
 @media (max-width: 480px){
-  :root{
-    --header-h:70px;
-    --hdrH:70px;
-  }
+  :root{ --header-h:70px !important; --hdrH:70px; }
 
   header{
-    padding:0 12px 0 8px;
-    gap:8px;
+    height:var(--header-h) !important;
+    gap:1px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
-  header .logo img{
-    height:50px;
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
   }
 
-  header nav{
-    display:none;
-  }
-
-  header .auth-buttons{
-    display:none;
-  }
+  header .logo img{ height:50px !important; }
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
-    display:inline-flex;
-    width:38px;
-    height:38px;
-    border-radius:9px;
+    order:2 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
-  .mobile-panel{
-    padding:12px 12px 14px;
+  .mobile-panel{ top:var(--header-h) !important; padding:12px 12px 14px !important; }
+  .mobile-panel .mnav{ gap:7px !important; }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
   }
+  .mobile-panel .mnav-submenu{ padding-left:10px !important; }
 
-  .mobile-panel .mnav{
-    gap:7px;
-  }
-
-  .mobile-panel .mnav a{
-    padding:10px 11px;
-    border-radius:10px;
-    font-size:0.88rem;
-  }
-
-  .page{
-    width:100%;
-    max-width:calc(100% - 14px);
-    min-height:calc(100vh - var(--hdrH));
-    padding:4px 0 14px;
-  }
-
-  .login-wrap{
-    min-height:calc(100vh - var(--hdrH) - 8px);
-    padding:2px 0 12px;
-  }
-
-  .card{
-    width:100%;
-    padding:14px 12px;
-    border-radius:16px;
-  }
-
-  .card-title{
-    gap:8px;
-    font-size:1.22rem;
-    margin-bottom:5px;
-  }
-
-  .card-sub{
-    font-size:0.79rem;
-    margin-bottom:11px;
-  }
-
-  .form{
-    gap:9px;
-  }
-
-  .field label{
-    font-size:0.78rem;
-    margin-bottom:6px;
-  }
-
-  .input{
-    padding:10px 11px;
-    font-size:0.88rem;
-    border-radius:10px;
-  }
-
-  .pass-row .input{
-    padding-right:50px;
-  }
-
-  .pass-eye{
-    width:34px;
-    height:34px;
-    right:8px;
-    border-radius:9px;
-  }
-
-  .note-pill,
-  .prefill-pill,
-  .loading,
-  .msg{
-    padding:9px 10px;
-    font-size:0.82rem;
-    border-radius:11px;
-  }
-
-  .actions{
-    grid-template-columns:1fr;
-    gap:8px;
-    margin-top:4px;
-  }
-
-  .btn{
-    padding:10px 12px;
-    font-size:0.87rem;
-    border-radius:10px;
-    gap:8px;
-  }
-
-  .bottom-row{
-    justify-content:center;
-    margin-top:3px;
-  }
-
-  .forgot{
-    font-size:0.84rem;
-    text-align:center;
-  }
-
-  .choice-grid{
-    grid-template-columns:1fr;
-  }
-
-  .choice-body{
-    padding:14px;
-  }
-
-  .choice-top{
-    padding:12px 14px;
-  }
-
-  .choice-title{
-    font-size:0.94rem;
-    gap:8px;
-  }
-
-  .choice-sub{
-    font-size:0.80rem;
-  }
-
-  .choice-link{
-    padding:13px 12px;
-    font-size:0.90rem;
-    border-radius:13px;
-  }
+  .page{ width:100%; max-width:calc(100% - 14px); min-height:calc(100vh - var(--hdrH)); padding:4px 0 14px; }
+  .login-wrap{ min-height:calc(100vh - var(--hdrH) - 8px); padding:2px 0 12px; }
+  .card{ width:100%; padding:14px 12px; border-radius:16px; }
+  .card-title{ gap:8px; font-size:1.22rem; margin-bottom:5px; }
+  .card-sub{ font-size:0.79rem; margin-bottom:11px; }
+  .form{ gap:9px; }
+  .field label{ font-size:0.78rem; margin-bottom:6px; }
+  .input{ padding:10px 11px; font-size:0.88rem; border-radius:10px; }
+  .pass-row .input{ padding-right:50px; }
+  .pass-eye{ width:34px; height:34px; right:8px; border-radius:9px; }
+  .note-pill, .prefill-pill, .loading, .msg{ padding:9px 10px; font-size:0.82rem; border-radius:11px; }
+  .actions{ grid-template-columns:1fr; gap:8px; margin-top:4px; }
+  .btn{ padding:10px 12px; font-size:0.87rem; border-radius:10px; gap:8px; }
+  .bottom-row{ justify-content:center; margin-top:3px; }
+  .forgot{ font-size:0.84rem; text-align:center; }
+  .choice-grid{ grid-template-columns:1fr; }
+  .choice-body{ padding:14px; }
+  .choice-top{ padding:12px 14px; }
+  .choice-title{ font-size:0.94rem; gap:8px; }
+  .choice-sub{ font-size:0.80rem; }
+  .choice-link{ padding:13px 12px; font-size:0.90rem; border-radius:13px; }
 }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -1454,8 +1037,7 @@ header .auth-buttons a:hover{
     </div>
 
     <a href="postedhiring.html">Job Hiring</a>
-            <a href="dashboard.html">Jobseeker</a>
-
+    <a href="dashboard.html">Jobseeker</a>
     <a href="postjob.html">Post Jobs</a>
     <a href="applicantform.html?source=jobspacelink">Post Resume</a>
   </nav>
@@ -1480,12 +1062,31 @@ header .auth-buttons a:hover{
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+
+    <div class="mnav-group" id="mobileAboutGroup">
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
+
+      <div class="mnav-submenu" id="mobileAboutMenu">
+        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
     <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="employer_dashboard.html">Employer Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
     <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
     <a href="loginjobseeker.html">Jobseeker Login <i class="fa-solid fa-arrow-right"></i></a>
@@ -1554,7 +1155,7 @@ header .auth-buttons a:hover{
         </div>
 
         <div class="loading" id="loadingBox">
-          <i class="fa-solid fa-spinner fa-spin"></i> Checking your record...
+          <i class="fa-solid fa-spinner fa-spin"></i> Checking your record.
         </div>
 
         <div class="msg error" id="errorBox"></div>
@@ -1564,7 +1165,6 @@ header .auth-buttons a:hover{
   </div>
 </div>
 
-<!-- POST-LOGIN CHOICE MODAL -->
 <div id="choiceModal" aria-hidden="true">
   <div class="choice-box" role="dialog" aria-modal="true" aria-label="After login choice">
     <div class="choice-top">
@@ -1636,6 +1236,13 @@ header .auth-buttons a:hover{
     }
   });
 
+  const aboutLink = document.getElementById("aboutNavLink");
+  if(aboutLink){
+    aboutLink.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  }
+
   menu.querySelectorAll("a").forEach(function(a){
     a.addEventListener("click", function(){
       closeAboutMenu();
@@ -1644,27 +1251,53 @@ header .auth-buttons a:hover{
 })();
 
 /* ============================================================
-   MOBILE MENU
+   MOBILE MENU - INDEX STYLE
 ============================================================ */
 (function(){
   const btn = document.getElementById("navToggle");
   const panel = document.getElementById("mobilePanel");
+  const aboutGroup = document.getElementById("mobileAboutGroup");
+  const aboutToggle = document.getElementById("mobileAboutToggle");
   if(!btn || !panel) return;
+
+  function closeAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    aboutGroup.classList.remove("open");
+    aboutToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    const open = aboutGroup.classList.toggle("open");
+    aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
 
   function close(){
     panel.classList.remove("open");
     panel.setAttribute("aria-hidden","true");
     btn.setAttribute("aria-expanded","false");
+    closeAbout();
   }
 
   btn.addEventListener("click", ()=>{
     const open = panel.classList.toggle("open");
     panel.setAttribute("aria-hidden", open ? "false" : "true");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(!open) closeAbout();
   });
 
+  if(aboutToggle){
+    aboutToggle.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAbout();
+    });
+  }
+
   panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
-  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") close();
+  });
 
   document.addEventListener("click", (e)=>{
     if(panel.classList.contains("open")){
@@ -1697,13 +1330,11 @@ const errorBox = document.getElementById("errorBox");
 const successBox = document.getElementById("successBox");
 const loadingBox = document.getElementById("loadingBox");
 
-/* Choice modal elements */
 const choiceModal = document.getElementById("choiceModal");
 const choiceSub = document.getElementById("choiceSub");
 const goProfileLink = document.getElementById("goProfileLink");
 const goJobsLink = document.getElementById("goJobsLink");
 
-/* After-login routes */
 let __postLoginProfileUrl = "";
 
 function showError(msg){
@@ -1765,62 +1396,30 @@ togglePass.addEventListener("click", ()=>{
     : `<i class="fa-solid fa-eye"></i>`;
 });
 
-emailEl.addEventListener("input", ()=>{
-  clearMsgs();
-
-  if (emailEl.dataset.prefilled === "true"){
-    emailEl.dataset.prefilled = "false";
-    showPrefillNote(false);
-  }
-
-  persistPrefillEmail(emailEl.value);
-});
-
-/* ==========================================================
-   CHOICE MODAL
-========================================================== */
 function openChoiceModal(email){
-  choiceSub.textContent = `Logged in as: ${String(email || "").trim()}`;
+  choiceSub.textContent = email ? `Logged in as ${email}` : "Choose where you want to go next.";
   choiceModal.style.display = "flex";
-  choiceModal.setAttribute("aria-hidden","false");
-  document.body.style.overflow = "hidden";
-
-  setTimeout(()=>{
-    try{
-      goJobsLink.focus();
-    }catch(e){}
-  }, 120);
+  choiceModal.setAttribute("aria-hidden", "false");
 }
 
 function closeChoiceModal(){
   choiceModal.style.display = "none";
-  choiceModal.setAttribute("aria-hidden","true");
-  document.body.style.overflow = "";
+  choiceModal.setAttribute("aria-hidden", "true");
 }
 
 choiceModal.addEventListener("click", (e)=>{
-  if (e.target === choiceModal){
-    closeChoiceModal();
-  }
+  if(e.target === choiceModal) closeChoiceModal();
 });
 
 document.addEventListener("keydown", (e)=>{
-  if (choiceModal.style.display === "flex" && e.key === "Escape"){
+  if(e.key === "Escape" && choiceModal.style.display === "flex"){
     closeChoiceModal();
   }
 });
 
-/* Force navigation */
 goJobsLink.addEventListener("click", (e)=>{
   e.preventDefault();
-
-  const eml = normEmail(emailEl.value || localStorage.getItem("employee_email") || localStorage.getItem("jsl_login_email"));
-  if (isEmailValid(eml)){
-    persistPrefillEmail(eml);
-    window.location.replace(`postedhiring.html?email=${encodeURIComponent(eml)}&from=loginjobseeker`);
-    return;
-  }
-
+  closeChoiceModal();
   window.location.replace("postedhiring.html");
 });
 
