@@ -2499,112 +2499,68 @@ header .auth-buttons a:hover{
     width:100%;
   }
 
-  .controls-panel{
-    display:grid !important;
-    grid-template-columns:minmax(76px,.82fr) minmax(88px,.92fr) minmax(88px,.92fr) minmax(146px,1.95fr);
-    grid-template-areas:
-      "search-field favorite-filter applied-filter search-wrapper"
-      "search-btn reset-btn view-table view-grid";
-    align-items:stretch;
-    gap:7px;
-  }
-
+  .controls-panel,
   .sticky-master-inner.logged-out-mode .controls-panel{
-    display:grid !important;
-    grid-template-columns:minmax(72px,.80fr) minmax(128px,1.85fr) repeat(4,minmax(50px,.58fr));
-    grid-template-areas:"search-field search-wrapper search-btn reset-btn view-table view-grid";
-    align-items:center;
-    gap:6px;
+    display:flex !important;
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
   }
 
   .control-row-main,
-  .control-row-sub,
-  .view-toggle,
-  .sticky-master-inner.logged-out-mode .control-row-main,
-  .sticky-master-inner.logged-out-mode .control-row-sub,
-  .sticky-master-inner.logged-out-mode .view-toggle{
-    display:contents !important;
+  .sticky-master-inner.logged-out-mode .control-row-main{
+    display:grid !important;
+    grid-template-columns:1fr;
+    gap:8px;
   }
 
-  .search-field{grid-area:search-field;width:100%;}
-  .favorite-filter-field{grid-area:favorite-filter;width:100%;}
-  .applied-filter-field{grid-area:applied-filter;width:100%;}
-  .search-wrapper{grid-area:search-wrapper;width:100%;min-width:0;}
-  .search-btn{grid-area:search-btn;}
-  .reset-btn{grid-area:reset-btn;}
-  #viewTableBtn{grid-area:view-table;}
-  #viewGridOnlyBtn{grid-area:view-grid;}
+  .control-row-sub,
+  .sticky-master-inner.logged-out-mode .control-row-sub{
+    display:flex !important;
+    justify-content:flex-start;
+    width:100%;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  .view-toggle,
+  .sticky-master-inner.logged-out-mode .view-toggle{
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+    width:100%;
+    gap:8px;
+  }
+
+  .search-field,
+  .favorite-filter-field,
+  .applied-filter-field,
+  .search-wrapper{
+    width:100%;
+  }
 
   .search-field select,
   .favorite-filter-field select,
   .applied-filter-field select,
   .search-wrapper input{
     width:100%;
-    min-width:0;
     min-height:38px;
-    padding:6px 8px;
-    font-size:.74rem;
-    border-radius:10px;
+    font-size:.76rem;
   }
 
-  .search-wrapper input{
-    padding-left:33px;
-  }
-  .search-wrapper .fa-search{
-    left:10px;
-    font-size:11px;
-  }
-
-  .search-btn,.reset-btn,
-  #viewTableBtn,#viewGridOnlyBtn{
-    width:100%;
-    min-width:0;
-    min-height:38px;
-    padding:6px 7px;
-    font-size:.68rem;
-    border-radius:10px;
-    gap:4px;
-  }
-
-  .sticky-master-inner.logged-out-mode .search-field select,
-  .sticky-master-inner.logged-out-mode .search-wrapper input{
-    min-height:36px;
-    padding-top:5px;
-    padding-bottom:5px;
-    font-size:.68rem;
-  }
-
-  .sticky-master-inner.logged-out-mode .search-wrapper input{
-    padding-left:30px;
-  }
-
+  .search-btn,.reset-btn,.logout-btn,
   .sticky-master-inner.logged-out-mode .search-btn,
   .sticky-master-inner.logged-out-mode .reset-btn,
   .sticky-master-inner.logged-out-mode #viewTableBtn,
   .sticky-master-inner.logged-out-mode #viewGridOnlyBtn{
-    min-height:36px;
-    padding:5px 4px;
-    font-size:.60rem;
-    border-radius:9px;
-    gap:3px;
-    white-space:nowrap;
+    width:100%;
+    min-width:0;
+    min-height:38px;
+    font-size:.72rem;
   }
 
   .toggle-btn{
     min-height:36px;
-    font-size:.68rem;
-  }
-
-  .sticky-master-inner.logged-out-mode .toggle-btn{
-    min-height:36px;
-    font-size:.60rem;
-  }
-
-  .sticky-master-inner.logged-out-mode .search-btn i,
-  .sticky-master-inner.logged-out-mode .reset-btn i,
-  .sticky-master-inner.logged-out-mode #viewTableBtn i,
-  .sticky-master-inner.logged-out-mode #viewGridOnlyBtn i{
-    font-size:.58rem;
+    font-size:.70rem;
   }
 
   .table-section{
@@ -2772,117 +2728,76 @@ header .auth-buttons a:hover{
     font-size:.70rem;
   }
 
-  .controls-panel{
-    display:grid !important;
-    grid-template-columns:minmax(62px,.78fr) minmax(76px,.86fr) minmax(76px,.86fr) minmax(118px,1.9fr);
-    grid-template-areas:
-      "search-field favorite-filter applied-filter search-wrapper"
-      "search-btn reset-btn view-table view-grid";
-    align-items:stretch;
-    gap:6px;
-  }
-
+  .controls-panel,
   .sticky-master-inner.logged-out-mode .controls-panel{
-    display:grid !important;
-    grid-template-columns:minmax(58px,.76fr) minmax(82px,1.55fr) repeat(4,minmax(40px,.54fr));
-    grid-template-areas:"search-field search-wrapper search-btn reset-btn view-table view-grid";
-    align-items:center;
-    gap:5px;
+    display:flex !important;
+    flex-direction:column;
+    align-items:stretch;
+    gap:7px;
   }
 
   .control-row-main,
-  .control-row-sub,
-  .view-toggle,
-  .sticky-master-inner.logged-out-mode .control-row-main,
-  .sticky-master-inner.logged-out-mode .control-row-sub,
-  .sticky-master-inner.logged-out-mode .view-toggle{
-    display:contents !important;
+  .sticky-master-inner.logged-out-mode .control-row-main{
+    display:grid !important;
+    grid-template-columns:1fr;
+    gap:7px;
   }
 
-  .search-field{grid-area:search-field;width:100%;}
-  .favorite-filter-field{grid-area:favorite-filter;width:100%;}
-  .applied-filter-field{grid-area:applied-filter;width:100%;}
-  .search-wrapper{grid-area:search-wrapper;width:100%;min-width:0;}
-  .search-btn{grid-area:search-btn;}
-  .reset-btn{grid-area:reset-btn;}
-  #viewTableBtn{grid-area:view-table;}
-  #viewGridOnlyBtn{grid-area:view-grid;}
+  .control-row-sub,
+  .sticky-master-inner.logged-out-mode .control-row-sub{
+    display:flex !important;
+    width:100%;
+    gap:7px;
+    flex-wrap:wrap;
+  }
+
+  .view-toggle,
+  .sticky-master-inner.logged-out-mode .view-toggle{
+    display:grid !important;
+    grid-template-columns:1fr;
+    width:100%;
+    gap:7px;
+  }
+
+  .search-field,
+  .favorite-filter-field,
+  .applied-filter-field,
+  .search-wrapper{
+    width:100%;
+  }
 
   .search-field select,
   .favorite-filter-field select,
   .applied-filter-field select,
   .search-wrapper input{
     width:100%;
-    min-width:0;
-    min-height:36px;
-    padding:6px 7px;
-    font-size:.68rem;
-    border-radius:9px;
+    min-height:38px;
+    padding:7px 9px;
+    font-size:.76rem;
+    border-radius:10px;
   }
 
   .search-wrapper input{
-    padding-left:31px;
-  }
-  .search-wrapper .fa-search{
-    left:10px;
-    font-size:10px;
+    padding-left:34px;
   }
 
-  .search-btn,.reset-btn,
-  #viewTableBtn,#viewGridOnlyBtn{
-    width:100%;
-    min-width:0;
-    min-height:36px;
-    padding:5px 6px;
-    font-size:.63rem;
-    border-radius:9px;
-    gap:3px;
-  }
-
-  .sticky-master-inner.logged-out-mode .search-field select,
-  .sticky-master-inner.logged-out-mode .search-wrapper input{
-    min-height:34px;
-    padding:4px 6px;
-    font-size:.60rem;
-  }
-
-  .sticky-master-inner.logged-out-mode .search-wrapper input{
-    padding-left:28px;
-  }
-
-  .sticky-master-inner.logged-out-mode .search-wrapper .fa-search{
-    left:9px;
-    font-size:9px;
-  }
-
+  .search-btn,.reset-btn,.logout-btn,
   .sticky-master-inner.logged-out-mode .search-btn,
   .sticky-master-inner.logged-out-mode .reset-btn,
   .sticky-master-inner.logged-out-mode #viewTableBtn,
   .sticky-master-inner.logged-out-mode #viewGridOnlyBtn{
-    min-height:34px;
-    padding:4px 3px;
-    font-size:.56rem;
-    border-radius:8px;
-    gap:2px;
-    white-space:nowrap;
+    width:100%;
+    min-width:0;
+    min-height:38px;
+    padding:8px 9px;
+    font-size:.72rem;
+    border-radius:10px;
   }
 
   .toggle-btn{
-    min-height:36px;
+    min-height:38px;
     width:100%;
-    font-size:.64rem;
-  }
-
-  .sticky-master-inner.logged-out-mode .toggle-btn{
-    min-height:34px;
-    font-size:.56rem;
-  }
-
-  .sticky-master-inner.logged-out-mode .search-btn i,
-  .sticky-master-inner.logged-out-mode .reset-btn i,
-  .sticky-master-inner.logged-out-mode #viewTableBtn i,
-  .sticky-master-inner.logged-out-mode #viewGridOnlyBtn i{
-    font-size:.54rem;
+    font-size:.72rem;
   }
 
   .table-section{
