@@ -545,445 +545,545 @@
 
     /* 1800px and above */
     @media (min-width: 1800px){
-      :root{
-        --header-h: 94px;
-      }
-
-      body{
-        padding-top: var(--header-h);
-      }
+      :root{ --header-h:84px !important; }
 
       header{
-        padding: 0 34px 0 18px;
-        gap: 22px;
+        height:var(--header-h) !important;
+        gap:18px !important;
+        padding:0 24px 0 14px !important;
+      }
+
+      header .logo{
+        margin-left:-2px !important;
       }
 
       header .logo img{
-        height: 74px;
+        height:88px !important;
       }
 
       header nav{
-        gap: 24px;
-        margin-left: 12px;
+        display:flex !important;
+        flex:1 1 auto !important;
+        min-width:0 !important;
+        align-items:center !important;
+        justify-content:flex-start !important;
+        gap:20px !important;
+        margin-left:10px !important;
+        white-space:nowrap !important;
       }
 
       header nav > a,
       header nav .nav-main-link{
-        font-size: 1rem;
-        height: 40px;
+        height:38px !important;
+        padding:0 5px !important;
+        font-size:0.94rem !important;
       }
 
       .nav-dropdown{
-        height: 40px;
+        height:38px !important;
+      }
+
+      .nav-dropdown-trigger{
+        gap:2px !important;
+      }
+
+      .nav-dropdown-toggle{
+        width:24px !important;
+        height:24px !important;
+      }
+
+      .nav-dropdown-toggle i{
+        font-size:0.92rem !important;
       }
 
       header .auth-buttons{
-        gap: 12px;
+        display:flex !important;
+        gap:10px !important;
       }
 
       header .auth-buttons a{
-        height: 40px;
-        padding: 0 15px;
-        font-size: 0.9rem;
+        height:38px !important;
+        padding:0 14px !important;
+        font-size:0.86rem !important;
+        border-radius:10px !important;
       }
 
+      .nav-toggle{ display:none !important; }
+      .mobile-panel{ display:none !important; }
+
       .hero h1{
-        font-size: 3.35rem;
+        font-size:3.35rem;
       }
 
       .hero p{
-        font-size: 1.2rem;
+        font-size:1.2rem;
       }
     }
 
     /* 1440px to 1799px */
     @media (min-width: 1440px) and (max-width: 1799px){
-      :root{
-        --header-h: 86px;
-      }
-
-      body{
-        padding-top: var(--header-h);
-      }
+      :root{ --header-h:78px !important; }
 
       header{
-        padding: 0 24px 0 14px;
-        gap: 16px;
+        height:var(--header-h) !important;
+        gap:14px !important;
+        padding:0 18px 0 10px !important;
+      }
+
+      header .logo{
+        margin-left:-3px !important;
       }
 
       header .logo img{
-        height: 66px;
+        height:80px !important;
       }
 
       header nav{
-        gap: 16px;
+        display:flex !important;
+        flex:1 1 auto !important;
+        min-width:0 !important;
+        align-items:center !important;
+        justify-content:flex-start !important;
+        gap:15px !important;
+        margin-left:7px !important;
+        white-space:nowrap !important;
       }
 
       header nav > a,
       header nav .nav-main-link{
-        font-size: 0.92rem;
+        height:36px !important;
+        padding:0 4px !important;
+        font-size:0.84rem !important;
+      }
+
+      .nav-dropdown{
+        height:36px !important;
+      }
+
+      .nav-dropdown-toggle{
+        width:24px !important;
+        height:24px !important;
+      }
+
+      .nav-dropdown-toggle i{
+        font-size:0.88rem !important;
       }
 
       header .auth-buttons{
-        gap: 9px;
+        display:flex !important;
+        gap:7px !important;
       }
 
       header .auth-buttons a{
-        padding: 0 12px;
-        font-size: 0.84rem;
+        height:36px !important;
+        padding:0 11px !important;
+        font-size:0.79rem !important;
+        border-radius:10px !important;
       }
+
+      .nav-toggle{ display:none !important; }
+      .mobile-panel{ display:none !important; }
     }
 
     /* 1024px to 1439px */
     @media (min-width: 1024px) and (max-width: 1439px){
-      :root{
-        --header-h: 80px;
-      }
-
-      body{
-        padding-top: var(--header-h);
-      }
+      :root{ --header-h:76px !important; }
 
       header{
-        padding: 0 14px 0 8px;
-        gap: 10px;
+        height:var(--header-h) !important;
+        gap:9px !important;
+        padding:0 12px 0 6px !important;
+      }
+
+      header .logo{
+        margin-left:-2px !important;
       }
 
       header .logo img{
-        height: 56px;
+        height:66px !important;
       }
 
       header nav{
-        gap: 10px;
-        margin-left: 2px;
+        display:flex !important;
+        flex:1 1 auto !important;
+        min-width:0 !important;
+        align-items:center !important;
+        justify-content:flex-start !important;
+        gap:9px !important;
+        margin-left:3px !important;
+        white-space:nowrap !important;
       }
 
       header nav > a,
       header nav .nav-main-link{
-        font-size: 0.79rem;
-        padding: 0 2px;
+        height:34px !important;
+        padding:0 2px !important;
+        font-size:0.75rem !important;
       }
 
       .nav-dropdown{
-        height: 34px;
+        height:34px !important;
+      }
+
+      .nav-dropdown-trigger{
+        gap:1px !important;
       }
 
       .nav-dropdown-toggle{
-        width: 20px;
+        width:20px !important;
+        height:20px !important;
+      }
+
+      .nav-dropdown-toggle i{
+        font-size:0.74rem !important;
       }
 
       header .auth-buttons{
-        gap: 6px;
+        display:flex !important;
+        gap:5px !important;
       }
 
       header .auth-buttons a{
-        height: 34px;
-        padding: 0 9px;
-        font-size: 0.74rem;
+        height:32px !important;
+        padding:0 8px !important;
+        font-size:0.70rem !important;
+        border-radius:8px !important;
+        gap:5px !important;
       }
 
+      .nav-toggle{ display:none !important; }
+      .mobile-panel{ display:none !important; }
+
       .why-grid{
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        grid-template-columns:repeat(3, 1fr);
+        gap:20px;
       }
     }
 
     /* 769px to 1023px */
     @media (min-width: 769px) and (max-width: 1023px){
-      :root{
-        --header-h: 76px;
-      }
+      :root{ --header-h:74px !important; }
 
       body{
         padding-top: var(--header-h);
       }
 
       header{
-        justify-content: space-between;
-        padding: 0 12px 0 8px;
-        gap: 10px;
-      }
-
-      header nav,
-      header .auth-buttons{
-        display: none;
+        height:var(--header-h) !important;
+        gap:7px !important;
+        padding:0 8px 0 5px !important;
       }
 
       header .logo{
-        margin-left: 0;
+        margin-left:-2px !important;
       }
 
       header .logo img{
-        height: 50px;
+        height:58px !important;
       }
 
-      .nav-toggle{
-        display: inline-flex;
-        width: 42px;
-        height: 42px;
+      header nav{
+        display:flex !important;
+        flex:1 1 auto !important;
+        min-width:0 !important;
+        align-items:center !important;
+        justify-content:flex-start !important;
+        gap:7px !important;
+        margin-left:2px !important;
+        white-space:nowrap !important;
       }
 
-      .mobile-panel{
-        padding: 14px 14px 18px;
+      header nav > a,
+      header nav .nav-main-link{
+        height:31px !important;
+        padding:0 2px !important;
+        font-size:0.66rem !important;
       }
 
-      .mobile-panel .mnav a,
-      .mobile-panel .mnav-main-link,
-      .mobile-panel .mnav-toggle{
-        padding: 12px 14px;
-        border-radius: 12px;
-        font-size: 0.9rem;
+      .nav-dropdown{
+        height:31px !important;
       }
 
-      .mobile-panel .mnav-toggle{
-        width: 48px;
-        min-width: 48px;
-        padding: 12px 0;
+      .nav-dropdown-trigger{
+        gap:1px !important;
       }
 
-      .mobile-panel .mnav-submenu{
-        padding-left: 12px;
+      .nav-dropdown-toggle{
+        width:18px !important;
+        height:18px !important;
       }
+
+      .nav-dropdown-toggle i{
+        font-size:0.68rem !important;
+      }
+
+      header .auth-buttons{
+        display:flex !important;
+        gap:4px !important;
+      }
+
+      header .auth-buttons a{
+        height:30px !important;
+        padding:0 6px !important;
+        font-size:0.61rem !important;
+        border-radius:8px !important;
+        gap:4px !important;
+      }
+
+      .nav-toggle{ display:none !important; }
+      .mobile-panel{ display:none !important; }
 
       .why-grid{
-        grid-template-columns: repeat(2, 1fr);
-        gap: 22px;
+        grid-template-columns:repeat(2, 1fr);
+        gap:22px;
       }
 
       .hero{
-        padding: 88px 18px 72px;
+        padding:88px 18px 72px;
       }
 
       .hero h1{
-        font-size: 2.45rem;
+        font-size:2.45rem;
       }
 
       .hero p{
-        font-size: 1.02rem;
+        font-size:1.02rem;
       }
     }
 
     /* 481px to 768px */
     @media (min-width: 481px) and (max-width: 768px){
-      :root{
-        --header-h: 76px;
-      }
+      :root{ --header-h:72px !important; }
 
       body{
         padding-top: var(--header-h);
-        padding-bottom: 170px;
+        padding-bottom:170px;
       }
 
       header{
-        justify-content: space-between;
-        padding: 0 14px 0 10px;
-        gap: 10px;
-      }
-
-      header nav,
-      header .auth-buttons{
-        display: none;
+        height:var(--header-h) !important;
+        gap:2px !important;
+        padding:0 12px 0 8px !important;
+        justify-content:flex-start !important;
+        align-items:center !important;
       }
 
       header .logo{
-        margin-left: 0;
+        order:1 !important;
+        margin-left:0 !important;
+        margin-right:0 !important;
+        flex:0 0 auto !important;
       }
 
       header .logo img{
-        height: 50px;
+        height:54px !important;
       }
 
+      header nav{ display:none !important; }
+      header .auth-buttons{ display:none !important; }
+
       .nav-toggle{
-        display: inline-flex;
-        width: 42px;
-        height: 42px;
+        order:2 !important;
+        display:inline-flex !important;
+        width:40px !important;
+        height:40px !important;
+        border-radius:10px !important;
+        margin-left:1px !important;
+        margin-right:auto !important;
+        flex:0 0 auto !important;
+        align-self:center !important;
       }
 
       .mobile-panel{
-        padding: 14px 14px 18px;
+        top:var(--header-h) !important;
+        padding:12px 14px 16px !important;
+      }
+
+      .mobile-panel .mnav{
+        gap:8px !important;
       }
 
       .mobile-panel .mnav a,
       .mobile-panel .mnav-main-link,
       .mobile-panel .mnav-toggle{
-        padding: 11px 12px;
-        border-radius: 11px;
-        font-size: 0.88rem;
-      }
-
-      .mobile-panel .mnav-toggle{
-        width: 48px;
-        min-width: 48px;
-        padding: 11px 0;
+        padding:11px 12px !important;
+        border-radius:11px !important;
+        font-size:0.88rem !important;
       }
 
       .mobile-panel .mnav-submenu{
-        padding-left: 12px;
+        padding-left:12px !important;
       }
 
       .hero{
-        padding: 84px 18px 66px;
+        padding:84px 18px 66px;
       }
 
       .hero h1{
-        font-size: 2.2rem;
+        font-size:2.2rem;
       }
 
       .hero p{
-        font-size: 1rem;
-        line-height: 1.65;
+        font-size:1rem;
+        line-height:1.65;
       }
 
       #why-choose{
-        padding: 24px 16px 82px;
+        padding:24px 16px 82px;
       }
 
       #why-choose h2{
-        font-size: 1.9rem;
+        font-size:1.9rem;
       }
 
       .why-grid{
-        grid-template-columns: 1fr;
-        gap: 18px;
+        grid-template-columns:1fr !important;
+        gap:18px;
       }
 
       .why-card{
-        padding: 22px;
+        padding:22px;
       }
 
       .footer-simple{
-        flex-direction: column;
-        gap: 8px;
-        min-height: auto;
-        padding: 10px 16px 14px;
+        flex-direction:column;
+        gap:8px;
+        min-height:auto;
+        padding:10px 16px 14px;
       }
 
       .footer-simple .footer-logo img{
-        height: 42px;
+        height:42px;
       }
 
       .footer-simple .footer-bottom{
-        font-size: 0.8rem;
-        white-space: normal;
-        text-align: center;
+        font-size:0.8rem;
+        white-space:normal;
+        text-align:center;
       }
     }
 
     /* 480px and below */
     @media (max-width: 480px){
-      :root{
-        --header-h: 72px;
-      }
+      :root{ --header-h:70px !important; }
 
       body{
         padding-top: var(--header-h);
-        padding-bottom: 178px;
+        padding-bottom:178px;
       }
 
       header{
-        justify-content: space-between;
-        padding: 0 10px 0 6px;
-        gap: 8px;
-      }
-
-      header nav,
-      header .auth-buttons{
-        display: none;
+        height:var(--header-h) !important;
+        gap:1px !important;
+        padding:0 10px 0 8px !important;
+        justify-content:flex-start !important;
+        align-items:center !important;
       }
 
       header .logo{
-        margin-left: -2px;
+        order:1 !important;
+        flex:0 0 auto !important;
+        display:inline-flex !important;
+        align-items:center !important;
+        justify-content:flex-start !important;
+        margin-left:0 !important;
+        margin-right:0 !important;
       }
 
       header .logo img{
-        height: 42px;
+        height:50px !important;
       }
 
+      header nav{ display:none !important; }
+      header .auth-buttons{ display:none !important; }
+
       .nav-toggle{
-        display: inline-flex;
-        width: 40px;
-        height: 40px;
+        order:2 !important;
+        display:inline-flex !important;
+        width:38px !important;
+        height:38px !important;
+        border-radius:9px !important;
+        margin-left:0 !important;
+        margin-right:auto !important;
+        flex:0 0 auto !important;
+        align-self:center !important;
       }
 
       .mobile-panel{
-        padding: 12px 12px 16px;
+        top:var(--header-h) !important;
+        padding:12px 12px 14px !important;
       }
 
       .mobile-panel .mnav{
-        gap: 7px;
+        gap:7px !important;
       }
 
       .mobile-panel .mnav a,
       .mobile-panel .mnav-main-link,
       .mobile-panel .mnav-toggle{
-        padding: 11px 12px;
-        font-size: 0.92rem;
-      }
-
-      .mobile-panel .mnav-toggle{
-        width: 46px;
-        min-width: 46px;
-        padding: 11px 0;
+        padding:10px 11px !important;
+        border-radius:10px !important;
+        font-size:0.84rem !important;
       }
 
       .mobile-panel .mnav-submenu{
-        padding-left: 10px;
+        padding-left:10px !important;
       }
 
       .hero{
-        padding: 74px 14px 56px;
+        padding:74px 14px 56px;
       }
 
       .hero h1{
-        font-size: 1.9rem;
-        line-height: 1.2;
+        font-size:1.9rem;
+        line-height:1.2;
       }
 
       .hero p{
-        margin-top: 14px;
-        font-size: 0.95rem;
-        line-height: 1.65;
+        margin-top:14px;
+        font-size:0.95rem;
+        line-height:1.65;
       }
 
       #why-choose{
-        padding: 20px 14px 74px;
+        padding:20px 14px 74px;
       }
 
       #why-choose h2{
-        font-size: 1.6rem;
-        margin-bottom: 24px;
+        font-size:1.6rem;
+        margin-bottom:24px;
       }
 
       .why-grid{
-        grid-template-columns: 1fr;
-        gap: 16px;
+        grid-template-columns:1fr !important;
+        gap:16px;
       }
 
       .why-card{
-        padding: 18px;
-        border-radius: 14px;
+        padding:18px;
+        border-radius:14px;
       }
 
       .why-card i{
-        font-size: 1.9rem;
+        font-size:1.9rem;
       }
 
       .footer-simple{
-        flex-direction: column;
-        gap: 8px;
-        min-height: auto;
-        padding: 10px 14px 14px;
+        flex-direction:column;
+        gap:8px;
+        min-height:auto;
+        padding:10px 14px 14px;
       }
 
       .footer-simple .footer-logo img{
-        height: 38px;
+        height:38px;
       }
 
       .footer-simple .footer-bottom{
-        font-size: 0.76rem;
-        white-space: normal;
-        text-align: center;
-        line-height: 1.5;
+        font-size:0.76rem;
+        white-space:normal;
+        text-align:center;
+        line-height:1.5;
       }
     }
   </style>
@@ -1141,6 +1241,7 @@
     <p class="footer-bottom">© 2025 Job Space Link</p>
   </footer>
 
+  
   <script>
     /* ============================================================
        ABOUT DROPDOWN
@@ -1149,6 +1250,7 @@
       const dd = document.getElementById("aboutNavDropdown");
       const toggle = document.getElementById("aboutNavToggle");
       const menu = document.getElementById("aboutNavMenu");
+      const aboutLink = document.getElementById("aboutNavLink");
 
       if(!dd || !toggle || !menu) return;
 
@@ -1165,7 +1267,6 @@
       toggle.addEventListener("click", function(e){
         e.preventDefault();
         e.stopPropagation();
-
         const isOpen = dd.classList.contains("open");
         if(isOpen){
           closeAboutMenu();
@@ -1186,6 +1287,12 @@
         }
       });
 
+      if(aboutLink){
+        aboutLink.addEventListener("click", function(){
+          closeAboutMenu();
+        });
+      }
+
       menu.querySelectorAll("a").forEach(function(a){
         a.addEventListener("click", function(){
           closeAboutMenu();
@@ -1199,68 +1306,64 @@
     (function(){
       const btn = document.getElementById("navToggle");
       const panel = document.getElementById("mobilePanel");
-      const mobileAboutGroup = document.getElementById("mobileAboutGroup");
-      const mobileAboutToggle = document.getElementById("mobileAboutToggle");
-
+      const aboutGroup = document.getElementById("mobileAboutGroup");
+      const aboutToggle = document.getElementById("mobileAboutToggle");
       if(!btn || !panel) return;
 
-      function closeMobileAbout(){
-        if(!mobileAboutGroup || !mobileAboutToggle) return;
-        mobileAboutGroup.classList.remove("open");
-        mobileAboutToggle.setAttribute("aria-expanded", "false");
+      function closeAbout(){
+        if(!aboutGroup || !aboutToggle) return;
+        aboutGroup.classList.remove("open");
+        aboutToggle.setAttribute("aria-expanded", "false");
       }
 
-      function toggleMobileAbout(){
-        if(!mobileAboutGroup || !mobileAboutToggle) return;
-        const isOpen = mobileAboutGroup.classList.toggle("open");
-        mobileAboutToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      function toggleAbout(){
+        if(!aboutGroup || !aboutToggle) return;
+        const open = aboutGroup.classList.toggle("open");
+        aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
       }
 
-      function close(){
+      function closeMobileMenu(){
         panel.classList.remove("open");
         panel.setAttribute("aria-hidden", "true");
         btn.setAttribute("aria-expanded", "false");
-        closeMobileAbout();
+        closeAbout();
       }
 
-      function togglePanel(){
-        const isOpen = panel.classList.toggle("open");
-        panel.setAttribute("aria-hidden", isOpen ? "false" : "true");
-        btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-        if(!isOpen){
-          closeMobileAbout();
-        }
+      btn.addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        const open = panel.classList.toggle("open");
+        panel.setAttribute("aria-hidden", open ? "false" : "true");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        if(!open) closeAbout();
+      });
+
+      if(aboutToggle){
+        aboutToggle.addEventListener("click", function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          toggleAbout();
+        });
       }
 
-      btn.addEventListener("click", (e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-        togglePanel();
+      panel.querySelectorAll("a").forEach(function(a){
+        a.addEventListener("click", closeMobileMenu);
       });
 
-      mobileAboutToggle?.addEventListener("click", (e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMobileAbout();
+      document.addEventListener("keydown", function(e){
+        if(e.key === "Escape") closeMobileMenu();
       });
 
-      panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
-
-      document.addEventListener("keydown", (e)=>{
-        if(e.key === "Escape") close();
+      document.addEventListener("click", function(e){
+        if(!panel.classList.contains("open")) return;
+        const header = document.querySelector("header");
+        if(header && header.contains(e.target)) return;
+        if(panel.contains(e.target)) return;
+        closeMobileMenu();
       });
 
-      document.addEventListener("click", (e)=>{
-        if(panel.classList.contains("open")){
-          const header = document.querySelector("header");
-          if(header && header.contains(e.target)) return;
-          if(panel.contains(e.target)) return;
-          close();
-        }
-      });
-
-      window.addEventListener("resize", ()=>{
-        if(window.innerWidth > 1023) close();
+      window.addEventListener("resize", function(){
+        if(window.innerWidth >= 769) closeMobileMenu();
       }, { passive:true });
     })();
   </script>
