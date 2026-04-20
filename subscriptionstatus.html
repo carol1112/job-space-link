@@ -207,6 +207,88 @@ header .auth-buttons a:hover{
   transform:translateX(3px);
 }
 
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03);
+}
+
 .nav-dropdown{
   position:relative;
   display:inline-flex;
@@ -498,14 +580,161 @@ input:focus{
 }
 
 @media (min-width: 481px) and (max-width: 768px){
-  .wrap{margin:26px 14px 24px;padding:16px 14px 14px;}
-  .title{font-size:1.25rem;}
-  .sub{font-size:0.85rem;margin-bottom:12px;}
-  .grid{grid-template-columns:1fr;gap:12px;}
-  .card{padding:12px;}
-  .row{font-size:0.86rem;margin-top:8px;}
-  .table th,.table td{padding:7px 8px;}
-  .btn{font-size:0.9rem;}
+  :root{ --header-h:72px !important; }
+
+  body{
+    padding-top:var(--header-h) !important;
+  }
+
+  .wrap{
+    margin:14px 10px 16px !important;
+    padding:10px 10px 11px !important;
+    border-radius:16px !important;
+  }
+
+  .title{
+    font-size:1.04rem !important;
+    gap:7px !important;
+    margin-bottom:2px !important;
+  }
+
+  .sub{
+    font-size:0.72rem !important;
+    margin-bottom:8px !important;
+    line-height:1.18 !important;
+  }
+
+  .grid{
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+  }
+
+  .card{
+    padding:8px 8px 9px !important;
+    border-radius:12px !important;
+  }
+
+  .badge{
+    font-size:0.66rem !important;
+    padding:4px 6px !important;
+    gap:6px !important;
+  }
+
+  .row{
+    margin-top:5px !important;
+    gap:8px !important;
+    font-size:0.70rem !important;
+  }
+
+  .row span:first-child{
+    font-size:0.68rem !important;
+  }
+
+  .row span:last-child{
+    font-size:0.70rem !important;
+  }
+
+  .table{
+    display:block !important;
+    width:100% !important;
+    overflow-x:auto !important;
+    white-space:nowrap !important;
+    margin-top:6px !important;
+    font-size:0.66rem !important;
+  }
+
+  .table th,
+  .table td{
+    padding:5px 6px !important;
+    font-size:0.64rem !important;
+  }
+
+  .form-row{
+    margin-bottom:6px !important;
+  }
+
+  label{
+    font-size:0.68rem !important;
+    margin-bottom:2px !important;
+  }
+
+  input{
+    padding:6px 7px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+  }
+
+  .btn{
+    padding:8px 10px !important;
+    font-size:0.74rem !important;
+    border-radius:10px !important;
+  }
+
+  .btn.danger{
+    margin-top:4px !important;
+  }
+
+  #msg{
+    margin-top:6px !important;
+    font-size:0.68rem !important;
+  }
+
+  header{
+    height:var(--header-h) !important;
+    gap:2px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:1px !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
+  }
 }
 
 @media (max-width: 1280px){
@@ -525,22 +754,164 @@ input:focus{
 }
 
 @media (max-width: 480px){
-  :root{ --header-h: 72px; }
-  .wrap{margin:16px 12px 20px;padding:14px 12px 12px;border-radius:18px;}
-  .title{font-size:1.15rem;}
-  .sub{font-size:0.82rem;margin-bottom:10px;line-height:1.25;}
-  .grid{grid-template-columns:1fr;gap:10px;}
-  .card{padding:12px;border-radius:14px;}
-  .badge{font-size:0.78rem;padding:5px 8px;}
-  .row{font-size:0.84rem;margin-top:6px;}
-  .table{display:block;overflow-x:auto;white-space:nowrap;}
-  .table th,.table td{padding:7px 8px;}
-  input{padding:8px 9px;font-size:0.9rem;}
-  .btn{padding:10px 12px;font-size:0.9rem;border-radius:12px;}
-  #msg{font-size:0.82rem;}
-  header{padding:0 10px 0 6px;}
-  header .logo{margin-left:-2px;}
-  header .logo img{height:42px;}
+  :root{ --header-h:70px !important; }
+
+  body{
+    padding-top:var(--header-h) !important;
+  }
+
+  .wrap{
+    margin:10px 8px 14px !important;
+    padding:7px 7px 8px !important;
+    border-radius:13px !important;
+  }
+
+  .title{
+    font-size:0.90rem !important;
+    gap:6px !important;
+    margin-bottom:2px !important;
+  }
+
+  .sub{
+    font-size:0.62rem !important;
+    margin-bottom:6px !important;
+    line-height:1.14 !important;
+  }
+
+  .grid{
+    grid-template-columns:1fr !important;
+    gap:7px !important;
+  }
+
+  .card{
+    padding:6px 6px 7px !important;
+    border-radius:10px !important;
+  }
+
+  .badge{
+    font-size:0.58rem !important;
+    padding:4px 6px !important;
+    gap:5px !important;
+  }
+
+  .row{
+    margin-top:4px !important;
+    gap:7px !important;
+    font-size:0.62rem !important;
+  }
+
+  .row span:first-child{
+    font-size:0.60rem !important;
+  }
+
+  .row span:last-child{
+    font-size:0.62rem !important;
+  }
+
+  .table{
+    display:block !important;
+    width:100% !important;
+    overflow-x:auto !important;
+    white-space:nowrap !important;
+    margin-top:5px !important;
+    font-size:0.58rem !important;
+  }
+
+  .table th,
+  .table td{
+    padding:4px 5px !important;
+    font-size:0.56rem !important;
+  }
+
+  .form-row{
+    margin-bottom:5px !important;
+  }
+
+  label{
+    font-size:0.58rem !important;
+    margin-bottom:1px !important;
+  }
+
+  input{
+    padding:5px 6px !important;
+    font-size:0.62rem !important;
+    border-radius:7px !important;
+  }
+
+  .btn{
+    padding:7px 8px !important;
+    font-size:0.66rem !important;
+    border-radius:8px !important;
+  }
+
+  .btn.danger{
+    margin-top:3px !important;
+  }
+
+  #msg{
+    margin-top:5px !important;
+    font-size:0.60rem !important;
+  }
+
+  header{
+    height:var(--header-h) !important;
+    gap:1px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
+  }
 }
 
 @media(max-width:900px){
@@ -608,12 +979,31 @@ input:focus{
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+
+    <div class="mnav-group" id="mobileAboutGroup">
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
+
+      <div class="mnav-submenu" id="mobileAboutMenu">
+        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
     <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
     <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
     <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
@@ -727,19 +1117,43 @@ input:focus{
 (function(){
   const btn = document.getElementById("navToggle");
   const panel = document.getElementById("mobilePanel");
+  const aboutGroup = document.getElementById("mobileAboutGroup");
+  const aboutToggle = document.getElementById("mobileAboutToggle");
   if(!btn || !panel) return;
+
+  function closeAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    aboutGroup.classList.remove("open");
+    aboutToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    const open = aboutGroup.classList.toggle("open");
+    aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
 
   function close(){
     panel.classList.remove("open");
     panel.setAttribute("aria-hidden","true");
     btn.setAttribute("aria-expanded","false");
+    closeAbout();
   }
 
   btn.addEventListener("click", ()=>{
     const open = panel.classList.toggle("open");
     panel.setAttribute("aria-hidden", open ? "false" : "true");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(!open) closeAbout();
   });
+
+  if(aboutToggle){
+    aboutToggle.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAbout();
+    });
+  }
 
   panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
   document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
@@ -754,7 +1168,7 @@ input:focus{
   });
 
   window.addEventListener("resize", ()=>{
-    if(window.innerWidth > 920) close();
+    if(window.innerWidth >= 769) close();
   }, { passive:true });
 })();
 
