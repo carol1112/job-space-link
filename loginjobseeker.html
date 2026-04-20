@@ -155,8 +155,8 @@ header .auth-buttons a:hover{
 
 .nav-toggle{
   display:none;
-  width:42px;
-  height:42px;
+  width:40px;
+  height:40px;
   border:none;
   border-radius:10px;
   background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
@@ -174,7 +174,7 @@ header .auth-buttons a:hover{
 }
 
 /* ============================================================
-   MOBILE PANEL - INDEX STYLE
+   MOBILE PANEL - MATCHED TO INDEX FILE
 ============================================================ */
 .mobile-panel{
   position:fixed;
@@ -263,11 +263,12 @@ header .auth-buttons a:hover{
 
 .mobile-panel .mnav-toggle{
   flex:0 0 48px;
-  min-width:48px;
   width:48px;
+  min-width:48px;
+  width:100%;
   display:flex;
   align-items:center;
-  justify-content:center;
+  justify-content:space-between;
   gap:12px;
   padding:12px 14px;
   border-radius:12px;
@@ -278,6 +279,12 @@ header .auth-buttons a:hover{
   font-size:0.96rem;
   cursor:pointer;
   transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle .mnav-toggle-left{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
 }
 
 .mobile-panel .mnav-toggle:hover{
@@ -867,7 +874,7 @@ header .auth-buttons a:hover{
   .choice-sub{ font-size:0.82rem; }
 }
 
-/* INDEX-LIKE MOBILE HAMBURGER DISPLAY */
+/* INDEX FILE MOBILE HAMBURGER DISPLAY */
 @media (min-width: 481px) and (max-width: 768px){
   :root{ --header-h:72px !important; --hdrH:72px; }
 
