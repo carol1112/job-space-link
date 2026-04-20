@@ -224,6 +224,71 @@ header .auth-buttons a:hover{
   transform:translateX(3px);
 }
 
+.mobile-panel .mnav-dropdown{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-dropdown-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-dropdown-link{
+  flex:1 1 auto;
+}
+
+.mobile-panel .mnav-dropdown-toggle{
+  flex:0 0 48px;
+  min-width:48px;
+  min-height:48px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-dropdown-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateY(-1px);
+}
+
+.mobile-panel .mnav-dropdown-toggle i{
+  transition:transform 0.25s ease;
+  pointer-events:none;
+}
+
+.mobile-panel .mnav-dropdown.open .mnav-dropdown-toggle i{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-dropdown.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  padding:10px 12px;
+  border-radius:12px;
+  font-size:0.88rem;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+}
+
 /* ABOUT NAV */
 .nav-dropdown{
   position:relative;
@@ -2410,7 +2475,8 @@ header .auth-buttons a:hover{
     top:72px;
     padding:12px 14px 16px;
   }
-  .mobile-panel .mnav a{
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-dropdown-toggle{
     padding:11px 12px;
     border-radius:11px;
     font-size:0.92rem;
@@ -2620,7 +2686,8 @@ header .auth-buttons a:hover{
   .mobile-panel .mnav{
     gap:7px;
   }
-  .mobile-panel .mnav a{
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-dropdown-toggle{
     padding:10px 11px;
     border-radius:10px;
     font-size:0.88rem;
@@ -2924,16 +2991,33 @@ header .auth-buttons a:hover{
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+
+    <div class="mnav-dropdown" id="mobileAboutDropdown">
+      <div class="mnav-dropdown-head">
+        <a href="about.html" class="mnav-dropdown-link">About</a>
+        <button
+          type="button"
+          class="mnav-dropdown-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down"></i>
+        </button>
+      </div>
+
+      <div class="mnav-submenu" id="mobileAboutMenu">
+        <a href="why choose us.html"><span>Why Choose Us</span> <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html"><span>How It Works</span> <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
     <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="employer_dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
     <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
@@ -5984,6 +6068,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     const menu = document.getElementById("aboutNavMenu");
     const navBtn = document.getElementById("navToggle");
     const mobilePanel = document.getElementById("mobilePanel");
+    const mobileAboutDropdown = document.getElementById("mobileAboutDropdown");
+    const mobileAboutToggle = document.getElementById("mobileAboutToggle");
+    const mobileAboutMenu = document.getElementById("mobileAboutMenu");
 
     function closeAboutMenu(){
       if (!dd || !toggle) return;
@@ -5995,6 +6082,18 @@ window.addEventListener("DOMContentLoaded", async () => {
       if (!dd || !toggle) return;
       dd.classList.add("open");
       toggle.setAttribute("aria-expanded", "true");
+    }
+
+    function closeMobileAboutMenu(){
+      if (!mobileAboutDropdown || !mobileAboutToggle) return;
+      mobileAboutDropdown.classList.remove("open");
+      mobileAboutToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function openMobileAboutMenu(){
+      if (!mobileAboutDropdown || !mobileAboutToggle) return;
+      mobileAboutDropdown.classList.add("open");
+      mobileAboutToggle.setAttribute("aria-expanded", "true");
     }
 
     if (toggle && dd && menu){
@@ -6015,17 +6114,33 @@ window.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
+    if (mobileAboutToggle && mobileAboutDropdown && mobileAboutMenu){
+      mobileAboutToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = mobileAboutDropdown.classList.contains("open");
+        if (isOpen) closeMobileAboutMenu();
+        else openMobileAboutMenu();
+      });
+
+      mobileAboutMenu.querySelectorAll("a").forEach((a) => {
+        a.addEventListener("click", () => closeMobileAboutMenu());
+      });
+    }
+
     if (navBtn && mobilePanel){
       function closeMobilePanel(){
         mobilePanel.classList.remove("open");
         mobilePanel.setAttribute("aria-hidden", "true");
         navBtn.setAttribute("aria-expanded", "false");
+        closeMobileAboutMenu();
       }
 
       navBtn.addEventListener("click", () => {
         const isOpen = mobilePanel.classList.toggle("open");
         mobilePanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
         navBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        if (!isOpen) closeMobileAboutMenu();
       });
 
       mobilePanel.querySelectorAll("a").forEach((a) => {
@@ -6048,6 +6163,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape"){
         closeAboutMenu();
+        closeMobileAboutMenu();
         if (mobilePanel && navBtn){
           mobilePanel.classList.remove("open");
           mobilePanel.setAttribute("aria-hidden", "true");
