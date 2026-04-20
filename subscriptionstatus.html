@@ -918,10 +918,40 @@ input:focus{
   .wrap{margin-left:14px;margin-right:14px;}
   .grid{grid-template-columns:1fr;}
 }
+
+
+/* ============================================================
+   MOBILE CENTERING PATCH
+============================================================ */
+@media (max-width: 768px){
+  body.subscription-status-page{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .wrap{
+    margin-top:auto !important;
+    margin-bottom:auto !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  .wrap{
+    width:min(94%, 560px) !important;
+  }
+}
+
+@media (max-width: 480px){
+  .wrap{
+    width:min(95%, 420px) !important;
+  }
+}
+
 </style>
 </head>
 
-<body>
+<body class="subscription-status-page">
 
 <header>
   <div class="logo">
