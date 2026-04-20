@@ -49,27 +49,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tiff.js/1.0.0/tiff.min.js"></script>
 
 <style>
+
+  
 /* ============================================================
-   RESET + GLOBAL
-============================================================ */
-html, body{
+   PAGE RESET + FIXED FOOTER SPACING + SCROLL OFFSET
+=========================================================== */
+:root{ --header-h: 78px; }
+
+html, body {
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
   height:100%;
 }
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins","Segoe UI",sans-serif;}
-body{
-  background: radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #0f172a);
-  color:#e5e7eb;
-  overflow:hidden;
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
 }
 
-h1,h2,h3,h4,h5,h6,strong,b,th,label,button{
-  font-weight:400;
+body{
+  padding-top: var(--header-h);
+  padding-bottom:100px;
+  background:#0f172a;
+  color:white;
+  font-family:"Poppins",sans-serif;
 }
 
 /* ============================================================
    HEADER - COMPRESSED
 =========================================================== */
-body > header{
+header{
   position:fixed;
   top:0;
   left:0;
@@ -87,7 +97,7 @@ body > header{
   z-index:1500;
 }
 
-body > header .logo{
+header .logo{
   flex:0 0 auto;
   display:flex;
   align-items:center;
@@ -95,7 +105,7 @@ body > header .logo{
   margin-left:-4px;
 }
 
-body > header .logo img{
+header .logo img{
   height:80px;
   width:auto;
   display:block;
@@ -103,7 +113,7 @@ body > header .logo img{
   filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
 }
 
-body > header nav{
+header nav{
   flex:1 1 auto;
   min-width:0;
   display:flex;
@@ -114,8 +124,8 @@ body > header nav{
   white-space:nowrap;
 }
 
-body > header nav > a,
-body > header nav .nav-main-link{
+header nav > a,
+header nav .nav-main-link{
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -128,16 +138,13 @@ body > header nav .nav-main-link{
   transition:color 0.25s ease, text-shadow 0.25s ease;
 }
 
-body > header nav > a:hover,
-body > header nav .nav-main-link:hover,
-body > header nav > a:focus-visible,
-body > header nav .nav-main-link:focus-visible{
+header nav > a:hover,
+header nav .nav-main-link:hover{
   color:#ffffff;
   text-shadow:0 0 12px rgba(0,198,255,0.55);
-  outline:none;
 }
 
-body > header .auth-buttons{
+header .auth-buttons{
   flex:0 0 auto;
   display:flex;
   align-items:center;
@@ -146,7 +153,7 @@ body > header .auth-buttons{
   white-space:nowrap;
 }
 
-body > header .auth-buttons a{
+header .auth-buttons a{
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -164,12 +171,10 @@ body > header .auth-buttons a{
   transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-body > header .auth-buttons a:hover,
-body > header .auth-buttons a:focus-visible{
+header .auth-buttons a:hover{
   transform:translateY(-2px);
   box-shadow:0 0 20px rgba(0,198,255,0.22);
   border-color:rgba(0,198,255,0.35);
-  outline:none;
 }
 
 .nav-toggle{
@@ -548,10 +553,15 @@ body > header .nav-dropdown-menu i{
     height:var(--header-h) !important;
     gap:10px !important;
     padding:0 12px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
   body > header .logo{
-    margin-left:-2px !important;
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
   }
 
   body > header .logo img{
@@ -562,10 +572,15 @@ body > header .nav-dropdown-menu i{
   body > header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
+    order:2 !important;
     display:inline-flex !important;
     width:40px !important;
     height:40px !important;
     border-radius:10px !important;
+    margin-left:1px !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
   .mobile-panel{
@@ -577,7 +592,9 @@ body > header .nav-dropdown-menu i{
     gap:8px !important;
   }
 
-  .mobile-panel .mnav a{
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
     padding:11px 12px !important;
     border-radius:11px !important;
     font-size:0.88rem !important;
@@ -589,12 +606,20 @@ body > header .nav-dropdown-menu i{
 
   body > header{
     height:var(--header-h) !important;
-    gap:8px !important;
-    padding:0 10px 0 6px !important;
+    gap:1px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
 
   body > header .logo{
-    margin-left:-2px !important;
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
   }
 
   body > header .logo img{
@@ -605,10 +630,15 @@ body > header .nav-dropdown-menu i{
   body > header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
+    order:2 !important;
     display:inline-flex !important;
     width:38px !important;
     height:38px !important;
     border-radius:9px !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
 
   .mobile-panel{
@@ -620,7 +650,9 @@ body > header .nav-dropdown-menu i{
     gap:7px !important;
   }
 
-  .mobile-panel .mnav a{
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
     padding:10px 11px !important;
     border-radius:10px !important;
     font-size:0.84rem !important;
@@ -632,7 +664,7 @@ body > header .nav-dropdown-menu i{
 ============================================================ */
 :root{
   --header-h: 78px;
-  --app-header-offset: 78px;
+  --app-header-offset: var(--header-h);
   --sticky-stack-gap: 10px;
   --controls-sticky-height: 0px;
 }
@@ -12838,274 +12870,7 @@ body.employer-logged-in .employer-session-account-card{
 
 </style>
 
-<style id="header-compact-override">
-/* ============================================================
-   HEADER COMPACT OVERRIDE — LOGO SMALLER + NAV IN ONE ROW
-============================================================ */
-@media (min-width: 769px){
-  :root{
-    --header-h: 72px !important;
-    --app-header-offset: var(--header-h) !important;
-  }
 
-  header,
-  body > header{
-    height:var(--header-h) !important;
-    min-height:var(--header-h) !important;
-    padding:0 8px 0 6px !important;
-    gap:6px !important;
-    align-items:center !important;
-    justify-content:space-between !important;
-    flex-wrap:nowrap !important;
-  }
-
-  header .logo,
-  body > header .logo{
-    flex:0 0 auto !important;
-    margin-left:0 !important;
-  }
-
-  header .logo img,
-  body > header .logo img{
-    height:54px !important;
-    width:auto !important;
-    max-width:none !important;
-  }
-
-  header nav,
-  body > header nav{
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:6px !important;
-    margin-left:0 !important;
-    white-space:nowrap !important;
-    flex-wrap:nowrap !important;
-    overflow:visible !important;
-  }
-
-  header,
-  body > header,
-  header .nav-dropdown,
-  body > header .nav-dropdown,
-  header .nav-dropdown-menu,
-  body > header .nav-dropdown-menu{
-    overflow:visible !important;
-  }
-
-  header .nav-dropdown,
-  body > header .nav-dropdown{
-    position:relative !important;
-    z-index:1601 !important;
-  }
-
-  header .nav-dropdown-menu,
-  body > header .nav-dropdown-menu{
-    z-index:1700 !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link,
-  body > header nav > a,
-  body > header nav .nav-main-link,
-  body > header nav > .nav-dropdown > a{
-    height:28px !important;
-    padding:0 1px !important;
-    font-size:0.66rem !important;
-    font-weight:600 !important;
-    line-height:1 !important;
-    letter-spacing:0 !important;
-    flex:0 0 auto !important;
-  }
-
-  header .nav-dropdown,
-  body > header .nav-dropdown{
-    height:28px !important;
-    flex:0 0 auto !important;
-  }
-
-  header .nav-dropdown-trigger,
-  body > header .nav-dropdown-trigger{
-    gap:0 !important;
-    height:100% !important;
-  }
-
-  header .nav-dropdown-toggle,
-  body > header .nav-dropdown-toggle{
-    width:18px !important;
-    height:18px !important;
-    padding:0 !important;
-  }
-
-  header .nav-dropdown-toggle i,
-  body > header .nav-dropdown-toggle i,
-  header .nav-caret,
-  body > header .nav-caret{
-    font-size:0.62rem !important;
-    margin-left:0 !important;
-  }
-
-  header .auth-buttons,
-  body > header .auth-buttons{
-    flex:0 0 auto !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:flex-end !important;
-    gap:4px !important;
-    white-space:nowrap !important;
-  }
-
-  header .auth-buttons a,
-  body > header .auth-buttons a{
-    height:28px !important;
-    padding:0 6px !important;
-    font-size:0.60rem !important;
-    gap:4px !important;
-    border-radius:8px !important;
-  }
-}
-
-@media (min-width: 1024px){
-  :root{
-    --header-h: 74px !important;
-    --app-header-offset: var(--header-h) !important;
-  }
-
-  header,
-  body > header{
-    padding:0 10px 0 6px !important;
-    gap:7px !important;
-  }
-
-  header .logo img,
-  body > header .logo img{
-    height:58px !important;
-  }
-
-  header nav,
-  body > header nav{
-    gap:8px !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link,
-  body > header nav > a,
-  body > header nav .nav-main-link,
-  body > header nav > .nav-dropdown > a{
-    height:30px !important;
-    font-size:0.70rem !important;
-    padding:0 2px !important;
-  }
-
-  header .nav-dropdown,
-  body > header .nav-dropdown{
-    height:30px !important;
-  }
-
-  header .nav-dropdown-toggle,
-  body > header .nav-dropdown-toggle{
-    width:19px !important;
-    height:19px !important;
-  }
-
-  header .nav-dropdown-toggle i,
-  body > header .nav-dropdown-toggle i,
-  header .nav-caret,
-  body > header .nav-caret{
-    font-size:0.66rem !important;
-  }
-
-  header .auth-buttons a,
-  body > header .auth-buttons a{
-    height:30px !important;
-    padding:0 7px !important;
-    font-size:0.64rem !important;
-  }
-}
-
-@media (min-width: 1440px){
-  :root{
-    --header-h: 76px !important;
-    --app-header-offset: var(--header-h) !important;
-  }
-
-  header,
-  body > header{
-    padding:0 12px 0 8px !important;
-    gap:8px !important;
-  }
-
-  header .logo img,
-  body > header .logo img{
-    height:62px !important;
-  }
-
-  header nav,
-  body > header nav{
-    gap:10px !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link,
-  body > header nav > a,
-  body > header nav .nav-main-link,
-  body > header nav > .nav-dropdown > a{
-    font-size:0.74rem !important;
-  }
-
-  header .auth-buttons a,
-  body > header .auth-buttons a{
-    font-size:0.68rem !important;
-    padding:0 8px !important;
-  }
-}
-
-@media (min-width: 1800px){
-  :root{
-    --header-h: 78px !important;
-    --app-header-offset: var(--header-h) !important;
-  }
-
-  header,
-  body > header{
-    padding:0 14px 0 8px !important;
-    gap:10px !important;
-  }
-
-  header .logo img,
-  body > header .logo img{
-    height:66px !important;
-  }
-
-  header nav,
-  body > header nav{
-    gap:12px !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link,
-  body > header nav > a,
-  body > header nav .nav-main-link,
-  body > header nav > .nav-dropdown > a{
-    font-size:0.78rem !important;
-  }
-
-  header .auth-buttons a,
-  body > header .auth-buttons a{
-    font-size:0.72rem !important;
-    padding:0 9px !important;
-  }
-}
-
-@media (max-width: 768px){
-  header .logo img,
-  body > header .logo img{
-    height:46px !important;
-  }
-}
-</style>
 
 
 <style id="laptop-table-contact-favorite-fix">
