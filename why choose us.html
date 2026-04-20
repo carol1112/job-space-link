@@ -238,6 +238,88 @@
       transform: translateX(3px);
     }
 
+    .mobile-panel .mnav-group{
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobile-panel .mnav-row{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mobile-panel .mnav-main-link{
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #e5e7eb;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-weight: 600;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    }
+
+    .mobile-panel .mnav-main-link:hover{
+      background: rgba(0,198,255,0.12);
+      color: #fff;
+      transform: translateX(3px);
+    }
+
+    .mobile-panel .mnav-toggle{
+      flex: 0 0 48px;
+      width: 48px;
+      min-width: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: #e5e7eb;
+      font-weight: 600;
+      font-size: 0.96rem;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    }
+
+    .mobile-panel .mnav-toggle:hover{
+      background: rgba(0,198,255,0.12);
+      color: #fff;
+      transform: translateX(3px);
+    }
+
+    .mobile-panel .mnav-toggle .mnav-caret{
+      transition: transform 0.25s ease;
+    }
+
+    .mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+      transform: rotate(180deg);
+    }
+
+    .mobile-panel .mnav-submenu{
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 14px;
+    }
+
+    .mobile-panel .mnav-group.open .mnav-submenu{
+      display: flex;
+    }
+
+    .mobile-panel .mnav-submenu a{
+      background: rgba(255,255,255,0.03);
+    }
+
     /* ============================================================
        ABOUT DROPDOWN
     ============================================================ */
@@ -617,8 +699,14 @@
       }
 
       header{
-        padding: 0 10px 0 6px;
-        gap: 8px;
+        justify-content: space-between;
+        padding: 0 12px 0 8px;
+        gap: 10px;
+      }
+
+      header nav,
+      header .auth-buttons{
+        display: none;
       }
 
       header .logo{
@@ -629,50 +717,32 @@
         height: 50px;
       }
 
-      header nav{
-        display: flex;
-        gap: 8px;
-        margin-left: 0;
-      }
-
-      header nav > a,
-      header nav .nav-main-link{
-        font-size: 0.69rem;
-        padding: 0 1px;
-        height: 34px;
-      }
-
-      .nav-dropdown{
-        height: 34px;
-      }
-
-      .nav-dropdown-toggle{
-        width: 18px;
-        height: 22px;
-      }
-
-      .nav-dropdown-toggle i{
-        font-size: 0.72rem;
-      }
-
-      .nav-dropdown-menu{
-        min-width: 190px;
-      }
-
-      header .auth-buttons{
-        display: flex;
-        gap: 4px;
-      }
-
-      header .auth-buttons a{
-        height: 32px;
-        padding: 0 7px;
-        font-size: 0.66rem;
-        border-radius: 8px;
-      }
-
       .nav-toggle{
-        display: none !important;
+        display: inline-flex;
+        width: 42px;
+        height: 42px;
+      }
+
+      .mobile-panel{
+        padding: 14px 14px 18px;
+      }
+
+      .mobile-panel .mnav a,
+      .mobile-panel .mnav-main-link,
+      .mobile-panel .mnav-toggle{
+        padding: 12px 14px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+      }
+
+      .mobile-panel .mnav-toggle{
+        width: 48px;
+        min-width: 48px;
+        padding: 12px 0;
+      }
+
+      .mobile-panel .mnav-submenu{
+        padding-left: 12px;
       }
 
       .why-grid{
@@ -705,6 +775,7 @@
       }
 
       header{
+        justify-content: space-between;
         padding: 0 14px 0 10px;
         gap: 10px;
       }
@@ -712,6 +783,10 @@
       header nav,
       header .auth-buttons{
         display: none;
+      }
+
+      header .logo{
+        margin-left: 0;
       }
 
       header .logo img{
@@ -726,6 +801,24 @@
 
       .mobile-panel{
         padding: 14px 14px 18px;
+      }
+
+      .mobile-panel .mnav a,
+      .mobile-panel .mnav-main-link,
+      .mobile-panel .mnav-toggle{
+        padding: 11px 12px;
+        border-radius: 11px;
+        font-size: 0.88rem;
+      }
+
+      .mobile-panel .mnav-toggle{
+        width: 48px;
+        min-width: 48px;
+        padding: 11px 0;
+      }
+
+      .mobile-panel .mnav-submenu{
+        padding-left: 12px;
       }
 
       .hero{
@@ -788,6 +881,7 @@
       }
 
       header{
+        justify-content: space-between;
         padding: 0 12px 0 8px;
         gap: 8px;
       }
@@ -819,9 +913,21 @@
         gap: 7px;
       }
 
-      .mobile-panel .mnav a{
+      .mobile-panel .mnav a,
+      .mobile-panel .mnav-main-link,
+      .mobile-panel .mnav-toggle{
         padding: 11px 12px;
         font-size: 0.92rem;
+      }
+
+      .mobile-panel .mnav-toggle{
+        width: 46px;
+        min-width: 46px;
+        padding: 11px 0;
+      }
+
+      .mobile-panel .mnav-submenu{
+        padding-left: 10px;
       }
 
       .hero{
@@ -949,16 +1055,34 @@
   <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
     <div class="mnav">
       <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
-      <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
-      <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-      <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
-      <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+
+      <div class="mnav-group" id="mobileAboutGroup">
+        <div class="mnav-row">
+          <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+          <button
+            type="button"
+            class="mnav-toggle"
+            id="mobileAboutToggle"
+            aria-expanded="false"
+            aria-controls="mobileAboutMenu"
+            aria-label="Toggle About submenu"
+          >
+            <i class="fa-solid fa-caret-down mnav-caret"></i>
+          </button>
+        </div>
+
+        <div class="mnav-submenu" id="mobileAboutMenu">
+          <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
       <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-      <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+      <a href="dashboard.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
+      <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
       <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-      <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
-      <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
-      <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+      <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
+      <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
       <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
     </div>
   </div>
@@ -1075,22 +1199,56 @@
     (function(){
       const btn = document.getElementById("navToggle");
       const panel = document.getElementById("mobilePanel");
+      const mobileAboutGroup = document.getElementById("mobileAboutGroup");
+      const mobileAboutToggle = document.getElementById("mobileAboutToggle");
+
       if(!btn || !panel) return;
+
+      function closeMobileAbout(){
+        if(!mobileAboutGroup || !mobileAboutToggle) return;
+        mobileAboutGroup.classList.remove("open");
+        mobileAboutToggle.setAttribute("aria-expanded", "false");
+      }
+
+      function toggleMobileAbout(){
+        if(!mobileAboutGroup || !mobileAboutToggle) return;
+        const isOpen = mobileAboutGroup.classList.toggle("open");
+        mobileAboutToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      }
 
       function close(){
         panel.classList.remove("open");
-        panel.setAttribute("aria-hidden","true");
-        btn.setAttribute("aria-expanded","false");
+        panel.setAttribute("aria-hidden", "true");
+        btn.setAttribute("aria-expanded", "false");
+        closeMobileAbout();
       }
 
-      btn.addEventListener("click", ()=>{
-        const open = panel.classList.toggle("open");
-        panel.setAttribute("aria-hidden", open ? "false" : "true");
-        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      function togglePanel(){
+        const isOpen = panel.classList.toggle("open");
+        panel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+        btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        if(!isOpen){
+          closeMobileAbout();
+        }
+      }
+
+      btn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        togglePanel();
+      });
+
+      mobileAboutToggle?.addEventListener("click", (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMobileAbout();
       });
 
       panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
-      document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+      document.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape") close();
+      });
 
       document.addEventListener("click", (e)=>{
         if(panel.classList.contains("open")){
@@ -1102,7 +1260,7 @@
       });
 
       window.addEventListener("resize", ()=>{
-        if(window.innerWidth > 768) close();
+        if(window.innerWidth > 1023) close();
       }, { passive:true });
     })();
   </script>
