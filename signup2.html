@@ -5,263 +5,837 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Employer Signup | Job Space Link</title>
 
-<!-- ICONS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 <link rel="stylesheet" href="jobspacelink.css" />
-<!-- LOAD SUPABASE (ONCE) + GLOBAL CLIENT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase_config.js"></script>
 
 <style>
-/* ===== CONTAINER ===== */
+:root{ --header-h: 78px; }
+
+*{ margin:0; padding:0; box-sizing:border-box; font-family:"Poppins","Segoe UI",sans-serif; }
+
+html, body{
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+  min-height:100%;
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 16px);
+}
+
+body{
+  min-height:100vh;
+  padding-top:var(--header-h);
+  background:radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #020617);
+  color:#e5e7eb;
+}
+
+/* ============================================================
+   HEADER - INDEX STYLE
+============================================================ */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+  transition:transform 0.28s ease, filter 0.28s ease;
+}
+
+header .logo:hover img{
+  transform:scale(1.08);
+  filter:drop-shadow(0 0 12px rgba(0,198,255,0.55));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease, transform 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+  transform:translateY(-1px);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{ font-size:1rem; }
+
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+  max-height:calc(100vh - var(--header-h));
+  overflow-y:auto;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{ display:flex; }
+.mobile-panel .mnav-submenu a{ background:rgba(255,255,255,0.03); }
+
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{ display:flex; }
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{ width:18px; text-align:center; }
+
+/* ============================================================
+   PAGE CONTENT
+============================================================ */
 .signup-container{
-  display:flex;justify-content:center;align-items:center;
-  min-height:calc(100vh - 160px);padding:20px;
-  margin-top: 40px;
+  width:100%;
+  min-height:calc(100vh - var(--header-h));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:34px 20px 28px;
 }
+
 .signup-box{
-  background:rgba(15,23,42,0.9);
-  border:2px solid rgba(59,130,246,0.4);
-  border-radius:20px;
-  box-shadow:0 0 25px rgba(59,130,246,0.3),
-              inset 0 0 20px rgba(147,51,234,0.15);
-  padding:45px 40px;
-  width:100%;max-width:420px;text-align:center;color:#fff;
+  position:relative;
+  width:100%;
+  max-width:430px;
+  text-align:center;
+  color:#fff;
+  background:rgba(15,23,42,0.92);
+  border:1.5px solid rgba(59,130,246,0.40);
+  border-radius:22px;
+  box-shadow:0 0 28px rgba(59,130,246,0.24), inset 0 0 18px rgba(147,51,234,0.12);
+  padding:34px 30px 30px;
 }
 
-/* ===== HEADINGS ===== */
 .signup-box h2{
-  font-size:1.9rem;margin-bottom:25px;color:#c0ff33;
-  text-shadow:0 0 15px rgba(147,51,234,0.7);
+  font-size:1.8rem;
+  margin-bottom:18px;
+  color:#e0f2fe;
+  text-shadow:0 0 14px rgba(0,198,255,0.45);
 }
 
-/* ===== INPUTS ===== */
+#signupForm{
+  display:flex;
+  flex-direction:column;
+}
+
 .signup-box input{
-  width:100%;padding:12px;border-radius:10px;
-  border:1.5px solid rgba(255,255,255,0.15);
-  background:rgba(255,255,255,0.05);color:#f1f5f9;
-  font-size:0.95rem;margin-bottom:18px;
-  transition:border 0.25s,box-shadow 0.25s;
+  width:100%;
+  padding:11px 12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05);
+  color:#f1f5f9;
+  font-size:0.94rem;
+  margin-bottom:14px;
+  transition:border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
+
 .signup-box input:focus{
-  outline:none;border-color:#60a5fa;
+  outline:none;
+  border-color:#60a5fa;
   box-shadow:0 0 12px rgba(59,130,246,0.4);
-  background:rgba(59,130,246,0.15);
+  background:rgba(59,130,246,0.12);
 }
 
-/* PASSWORD TOGGLE */
 .toggle-password{
-  cursor:pointer;font-size:0.9em;color:#00c6ff;
-  display:block;margin-bottom:10px;text-align:right;
+  cursor:pointer;
+  font-size:0.84rem;
+  color:#7dd3fc;
+  display:block;
+  margin:-4px 0 10px;
+  text-align:right;
 }
 
-/* BUTTON */
 .signup-box button{
-  width:100%;padding:12px;border:none;border-radius:10px;
+  width:100%;
+  padding:11px 12px;
+  border:none;
+  border-radius:10px;
   background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
-  background-size:200%;color:white;font-size:1rem;font-weight:600;
-  cursor:pointer;transition:all 0.4s ease;
-  box-shadow:0 0 20px rgba(147,51,234,0.35);
+  background-size:200%;
+  color:white;
+  font-size:0.96rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.35s ease;
+  box-shadow:0 0 20px rgba(147,51,234,0.30);
 }
+
 .signup-box button:hover{
-  background-position:100% 0;transform:translateY(-3px);
-  box-shadow:0 0 30px rgba(147,51,234,0.6);
+  background-position:100% 0;
+  transform:translateY(-2px);
+  box-shadow:0 0 28px rgba(147,51,234,0.55);
 }
 
-/* SUCCESS MESSAGE */
 .success-message{
-  display:none;position:absolute;top:-60px;left:50%;
+  display:none;
+  position:absolute;
+  top:-56px;
+  left:50%;
   transform:translateX(-50%);
-  background:#22c55e;color:white;
-  padding:12px 20px;border-radius:8px;font-size:14px;
+  background:#22c55e;
+  color:white;
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:0.86rem;
+  box-shadow:0 8px 22px rgba(0,0,0,0.22);
 }
 
-/* ERROR */
-.error{color:#f87171;font-size:0.9em;margin-bottom:10px;}
-/* ============================================================
-   1800px and ABOVE — Extra Large Screens
-============================================================ */
-@media (min-width: 1800px) {
-  .signup-container {
-    padding-top: 180px;
-  }
-  .signup-box {
-    max-width: 500px;
-    padding: 55px 48px;
-    border-radius: 22px;
-  }
-  .signup-box h2 { font-size: 2.2rem; }
-  .signup-box input { padding: 14px; font-size: 1.05rem; }
-  .signup-box button { padding: 14px; font-size: 1.1rem; }
+.error{
+  color:#fca5a5;
+  font-size:0.88rem;
+  margin-bottom:10px;
+  min-height:1.2em;
 }
 
-/* ============================================================
-   1440px to 1799px — Wide Desktop
-============================================================ */
-@media (min-width: 1440px) and (max-width: 1799px) {
-  .signup-container { padding-top: 160px; }
-  .signup-box {
-    max-width: 460px;
-    padding: 50px 42px;
-  }
-  .signup-box h2 { font-size: 2rem; }
-  .signup-box input { padding: 13px; }
+.signup-box p{
+  margin-top:14px;
+  font-size:0.88rem;
+  color:#dbeafe;
 }
 
-/* ============================================================
-   1024px to 1439px — Standard Desktop / Laptop
-============================================================ */
-@media (min-width: 1024px) and (max-width: 1439px) {
-  .signup-container { padding-top: 150px; }
-  .signup-box {
-    max-width: 440px;
-    padding: 45px 38px;
-  }
+.signup-box p a{
+  color:#7dd3fc;
+  text-decoration:none;
+  font-weight:700;
 }
+
+.signup-box p a:hover{ text-decoration:underline; }
+
 /* ============================================================
-   769px–1023px — SUPER COMPACT 2-COLUMN SIGNUP FORM
+   RESPONSIVE
 ============================================================ */
-@media (min-width: 769px) and (max-width: 1023px) {
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
 
-  .signup-container {
-    padding-top: 95px;
+  header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
   }
 
-  .signup-box {
-    max-width: 360px;
-    padding: 22px 18px;
-    border-radius: 12px;
+  header .logo{ margin-left:-2px !important; }
+  header .logo img{ height:88px !important; }
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
   }
-
-  /* Grid form ultra compact */
-  .signup-box form {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px 8px; /* very tight gap */
-    align-items: start;
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
   }
+  .nav-dropdown{ height:38px !important; }
+  .nav-dropdown-trigger{ gap:2px !important; }
+  .nav-dropdown-toggle{ width:24px !important; height:24px !important; }
+  .nav-dropdown-toggle i{ font-size:0.92rem !important; }
+  header .auth-buttons{ display:flex !important; gap:10px !important; }
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
 
-  /* Full-width fields */
+  .signup-container{ padding:44px 24px 34px; }
+  .signup-box{ max-width:500px; padding:44px 38px 38px; }
+  .signup-box h2{ font-size:2rem; }
+  .signup-box input{ padding:13px 14px; font-size:1rem; }
+  .signup-box button{ padding:13px 14px; font-size:1.02rem; }
+}
+
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+  header .logo{ margin-left:-3px !important; }
+  header .logo img{ height:80px !important; }
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:15px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+  }
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+  }
+  .nav-dropdown{ height:36px !important; }
+  .nav-dropdown-toggle{ width:24px !important; height:24px !important; }
+  .nav-dropdown-toggle i{ font-size:0.88rem !important; }
+  header .auth-buttons{ display:flex !important; gap:7px !important; }
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+    border-radius:10px !important;
+  }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .signup-container{ padding:38px 22px 30px; }
+  .signup-box{ max-width:460px; padding:38px 34px 34px; }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:9px !important;
+    padding:0 12px 0 6px !important;
+  }
+  header .logo{ margin-left:-2px !important; }
+  header .logo img{ height:66px !important; }
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:9px !important;
+    margin-left:3px !important;
+    white-space:nowrap !important;
+  }
+  header nav > a,
+  header nav .nav-main-link{
+    height:34px !important;
+    padding:0 2px !important;
+    font-size:0.75rem !important;
+  }
+  .nav-dropdown{ height:34px !important; }
+  .nav-dropdown-trigger{ gap:1px !important; }
+  .nav-dropdown-toggle{ width:20px !important; height:20px !important; }
+  .nav-dropdown-toggle i{ font-size:0.74rem !important; }
+  header .auth-buttons{ display:flex !important; gap:5px !important; }
+  header .auth-buttons a{
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .signup-container{ padding:32px 20px 26px; }
+  .signup-box{ max-width:430px; padding:34px 30px 30px; }
+}
+
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:7px !important;
+    padding:0 8px 0 5px !important;
+  }
+  header .logo{ margin-left:-2px !important; }
+  header .logo img{ height:58px !important; }
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+  }
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+  .nav-dropdown{ height:31px !important; }
+  .nav-dropdown-trigger{ gap:1px !important; }
+  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
+  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
+  header .auth-buttons{ display:flex !important; gap:4px !important; }
+  header .auth-buttons a{
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .signup-container{ padding:20px 16px 18px; }
+  .signup-box{
+    max-width:370px;
+    padding:22px 18px 18px;
+    border-radius:14px;
+  }
+  #signupForm{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:6px 8px;
+    align-items:start;
+  }
+  .signup-box h2,
   #company_name,
   #email,
   .toggle-password,
+  .error,
   .signup-box button,
-  .signup-box p,
-  .error {
-    grid-column: span 2;
+  .signup-box p{ grid-column:span 2; }
+  .signup-box h2{ font-size:1.36rem; margin-bottom:8px; }
+  .signup-box input{
+    padding:7px 8px;
+    font-size:0.78rem;
+    margin-bottom:0;
+    border-radius:7px;
   }
-
-  .signup-box h2 {
-    font-size: 1.38rem;
-    margin-bottom: 10px;
-    grid-column: span 2;
-  }
-
-  /* Inputs smaller height + padding */
-  .signup-box input {
-    padding: 6px 8px;
-    height: 28px;                 /* smaller height */
-    font-size: 0.78rem;
-    border-radius: 5px;
-    margin-bottom: 4px;
-  }
-
-  /* Toggle password smaller */
-  .toggle-password {
-    font-size: 0.72rem;
-    margin-bottom: 3px;
-  }
-
-  /* Button super compact */
-  .signup-box button {
-    padding: 7px;
-    height: 30px;
-    font-size: 0.8rem;
-    border-radius: 6px;
-    margin-top: 4px;
-  }
-
-  /* Bottom text smaller */
-  .signup-box p {
-    font-size: 0.75rem;
-    margin-top: 6px;
-  }
-
-  .error {
-    font-size: 0.75rem;
-    margin-bottom: 4px;
-  }
+  .toggle-password{ font-size:0.72rem; margin:0 0 2px; }
+  .signup-box button{ padding:8px; font-size:0.80rem; border-radius:7px; }
+  .signup-box p{ font-size:0.75rem; margin-top:8px; }
+  .error{ font-size:0.74rem; margin-bottom:2px; }
 }
 
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
 
-/* ============================================================
-   481px to 768px — Tablet Portrait
-============================================================ */
-@media (min-width: 481px) and (max-width: 768px) {
-  .signup-container { padding-top: 120px; }
+  body{ padding-top:var(--header-h) !important; }
 
-  .signup-box {
-    max-width: 90%;
-    padding: 30px 24px;
+  header{
+    height:var(--header-h) !important;
+    gap:2px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
-
-  .signup-box h2 { font-size: 1.6rem; }
-
-  .signup-box input {
-    padding: 10px;
-    font-size: 0.9rem;
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
   }
-
-  .signup-box button {
-    padding: 11px;
-    font-size: 0.95rem;
+  header .logo img{ height:54px !important; }
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:1px !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
   }
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+  .mobile-panel .mnav{ gap:8px !important; }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+  .mobile-panel .mnav-submenu{ padding-left:12px !important; }
+
+  .signup-container{
+    padding:18px 14px 18px;
+    align-items:center;
+  }
+  .signup-box{
+    max-width:92%;
+    padding:24px 20px 20px;
+    border-radius:16px;
+  }
+  .signup-box h2{ font-size:1.45rem; margin-bottom:12px; }
+  .signup-box input{ padding:10px; font-size:0.90rem; margin-bottom:12px; }
+  .toggle-password{ font-size:0.78rem; margin:-2px 0 8px; }
+  .signup-box button{ padding:10px; font-size:0.92rem; }
 }
 
-/* ============================================================
-   480px and BELOW — Mobile (Super Compact)
-============================================================ */
-@media (max-width: 480px) {
-  .signup-container { margin-top: 110px; padding: 0 16px; }
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
 
-  .signup-box {
-    max-width: 100%;
-    padding: 26px 18px;
-    border-radius: 14px;
-  }
+  body{ padding-top:var(--header-h) !important; }
 
-  .signup-box h2 {
-    font-size: 1.4rem;
-    margin-bottom: 14px;
+  header{
+    height:var(--header-h) !important;
+    gap:1px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
   }
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+  header .logo img{ height:50px !important; }
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+  .mobile-panel .mnav{ gap:7px !important; }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+  .mobile-panel .mnav-submenu{ padding-left:10px !important; }
 
-  .signup-box input {
-    padding: 9px;
-    font-size: 0.85rem;
-    margin-bottom: 12px;
+  .signup-container{
+    padding:14px 12px 16px;
+    align-items:center;
   }
-
-  .toggle-password {
-    font-size: 0.75rem;
-    margin-bottom: 6px;
+  .signup-box{
+    max-width:100%;
+    padding:20px 16px 18px;
+    border-radius:14px;
   }
-
-  .signup-box button {
-    padding: 10px;
-    font-size: 0.9rem;
-  }
-
-  .signup-box p {
-    font-size: 0.82rem;
-  }
+  .signup-box h2{ font-size:1.22rem; margin-bottom:10px; }
+  .signup-box input{ padding:9px; font-size:0.84rem; margin-bottom:10px; }
+  .toggle-password{ font-size:0.74rem; margin:-2px 0 6px; }
+  .signup-box button{ padding:9px; font-size:0.88rem; }
+  .signup-box p{ font-size:0.80rem; }
+  .error{ font-size:0.80rem; }
 }
-
 </style>
 </head>
 
 <body>
- 
-<!-- HEADER -->
+
 <header>
   <div class="logo">
     <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
@@ -269,58 +843,92 @@
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="postjob.html">Post Jobs</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
     <a href="postedhiring.html">Job Hiring</a>
-     <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+    <a href="postjob.html">Post Jobs</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
   </nav>
 
   <div class="auth-buttons">
-    <!-- EMPLOYER DROPDOWN -->
-    <div class="dropdown">
-      <a href="#" id="employerToggle" class="login dropdown-toggle">
-        <i class="fa-solid fa-user-lock"></i>
-        Employer
-        <i class="fa-solid fa-caret-down caret-icon"></i>
-      </a>
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
 
-      <div class="dropdown-menu" id="employerMenu">
-        <!-- Employer Login (optional, keep or remove as you like) -->
-        <a href="loginemployer.html">
-          <i class="fa-solid fa-right-to-bracket"></i>
-          Employer Login
-        </a>
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
 
-        <!-- Subscribe / Pay -->
-        <a href="subscribe.html">
-          <i class="fa-solid fa-credit-card"></i>
-          Subscribe
-        </a>
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
 
-        <!-- Subscription Status -->
-        <a href="subscriptionstatus.html">
-          <i class="fa-solid fa-list-check"></i>
-          Subscription Status
-        </a>
+    <div class="mnav-group" id="mobileAboutGroup">
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
+
+      <div class="mnav-submenu" id="mobileAboutMenu">
+        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
-     <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
 
-    <!-- Admin stays as separate button -->
-    <a href="admin.html" class="admin">
-      <i class="fa-solid fa-user-lock"></i> Admin
-    </a>
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="employersignup.html">Employer Signup <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
   </div>
-</header>
+</div>
 
 <div class="signup-container">
   <div class="signup-box">
-    <div class="success-message" id="successMsg">
-      ✅ Signup successful! Redirecting...
-    </div>
+    <div class="success-message" id="successMsg">✅ Signup successful! Redirecting...</div>
 
     <h2><i class="fa-solid fa-user-tie"></i> Employer Signup</h2>
 
-    <form id="signupForm">
+    <form id="signupForm" autocomplete="off">
       <input type="text" id="company_name" placeholder="Company Name" required />
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required />
@@ -337,74 +945,210 @@
 </div>
 
 <script>
-// ----------------------------------------------------
-// USE GLOBAL SUPABASE CLIENT
-// ----------------------------------------------------
+(function(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
 
+  if(!dd || !toggle || !menu) return;
 
-// ----------------------------------------------------
-// PASSWORD TOGGLE
-// ----------------------------------------------------
-document.getElementById("togglePassword").addEventListener("click", () => {
-  const pw = document.getElementById("password");
-  const cpw = document.getElementById("confirm_password");
-  const show = pw.type === "password";
-  pw.type = show ? "text" : "password";
-  cpw.type = show ? "text" : "password";
-  togglePassword.textContent = show ? "Hide Passwords" : "Show Passwords";
-});
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
 
-// ----------------------------------------------------
-// FORM SUBMISSION
-// ----------------------------------------------------
-document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  function openAboutMenu(){
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const isOpen = dd.classList.contains("open");
+    if(isOpen) closeAboutMenu();
+    else openAboutMenu();
+  });
+
+  document.addEventListener("click", function(e){
+    if(!dd.contains(e.target)) closeAboutMenu();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeAboutMenu();
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  });
+})();
+
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  const aboutGroup = document.getElementById("mobileAboutGroup");
+  const aboutToggle = document.getElementById("mobileAboutToggle");
+  if(!btn || !panel) return;
+
+  function closeAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    aboutGroup.classList.remove("open");
+    aboutToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    const open = aboutGroup.classList.toggle("open");
+    aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+    closeAbout();
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(!open) closeAbout();
+  });
+
+  if(aboutToggle){
+    aboutToggle.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAbout();
+    });
+  }
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth >= 769) close();
+  }, { passive:true });
+})();
+
+function isSupabaseClient(obj){
+  return !!(obj && typeof obj.from === "function" && obj.auth && typeof obj.auth.signUp === "function");
+}
+
+function isSupabaseNamespace(obj){
+  return !!(obj && typeof obj.createClient === "function");
+}
+
+function resolveSupabaseClient(){
+  if (isSupabaseClient(window.supabase)) return window.supabase;
+  if (window.supabaseClient && isSupabaseClient(window.supabaseClient)) return window.supabaseClient;
+  if (isSupabaseNamespace(window.supabase) && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+    return window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  }
+  return null;
+}
+
+let supabaseClient = resolveSupabaseClient();
+
+const togglePasswordEl = document.getElementById("togglePassword");
+const passwordEl = document.getElementById("password");
+const confirmPasswordEl = document.getElementById("confirm_password");
+const signupForm = document.getElementById("signupForm");
+const errorMsg = document.getElementById("errorMsg");
+const successMsg = document.getElementById("successMsg");
+
+if (togglePasswordEl) {
+  togglePasswordEl.addEventListener("click", () => {
+    const show = passwordEl.type === "password";
+    passwordEl.type = show ? "text" : "password";
+    confirmPasswordEl.type = show ? "text" : "password";
+    togglePasswordEl.textContent = show ? "Hide Passwords" : "Show Passwords";
+  });
+}
+
+signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const errorMsg = document.getElementById("errorMsg");
-  const successMsg = document.getElementById("successMsg");
-
+  supabaseClient = resolveSupabaseClient();
   errorMsg.textContent = "";
+  successMsg.style.display = "none";
+
+  if (!supabaseClient) {
+    errorMsg.textContent = "Supabase client not detected. Please reload the page.";
+    return;
+  }
 
   const company_name = document.getElementById("company_name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const confirm_password = document.getElementById("confirm_password").value;
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = passwordEl.value;
+  const confirm_password = confirmPasswordEl.value;
+
+  if (!company_name) {
+    errorMsg.textContent = "Company name is required.";
+    return;
+  }
 
   if (password !== confirm_password) {
     errorMsg.textContent = "Passwords do not match!";
     return;
   }
 
-  // STEP 1 — Create Supabase Auth account
-  const { data: signup, error: signupError } = await supabase.auth.signUp({ email, password });
+  const submitBtn = signupForm.querySelector("button[type='submit']");
+  const originalBtnHtml = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account...';
 
-  if (signupError) {
-    errorMsg.textContent = "Signup failed: " + signupError.message;
-    return;
+  try {
+    const { data: signupData, error: signupError } = await supabaseClient.auth.signUp({ email, password });
+
+    if (signupError) {
+      errorMsg.textContent = "Signup failed: " + signupError.message;
+      return;
+    }
+
+    const user = signupData?.user || signupData?.session?.user;
+    if (!user) {
+      errorMsg.textContent = "Signup failed: No user returned.";
+      return;
+    }
+
+    const { error: insertErr } = await supabaseClient.from("employers").insert([
+      { user_id: user.id, company_name, email }
+    ]);
+
+    if (insertErr) {
+      errorMsg.textContent = "Insert failed: " + insertErr.message;
+      return;
+    }
+
+    successMsg.style.display = "block";
+    signupForm.reset();
+    togglePasswordEl.textContent = "Show Passwords";
+    passwordEl.type = "password";
+    confirmPasswordEl.type = "password";
+
+    setTimeout(() => {
+      window.location.href = "loginemployer.html";
+    }, 1500);
+  } catch (err) {
+    console.error(err);
+    errorMsg.textContent = "Unexpected error. Please try again.";
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnHtml;
   }
-
-  const user = signup.user;
-  if (!user) {
-    errorMsg.textContent = "Signup failed: No user returned.";
-    return;
-  }
-
-  // STEP 2 — Insert Employer Profile
-  const { error: insertErr } = await supabase.from("employers").insert([
-    { user_id: user.id, company_name, email }
-  ]);
-
-  if (insertErr) {
-    errorMsg.textContent = "Insert failed: " + insertErr.message;
-    return;
-  }
-
-  // SUCCESS
-  successMsg.style.display = "block";
-
-  setTimeout(() => {
-    window.location.href = "login.html";
-  }, 1500);
 });
 </script>
 
