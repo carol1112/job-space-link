@@ -229,6 +229,88 @@ header .auth-buttons a:hover{
   transform:translateX(3px);
 }
 
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03);
+}
+
 /* ============================================================
    ABOUT NAV FIX
 ============================================================ */
@@ -868,6 +950,182 @@ tbody tr:hover{
     height:50px;
   }
 }
+
+
+/* ============================================================
+   INDEX-STYLE MOBILE HEADER OVERRIDE
+============================================================ */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  body{
+    padding-top:var(--header-h) !important;
+  }
+
+  header{
+    height:var(--header-h) !important;
+    gap:2px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+  }
+
+  .header-left{
+    flex:0 0 auto !important;
+    min-width:auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+    overflow:visible !important;
+  }
+
+  .header-right{
+    flex:0 0 auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+    margin-left:1px !important;
+    margin-right:auto !important;
+    white-space:nowrap !important;
+  }
+
+  header .logo{
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
+  }
+}
+
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  body{
+    padding-top:var(--header-h) !important;
+  }
+
+  header{
+    height:var(--header-h) !important;
+    gap:1px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+  }
+
+  .header-left{
+    flex:0 0 auto !important;
+    min-width:auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+    overflow:visible !important;
+  }
+
+  .header-right{
+    flex:0 0 auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    white-space:nowrap !important;
+  }
+
+  header .logo{
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
+  }
+}
+
 </style>
 </head>
 
@@ -932,16 +1190,34 @@ tbody tr:hover{
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+
+    <div class="mnav-group" id="mobileAboutGroup">
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
+
+      <div class="mnav-submenu" id="mobileAboutMenu">
+        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
     <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
     <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
@@ -1068,19 +1344,43 @@ tbody tr:hover{
 (function(){
   const btn = document.getElementById("navToggle");
   const panel = document.getElementById("mobilePanel");
+  const aboutGroup = document.getElementById("mobileAboutGroup");
+  const aboutToggle = document.getElementById("mobileAboutToggle");
   if(!btn || !panel) return;
+
+  function closeAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    aboutGroup.classList.remove("open");
+    aboutToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    const open = aboutGroup.classList.toggle("open");
+    aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
 
   function close(){
     panel.classList.remove("open");
     panel.setAttribute("aria-hidden","true");
     btn.setAttribute("aria-expanded","false");
+    closeAbout();
   }
 
   btn.addEventListener("click", ()=>{
     const open = panel.classList.toggle("open");
     panel.setAttribute("aria-hidden", open ? "false" : "true");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(!open) closeAbout();
   });
+
+  if(aboutToggle){
+    aboutToggle.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAbout();
+    });
+  }
 
   panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
   document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
@@ -1095,7 +1395,7 @@ tbody tr:hover{
   });
 
   window.addEventListener("resize", ()=>{
-    if(window.innerWidth > 768) close();
+    if(window.innerWidth >= 769) close();
   }, { passive:true });
 })();
 
