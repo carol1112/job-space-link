@@ -1126,6 +1126,33 @@ tbody tr:hover{
   }
 }
 
+
+/* ============================================================
+   MOBILE DATE FILTER TEXT - WHITE
+============================================================ */
+@media (max-width:768px){
+  .filter-bar input[type="date"]{
+    color:#ffffff !important;
+    -webkit-text-fill-color:#ffffff !important;
+    color-scheme:dark;
+  }
+
+  .filter-bar input[type="date"]::-webkit-datetime-edit,
+  .filter-bar input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+  .filter-bar input[type="date"]::-webkit-datetime-edit-text,
+  .filter-bar input[type="date"]::-webkit-datetime-edit-month-field,
+  .filter-bar input[type="date"]::-webkit-datetime-edit-day-field,
+  .filter-bar input[type="date"]::-webkit-datetime-edit-year-field{
+    color:#ffffff !important;
+    -webkit-text-fill-color:#ffffff !important;
+  }
+
+  .filter-bar input[type="date"]::-webkit-calendar-picker-indicator{
+    filter:invert(1) brightness(1.25);
+    opacity:1;
+  }
+}
+
 </style>
 </head>
 
