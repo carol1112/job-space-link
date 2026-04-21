@@ -6614,6 +6614,435 @@ header .auth-buttons a{
   }
 }
 
+
+
+/* ==========================================================
+   FINAL MOBILE REFINEMENT PATCH
+   - logout stays at far right of account row
+   - topbar stays in one row with horizontal scroll
+   - filter controls stay in one row with horizontal scroll
+   - table columns are compressed more on mobile
+   - table header sits directly above first table row
+========================================================== */
+@media (max-width:768px){
+  :root{
+    --topbar-h:40px !important;
+    --controlsbar-h:46px !important;
+    --tableheader-h:28px !important;
+    --col-logo:72px !important;
+    --col-company:118px !important;
+    --col-title:124px !important;
+    --col-department:104px !important;
+    --col-employment:92px !important;
+    --col-location:148px !important;
+    --col-salary:100px !important;
+    --col-file:84px !important;
+    --col-date:76px !important;
+    --col-edit:56px !important;
+    --table-min-w:974px !important;
+    --table-min-w-public:842px !important;
+  }
+
+  .page-shell{
+    padding:calc(var(--hdrH) + 6px) 4px 10px !important;
+  }
+
+  #companyHeroBar{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:8px !important;
+    padding:8px !important;
+    border-radius:14px !important;
+  }
+
+  #companyHeroBar .company-hero-account-card{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    gap:8px !important;
+    width:100% !important;
+    max-width:none !important;
+    padding:8px 9px !important;
+    overflow:hidden !important;
+  }
+
+  #companyHeroBar .company-hero-profile{
+    min-width:0 !important;
+    gap:8px !important;
+  }
+
+  #companyHeroBar .company-hero-account-actions{
+    width:auto !important;
+    min-width:max-content !important;
+    margin-left:auto !important;
+    justify-content:flex-end !important;
+    align-self:center !important;
+  }
+
+  #companyHeroBar .company-hero-btn.logout{
+    min-height:34px !important;
+    height:34px !important;
+    padding:0 10px !important;
+    font-size:0.68rem !important;
+    border-radius:10px !important;
+    white-space:nowrap !important;
+  }
+
+  #companyHeroBar .company-hero-eyebrow{
+    font-size:0.60rem !important;
+    margin-bottom:3px !important;
+  }
+
+  #companyHeroBar .company-hero-name{
+    font-size:0.84rem !important;
+    line-height:1.05 !important;
+  }
+
+  #companyHeroBar .company-hero-meta{
+    font-size:0.62rem !important;
+    gap:4px !important;
+    margin-top:3px !important;
+  }
+
+  #companyHeroBar .company-hero-logo{
+    width:52px !important;
+    height:52px !important;
+    border-radius:14px !important;
+  }
+
+  .directory-topbar{
+    top:calc(var(--hdrH) + 6px) !important;
+    min-height:40px !important;
+    padding:4px 6px !important;
+    gap:6px !important;
+    border-radius:12px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    white-space:nowrap !important;
+    scrollbar-width:thin !important;
+  }
+
+  .directory-title,
+  #topbarActions,
+  #topbarActions .view-switcher,
+  #topbarActions .auto-refresh-pill{
+    flex:0 0 auto !important;
+    min-width:max-content !important;
+    white-space:nowrap !important;
+  }
+
+  .directory-title{
+    gap:6px !important;
+  }
+
+  .directory-title i{
+    font-size:0.90rem !important;
+  }
+
+  .directory-title h1{
+    font-size:0.80rem !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+
+  #topbarActions{
+    display:flex !important;
+    align-items:center !important;
+    gap:6px !important;
+    flex-wrap:nowrap !important;
+    margin-left:auto !important;
+  }
+
+  #topbarActions .view-switcher{
+    display:flex !important;
+    align-items:center !important;
+    gap:5px !important;
+    flex-wrap:nowrap !important;
+  }
+
+  .view-toggle,
+  .auto-refresh-pill{
+    min-height:30px !important;
+    height:30px !important;
+    padding:0 8px !important;
+    font-size:0.64rem !important;
+    gap:4px !important;
+    border-radius:9px !important;
+  }
+
+  .controls-wrap{
+    top:calc(var(--hdrH) + 6px + var(--topbar-h)) !important;
+    padding:4px !important;
+    border-radius:12px 12px 0 0 !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    scrollbar-width:thin !important;
+  }
+
+  .controls-grid{
+    display:grid !important;
+    grid-template-columns:
+      minmax(94px, 94px)
+      minmax(150px, 150px)
+      minmax(100px, 100px)
+      minmax(92px, 92px)
+      minmax(92px, 92px)
+      minmax(108px, 108px)
+      minmax(196px, 196px)
+      minmax(78px, 78px)
+      minmax(74px, 74px) !important;
+    gap:5px !important;
+    min-width:996px !important;
+    align-items:center !important;
+  }
+
+  .field,
+  .field-group,
+  .search-btn,
+  .ghost-btn{
+    height:32px !important;
+    min-height:32px !important;
+    border-radius:9px !important;
+  }
+
+  .field.icon-field{
+    padding:0 7px !important;
+    gap:4px !important;
+  }
+
+  .field-group{
+    padding:0 4px !important;
+    gap:4px !important;
+  }
+
+  .toolbar-label{
+    font-size:0.62rem !important;
+    gap:3px !important;
+  }
+
+  select,
+  input[type="text"],
+  input[type="date"]{
+    font-size:0.64rem !important;
+    padding:0 7px !important;
+  }
+
+  .search-btn,
+  .ghost-btn{
+    padding:0 8px !important;
+    font-size:0.63rem !important;
+    gap:4px !important;
+    white-space:nowrap !important;
+  }
+
+  .table-header-dock{
+    top:calc(var(--hdrH) + 6px + var(--topbar-h) + var(--controlsbar-h) - 1px) !important;
+    margin-bottom:0 !important;
+    border-top-width:0 !important;
+  }
+
+  .table-header-scroll{
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+  }
+
+  .floating-table-header-grid{
+    width:max(100%, var(--table-min-w)) !important;
+    min-width:var(--table-min-w) !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode){
+    --col-company:112px !important;
+    --col-title:118px !important;
+    --col-department:96px !important;
+    --col-employment:90px !important;
+    --col-location:138px !important;
+    --col-salary:96px !important;
+    --col-file:80px !important;
+    --col-date:70px !important;
+    --col-edit:54px !important;
+    --table-min-w-loggedin:854px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) .floating-table-header-grid,
+  body.logged-in-directory-mode:not(.public-directory-mode) .directory-table{
+    width:var(--table-min-w-loggedin) !important;
+    min-width:var(--table-min-w-loggedin) !important;
+    max-width:none !important;
+  }
+
+  .floating-table-header-cell{
+    min-height:28px !important;
+    padding:3px 4px !important;
+    font-size:0.54rem !important;
+    line-height:1 !important;
+    white-space:normal !important;
+    word-break:break-word !important;
+  }
+
+  .table-wrap{
+    margin-top:0 !important;
+    padding-top:0 !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  .table-header-dock + .table-wrap{
+    margin-top:0 !important;
+    padding-top:0 !important;
+  }
+
+  .directory-table{
+    margin-top:0 !important;
+  }
+
+  .directory-table tbody tr:first-child td{
+    border-top:0 !important;
+  }
+
+  .directory-table tbody td{
+    padding:5px 4px !important;
+    font-size:0.60rem !important;
+    line-height:1.08 !important;
+    vertical-align:top !important;
+  }
+
+  .directory-table tbody td strong{
+    font-size:0.66rem !important;
+    line-height:1.05 !important;
+  }
+
+  .logo-cell .logo-badge{
+    width:34px !important;
+    height:34px !important;
+    border-radius:10px !important;
+  }
+
+  .logo-cell .logo-badge:hover{
+    transform:translate3d(6px, 4px, 0) scale(1.24) !important;
+  }
+
+  .table-file-actions{
+    min-height:30px !important;
+    gap:2px !important;
+  }
+
+  .file-link{
+    min-height:22px !important;
+    padding:3px 5px !important;
+    font-size:0.54rem !important;
+    gap:3px !important;
+    border-radius:7px !important;
+  }
+
+  .file-count-pill{
+    min-width:34px !important;
+    padding:2px 5px !important;
+    font-size:0.50rem !important;
+  }
+
+  .table-edit-btn{
+    min-width:32px !important;
+    min-height:22px !important;
+    padding:3px 4px !important;
+    font-size:0.52rem !important;
+    gap:3px !important;
+    border-radius:7px !important;
+  }
+}
+
+@media (max-width:480px){
+  :root{
+    --hdrH:66px !important;
+    --header-h:66px !important;
+    --topbar-h:38px !important;
+    --controlsbar-h:44px !important;
+    --tableheader-h:26px !important;
+    --col-logo:64px !important;
+    --col-company:108px !important;
+    --col-title:114px !important;
+    --col-department:94px !important;
+    --col-employment:84px !important;
+    --col-location:136px !important;
+    --col-salary:92px !important;
+    --col-file:78px !important;
+    --col-date:70px !important;
+    --col-edit:50px !important;
+    --table-min-w:890px !important;
+    --table-min-w-public:772px !important;
+  }
+
+  #companyHeroBar .company-hero-account-card{
+    padding:7px 8px !important;
+    gap:7px !important;
+  }
+
+  #companyHeroBar .company-hero-logo{
+    width:48px !important;
+    height:48px !important;
+  }
+
+  #companyHeroBar .company-hero-name{
+    font-size:0.78rem !important;
+  }
+
+  #companyHeroBar .company-hero-meta{
+    font-size:0.58rem !important;
+  }
+
+  #companyHeroBar .company-hero-btn.logout{
+    min-height:32px !important;
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.62rem !important;
+  }
+
+  .directory-topbar{
+    padding:4px 5px !important;
+    gap:5px !important;
+  }
+
+  .directory-title h1{
+    font-size:0.74rem !important;
+  }
+
+  .view-toggle,
+  .auto-refresh-pill{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 7px !important;
+    font-size:0.60rem !important;
+  }
+
+  .controls-grid{
+    min-width:952px !important;
+  }
+
+  .floating-table-header-cell{
+    font-size:0.50rem !important;
+    padding:3px !important;
+  }
+
+  .directory-table tbody td{
+    font-size:0.56rem !important;
+    padding:4px 3px !important;
+  }
+
+  .directory-table tbody td strong{
+    font-size:0.62rem !important;
+  }
+
+  .file-link,
+  .table-edit-btn{
+    font-size:0.48rem !important;
+  }
+}
+
 </style>
 
 
