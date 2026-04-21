@@ -11574,6 +11574,60 @@ header{
 }
 </style>
 
+
+<style id="mobile-file-viewer-header-title-removal-patch">
+/* =========================================================
+   MOBILE FILE VIEWER HEADER TITLE REMOVAL PATCH
+   Removes the hidden job description viewer title from behind
+   the top action buttons on phones/tablets.
+========================================================= */
+@media (max-width: 768px){
+  #fileViewerModal .file-viewer-head{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:6px !important;
+    min-height:42px !important;
+    padding:6px 8px !important;
+  }
+
+  #fileViewerModal .file-viewer-title-wrap,
+  #fileViewerModal .file-viewer-head h2,
+  #fileViewerModal .file-viewer-subtitle{
+    display:none !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    transform:none !important;
+    width:100% !important;
+    max-width:none !important;
+    margin-left:auto !important;
+    justify-content:flex-end !important;
+    flex-wrap:nowrap !important;
+    gap:4px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding-bottom:2px !important;
+    scrollbar-width:thin !important;
+  }
+}
+
+@media (max-width: 480px){
+  #fileViewerModal .file-viewer-head{
+    min-height:40px !important;
+    padding:6px 8px !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    gap:3px !important;
+  }
+}
+</style>
+
 </head>
 <body>
   <!-- ==========================================================
