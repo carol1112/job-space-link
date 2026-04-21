@@ -3681,59 +3681,65 @@ header .auth-buttons a:hover{
     height:min(92vh, 920px);
   }
   #pdfTopBar{
-    min-height:74px;
-    padding:10px 16px;
-    gap:12px;
+    min-height:64px;
+    padding:7px 14px;
+    gap:10px;
   }
   #pdfTopMeta{
-    gap:12px;
+    gap:10px;
   }
   #pdfProfileThumbWrap{
-    width:54px;
-    height:54px;
-    border-radius:18px;
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    box-shadow:0 10px 22px rgba(2,6,23,0.22);
     transition:transform .18s ease, box-shadow .18s ease;
   }
   #pdfProfileThumb,
   #pdfProfileThumbPlaceholder{
-    border-radius:18px;
+    border-radius:14px;
+  }
+  #pdfProfileThumbPlaceholder{
+    font-size:1rem;
   }
   #pdfProfileThumbWrap:hover{
     transform:translateY(-1px);
-    box-shadow:0 18px 36px rgba(2,6,23,0.34);
+    box-shadow:0 14px 28px rgba(2,6,23,0.28);
     z-index:60;
   }
   #pdfProfileThumbWrap:hover #pdfProfileThumb{
-    top:-6px;
-    left:-6px;
-    width:230px;
-    height:276px;
-    padding:4px;
-    border-radius:24px;
+    top:-4px;
+    left:-4px;
+    width:170px;
+    height:208px;
+    padding:3px;
+    border-radius:18px;
     border-width:2px;
-    box-shadow:0 28px 64px rgba(2,6,23,0.62);
+    box-shadow:0 18px 42px rgba(2,6,23,0.44);
     z-index:70;
   }
   #pdfTitleWrap{
-    gap:3px;
+    gap:2px;
   }
   #pdfTitle{
-    font-size:1.02rem;
-  }
-  #pdfPreviewStatus{
-    font-size:.74rem;
-  }
-  .pdfTopActions{
+    font-size:.96rem;
     gap:8px;
   }
+  #pdfPreviewStatus{
+    font-size:.70rem;
+  }
+  .pdfTopActions{
+    gap:6px;
+  }
   .pdfTopBtn{
-    min-height:38px;
-    padding:9px 12px;
-    border-radius:12px;
-    font-size:.82rem;
-    gap:7px;
+    min-height:32px;
+    padding:7px 10px;
+    border-radius:10px;
+    font-size:.74rem;
+    gap:6px;
   }
 }
+
 
 </style>
 <style id="viewstaff-mobile-modal-behavior-patch">
