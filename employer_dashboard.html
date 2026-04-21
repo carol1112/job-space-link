@@ -5922,6 +5922,698 @@ header .auth-buttons a{
   }
 }
 
+
+
+/* ============================================================
+   MOBILE COMPRESSION REFINEMENT PATCH
+   TABLE VIEW + GRID VIEW + LOCATION VIEW
+============================================================ */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{
+    --topbar-h:44px;
+    --controlsbar-h:44px;
+    --tableheader-h:34px;
+    --col-logo:76px;
+    --col-company:130px;
+    --col-title:136px;
+    --col-department:112px;
+    --col-employment:98px;
+    --col-location:170px;
+    --col-salary:122px;
+    --col-file:102px;
+    --col-date:96px;
+    --col-edit:64px;
+    --table-min-w:1106px;
+    --table-min-w-public:946px;
+  }
+
+  .summary-bar,
+  .feedback{
+    padding:7px 9px;
+    font-size:.74rem;
+    border-radius:12px;
+  }
+
+  .directory-topbar{
+    padding:5px 7px;
+    gap:6px;
+    border-radius:14px;
+  }
+
+  .directory-title i{ font-size:1.04rem; }
+  .directory-title h1{ font-size:.94rem; line-height:1.04; }
+  .directory-subtitle{ font-size:.66rem; line-height:1.08; }
+
+  .topbar-actions,
+  .view-switcher{ gap:6px; }
+
+  .view-toggle,
+  .auto-refresh-pill{
+    min-height:34px;
+    height:34px;
+    padding:0 8px;
+    font-size:.72rem;
+    gap:5px;
+    border-radius:10px;
+  }
+
+  .controls-wrap{
+    padding:5px;
+    border-radius:14px 14px 0 0;
+  }
+
+  .controls-grid{ gap:5px; }
+
+  .field,
+  .field-group{
+    height:34px;
+    border-radius:10px;
+  }
+
+  .field.icon-field{
+    padding:0 8px;
+    gap:5px;
+  }
+
+  .field.icon-field i{ font-size:.8rem; }
+
+  .field-group{
+    padding:0 5px;
+    gap:5px;
+  }
+
+  .toolbar-label{
+    font-size:.7rem;
+    gap:4px;
+  }
+
+  .toolbar-label i{ font-size:.78rem; }
+
+  select,
+  input[type="text"],
+  input[type="date"]{
+    font-size:.72rem;
+    padding:0 8px;
+  }
+
+  .search-btn,
+  .ghost-btn{
+    height:34px;
+    padding:0 8px;
+    font-size:.72rem;
+    border-radius:10px;
+    gap:5px;
+  }
+
+  .floating-table-header-cell{
+    min-height:32px;
+    padding:4px 5px;
+    font-size:.63rem;
+    line-height:1.02;
+    white-space:normal;
+  }
+
+  .directory-table tbody td{
+    padding:7px 5px;
+    font-size:.69rem;
+    line-height:1.12;
+  }
+
+  .directory-table tbody td strong{
+    font-size:.74rem;
+    line-height:1.1;
+  }
+
+  .logo-cell{
+    width:76px;
+    padding-left:3px;
+    padding-right:3px;
+  }
+
+  .logo-cell .logo-badge{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+  }
+
+  .logo-cell .logo-badge:hover{
+    transform:translate3d(18px, 14px, 0) scale(1.85);
+  }
+
+  .table-file-actions{
+    min-height:34px;
+    gap:3px;
+  }
+
+  .file-link{
+    min-height:28px;
+    padding:5px 7px;
+    font-size:.64rem;
+    border-radius:9px;
+    gap:4px;
+  }
+
+  .file-count-pill{
+    min-width:44px;
+    padding:4px 7px;
+    font-size:.62rem;
+  }
+
+  .table-edit-btn{
+    min-width:42px;
+    min-height:28px;
+    padding:4px 6px;
+    font-size:.62rem;
+    gap:4px;
+    border-radius:9px;
+  }
+
+  .grid-wrap{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:7px;
+    padding:7px;
+  }
+
+  .job-card{
+    min-height:200px;
+    padding:8px;
+    border-radius:14px;
+    gap:7px;
+  }
+
+  .job-card-top{ gap:7px; }
+
+  .job-card .logo-badge,
+  .location-job-card .logo-badge{
+    width:40px;
+    height:40px;
+    border-radius:13px;
+  }
+
+  .job-card .logo-badge:hover,
+  .location-job-card .logo-badge:hover{
+    transform:translate3d(12px, 10px, 0) scale(1.75);
+  }
+
+  .job-card h3{
+    font-size:.8rem;
+    line-height:1.16;
+  }
+
+  .job-card .company-name{
+    font-size:.72rem;
+    line-height:1.1;
+  }
+
+  .job-meta{ gap:6px; }
+
+  .meta-box{
+    padding:5px 6px;
+    border-radius:11px;
+  }
+
+  .meta-label{
+    font-size:.6rem;
+    margin-bottom:3px;
+  }
+
+  .meta-value{
+    font-size:.69rem;
+    line-height:1.12;
+  }
+
+  .job-desc{
+    font-size:.68rem;
+    line-height:1.18;
+    min-height:28px;
+  }
+
+  .card-actions,
+  .location-card-actions{ gap:6px; }
+
+  .action-btn,
+  .file-action-btn{
+    height:30px;
+    padding:0 8px;
+    font-size:.68rem;
+    border-radius:10px;
+    gap:5px;
+  }
+
+  .location-wrap{ padding:7px; }
+
+  .location-layout{ gap:8px; }
+
+  .location-preview-card{ border-radius:16px; }
+
+  .location-preview-head{ padding:10px 11px 8px; }
+
+  .location-preview-title{ gap:7px; }
+
+  .location-preview-title h3{
+    font-size:.86rem;
+    line-height:1.16;
+  }
+
+  .count-badge{
+    padding:4px 8px;
+    font-size:.66rem;
+  }
+
+  .location-preview-company{
+    font-size:.74rem;
+    margin-top:4px;
+  }
+
+  .location-address-box{
+    margin-top:7px;
+    padding:8px;
+    border-radius:12px;
+    font-size:.72rem;
+    line-height:1.2;
+    gap:6px;
+  }
+
+  .location-preview-map{
+    min-height:250px;
+    height:250px;
+  }
+
+  .location-preview-footer{
+    padding:8px 10px;
+    gap:7px;
+  }
+
+  .location-preview-footnote{
+    font-size:.68rem;
+    line-height:1.18;
+  }
+
+  .map-link{
+    font-size:.72rem;
+    gap:5px;
+  }
+
+  .location-list{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:7px;
+  }
+
+  .location-job-card{
+    min-height:205px;
+    padding:9px;
+    border-radius:14px;
+    gap:7px;
+  }
+
+  .location-job-head{ gap:7px; }
+
+  .location-job-address{
+    min-height:48px;
+    padding:7px 8px;
+    border-radius:11px;
+    font-size:.7rem;
+    line-height:1.16;
+    gap:6px;
+  }
+
+  .location-job-note,
+  .location-card-hint{
+    font-size:.64rem;
+  }
+
+  .pagination-bar{
+    padding:7px 8px;
+    gap:8px;
+  }
+
+  .pagination-info,
+  .page-number{
+    font-size:.74rem;
+  }
+
+  .pagination-btn{
+    min-width:72px;
+    height:32px;
+    font-size:.74rem;
+    border-radius:10px;
+  }
+}
+
+@media (max-width: 480px){
+  :root{
+    --topbar-h:42px;
+    --controlsbar-h:42px;
+    --tableheader-h:32px;
+    --col-logo:64px;
+    --col-company:116px;
+    --col-title:120px;
+    --col-department:108px;
+    --col-employment:92px;
+    --col-location:154px;
+    --col-salary:110px;
+    --col-file:92px;
+    --col-date:92px;
+    --col-edit:60px;
+    --table-min-w:1008px;
+    --table-min-w-public:856px;
+  }
+
+  .directory-card{
+    padding:5px 5px 8px;
+    border-radius:0 0 16px 16px;
+  }
+
+  .summary-bar,
+  .feedback{
+    padding:7px 8px;
+    font-size:.72rem;
+    border-radius:11px;
+  }
+
+  .directory-topbar{
+    padding:5px 6px;
+    gap:6px;
+    border-radius:13px;
+  }
+
+  .directory-title i{ font-size:1rem; }
+  .directory-title h1{ font-size:.9rem; line-height:1.02; }
+  .directory-subtitle{ font-size:.63rem; line-height:1.08; }
+
+  .topbar-actions,
+  .view-switcher{ gap:5px; }
+
+  .view-toggle,
+  .auto-refresh-pill{
+    min-height:32px;
+    height:32px;
+    padding:0 8px;
+    font-size:.68rem;
+    gap:5px;
+    border-radius:10px;
+  }
+
+  .controls-wrap{
+    padding:5px;
+    border-radius:13px 13px 0 0;
+  }
+
+  .controls-grid{ gap:5px; }
+
+  .field,
+  .field-group{
+    height:32px;
+    border-radius:10px;
+  }
+
+  .field.icon-field{
+    padding:0 8px;
+    gap:5px;
+  }
+
+  .field.icon-field i{ font-size:.78rem; }
+
+  .field-group{
+    padding:0 5px;
+    gap:5px;
+  }
+
+  .toolbar-label{
+    font-size:.66rem;
+    gap:4px;
+  }
+
+  .toolbar-label i{ font-size:.74rem; }
+
+  select,
+  input[type="text"],
+  input[type="date"]{
+    font-size:.7rem;
+    padding:0 7px;
+  }
+
+  select{
+    padding-right:22px;
+    background-position:
+      calc(100% - 14px) calc(50% - 2px),
+      calc(100% - 9px) calc(50% - 2px);
+    background-size:5px 5px, 5px 5px;
+  }
+
+  .search-btn,
+  .ghost-btn{
+    height:32px;
+    padding:0 8px;
+    font-size:.68rem;
+    border-radius:10px;
+    gap:5px;
+  }
+
+  .floating-table-header-cell{
+    min-height:30px;
+    padding:4px 4px;
+    font-size:.58rem;
+    line-height:1;
+    white-space:normal;
+  }
+
+  .directory-table tbody td{
+    padding:6px 4px;
+    font-size:.62rem;
+    line-height:1.08;
+  }
+
+  .directory-table tbody td strong{
+    font-size:.68rem;
+    line-height:1.08;
+  }
+
+  .logo-cell{
+    width:64px;
+    padding-left:2px;
+    padding-right:2px;
+  }
+
+  .logo-cell .logo-badge{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+  }
+
+  .logo-cell .logo-badge:hover{
+    transform:translate3d(12px, 10px, 0) scale(1.6);
+  }
+
+  .file-link-wrap{ min-height:32px; }
+
+  .table-file-actions{
+    min-height:32px;
+    gap:3px;
+  }
+
+  .file-link{
+    min-height:26px;
+    padding:4px 6px;
+    font-size:.58rem;
+    border-radius:8px;
+    gap:4px;
+  }
+
+  .file-count-pill{
+    min-width:38px;
+    padding:3px 6px;
+    font-size:.56rem;
+  }
+
+  .table-edit-btn{
+    min-width:38px;
+    min-height:26px;
+    padding:4px 5px;
+    font-size:.56rem;
+    gap:4px;
+    border-radius:8px;
+  }
+
+  .grid-wrap{
+    grid-template-columns:1fr;
+    gap:7px;
+    padding:7px;
+  }
+
+  .job-card{
+    min-height:188px;
+    padding:8px;
+    border-radius:13px;
+    gap:7px;
+  }
+
+  .job-card-top,
+  .location-job-head{ gap:7px; }
+
+  .job-card .logo-badge,
+  .location-job-card .logo-badge{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+  }
+
+  .job-card .logo-badge:hover,
+  .location-job-card .logo-badge:hover{
+    transform:translate3d(10px, 8px, 0) scale(1.45);
+  }
+
+  .job-card h3{
+    font-size:.76rem;
+    line-height:1.14;
+  }
+
+  .job-card .company-name{
+    font-size:.7rem;
+    line-height:1.1;
+  }
+
+  .job-meta{ gap:6px; }
+
+  .meta-box{
+    padding:5px 6px;
+    border-radius:10px;
+  }
+
+  .meta-label{
+    font-size:.56rem;
+    margin-bottom:3px;
+  }
+
+  .meta-value{
+    font-size:.66rem;
+    line-height:1.1;
+  }
+
+  .job-desc{
+    font-size:.64rem;
+    line-height:1.14;
+    min-height:24px;
+  }
+
+  .card-actions,
+  .location-card-actions{ gap:6px; }
+
+  .action-btn,
+  .file-action-btn{
+    height:28px;
+    padding:0 7px;
+    font-size:.63rem;
+    border-radius:9px;
+    gap:5px;
+  }
+
+  .location-wrap{ padding:7px; }
+
+  .location-layout{ gap:8px; }
+
+  .location-preview-card{ border-radius:15px; }
+
+  .location-preview-head{ padding:9px 10px 8px; }
+
+  .location-preview-title{ gap:6px; }
+
+  .location-preview-title i{ font-size:.84rem; }
+
+  .location-preview-title h3{
+    font-size:.8rem;
+    line-height:1.14;
+  }
+
+  .count-badge{
+    padding:4px 7px;
+    font-size:.62rem;
+  }
+
+  .location-preview-company{
+    font-size:.7rem;
+    margin-top:4px;
+  }
+
+  .location-address-box{
+    margin-top:7px;
+    padding:7px 8px;
+    border-radius:11px;
+    font-size:.68rem;
+    line-height:1.18;
+    gap:6px;
+  }
+
+  .location-preview-map{
+    min-height:220px;
+    height:220px;
+  }
+
+  .location-preview-footer{
+    padding:8px 9px;
+    gap:7px;
+  }
+
+  .location-preview-footnote{
+    font-size:.64rem;
+    line-height:1.16;
+  }
+
+  .map-link{
+    font-size:.68rem;
+    gap:5px;
+  }
+
+  .location-list{
+    grid-template-columns:1fr;
+    gap:7px;
+  }
+
+  .location-job-card{
+    min-height:188px;
+    padding:8px;
+    border-radius:13px;
+    gap:7px;
+  }
+
+  .location-job-address{
+    min-height:42px;
+    padding:7px 8px;
+    border-radius:10px;
+    font-size:.66rem;
+    line-height:1.14;
+    gap:6px;
+  }
+
+  .location-job-note,
+  .location-card-hint{
+    font-size:.6rem;
+  }
+
+  .pagination-bar{
+    padding:7px 8px;
+    gap:7px;
+    border-radius:11px;
+  }
+
+  .pagination-info,
+  .page-number{
+    font-size:.68rem;
+  }
+
+  .pagination-actions{
+    width:100%;
+    justify-content:center;
+  }
+
+  .pagination-btn{
+    min-width:64px;
+    height:30px;
+    font-size:.68rem;
+    border-radius:10px;
+  }
+}
+
 </style>
 
 
