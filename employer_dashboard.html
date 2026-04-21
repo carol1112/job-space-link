@@ -7788,6 +7788,386 @@ header .auth-buttons a{
   }
 }
 
+
+
+/* ============================================================
+   MOBILE-ONLY FINAL OVERRIDE PATCH
+   - desktop-style file viewer retained on mobile, compressed to avoid overlap
+   - search / reset / refresh grouped after date filter on mobile
+   - sticky table header locked directly under mobile controls
+============================================================ */
+@media (max-width:768px){
+  :root{
+    --header-h:72px !important;
+    --topbar-h:42px !important;
+    --tableheader-h:30px !important;
+  }
+
+  #mobileActionsStrip,
+  #mobileActionsStrip.mobile-actions-strip,
+  #mobileActionsStrip.mobile-actions-strip.active{
+    display:none !important;
+  }
+
+  #controlsWrap.controls-wrap{
+    top:calc(var(--header-h) + var(--topbar-h)) !important;
+    padding:4px !important;
+    border-radius:12px 12px 0 0 !important;
+  }
+
+  #controlsWrap .controls-grid{
+    display:grid !important;
+    grid-template-columns:repeat(12, minmax(0, 1fr)) !important;
+    gap:4px !important;
+    align-items:stretch !important;
+  }
+
+  #controlsWrap .controls-grid > *{ min-width:0 !important; }
+  #controlsWrap .controls-grid > :nth-child(1),
+  #controlsWrap .controls-grid > :nth-child(2),
+  #controlsWrap .controls-grid > :nth-child(3),
+  #controlsWrap .controls-grid > :nth-child(4),
+  #controlsWrap .controls-grid > :nth-child(5),
+  #controlsWrap .controls-grid > :nth-child(6){
+    grid-column:span 4 !important;
+  }
+
+  #controlsWrap .controls-grid > :nth-child(7){
+    grid-column:span 6 !important;
+  }
+
+  #controlsWrap .controls-grid > #searchBtn,
+  #controlsWrap .controls-grid > #resetBtn,
+  #controlsWrap .controls-grid > #autoRefreshPill{
+    grid-column:span 2 !important;
+  }
+
+  #controlsWrap .field,
+  #controlsWrap .field-group,
+  #controlsWrap .search-btn,
+  #controlsWrap .ghost-btn,
+  #controlsWrap .auto-refresh-pill{
+    min-height:32px !important;
+    height:32px !important;
+    border-radius:10px !important;
+  }
+
+  #controlsWrap select,
+  #controlsWrap input[type="text"],
+  #controlsWrap input[type="date"]{
+    font-size:.68rem !important;
+    padding:0 7px !important;
+  }
+
+  #controlsWrap .toolbar-label{
+    font-size:.62rem !important;
+    gap:4px !important;
+  }
+
+  #controlsWrap .search-btn,
+  #controlsWrap .ghost-btn,
+  #controlsWrap #autoRefreshPill{
+    width:100% !important;
+    justify-content:center !important;
+    padding:0 6px !important;
+    gap:4px !important;
+    font-size:.60rem !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+  }
+
+  #controlsWrap #autoRefreshPill span:nth-child(3),
+  #controlsWrap #autoRefreshPill #liveClock{
+    display:none !important;
+  }
+
+  #controlsWrap #autoRefreshPill #autoRefreshText{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+  }
+
+  #tableView{ padding-top:0 !important; }
+
+  #tableHeaderDock.table-header-dock{
+    position:sticky !important;
+    top:calc(var(--header-h) + var(--topbar-h) + var(--controlsbar-h)) !important;
+    margin:0 !important;
+    padding:0 !important;
+    z-index:64 !important;
+    border-top:0 !important;
+    border-bottom:1px solid rgba(34,160,255,.18) !important;
+    background:rgba(3,12,30,.98) !important;
+  }
+
+  #tableHeaderDock .table-header-scroll{
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    margin:0 !important;
+    padding:0 !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  #tableHeaderDock .floating-table-header-grid{
+    margin-top:0 !important;
+    box-shadow:none !important;
+  }
+
+  #tableWrap.table-wrap{
+    margin-top:0 !important;
+    padding-top:0 !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  #tableWrap .directory-table{
+    margin-top:0 !important;
+  }
+
+  #tableWrap .directory-table tbody tr:first-child td{
+    border-top:0 !important;
+  }
+
+  #fileViewerModal{
+    padding:6px !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+
+  #fileViewerModal .file-viewer-panel{
+    width:calc(100vw - 12px) !important;
+    max-width:calc(100vw - 12px) !important;
+    height:min(95dvh, 940px) !important;
+    max-height:min(95dvh, 940px) !important;
+    border-radius:18px !important;
+    border-left:1px solid rgba(0,219,255,.34) !important;
+    border-right:1px solid rgba(0,219,255,.34) !important;
+  }
+
+  #fileViewerModal .file-viewer-panel::before{
+    border-radius:18px !important;
+  }
+
+  #fileViewerModal .file-viewer-head{
+    min-height:auto !important;
+    padding:9px 10px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:flex-start !important;
+    gap:8px !important;
+  }
+
+  #fileViewerModal .file-viewer-title-wrap{
+    max-width:100% !important;
+    text-align:left !important;
+  }
+
+  #fileViewerModal .file-viewer-head h2{
+    font-size:.84rem !important;
+    line-height:1.12 !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    transform:none !important;
+    max-width:none !important;
+    width:100% !important;
+    justify-content:flex-end !important;
+    gap:6px !important;
+    flex-wrap:wrap !important;
+  }
+
+  #fileViewerModal .file-head-btn{
+    min-height:30px !important;
+    height:30px !important;
+    padding:0 8px !important;
+    border-radius:9px !important;
+    font-size:.62rem !important;
+    gap:4px !important;
+    width:auto !important;
+    flex:0 0 auto !important;
+  }
+
+  #fileViewerModal .file-viewer-layout{
+    grid-template-columns:1fr !important;
+    grid-template-rows:auto minmax(0, 1fr) !important;
+  }
+
+  #fileViewerModal .file-viewer-layout.sidebar-hidden{
+    grid-template-columns:1fr !important;
+    grid-template-rows:minmax(0, 1fr) !important;
+  }
+
+  #fileViewerModal .file-side-pane{
+    display:block !important;
+    max-height:208px !important;
+    padding:10px 0 0 !important;
+    overflow:auto !important;
+    border-right:0 !important;
+    border-bottom:1px solid rgba(255,255,255,.06) !important;
+  }
+
+  #fileViewerModal .file-viewer-layout.sidebar-hidden .file-side-pane{
+    display:none !important;
+    max-height:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    border-bottom-color:transparent !important;
+  }
+
+  #fileViewerModal .file-side-profile{
+    padding:10px 12px 12px !important;
+    gap:10px !important;
+    margin-bottom:8px !important;
+  }
+
+  #fileViewerModal .file-side-logo{
+    width:56px !important;
+    height:56px !important;
+    border-radius:14px !important;
+  }
+
+  #fileViewerModal .file-side-company{
+    font-size:.82rem !important;
+    line-height:1.12 !important;
+  }
+
+  #fileViewerModal .file-side-section-name{
+    margin-top:5px !important;
+    font-size:.70rem !important;
+    line-height:1.14 !important;
+  }
+
+  #fileViewerModal .file-side-tab-row{
+    margin:0 10px 8px !important;
+    gap:6px !important;
+    padding-bottom:8px !important;
+  }
+
+  #fileViewerModal .file-side-tab{
+    min-height:30px !important;
+    height:30px !important;
+    border-radius:10px !important;
+    padding:0 8px !important;
+    font-size:.68rem !important;
+  }
+
+  #fileViewerModal .job-file-list,
+  #fileViewerModal .page-thumb-list{
+    flex-direction:row !important;
+    gap:8px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding:0 10px 10px !important;
+    align-items:stretch !important;
+    scroll-snap-type:x proximity !important;
+  }
+
+  #fileViewerModal .job-file-item,
+  #fileViewerModal .page-thumb-item{
+    flex:0 0 132px !important;
+    min-width:132px !important;
+    max-width:none !important;
+    scroll-snap-align:start !important;
+  }
+
+  #fileViewerModal .job-file-thumb,
+  #fileViewerModal .page-thumb-canvas-wrap{
+    min-height:54px !important;
+    margin-bottom:6px !important;
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .job-file-label,
+  #fileViewerModal .page-thumb-label{
+    font-size:.68rem !important;
+    line-height:1.16 !important;
+    min-height:30px !important;
+  }
+
+  #fileViewerModal .file-preview-shell{
+    padding:8px 8px 0 !important;
+  }
+
+  #fileViewerModal .file-preview-stage{
+    border-radius:12px !important;
+  }
+
+  #fileViewerModal .file-preview-image{
+    padding:8px !important;
+  }
+
+  #fileViewerModal .pdf-preview-wrap{
+    padding:8px 8px 12px !important;
+  }
+
+  #fileViewerModal .pdf-preview-pages{
+    gap:12px !important;
+  }
+
+  #fileViewerModal .pdf-page-card{
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .pdf-page-badge{
+    left:10px !important;
+    top:8px !important;
+    padding:4px 8px !important;
+    font-size:.64rem !important;
+  }
+
+  #fileViewerModal .pdf-page-toolbar{
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    gap:6px !important;
+    padding:8px 8px 0 !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar{
+    padding:8px 8px 10px !important;
+    gap:6px !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-main{
+    display:grid !important;
+    grid-template-columns:repeat(4, minmax(0, 1fr)) !important;
+    gap:6px !important;
+    align-items:stretch !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-left,
+  #fileViewerModal .file-preview-toolbar-center,
+  #fileViewerModal .file-preview-toolbar-right{
+    display:contents !important;
+  }
+
+  #fileViewerModal .toolbar-btn,
+  #fileViewerModal .toolbar-link,
+  #fileViewerModal .current-zoom-pill,
+  #fileViewerModal #pdfPagePill{
+    min-width:0 !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:0 7px !important;
+    border-radius:9px !important;
+    font-size:.62rem !important;
+    gap:4px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .toolbar-btn i,
+  #fileViewerModal .toolbar-link i{
+    font-size:.66rem !important;
+  }
+}
+
 </style>
 
 
@@ -11220,6 +11600,370 @@ header{
   }
 }
 
+</style>
+
+
+<style id="mobile-file-viewer-sync-patch">
+/* ============================================================
+   FINAL PATCH — MOBILE FILE VIEWER SYNC
+   Applies the tighter mobile file-viewer behavior/style so the
+   uploaded files view matches the refined staff requirements modal.
+============================================================ */
+@media (max-width:768px){
+  #fileViewerModal{
+    padding:0 !important;
+    align-items:stretch !important;
+    justify-content:stretch !important;
+    overflow:hidden !important;
+  }
+
+  #fileViewerModal .file-viewer-panel{
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    border-radius:0 !important;
+    border-left:0 !important;
+    border-right:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-panel::before{
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-head{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    gap:6px !important;
+    min-height:52px !important;
+    padding:8px 10px !important;
+    justify-content:stretch !important;
+  }
+
+  #fileViewerModal .file-viewer-title-wrap{
+    min-width:0 !important;
+    max-width:none !important;
+    text-align:left !important;
+  }
+
+  #fileViewerModal .file-viewer-head h2{
+    font-size:.78rem !important;
+    line-height:1.05 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .file-viewer-subtitle{
+    font-size:.56rem !important;
+    line-height:1.05 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    transform:none !important;
+    max-width:none !important;
+    min-width:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:4px !important;
+  }
+
+  #fileViewerModal .file-head-btn{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 7px !important;
+    font-size:.56rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+    white-space:nowrap !important;
+    flex:0 0 auto !important;
+  }
+
+  #fileViewerModal .file-viewer-layout,
+  #fileViewerModal .file-viewer-layout.sidebar-hidden{
+    grid-template-columns:1fr !important;
+    grid-template-rows:auto minmax(0,1fr) !important;
+    height:calc(100dvh - 52px) !important;
+  }
+
+  #fileViewerModal .file-side-pane{
+    max-height:148px !important;
+    padding:8px 8px 6px !important;
+    overflow:auto !important;
+    border-right:0 !important;
+    border-bottom:1px solid rgba(255,255,255,.06) !important;
+  }
+
+  #fileViewerModal .file-viewer-layout.sidebar-hidden .file-side-pane{
+    max-height:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    border-bottom-color:transparent !important;
+  }
+
+  #fileViewerModal .file-side-profile{
+    display:grid !important;
+    grid-template-columns:40px minmax(0,1fr) !important;
+    gap:8px !important;
+    align-items:center !important;
+    padding:0 0 8px !important;
+  }
+
+  #fileViewerModal .file-side-logo{
+    width:40px !important;
+    height:40px !important;
+    border-radius:12px !important;
+  }
+
+  #fileViewerModal .file-side-company{
+    font-size:.68rem !important;
+    line-height:1.08 !important;
+  }
+
+  #fileViewerModal .file-side-section-name{
+    font-size:.58rem !important;
+    line-height:1.08 !important;
+  }
+
+  #fileViewerModal .file-side-tab-row{
+    gap:5px !important;
+    padding-bottom:6px !important;
+  }
+
+  #fileViewerModal .file-side-tab{
+    min-height:28px !important;
+    height:28px !important;
+    font-size:.56rem !important;
+    border-radius:8px !important;
+  }
+
+  #fileViewerModal .job-file-list,
+  #fileViewerModal .page-thumb-list{
+    gap:6px !important;
+    padding:0 0 6px !important;
+  }
+
+  #fileViewerModal .job-file-item,
+  #fileViewerModal .page-thumb-item{
+    max-width:none !important;
+    padding:6px !important;
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .job-file-thumb{
+    width:30px !important;
+    height:30px !important;
+    border-radius:9px !important;
+  }
+
+  #fileViewerModal .job-file-label,
+  #fileViewerModal .page-thumb-label{
+    font-size:.58rem !important;
+    line-height:1.12 !important;
+    min-height:auto !important;
+  }
+
+  #fileViewerModal .page-thumb-canvas-wrap{
+    min-height:52px !important;
+    margin-bottom:6px !important;
+  }
+
+  #fileViewerModal .file-preview-pane{
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+  }
+
+  #fileViewerModal .file-preview-shell{
+    padding:6px 6px 0 !important;
+    min-height:0 !important;
+    flex:1 1 auto !important;
+  }
+
+  #fileViewerModal .file-preview-stage{
+    min-height:0 !important;
+    height:100% !important;
+    border-radius:12px !important;
+  }
+
+  #fileViewerModal .file-preview-image{
+    padding:8px !important;
+  }
+
+  #fileViewerModal .pdf-preview-wrap{
+    padding:8px 8px 12px !important;
+  }
+
+  #fileViewerModal .pdf-preview-pages{
+    gap:10px !important;
+  }
+
+  #fileViewerModal .pdf-page-card{
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .pdf-page-toolbar{
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(0,1fr)) !important;
+    gap:4px !important;
+    padding:6px 6px 8px !important;
+  }
+
+  #fileViewerModal .pdf-page-toolbar > *,
+  #fileViewerModal .file-preview-footer > *,
+  #fileViewerModal .file-viewer-footer > *,
+  #fileViewerModal .file-preview-controls > *{
+    min-width:0 !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar{
+    padding:6px 6px 8px !important;
+    gap:6px !important;
+    overflow:hidden !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-main{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:6px !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-center{
+    order:1 !important;
+    flex:1 1 100% !important;
+    width:100% !important;
+    min-width:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-wrap:wrap !important;
+    gap:6px !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-left,
+  #fileViewerModal .file-preview-toolbar-right{
+    order:2 !important;
+    flex:0 1 auto !important;
+    min-width:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-wrap:wrap !important;
+    gap:6px !important;
+  }
+
+  #fileViewerModal .toolbar-btn,
+  #fileViewerModal .toolbar-link,
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill,
+  #fileViewerModal .file-nav-btn,
+  #fileViewerModal .preview-link{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    border-radius:8px !important;
+    gap:4px !important;
+    font-size:.56rem !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    flex:0 0 auto !important;
+  }
+
+  #fileViewerModal .toolbar-btn i,
+  #fileViewerModal .toolbar-link i,
+  #fileViewerModal .file-nav-btn i,
+  #fileViewerModal .preview-link i{
+    font-size:.62rem !important;
+  }
+
+  #fileViewerModal #currentFilePill,
+  #fileViewerModal #currentZoomPill,
+  #fileViewerModal #pdfPagePill{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal #currentFilePill{
+    max-width:56vw !important;
+  }
+
+  #fileViewerModal #prevPdfPageBtn,
+  #fileViewerModal #nextPdfPageBtn,
+  #fileViewerModal #pdfPagePill{
+    min-height:28px !important;
+    height:28px !important;
+    font-size:.56rem !important;
+    padding:0 8px !important;
+    border-radius:8px !important;
+  }
+}
+
+@media (max-width:480px){
+  #fileViewerModal .file-viewer-head{
+    gap:5px !important;
+    min-height:50px !important;
+    padding:7px 8px !important;
+  }
+
+  #fileViewerModal .file-viewer-head h2{
+    font-size:.72rem !important;
+  }
+
+  #fileViewerModal .file-viewer-subtitle{
+    font-size:.52rem !important;
+  }
+
+  #fileViewerModal .file-head-btn,
+  #fileViewerModal .toolbar-btn,
+  #fileViewerModal .toolbar-link,
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill,
+  #fileViewerModal .file-nav-btn,
+  #fileViewerModal .preview-link,
+  #fileViewerModal #prevPdfPageBtn,
+  #fileViewerModal #nextPdfPageBtn,
+  #fileViewerModal #pdfPagePill{
+    min-height:26px !important;
+    height:26px !important;
+    padding:0 5px !important;
+    font-size:.52rem !important;
+    gap:3px !important;
+  }
+
+  #fileViewerModal .toolbar-btn i,
+  #fileViewerModal .toolbar-link i,
+  #fileViewerModal .file-nav-btn i,
+  #fileViewerModal .preview-link i{
+    font-size:.58rem !important;
+  }
+
+  #fileViewerModal .file-side-pane{
+    max-height:136px !important;
+    padding:7px 7px 5px !important;
+  }
+
+  #fileViewerModal .job-file-item,
+  #fileViewerModal .page-thumb-item{
+    padding:5px !important;
+  }
+
+  #fileViewerModal #currentFilePill{
+    max-width:52vw !important;
+  }
+}
 </style>
 
 </head>
@@ -16293,6 +17037,225 @@ if (navToggle && mobilePanel){
   } else {
     bindMobileHeaderHelpers();
   }
+})();
+</script>
+
+
+<script id="mobile-file-viewer-behavior-sync-patch">
+(function(){
+  var MOBILE_MAX = 768;
+
+  function isMobileViewer(){
+    return window.innerWidth <= MOBILE_MAX;
+  }
+
+  function getModal(){
+    return document.getElementById('fileViewerModal');
+  }
+
+  function getLayout(){
+    return document.getElementById('fileViewerLayout');
+  }
+
+  function isViewerOpen(){
+    var modal = getModal();
+    return !!(modal && modal.classList.contains('show'));
+  }
+
+  function sidebarHidden(){
+    var layout = getLayout();
+    return !!(layout && layout.classList.contains('sidebar-hidden'));
+  }
+
+  function syncMobileViewerHeaderText(){
+    var toggleText = document.getElementById('toggleFileSidebarText');
+    if (!toggleText) return;
+
+    if (isMobileViewer()){
+      toggleText.textContent = sidebarHidden() ? 'Show' : 'Hide';
+    }else{
+      toggleText.textContent = sidebarHidden() ? 'Show Content' : 'Hide Content';
+    }
+  }
+
+  function collapseSidebarAfterSelection(event){
+    if (!isMobileViewer() || !isViewerOpen()) return;
+    var trigger = event.target && event.target.closest('.job-file-item, .page-thumb-item');
+    if (!trigger) return;
+
+    window.requestAnimationFrame(function(){
+      if (typeof window.setFileSidebarHidden === 'function'){
+        window.setFileSidebarHidden(true);
+      }
+      syncMobileViewerHeaderText();
+    });
+  }
+
+  function resyncFromUiClick(event){
+    var trigger = event.target && event.target.closest('#toggleFileSidebarBtn, #filesTabBtn, #pagesTabBtn, #fileViewerCloseBtn');
+    if (!trigger) return;
+    window.setTimeout(syncMobileViewerHeaderText, 0);
+  }
+
+  document.addEventListener('click', collapseSidebarAfterSelection, true);
+  document.addEventListener('click', resyncFromUiClick, true);
+  document.addEventListener('DOMContentLoaded', syncMobileViewerHeaderText);
+  window.addEventListener('resize', syncMobileViewerHeaderText, { passive:true });
+
+  var modal = getModal();
+  var layout = getLayout();
+  if (window.MutationObserver && (modal || layout)){
+    var observer = new MutationObserver(syncMobileViewerHeaderText);
+    if (modal){
+      observer.observe(modal, { attributes:true, attributeFilter:['class', 'aria-hidden'] });
+    }
+    if (layout){
+      observer.observe(layout, { attributes:true, attributeFilter:['class'] });
+    }
+  }
+
+  syncMobileViewerHeaderText();
+})();
+</script>
+
+
+<script>
+(function(){
+  const controlsWrap = document.getElementById('controlsWrap');
+  const controlsGrid = controlsWrap ? controlsWrap.querySelector('.controls-grid') : null;
+  const searchBtn = document.getElementById('searchBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const refreshPill = document.getElementById('autoRefreshPill');
+  const topbarActions = document.getElementById('topbarActions');
+  const tableHeaderDock = document.getElementById('tableHeaderDock');
+  const tableWrap = document.getElementById('tableWrap');
+  const tableHeaderScroll = document.getElementById('tableHeaderScroll');
+  const fileViewerModal = document.getElementById('fileViewerModal');
+  const fileViewerLayout = document.getElementById('fileViewerLayout');
+
+  const originalParents = {
+    search: searchBtn ? searchBtn.parentElement : null,
+    reset: resetBtn ? resetBtn.parentElement : null,
+    refresh: refreshPill ? refreshPill.parentElement : null
+  };
+
+  function isMobile(){
+    return window.innerWidth <= 768;
+  }
+
+  function hideLegacyMobileStrip(){
+    const strip = document.getElementById('mobileActionsStrip');
+    if (!strip) return;
+    strip.classList.remove('active');
+    strip.style.display = 'none';
+  }
+
+  function moveMobileActions(){
+    if (!searchBtn || !resetBtn || !refreshPill || !controlsGrid) return;
+
+    hideLegacyMobileStrip();
+
+    if (isMobile()){
+      if (searchBtn.parentElement !== controlsGrid) controlsGrid.appendChild(searchBtn);
+      if (resetBtn.parentElement !== controlsGrid) controlsGrid.appendChild(resetBtn);
+      if (refreshPill.parentElement !== controlsGrid) controlsGrid.appendChild(refreshPill);
+    } else {
+      if (originalParents.search && searchBtn.parentElement !== originalParents.search) originalParents.search.appendChild(searchBtn);
+      if (originalParents.reset && resetBtn.parentElement !== originalParents.reset) originalParents.reset.appendChild(resetBtn);
+      if (originalParents.refresh && refreshPill.parentElement !== originalParents.refresh) originalParents.refresh.appendChild(refreshPill);
+    }
+  }
+
+  function syncMobileTableHeaderTop(){
+    if (!tableHeaderDock || !controlsWrap || !isMobile()){
+      if (tableHeaderDock && !isMobile()) tableHeaderDock.style.removeProperty('top');
+      return;
+    }
+
+    window.requestAnimationFrame(function(){
+      const rect = controlsWrap.getBoundingClientRect();
+      const topValue = Math.max(0, Math.round(rect.top + rect.height));
+      tableHeaderDock.style.top = topValue + 'px';
+      if (tableHeaderScroll && tableWrap){
+        tableHeaderScroll.scrollLeft = tableWrap.scrollLeft;
+      }
+    });
+  }
+
+  function keepDesktopStyleViewerOnMobile(){
+    if (!fileViewerLayout) return;
+
+    if (!isMobile()) return;
+
+    if (fileViewerModal && fileViewerModal.classList.contains('show')){
+      if (!fileViewerLayout.classList.contains('sidebar-hidden')) return;
+      fileViewerLayout.classList.remove('sidebar-hidden');
+      const toggleText = document.getElementById('toggleFileSidebarText');
+      if (toggleText) toggleText.textContent = 'Hide Content';
+    }
+  }
+
+  function syncEverything(){
+    moveMobileActions();
+    syncMobileTableHeaderTop();
+    keepDesktopStyleViewerOnMobile();
+  }
+
+  if (tableWrap && tableHeaderScroll){
+    tableWrap.addEventListener('scroll', function(){
+      tableHeaderScroll.scrollLeft = tableWrap.scrollLeft;
+    }, { passive:true });
+  }
+
+  window.addEventListener('resize', function(){
+    window.requestAnimationFrame(syncEverything);
+  }, { passive:true });
+
+  window.addEventListener('scroll', function(){
+    if (isMobile()) syncMobileTableHeaderTop();
+  }, { passive:true });
+
+  document.addEventListener('click', function(event){
+    if (!isMobile()) return;
+
+    const fileItem = event.target && event.target.closest('.job-file-item, .page-thumb-item');
+    if (fileItem && fileViewerModal && fileViewerModal.classList.contains('show')){
+      window.setTimeout(keepDesktopStyleViewerOnMobile, 0);
+      window.setTimeout(keepDesktopStyleViewerOnMobile, 60);
+    }
+
+    const sidebarToggle = event.target && event.target.closest('#toggleFileSidebarBtn');
+    if (sidebarToggle){
+      window.setTimeout(function(){
+        const toggleText = document.getElementById('toggleFileSidebarText');
+        if (!toggleText || !fileViewerLayout) return;
+        toggleText.textContent = fileViewerLayout.classList.contains('sidebar-hidden') ? 'Show Content' : 'Hide Content';
+      }, 0);
+    }
+  }, true);
+
+  if (window.MutationObserver && fileViewerModal){
+    const observer = new MutationObserver(function(){
+      window.requestAnimationFrame(syncEverything);
+    });
+    observer.observe(fileViewerModal, { attributes:true, attributeFilter:['class', 'aria-hidden'] });
+  }
+
+  if (window.MutationObserver && controlsWrap){
+    const observer = new MutationObserver(function(){
+      window.requestAnimationFrame(syncEverything);
+    });
+    observer.observe(controlsWrap, { childList:true, subtree:true, attributes:true });
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', syncEverything, { once:true });
+  } else {
+    syncEverything();
+  }
+
+  window.setTimeout(syncEverything, 120);
+  window.setTimeout(syncEverything, 420);
 })();
 </script>
 
