@@ -16707,130 +16707,299 @@ if (navToggle && mobilePanel){
 </script>
 
 
-<style id="final-mobile-files-pages-sticky-controls-row-patch">
-@media (max-width:768px){
-  /* Keep FILES and PAGES side by side in one row on mobile */
-  #fileViewerModal .file-side-tab-row,
-  #fileViewerModal .file-viewer-layout.sidebar-hidden .file-side-tab-row{
-    display:grid !important;
-    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
-    align-items:stretch !important;
-    gap:5px !important;
-    margin:0 8px 6px !important;
-    padding:0 0 6px !important;
-    border-bottom:0 !important;
+<style id="final-mobile-two-row-controls-no-scrollbar-patch">
+@media (max-width: 768px){
+  #mobileActionsStrip,
+  #mobileActionsStrip.mobile-actions-strip,
+  #mobileActionsStrip.mobile-actions-strip.active{
+    display:none !important;
   }
 
-  #fileViewerModal .file-side-tab,
-  #fileViewerModal .file-viewer-layout.sidebar-hidden .file-side-tab{
+  #companyHeroBar .company-hero-account-actions{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-end !important;
+    justify-content:flex-start !important;
+    gap:6px !important;
+    width:auto !important;
+  }
+  #mobilePostedJobsTitle{
+    display:block;
+    max-width:150px;
+    color:#eef8ff;
+    font-size:.70rem;
+    line-height:1.1;
+    font-weight:800;
+    text-align:right;
+    letter-spacing:.01em;
+  }
+
+  #directoryTopbar{
+    padding:6px 8px !important;
+    gap:6px !important;
+  }
+  #directoryTopbar #directoryTitleWrap{
+    display:none !important;
+  }
+  #directoryTopbar #topbarActions{
     width:100% !important;
-    min-width:0 !important;
-    min-height:28px !important;
-    height:28px !important;
-    padding:0 6px !important;
-    font-size:.58rem !important;
-    border-radius:8px !important;
-    white-space:nowrap !important;
     justify-content:center !important;
+    gap:0 !important;
+  }
+  #directoryTopbar .view-switcher{
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(0,1fr)) !important;
+    gap:6px !important;
+    overflow:visible !important;
+    scrollbar-width:none !important;
+  }
+  #directoryTopbar .view-switcher::-webkit-scrollbar{
+    display:none !important;
+  }
+  #directoryTopbar .view-toggle{
+    min-width:0 !important;
+    width:100% !important;
+    height:32px !important;
+    min-height:32px !important;
+    padding:0 4px !important;
+    gap:3px !important;
+    font-size:.62rem !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    border-radius:10px !important;
+  }
+  #directoryTopbar .view-toggle i{
+    font-size:.70rem !important;
   }
 
-  /* Put Search / Reset / Refresh directly after Date filter */
+  #controlsWrap.controls-wrap{
+    padding:6px !important;
+  }
   #controlsWrap .controls-grid{
+    display:grid !important;
+    grid-template-columns:repeat(14, minmax(0,1fr)) !important;
+    gap:5px !important;
     align-items:center !important;
   }
+  #controlsWrap .controls-grid > *{
+    min-width:0 !important;
+    width:100% !important;
+  }
+  #controlsWrap .controls-grid > :nth-child(1){ grid-column:span 3 !important; }
+  #controlsWrap .controls-grid > :nth-child(2){ grid-column:span 5 !important; }
+  #controlsWrap .controls-grid > :nth-child(3){ grid-column:span 3 !important; }
+  #controlsWrap .controls-grid > :nth-child(4){ grid-column:span 3 !important; }
+  #controlsWrap .controls-grid > :nth-child(5){ grid-column:span 2 !important; }
+  #controlsWrap .controls-grid > :nth-child(6){ grid-column:span 2 !important; }
+  #controlsWrap .controls-grid > :nth-child(7){ grid-column:span 4 !important; }
+  #controlsWrap .controls-grid > :nth-child(8){ grid-column:span 2 !important; }
+  #controlsWrap .controls-grid > :nth-child(9){ grid-column:span 2 !important; }
+  #controlsWrap .controls-grid > :nth-child(10){ grid-column:span 2 !important; }
 
-  #mobileActionsStrip.mobile-actions-strip.active{
-    grid-column:1 / -1 !important;
-    margin:0 !important;
-    order:8 !important;
+  #controlsWrap .field,
+  #controlsWrap .field-group,
+  #controlsWrap .search-btn,
+  #controlsWrap .ghost-btn,
+  #controlsWrap #autoRefreshPill{
+    height:34px !important;
+    min-height:34px !important;
+    border-radius:10px !important;
+  }
+  #controlsWrap .field.icon-field{
+    padding:0 7px !important;
+    gap:5px !important;
+  }
+  #controlsWrap .field.icon-field i{
+    font-size:.78rem !important;
+  }
+  #controlsWrap select,
+  #controlsWrap input[type="text"],
+  #controlsWrap input[type="date"]{
+    padding:0 6px !important;
+    font-size:.66rem !important;
+  }
+  #controlsWrap select{
+    padding-right:20px !important;
+    background-position:
+      calc(100% - 12px) calc(50% - 3px),
+      calc(100% - 7px) calc(50% - 3px) !important;
+    background-size:5px 5px, 5px 5px !important;
+  }
+  #controlsWrap #cityFilter,
+  #controlsWrap #employmentTypeFilter{
+    font-size:.62rem !important;
+  }
+  #controlsWrap .field-group{
+    padding:0 4px !important;
+    gap:4px !important;
+  }
+  #controlsWrap .toolbar-label{
+    font-size:.62rem !important;
+    gap:3px !important;
+    padding-right:0 !important;
+  }
+  #controlsWrap .toolbar-label i{
+    font-size:.70rem !important;
+  }
+  #controlsWrap .field-group > .field{
+    height:26px !important;
+  }
+  #controlsWrap .field-group > .field:first-of-type{
+    flex:0 0 52px !important;
+  }
+  #controlsWrap #dateMode,
+  #controlsWrap #dateFilter{
+    font-size:.62rem !important;
+  }
+  #controlsWrap #searchBtn,
+  #controlsWrap #resetBtn,
+  #controlsWrap #autoRefreshPill{
+    padding:0 6px !important;
+    font-size:.62rem !important;
+    gap:4px !important;
+    justify-content:center !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+  }
+  #controlsWrap #autoRefreshPill{
+    display:inline-flex !important;
+  }
+  #controlsWrap #autoRefreshPill span:nth-child(3),
+  #controlsWrap #autoRefreshPill span:last-child{
+    display:none !important;
   }
 
-  #mobileActionsStrip.mobile-actions-strip.active .search-btn,
-  #mobileActionsStrip.mobile-actions-strip.active .ghost-btn,
-  #mobileActionsStrip.mobile-actions-strip.active #autoRefreshPill{
-    min-height:32px !important;
-    height:32px !important;
-  }
-
-  /* Make floating table header stay fixed under sticky controls while scrolling */
-  #tableView,
-  .view-panel,
-  #tableWrap,
-  #tableHeaderDock,
-  #tableHeaderDock .table-header-scroll{
-    overflow:visible !important;
-  }
-
-  #tableHeaderDock.table-header-dock,
-  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock.table-header-dock{
+  #tableView .table-header-dock{
     position:sticky !important;
-    top:var(--mobile-table-header-top, calc(var(--header-h) + var(--topbar-h) + var(--controlsbar-h) - 1px)) !important;
-    z-index:72 !important;
-    margin:0 !important;
+    top:calc(var(--header-h) + var(--topbar-h) + var(--controlsbar-h)) !important;
+    z-index:60 !important;
   }
 
-  #tableWrap.table-wrap{
-    position:relative !important;
+  #fileViewerModal .file-side-tab-row{
+    grid-template-columns:1fr 1fr !important;
+    gap:5px !important;
+    margin:0 8px 6px !important;
+    padding-bottom:6px !important;
+  }
+  #fileViewerModal .job-file-item,
+  #fileViewerModal .page-thumb-item{
+    max-width:138px !important;
+    padding:6px !important;
+    border-radius:12px !important;
+  }
+  #fileViewerModal .job-file-thumb,
+  #fileViewerModal .page-thumb-canvas-wrap{
+    min-height:48px !important;
+    margin-bottom:6px !important;
+    border-radius:10px !important;
+  }
+  #fileViewerModal .job-file-thumb{
+    font-size:1.35rem !important;
+  }
+  #fileViewerModal .job-file-label,
+  #fileViewerModal .page-thumb-label{
+    font-size:.68rem !important;
+    min-height:30px !important;
+  }
+  #fileViewerModal .page-thumb-canvas-wrap canvas{
+    max-height:38px !important;
+    width:auto !important;
+  }
+  #fileViewerModal .file-viewer-layout.sidebar-hidden .file-side-tab-row{
+    display:none !important;
   }
 }
 </style>
-
-<script id="final-mobile-files-pages-sticky-controls-row-script">
+<script id="final-mobile-two-row-controls-no-scrollbar-script">
 (function(){
-  function moveMobileActionStripAfterDateFilter(){
-    var controlsGrid = document.querySelector('#controlsWrap .controls-grid');
-    var strip = document.getElementById('mobileActionsStrip');
-    var dateMode = document.getElementById('dateMode');
-    var dateGroup = dateMode ? dateMode.closest('.field-group') : null;
-    if (!controlsGrid || !strip || window.innerWidth > 768) return;
+  const mq = window.matchMedia('(max-width: 768px)');
+  let rafId = null;
 
-    if (strip.parentElement !== controlsGrid){
-      controlsGrid.insertBefore(strip, dateGroup ? dateGroup.nextSibling : null);
-    } else if (dateGroup && strip.previousElementSibling !== dateGroup){
-      controlsGrid.insertBefore(strip, dateGroup.nextSibling);
+  function ensureMobileTitle(){
+    const actions = document.querySelector('#companyHeroBar .company-hero-account-actions');
+    const logoutBtn = document.getElementById('companyLogoutBtn');
+    const sourceTitle = document.getElementById('directoryMainTitle');
+    if (!actions || !logoutBtn || !sourceTitle) return;
+    let mobileTitle = document.getElementById('mobilePostedJobsTitle');
+    if (mq.matches){
+      if (!mobileTitle){
+        mobileTitle = document.createElement('div');
+        mobileTitle.id = 'mobilePostedJobsTitle';
+      }
+      mobileTitle.textContent = (sourceTitle.textContent || 'All Posted Jobs').trim() || 'All Posted Jobs';
+      if (mobileTitle.parentElement !== actions){
+        actions.insertBefore(mobileTitle, logoutBtn);
+      }
+    } else if (mobileTitle){
+      mobileTitle.remove();
     }
   }
 
-  function updateMobileStickyTableHeaderTop(){
-    if (window.innerWidth > 768) {
-      var dockDesktop = document.getElementById('tableHeaderDock');
-      if (dockDesktop) dockDesktop.style.removeProperty('top');
-      document.documentElement.style.removeProperty('--mobile-table-header-top');
-      return;
+  function moveRefreshPill(){
+    const pill = document.getElementById('autoRefreshPill');
+    const pillText = document.getElementById('autoRefreshText');
+    const grid = document.querySelector('#controlsWrap .controls-grid');
+    const topbarActions = document.getElementById('topbarActions');
+    if (!pill || !grid || !topbarActions) return;
+
+    if (!pill.dataset.desktopText && pillText){
+      pill.dataset.desktopText = pillText.textContent || '';
     }
 
-    var controlsWrap = document.getElementById('controlsWrap');
-    var tableDock = document.getElementById('tableHeaderDock');
-    if (!controlsWrap || !tableDock) return;
-
-    var rect = controlsWrap.getBoundingClientRect();
-    var topValue = Math.max(0, Math.round(rect.bottom) - 1);
-    document.documentElement.style.setProperty('--mobile-table-header-top', topValue + 'px');
-    tableDock.style.top = topValue + 'px';
+    if (mq.matches){
+      if (pillText) pillText.textContent = 'Refresh';
+      if (pill.parentElement !== grid){
+        grid.appendChild(pill);
+      } else {
+        grid.appendChild(pill);
+      }
+    } else {
+      if (pillText && pill.dataset.desktopText){
+        pillText.textContent = pill.dataset.desktopText;
+      }
+      if (pill.parentElement !== topbarActions){
+        topbarActions.appendChild(pill);
+      }
+    }
   }
 
-  function applyFinalMobileDashboardPatch(){
-    moveMobileActionStripAfterDateFilter();
-    updateMobileStickyTableHeaderTop();
+  function refreshStickyMetrics(){
+    const controlsWrap = document.getElementById('controlsWrap');
+    const directoryTopbar = document.getElementById('directoryTopbar');
+    if (controlsWrap){
+      document.documentElement.style.setProperty('--controlsbar-h', `${Math.ceil(controlsWrap.getBoundingClientRect().height)}px`);
+    }
+    if (directoryTopbar){
+      document.documentElement.style.setProperty('--topbar-h', `${Math.ceil(directoryTopbar.getBoundingClientRect().height)}px`);
+    }
   }
 
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(applyFinalMobileDashboardPatch, 80);
-    setTimeout(applyFinalMobileDashboardPatch, 240);
-  });
+  function applyFinalMobileLayout(){
+    ensureMobileTitle();
+    moveRefreshPill();
+    refreshStickyMetrics();
+  }
 
-  window.addEventListener('load', function(){
-    setTimeout(applyFinalMobileDashboardPatch, 80);
-    setTimeout(applyFinalMobileDashboardPatch, 240);
-  });
+  function scheduleApply(){
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => {
+      applyFinalMobileLayout();
+      setTimeout(applyFinalMobileLayout, 60);
+      setTimeout(applyFinalMobileLayout, 220);
+    });
+  }
 
-  window.addEventListener('resize', applyFinalMobileDashboardPatch, { passive:true });
-  window.addEventListener('scroll', updateMobileStickyTableHeaderTop, { passive:true });
-
-  var mo = new MutationObserver(function(){
-    applyFinalMobileDashboardPatch();
-  });
-  mo.observe(document.documentElement, { attributes:false, childList:true, subtree:true });
+  document.addEventListener('DOMContentLoaded', scheduleApply);
+  window.addEventListener('load', scheduleApply);
+  window.addEventListener('resize', scheduleApply);
+  if (mq.addEventListener){
+    mq.addEventListener('change', scheduleApply);
+  } else if (mq.addListener){
+    mq.addListener(scheduleApply);
+  }
 })();
 </script>
 
