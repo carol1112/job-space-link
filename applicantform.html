@@ -2542,12 +2542,154 @@ header .auth-buttons a:hover{
     border-radius:11px;
   }
 
-  #fileViewerBody{
-    padding:10px;
+  #fileViewerPopup{
+    padding:8px;
   }
   #fileViewerBox{
-    width:min(1240px, 100%);
-    height:min(92vh, 900px);
+    width:100%;
+    max-width:100%;
+    height:min(95vh, 900px);
+    border-radius:16px;
+  }
+  #fileViewerTopActions{
+    top:8px;
+    right:8px;
+    gap:6px;
+  }
+  .viewer-top-action{
+    min-height:34px;
+    padding:7px 10px;
+    font-size:.72rem;
+    border-radius:10px;
+  }
+  #viewerSidebar{
+    width:228px;
+    flex:0 0 228px;
+  }
+  #fileViewerBox.resume-clean #viewerSidebar{
+    width:228px;
+    flex-basis:228px;
+  }
+  #sidebarTop{
+    padding:10px 10px 8px;
+  }
+  #sidebarProfile{
+    padding:4px;
+    gap:8px;
+  }
+  #sidebarPicture{
+    width:40px;
+    height:50px;
+    border-radius:10px;
+  }
+  #sidebarProfile:hover #sidebarPicture,
+  #fileViewerHiddenThumbWrap:hover #fileViewerHiddenThumb{
+    position:relative;
+    top:auto;
+    left:auto;
+    width:100%;
+    height:100%;
+    padding:0;
+    border-width:1px;
+    border-radius:inherit;
+    background:transparent;
+    box-shadow:none;
+  }
+  #sidebarName{
+    font-size:.78rem;
+  }
+  #workspaceLabel{
+    margin-top:6px;
+    font-size:.68rem;
+  }
+  #resumePagesBtn{
+    margin-top:10px;
+    min-height:36px;
+    font-size:.72rem;
+    border-radius:11px;
+  }
+  #sidebarTabs{
+    margin-top:8px;
+    gap:6px;
+  }
+  .sidebar-tab{
+    padding:7px 9px;
+    font-size:.68rem;
+    border-radius:10px;
+  }
+  #thumbGridWrap{
+    padding:4px;
+  }
+  #thumbGrid{
+    gap:5px;
+  }
+  .thumb-item{
+    width:min(156px,100%);
+    padding:4px;
+    border-radius:9px;
+  }
+  .thumb-preview{
+    height:48px;
+    border-radius:8px;
+  }
+  .thumb-name{
+    margin-top:4px;
+    font-size:.58rem;
+  }
+  #profileHeader{
+    height:54px;
+    padding:8px 14px;
+  }
+  #profileName{
+    font-size:.84rem;
+  }
+  #fileViewerHiddenHeader{
+    min-height:68px;
+    padding:8px 12px;
+  }
+  #fileViewerHiddenMeta{
+    gap:10px;
+  }
+  #fileViewerHiddenThumbWrap{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+  }
+  #fileViewerHiddenThumb{
+    border-radius:12px;
+  }
+  #fileViewerHiddenThumbPlaceholder{
+    border-radius:12px;
+    font-size:.9rem;
+  }
+  #fileViewerHiddenTitle{
+    font-size:.84rem;
+  }
+  #fileViewerHiddenSub{
+    font-size:.68rem;
+  }
+  #fileViewerBody{
+    padding:8px;
+  }
+  .viewer-scroll-doc{
+    width:min(100%, 100%);
+    padding:10px;
+    border-radius:10px;
+  }
+  .pdf-scroll-wrap{
+    width:min(100%, 100%);
+    gap:10px;
+  }
+  .pdf-page-card{
+    padding:6px;
+    border-radius:8px;
+  }
+  .pdf-page-card canvas{
+    border-radius:6px;
+  }
+  .pdf-page-title{
+    font-size:.68rem;
+    margin-bottom:4px;
   }
 }
 
@@ -3070,6 +3212,172 @@ header .auth-buttons a:hover{
     min-width:56px;
     font-size:.70rem;
     padding:7px 8px;
+    border-radius:10px;
+  }
+
+  #fileViewerPopup{
+    padding:4px;
+  }
+  #fileViewerBox{
+    width:100%;
+    max-width:100%;
+    height:calc(100vh - 8px);
+    min-height:calc(100vh - 8px);
+    border-radius:12px;
+    border-width:1px;
+  }
+  #fileViewerTopActions{
+    top:6px;
+    right:6px;
+    gap:5px;
+  }
+  .viewer-top-action{
+    min-height:30px;
+    padding:6px 8px;
+    font-size:.64rem;
+    border-radius:9px;
+    gap:6px;
+  }
+  #viewerSidebar{
+    width:180px;
+    flex:0 0 180px;
+  }
+  #fileViewerBox.resume-clean #viewerSidebar{
+    width:180px;
+    flex-basis:180px;
+  }
+  #sidebarTop{
+    padding:8px 8px 6px;
+  }
+  #sidebarProfile{
+    padding:3px;
+    gap:6px;
+  }
+  #sidebarPicture{
+    width:32px;
+    height:40px;
+    border-radius:8px;
+    border-width:1.5px;
+  }
+  #sidebarProfile:hover #sidebarPicture,
+  #fileViewerHiddenThumbWrap:hover #fileViewerHiddenThumb{
+    position:relative;
+    top:auto;
+    left:auto;
+    width:100%;
+    height:100%;
+    padding:0;
+    border-width:1px;
+    border-radius:inherit;
+    background:transparent;
+    box-shadow:none;
+  }
+  #sidebarName{
+    font-size:.70rem;
+  }
+  #workspaceLabel{
+    margin-top:4px;
+    font-size:.60rem;
+  }
+  #resumePagesBtn{
+    margin-top:8px;
+    min-height:32px;
+    border-radius:9px;
+    font-size:.64rem;
+    gap:6px;
+  }
+  #sidebarTabs{
+    margin-top:7px;
+    gap:5px;
+  }
+  .sidebar-tab{
+    padding:6px 7px;
+    font-size:.60rem;
+    border-radius:9px;
+  }
+  #thumbGridWrap{
+    padding:3px;
+  }
+  #thumbGrid{
+    gap:4px;
+  }
+  .thumb-item{
+    width:min(132px,100%);
+    padding:4px;
+    border-radius:8px;
+  }
+  .thumb-preview{
+    height:42px;
+    border-radius:7px;
+  }
+  .thumb-name{
+    margin-top:4px;
+    font-size:.52rem;
+  }
+  #profileHeader{
+    height:46px;
+    padding:7px 10px;
+  }
+  #profileName{
+    font-size:.74rem;
+  }
+  #fileViewerHiddenHeader{
+    min-height:54px;
+    padding:7px 9px;
+  }
+  #fileViewerHiddenMeta{
+    gap:8px;
+  }
+  #fileViewerHiddenThumbWrap{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+  }
+  #fileViewerHiddenThumb{
+    border-radius:10px;
+  }
+  #fileViewerHiddenThumbPlaceholder{
+    border-radius:10px;
+    font-size:.8rem;
+  }
+  #fileViewerHiddenTitle{
+    font-size:.74rem;
+  }
+  #fileViewerHiddenSub{
+    font-size:.60rem;
+  }
+  #fileViewerBody{
+    padding:6px;
+  }
+  .viewer-scroll-doc{
+    padding:8px;
+    border-radius:9px;
+    font-size:.78rem;
+    line-height:1.4;
+  }
+  .pdf-scroll-wrap{
+    width:100%;
+    gap:8px;
+  }
+  .pdf-page-card{
+    padding:4px;
+    border-radius:8px;
+  }
+  .pdf-page-card canvas{
+    border-radius:6px;
+  }
+  .pdf-page-title{
+    font-size:.62rem;
+    margin-bottom:4px;
+  }
+  #pdfControls{
+    padding:7px;
+    gap:6px;
+  }
+  .pdf-btn{
+    min-height:34px;
+    padding:7px 9px;
+    font-size:.66rem;
     border-radius:10px;
   }
 }
@@ -3977,6 +4285,9 @@ function updateAgeHidden(){
   ageHiddenEl.value = age === "" ? "" : String(age);
 }
 function isMobileBirthdayTypingMode(){
+  return !!(window.matchMedia && window.matchMedia("(max-width:768px)").matches);
+}
+function isCompactViewerMobileMode(){
   return !!(window.matchMedia && window.matchMedia("(max-width:768px)").matches);
 }
 function formatBirthdayDigitsForMobile(raw){
@@ -4925,7 +5236,7 @@ function openMultiViewer(files, startIndex, ctx){
   resetPdfState();
   viewerZoom = 1;
   updateZoomLabel();
-  setViewerSidebarHidden(false);
+  setViewerSidebarHidden(isCompactViewerMobileMode());
   setSidebarMode("files");
   applySidebarContext(viewerCtx.viewKind);
   renderSidebarList();
