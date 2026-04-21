@@ -11437,27 +11437,28 @@ header{
   }
 
   #fileViewerModal .file-preview-toolbar{
-    padding:10px 10px 12px !important;
-    overflow:visible !important;
+    padding:8px 8px 10px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    scrollbar-width:thin !important;
   }
 
   #fileViewerModal .file-preview-toolbar-main{
-    display:flex !important;
-    align-items:center !important;
-    justify-content:space-between !important;
-    gap:8px !important;
-    flex-wrap:wrap !important;
-    width:100% !important;
-    min-width:0 !important;
+    display:grid !important;
+    grid-auto-flow:column !important;
+    grid-template-rows:repeat(2, minmax(30px, auto)) !important;
+    grid-auto-columns:max-content !important;
+    gap:6px !important;
+    width:max-content !important;
+    min-width:100% !important;
+    align-items:stretch !important;
+    justify-content:start !important;
   }
 
   #fileViewerModal .file-preview-toolbar-left,
   #fileViewerModal .file-preview-toolbar-center,
   #fileViewerModal .file-preview-toolbar-right{
-    display:flex !important;
-    align-items:center !important;
-    gap:8px !important;
-    flex-wrap:wrap !important;
+    display:contents !important;
   }
 
   #fileViewerModal .toolbar-btn,
@@ -11468,12 +11469,12 @@ header{
   #fileViewerModal .preview-link{
     width:auto !important;
     min-width:0 !important;
-    min-height:34px !important;
-    height:auto !important;
-    padding:6px 10px !important;
-    font-size:.68rem !important;
-    border-radius:11px !important;
-    gap:5px !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:0 8px !important;
+    font-size:.62rem !important;
+    border-radius:10px !important;
+    gap:4px !important;
     white-space:nowrap !important;
     justify-content:center !important;
   }
@@ -11533,15 +11534,26 @@ header{
     padding:8px 8px 14px !important;
   }
 
+  #fileViewerModal .file-preview-toolbar{
+    padding:6px 6px 8px !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-main{
+    grid-template-rows:repeat(2, minmax(28px, auto)) !important;
+    gap:4px !important;
+  }
+
   #fileViewerModal .toolbar-btn,
   #fileViewerModal .toolbar-link,
   #fileViewerModal .current-file-pill,
   #fileViewerModal .current-zoom-pill,
   #fileViewerModal .file-nav-btn,
   #fileViewerModal .preview-link{
-    min-height:32px !important;
-    padding:5px 9px !important;
-    font-size:.64rem !important;
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 7px !important;
+    font-size:.58rem !important;
+    gap:3px !important;
   }
 }
 </style>
