@@ -8085,6 +8085,293 @@ header{
 }
 </style>
 
+
+<style id="mobile-final-viewrow-stickyheader-fileviewer-2rows-patch">
+/* ============================================================
+   FINAL MOBILE ONLY PATCH
+   - table / grid / location stay in one row
+   - floating table header sits directly above first row
+   - floating table header stays sticky while rows scroll
+   - file viewer lower controls compress into two rows
+============================================================ */
+@media (max-width:768px){
+  /* one-row view buttons */
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host,
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host.active,
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host .topbar-actions,
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host .view-switcher,
+  #directoryTopbar .topbar-actions,
+  #directoryTopbar .view-switcher{
+    display:flex !important;
+    align-items:center !important;
+    flex-wrap:nowrap !important;
+    gap:4px !important;
+    min-width:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host .view-switcher,
+  #directoryTopbar .view-switcher{
+    width:100% !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    scrollbar-width:none !important;
+    padding-bottom:1px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host .view-switcher::-webkit-scrollbar,
+  #directoryTopbar .view-switcher::-webkit-scrollbar{
+    display:none !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host .view-toggle,
+  #directoryTopbar .view-toggle{
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    width:auto !important;
+    white-space:nowrap !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:.58rem !important;
+    gap:4px !important;
+    border-radius:9px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host .auto-refresh-pill,
+  #directoryTopbar .auto-refresh-pill{
+    flex:0 0 auto !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:0 7px !important;
+    font-size:.56rem !important;
+    gap:3px !important;
+    border-radius:9px !important;
+  }
+
+  /* sticky floating table header directly above first row */
+  #tableView,
+  #tableWrap,
+  #tableWrap .directory-table,
+  #tableHeaderDock,
+  #tableHeaderDock .table-header-scroll,
+  #tableHeaderDock .floating-table-header-grid{
+    margin-top:0 !important;
+    padding-top:0 !important;
+  }
+
+  #tableHeaderDock.table-header-dock{
+    position:sticky !important;
+    top:calc(var(--header-h) + var(--topbar-h) + var(--controlsbar-h) - 1px) !important;
+    z-index:64 !important;
+    margin:0 !important;
+    border-top:0 !important;
+    border-bottom:0 !important;
+    background:rgba(3,12,30,.985) !important;
+    box-shadow:0 8px 16px rgba(2,6,23,.22) !important;
+  }
+
+  #tableHeaderDock .table-header-scroll{
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  #tableHeaderDock .floating-table-header-grid{
+    box-shadow:none !important;
+  }
+
+  #tableWrap.table-wrap{
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    margin-top:0 !important;
+    padding-top:0 !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  #tableWrap .directory-table{
+    margin-top:0 !important;
+  }
+
+  #tableWrap .directory-table tbody tr:first-child td{
+    border-top-width:0 !important;
+  }
+
+  /* file viewer lower controls in two rows */
+  .file-preview-toolbar,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar{
+    padding:6px 6px 8px !important;
+    gap:6px !important;
+    overflow:hidden !important;
+  }
+
+  .file-preview-toolbar-main,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar-main,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar-main{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:6px !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  .file-preview-toolbar-center,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar-center,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar-center{
+    order:1 !important;
+    flex:1 1 100% !important;
+    width:100% !important;
+    min-width:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-wrap:wrap !important;
+    gap:6px !important;
+  }
+
+  .file-preview-toolbar-left,
+  .file-preview-toolbar-right,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar-left,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar-right,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar-left,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar-right{
+    order:2 !important;
+    flex:0 1 auto !important;
+    min-width:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-wrap:wrap !important;
+    gap:6px !important;
+  }
+
+  .toolbar-btn,
+  .toolbar-link,
+  .current-zoom-pill,
+  .file-viewer-layout.sidebar-hidden .toolbar-btn,
+  .file-viewer-layout.sidebar-hidden .toolbar-link,
+  .file-viewer-layout.sidebar-hidden .current-zoom-pill,
+  .file-viewer-layout:not(.sidebar-hidden) .toolbar-btn,
+  .file-viewer-layout:not(.sidebar-hidden) .toolbar-link,
+  .file-viewer-layout:not(.sidebar-hidden) .current-zoom-pill{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    border-radius:8px !important;
+    gap:4px !important;
+    font-size:.56rem !important;
+    white-space:nowrap !important;
+    line-height:1 !important;
+  }
+
+  .toolbar-btn i,
+  .toolbar-link i,
+  .file-viewer-layout.sidebar-hidden .toolbar-btn i,
+  .file-viewer-layout.sidebar-hidden .toolbar-link i,
+  .file-viewer-layout:not(.sidebar-hidden) .toolbar-btn i,
+  .file-viewer-layout:not(.sidebar-hidden) .toolbar-link i{
+    font-size:.62rem !important;
+  }
+
+  .current-zoom-pill,
+  .file-viewer-layout.sidebar-hidden .current-zoom-pill,
+  .file-viewer-layout:not(.sidebar-hidden) .current-zoom-pill{
+    min-width:42px !important;
+    justify-content:center !important;
+  }
+
+  .pdf-page-toolbar,
+  .file-viewer-layout.sidebar-hidden .pdf-page-toolbar,
+  .file-viewer-layout:not(.sidebar-hidden) .pdf-page-toolbar{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-wrap:wrap !important;
+    gap:6px !important;
+    padding:6px 8px 0 !important;
+  }
+
+  #prevPdfPageBtn,
+  #nextPdfPageBtn,
+  #pdfPagePill{
+    min-height:28px !important;
+    height:28px !important;
+    font-size:.56rem !important;
+    padding:0 8px !important;
+    border-radius:8px !important;
+  }
+}
+
+@media (max-width:480px){
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host .view-toggle,
+  #directoryTopbar .view-toggle{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 5px !important;
+    font-size:.54rem !important;
+    gap:3px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #companyHeroBar .hero-toolbar-host .auto-refresh-pill,
+  #directoryTopbar .auto-refresh-pill{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    font-size:.52rem !important;
+  }
+
+  .file-preview-toolbar,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar{
+    padding:5px 5px 7px !important;
+    gap:5px !important;
+  }
+
+  .file-preview-toolbar-main,
+  .file-preview-toolbar-center,
+  .file-preview-toolbar-left,
+  .file-preview-toolbar-right,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar-main,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar-center,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar-left,
+  .file-viewer-layout.sidebar-hidden .file-preview-toolbar-right,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar-main,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar-center,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar-left,
+  .file-viewer-layout:not(.sidebar-hidden) .file-preview-toolbar-right{
+    gap:5px !important;
+  }
+
+  .toolbar-btn,
+  .toolbar-link,
+  .current-zoom-pill,
+  .file-viewer-layout.sidebar-hidden .toolbar-btn,
+  .file-viewer-layout.sidebar-hidden .toolbar-link,
+  .file-viewer-layout.sidebar-hidden .current-zoom-pill,
+  .file-viewer-layout:not(.sidebar-hidden) .toolbar-btn,
+  .file-viewer-layout:not(.sidebar-hidden) .toolbar-link,
+  .file-viewer-layout:not(.sidebar-hidden) .current-zoom-pill{
+    min-height:26px !important;
+    height:26px !important;
+    padding:0 5px !important;
+    font-size:.52rem !important;
+    gap:3px !important;
+  }
+
+  #prevPdfPageBtn,
+  #nextPdfPageBtn,
+  #pdfPagePill{
+    min-height:26px !important;
+    height:26px !important;
+    font-size:.52rem !important;
+    padding:0 7px !important;
+  }
+}
+</style>
+
 </head>
 <body>
   <!-- ==========================================================
