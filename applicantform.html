@@ -2716,6 +2716,17 @@ header .auth-buttons a:hover{
   .field-card textarea{
     min-height:52px;
   }
+  #birthday.birthday-mobile-input{
+    min-height:38px;
+    font-size:16px !important;
+    letter-spacing:.3px;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  #birthday.birthday-mobile-input::placeholder{
+    color:#94a3b8;
+    opacity:1;
+  }
   .field-card .currency-pill{
     font-size:.70rem;
     padding:4px 6px;
@@ -2968,6 +2979,17 @@ header .auth-buttons a:hover{
   }
   .field-card textarea{
     min-height:48px;
+  }
+  #birthday.birthday-mobile-input{
+    min-height:40px;
+    font-size:16px !important;
+    letter-spacing:.32px;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  #birthday.birthday-mobile-input::placeholder{
+    color:#94a3b8;
+    opacity:1;
   }
   .field-card .currency-pill{
     font-size:.66rem;
@@ -3379,7 +3401,7 @@ header .auth-buttons a:hover{
                   <div class="field-card"><div class="lbl"><i class="fa-solid fa-id-card"></i> First Name</div><input id="first_name" required /></div>
                   <div class="field-card"><div class="lbl"><i class="fa-solid fa-id-card"></i> Middle Name</div><input id="middle_name" /></div>
                   <div class="field-card"><div class="lbl"><i class="fa-solid fa-id-card"></i> Last Name</div><input id="last_name" required /></div>
-                  <div class="field-card"><div class="lbl"><i class="fa-solid fa-cake-candles"></i> Birthday</div><input type="date" id="birthday" required /></div>
+                  <div class="field-card birthday-field-card"><div class="lbl"><i class="fa-solid fa-cake-candles"></i> Birthday</div><input type="date" id="birthday" required autocomplete="bday" /></div>
                 </div>
 
                 <div class="personal-row row4">
@@ -3953,6 +3975,61 @@ function calculateAge(birthdayStr){
 function updateAgeHidden(){
   var age = calculateAge(birthdayEl.value);
   ageHiddenEl.value = age === "" ? "" : String(age);
+}
+function isMobileBirthdayTypingMode(){
+  return !!(window.matchMedia && window.matchMedia("(max-width:768px)").matches);
+}
+function formatBirthdayDigitsForMobile(raw){
+  var digits = String(raw || "").replace(/\D/g, "").slice(0, 8);
+  if (!digits) return "";
+  if (digits.length <= 4) return digits;
+  if (digits.length <= 6) return digits.slice(0, 4) + "-" + digits.slice(4);
+  return digits.slice(0, 4) + "-" + digits.slice(4, 6) + "-" + digits.slice(6, 8);
+}
+function setupBirthdayTypingMode(){
+  if (!birthdayEl) return;
+
+  birthdayEl.setAttribute("autocomplete", "bday");
+
+  if (!birthdayEl.__mobileTypingBound){
+    birthdayEl.__mobileTypingBound = true;
+
+    birthdayEl.addEventListener("input", function(){
+      if (isMobileBirthdayTypingMode()){
+        var formatted = formatBirthdayDigitsForMobile(birthdayEl.value);
+        if (birthdayEl.value !== formatted){
+          birthdayEl.value = formatted;
+        }
+      }
+      updateAgeHidden();
+    });
+
+    birthdayEl.addEventListener("blur", function(){
+      if (isMobileBirthdayTypingMode()){
+        birthdayEl.value = formatBirthdayDigitsForMobile(birthdayEl.value);
+      }
+      updateAgeHidden();
+    });
+  }
+
+  if (isMobileBirthdayTypingMode()){
+    birthdayEl.setAttribute("type", "text");
+    birthdayEl.setAttribute("inputmode", "numeric");
+    birthdayEl.setAttribute("placeholder", "YYYY-MM-DD");
+    birthdayEl.setAttribute("maxlength", "10");
+    birthdayEl.setAttribute("pattern", "\\d{4}-\\d{2}-\\d{2}");
+    birthdayEl.classList.add("birthday-mobile-input");
+    birthdayEl.value = formatBirthdayDigitsForMobile(birthdayEl.value);
+  } else {
+    birthdayEl.setAttribute("type", "date");
+    birthdayEl.removeAttribute("inputmode");
+    birthdayEl.removeAttribute("maxlength");
+    birthdayEl.removeAttribute("pattern");
+    birthdayEl.removeAttribute("placeholder");
+    birthdayEl.classList.remove("birthday-mobile-input");
+  }
+
+  updateAgeHidden();
 }
 birthdayEl.addEventListener("change", updateAgeHidden);
 
@@ -8804,6 +8881,7 @@ window.addEventListener("pagehide", function(){
 document.addEventListener("DOMContentLoaded", async function(){
   persistSource();
   populateCountries();
+  setupBirthdayTypingMode();
   updateSalaryCurrency();
   updateAgeHidden();
 
