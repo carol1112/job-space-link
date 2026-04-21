@@ -7543,6 +7543,251 @@ header .auth-buttons a{
   }
 }
 
+
+/* =========================================================
+   MOBILE-ONLY FINAL PATCH - TABLE HEADER + FILE VIEWER
+========================================================= */
+@media (max-width: 768px){
+  /* put sticky table header exactly in the blank space above row 1 */
+  #tableView{
+    padding-top:0 !important;
+  }
+
+  #tableHeaderDock,
+  #tableWrap,
+  #tableWrap .directory-table,
+  #tableHeaderDock .table-header-scroll,
+  #tableHeaderDock .floating-table-header-grid{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode){
+    --col-company:112px !important;
+    --col-title:118px !important;
+    --col-department:96px !important;
+    --col-employment:90px !important;
+    --col-location:138px !important;
+    --col-salary:96px !important;
+    --col-file:80px !important;
+    --col-date:70px !important;
+    --col-edit:54px !important;
+    --table-min-w-loggedin:854px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock.table-header-dock{
+    top:0 !important; /* exact top is set by JS from controls bottom */
+    margin:0 !important;
+    padding:0 !important;
+    border-top:0 !important;
+    border-bottom:1px solid rgba(34,160,255,.18) !important;
+    background:rgba(3,12,30,.985) !important;
+    z-index:64 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .table-header-scroll{
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    margin:0 !important;
+    padding:0 !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-grid,
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    width:var(--table-min-w-loggedin) !important;
+    min-width:var(--table-min-w-loggedin) !important;
+    max-width:none !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-cell{
+    min-height:28px !important;
+    padding:3px 4px !important;
+    font-size:.54rem !important;
+    line-height:1 !important;
+    white-space:normal !important;
+    word-break:break-word !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap.table-wrap{
+    margin-top:0 !important;
+    padding-top:0 !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody tr:first-child td{
+    border-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td{
+    padding:5px 4px !important;
+    font-size:.60rem !important;
+    line-height:1.08 !important;
+    vertical-align:top !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td strong{
+    font-size:.66rem !important;
+    line-height:1.05 !important;
+  }
+
+  .logo-cell .logo-badge{
+    width:34px !important;
+    height:34px !important;
+    border-radius:10px !important;
+  }
+
+  /* file viewer header: title + top controls in one compressed row */
+  #fileViewerModal .file-viewer-panel{
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-panel::before{
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-head{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap:6px !important;
+    min-height:44px !important;
+    padding:6px 8px !important;
+  }
+
+  #fileViewerModal .file-viewer-title-wrap{
+    max-width:none !important;
+    min-width:0 !important;
+    text-align:left !important;
+  }
+
+  #fileViewerModal .file-viewer-head h2{
+    margin:0 !important;
+    font-size:.74rem !important;
+    line-height:1.05 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    transform:none !important;
+    max-width:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    flex-wrap:nowrap !important;
+    gap:4px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding-bottom:2px !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-head-btn{
+    flex:0 0 auto !important;
+    min-height:24px !important;
+    height:24px !important;
+    padding:0 7px !important;
+    font-size:.54rem !important;
+    border-radius:7px !important;
+    gap:3px !important;
+    white-space:nowrap !important;
+  }
+
+  #fileViewerModal .file-viewer-layout{
+    grid-template-columns:0 minmax(0,1fr) !important;
+  }
+
+  #fileViewerModal .file-side-pane{
+    display:none !important;
+  }
+
+  #fileViewerModal .file-preview-shell{
+    padding:6px 6px 0 !important;
+  }
+
+  #fileViewerModal .file-preview-stage{
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .pdf-preview-wrap{
+    padding:6px 6px 44px !important;
+  }
+
+  #fileViewerModal .pdf-preview-pages{
+    gap:8px !important;
+  }
+
+  /* bottom controls: two rows with scrollbar if needed */
+  #fileViewerModal .file-preview-toolbar{
+    padding:6px 6px 8px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-main{
+    display:grid !important;
+    grid-auto-flow:column !important;
+    grid-template-rows:repeat(2, minmax(28px, auto)) !important;
+    grid-auto-columns:minmax(104px, 1fr) !important;
+    gap:4px !important;
+    width:max-content !important;
+    min-width:100% !important;
+    align-items:stretch !important;
+    justify-content:start !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-left,
+  #fileViewerModal .file-preview-toolbar-center,
+  #fileViewerModal .file-preview-toolbar-right{
+    display:contents !important;
+  }
+
+  #fileViewerModal .toolbar-btn,
+  #fileViewerModal .toolbar-link,
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill,
+  #fileViewerModal .file-nav-btn,
+  #fileViewerModal .preview-link{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    font-size:.56rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+    white-space:nowrap !important;
+    width:auto !important;
+    min-width:0 !important;
+    justify-content:center !important;
+  }
+
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .pdf-page-toolbar{
+    display:none !important;
+  }
+}
+
 </style>
 
 
@@ -7902,6 +8147,251 @@ header .auth-buttons a{
     font-size:.58rem !important;
     border-radius:8px !important;
     gap:4px !important;
+  }
+}
+
+
+/* =========================================================
+   MOBILE-ONLY FINAL PATCH - TABLE HEADER + FILE VIEWER
+========================================================= */
+@media (max-width: 768px){
+  /* put sticky table header exactly in the blank space above row 1 */
+  #tableView{
+    padding-top:0 !important;
+  }
+
+  #tableHeaderDock,
+  #tableWrap,
+  #tableWrap .directory-table,
+  #tableHeaderDock .table-header-scroll,
+  #tableHeaderDock .floating-table-header-grid{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode){
+    --col-company:112px !important;
+    --col-title:118px !important;
+    --col-department:96px !important;
+    --col-employment:90px !important;
+    --col-location:138px !important;
+    --col-salary:96px !important;
+    --col-file:80px !important;
+    --col-date:70px !important;
+    --col-edit:54px !important;
+    --table-min-w-loggedin:854px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock.table-header-dock{
+    top:0 !important; /* exact top is set by JS from controls bottom */
+    margin:0 !important;
+    padding:0 !important;
+    border-top:0 !important;
+    border-bottom:1px solid rgba(34,160,255,.18) !important;
+    background:rgba(3,12,30,.985) !important;
+    z-index:64 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .table-header-scroll{
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    margin:0 !important;
+    padding:0 !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-grid,
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    width:var(--table-min-w-loggedin) !important;
+    min-width:var(--table-min-w-loggedin) !important;
+    max-width:none !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-cell{
+    min-height:28px !important;
+    padding:3px 4px !important;
+    font-size:.54rem !important;
+    line-height:1 !important;
+    white-space:normal !important;
+    word-break:break-word !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap.table-wrap{
+    margin-top:0 !important;
+    padding-top:0 !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody tr:first-child td{
+    border-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td{
+    padding:5px 4px !important;
+    font-size:.60rem !important;
+    line-height:1.08 !important;
+    vertical-align:top !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td strong{
+    font-size:.66rem !important;
+    line-height:1.05 !important;
+  }
+
+  .logo-cell .logo-badge{
+    width:34px !important;
+    height:34px !important;
+    border-radius:10px !important;
+  }
+
+  /* file viewer header: title + top controls in one compressed row */
+  #fileViewerModal .file-viewer-panel{
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-panel::before{
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-head{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap:6px !important;
+    min-height:44px !important;
+    padding:6px 8px !important;
+  }
+
+  #fileViewerModal .file-viewer-title-wrap{
+    max-width:none !important;
+    min-width:0 !important;
+    text-align:left !important;
+  }
+
+  #fileViewerModal .file-viewer-head h2{
+    margin:0 !important;
+    font-size:.74rem !important;
+    line-height:1.05 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    transform:none !important;
+    max-width:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    flex-wrap:nowrap !important;
+    gap:4px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding-bottom:2px !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-head-btn{
+    flex:0 0 auto !important;
+    min-height:24px !important;
+    height:24px !important;
+    padding:0 7px !important;
+    font-size:.54rem !important;
+    border-radius:7px !important;
+    gap:3px !important;
+    white-space:nowrap !important;
+  }
+
+  #fileViewerModal .file-viewer-layout{
+    grid-template-columns:0 minmax(0,1fr) !important;
+  }
+
+  #fileViewerModal .file-side-pane{
+    display:none !important;
+  }
+
+  #fileViewerModal .file-preview-shell{
+    padding:6px 6px 0 !important;
+  }
+
+  #fileViewerModal .file-preview-stage{
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .pdf-preview-wrap{
+    padding:6px 6px 44px !important;
+  }
+
+  #fileViewerModal .pdf-preview-pages{
+    gap:8px !important;
+  }
+
+  /* bottom controls: two rows with scrollbar if needed */
+  #fileViewerModal .file-preview-toolbar{
+    padding:6px 6px 8px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-main{
+    display:grid !important;
+    grid-auto-flow:column !important;
+    grid-template-rows:repeat(2, minmax(28px, auto)) !important;
+    grid-auto-columns:minmax(104px, 1fr) !important;
+    gap:4px !important;
+    width:max-content !important;
+    min-width:100% !important;
+    align-items:stretch !important;
+    justify-content:start !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-left,
+  #fileViewerModal .file-preview-toolbar-center,
+  #fileViewerModal .file-preview-toolbar-right{
+    display:contents !important;
+  }
+
+  #fileViewerModal .toolbar-btn,
+  #fileViewerModal .toolbar-link,
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill,
+  #fileViewerModal .file-nav-btn,
+  #fileViewerModal .preview-link{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    font-size:.56rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+    white-space:nowrap !important;
+    width:auto !important;
+    min-width:0 !important;
+    justify-content:center !important;
+  }
+
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .pdf-page-toolbar{
+    display:none !important;
   }
 }
 
@@ -8279,6 +8769,251 @@ header{
     font-size:.58rem !important;
     border-radius:8px !important;
     gap:4px !important;
+  }
+}
+
+
+/* =========================================================
+   MOBILE-ONLY FINAL PATCH - TABLE HEADER + FILE VIEWER
+========================================================= */
+@media (max-width: 768px){
+  /* put sticky table header exactly in the blank space above row 1 */
+  #tableView{
+    padding-top:0 !important;
+  }
+
+  #tableHeaderDock,
+  #tableWrap,
+  #tableWrap .directory-table,
+  #tableHeaderDock .table-header-scroll,
+  #tableHeaderDock .floating-table-header-grid{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode){
+    --col-company:112px !important;
+    --col-title:118px !important;
+    --col-department:96px !important;
+    --col-employment:90px !important;
+    --col-location:138px !important;
+    --col-salary:96px !important;
+    --col-file:80px !important;
+    --col-date:70px !important;
+    --col-edit:54px !important;
+    --table-min-w-loggedin:854px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock.table-header-dock{
+    top:0 !important; /* exact top is set by JS from controls bottom */
+    margin:0 !important;
+    padding:0 !important;
+    border-top:0 !important;
+    border-bottom:1px solid rgba(34,160,255,.18) !important;
+    background:rgba(3,12,30,.985) !important;
+    z-index:64 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .table-header-scroll{
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    margin:0 !important;
+    padding:0 !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-grid,
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    width:var(--table-min-w-loggedin) !important;
+    min-width:var(--table-min-w-loggedin) !important;
+    max-width:none !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-cell{
+    min-height:28px !important;
+    padding:3px 4px !important;
+    font-size:.54rem !important;
+    line-height:1 !important;
+    white-space:normal !important;
+    word-break:break-word !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap.table-wrap{
+    margin-top:0 !important;
+    padding-top:0 !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody tr:first-child td{
+    border-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td{
+    padding:5px 4px !important;
+    font-size:.60rem !important;
+    line-height:1.08 !important;
+    vertical-align:top !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td strong{
+    font-size:.66rem !important;
+    line-height:1.05 !important;
+  }
+
+  .logo-cell .logo-badge{
+    width:34px !important;
+    height:34px !important;
+    border-radius:10px !important;
+  }
+
+  /* file viewer header: title + top controls in one compressed row */
+  #fileViewerModal .file-viewer-panel{
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-panel::before{
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-head{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap:6px !important;
+    min-height:44px !important;
+    padding:6px 8px !important;
+  }
+
+  #fileViewerModal .file-viewer-title-wrap{
+    max-width:none !important;
+    min-width:0 !important;
+    text-align:left !important;
+  }
+
+  #fileViewerModal .file-viewer-head h2{
+    margin:0 !important;
+    font-size:.74rem !important;
+    line-height:1.05 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    transform:none !important;
+    max-width:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    flex-wrap:nowrap !important;
+    gap:4px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding-bottom:2px !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-head-btn{
+    flex:0 0 auto !important;
+    min-height:24px !important;
+    height:24px !important;
+    padding:0 7px !important;
+    font-size:.54rem !important;
+    border-radius:7px !important;
+    gap:3px !important;
+    white-space:nowrap !important;
+  }
+
+  #fileViewerModal .file-viewer-layout{
+    grid-template-columns:0 minmax(0,1fr) !important;
+  }
+
+  #fileViewerModal .file-side-pane{
+    display:none !important;
+  }
+
+  #fileViewerModal .file-preview-shell{
+    padding:6px 6px 0 !important;
+  }
+
+  #fileViewerModal .file-preview-stage{
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .pdf-preview-wrap{
+    padding:6px 6px 44px !important;
+  }
+
+  #fileViewerModal .pdf-preview-pages{
+    gap:8px !important;
+  }
+
+  /* bottom controls: two rows with scrollbar if needed */
+  #fileViewerModal .file-preview-toolbar{
+    padding:6px 6px 8px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-main{
+    display:grid !important;
+    grid-auto-flow:column !important;
+    grid-template-rows:repeat(2, minmax(28px, auto)) !important;
+    grid-auto-columns:minmax(104px, 1fr) !important;
+    gap:4px !important;
+    width:max-content !important;
+    min-width:100% !important;
+    align-items:stretch !important;
+    justify-content:start !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-left,
+  #fileViewerModal .file-preview-toolbar-center,
+  #fileViewerModal .file-preview-toolbar-right{
+    display:contents !important;
+  }
+
+  #fileViewerModal .toolbar-btn,
+  #fileViewerModal .toolbar-link,
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill,
+  #fileViewerModal .file-nav-btn,
+  #fileViewerModal .preview-link{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    font-size:.56rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+    white-space:nowrap !important;
+    width:auto !important;
+    min-width:0 !important;
+    justify-content:center !important;
+  }
+
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .pdf-page-toolbar{
+    display:none !important;
   }
 }
 
@@ -9383,6 +10118,251 @@ header{
   }
 }
 
+
+/* =========================================================
+   MOBILE-ONLY FINAL PATCH - TABLE HEADER + FILE VIEWER
+========================================================= */
+@media (max-width: 768px){
+  /* put sticky table header exactly in the blank space above row 1 */
+  #tableView{
+    padding-top:0 !important;
+  }
+
+  #tableHeaderDock,
+  #tableWrap,
+  #tableWrap .directory-table,
+  #tableHeaderDock .table-header-scroll,
+  #tableHeaderDock .floating-table-header-grid{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode){
+    --col-company:112px !important;
+    --col-title:118px !important;
+    --col-department:96px !important;
+    --col-employment:90px !important;
+    --col-location:138px !important;
+    --col-salary:96px !important;
+    --col-file:80px !important;
+    --col-date:70px !important;
+    --col-edit:54px !important;
+    --table-min-w-loggedin:854px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock.table-header-dock{
+    top:0 !important; /* exact top is set by JS from controls bottom */
+    margin:0 !important;
+    padding:0 !important;
+    border-top:0 !important;
+    border-bottom:1px solid rgba(34,160,255,.18) !important;
+    background:rgba(3,12,30,.985) !important;
+    z-index:64 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .table-header-scroll{
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    margin:0 !important;
+    padding:0 !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-grid,
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    width:var(--table-min-w-loggedin) !important;
+    min-width:var(--table-min-w-loggedin) !important;
+    max-width:none !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-cell{
+    min-height:28px !important;
+    padding:3px 4px !important;
+    font-size:.54rem !important;
+    line-height:1 !important;
+    white-space:normal !important;
+    word-break:break-word !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap.table-wrap{
+    margin-top:0 !important;
+    padding-top:0 !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody tr:first-child td{
+    border-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td{
+    padding:5px 4px !important;
+    font-size:.60rem !important;
+    line-height:1.08 !important;
+    vertical-align:top !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td strong{
+    font-size:.66rem !important;
+    line-height:1.05 !important;
+  }
+
+  .logo-cell .logo-badge{
+    width:34px !important;
+    height:34px !important;
+    border-radius:10px !important;
+  }
+
+  /* file viewer header: title + top controls in one compressed row */
+  #fileViewerModal .file-viewer-panel{
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-panel::before{
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-head{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap:6px !important;
+    min-height:44px !important;
+    padding:6px 8px !important;
+  }
+
+  #fileViewerModal .file-viewer-title-wrap{
+    max-width:none !important;
+    min-width:0 !important;
+    text-align:left !important;
+  }
+
+  #fileViewerModal .file-viewer-head h2{
+    margin:0 !important;
+    font-size:.74rem !important;
+    line-height:1.05 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    transform:none !important;
+    max-width:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    flex-wrap:nowrap !important;
+    gap:4px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding-bottom:2px !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-head-btn{
+    flex:0 0 auto !important;
+    min-height:24px !important;
+    height:24px !important;
+    padding:0 7px !important;
+    font-size:.54rem !important;
+    border-radius:7px !important;
+    gap:3px !important;
+    white-space:nowrap !important;
+  }
+
+  #fileViewerModal .file-viewer-layout{
+    grid-template-columns:0 minmax(0,1fr) !important;
+  }
+
+  #fileViewerModal .file-side-pane{
+    display:none !important;
+  }
+
+  #fileViewerModal .file-preview-shell{
+    padding:6px 6px 0 !important;
+  }
+
+  #fileViewerModal .file-preview-stage{
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .pdf-preview-wrap{
+    padding:6px 6px 44px !important;
+  }
+
+  #fileViewerModal .pdf-preview-pages{
+    gap:8px !important;
+  }
+
+  /* bottom controls: two rows with scrollbar if needed */
+  #fileViewerModal .file-preview-toolbar{
+    padding:6px 6px 8px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-main{
+    display:grid !important;
+    grid-auto-flow:column !important;
+    grid-template-rows:repeat(2, minmax(28px, auto)) !important;
+    grid-auto-columns:minmax(104px, 1fr) !important;
+    gap:4px !important;
+    width:max-content !important;
+    min-width:100% !important;
+    align-items:stretch !important;
+    justify-content:start !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-left,
+  #fileViewerModal .file-preview-toolbar-center,
+  #fileViewerModal .file-preview-toolbar-right{
+    display:contents !important;
+  }
+
+  #fileViewerModal .toolbar-btn,
+  #fileViewerModal .toolbar-link,
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill,
+  #fileViewerModal .file-nav-btn,
+  #fileViewerModal .preview-link{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    font-size:.56rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+    white-space:nowrap !important;
+    width:auto !important;
+    min-width:0 !important;
+    justify-content:center !important;
+  }
+
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .pdf-page-toolbar{
+    display:none !important;
+  }
+}
+
 </style>
 
 
@@ -9992,6 +10972,251 @@ header{
     font-size:.58rem !important;
     border-radius:8px !important;
     gap:4px !important;
+  }
+}
+
+
+/* =========================================================
+   MOBILE-ONLY FINAL PATCH - TABLE HEADER + FILE VIEWER
+========================================================= */
+@media (max-width: 768px){
+  /* put sticky table header exactly in the blank space above row 1 */
+  #tableView{
+    padding-top:0 !important;
+  }
+
+  #tableHeaderDock,
+  #tableWrap,
+  #tableWrap .directory-table,
+  #tableHeaderDock .table-header-scroll,
+  #tableHeaderDock .floating-table-header-grid{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode){
+    --col-company:112px !important;
+    --col-title:118px !important;
+    --col-department:96px !important;
+    --col-employment:90px !important;
+    --col-location:138px !important;
+    --col-salary:96px !important;
+    --col-file:80px !important;
+    --col-date:70px !important;
+    --col-edit:54px !important;
+    --table-min-w-loggedin:854px !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock.table-header-dock{
+    top:0 !important; /* exact top is set by JS from controls bottom */
+    margin:0 !important;
+    padding:0 !important;
+    border-top:0 !important;
+    border-bottom:1px solid rgba(34,160,255,.18) !important;
+    background:rgba(3,12,30,.985) !important;
+    z-index:64 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .table-header-scroll{
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    margin:0 !important;
+    padding:0 !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-grid,
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    width:var(--table-min-w-loggedin) !important;
+    min-width:var(--table-min-w-loggedin) !important;
+    max-width:none !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock .floating-table-header-cell{
+    min-height:28px !important;
+    padding:3px 4px !important;
+    font-size:.54rem !important;
+    line-height:1 !important;
+    white-space:normal !important;
+    word-break:break-word !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap.table-wrap{
+    margin-top:0 !important;
+    padding-top:0 !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table{
+    margin-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody tr:first-child td{
+    border-top:0 !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td{
+    padding:5px 4px !important;
+    font-size:.60rem !important;
+    line-height:1.08 !important;
+    vertical-align:top !important;
+  }
+
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableWrap .directory-table tbody td strong{
+    font-size:.66rem !important;
+    line-height:1.05 !important;
+  }
+
+  .logo-cell .logo-badge{
+    width:34px !important;
+    height:34px !important;
+    border-radius:10px !important;
+  }
+
+  /* file viewer header: title + top controls in one compressed row */
+  #fileViewerModal .file-viewer-panel{
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-panel::before{
+    border-radius:0 !important;
+  }
+
+  #fileViewerModal .file-viewer-head{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap:6px !important;
+    min-height:44px !important;
+    padding:6px 8px !important;
+  }
+
+  #fileViewerModal .file-viewer-title-wrap{
+    max-width:none !important;
+    min-width:0 !important;
+    text-align:left !important;
+  }
+
+  #fileViewerModal .file-viewer-head h2{
+    margin:0 !important;
+    font-size:.74rem !important;
+    line-height:1.05 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .file-viewer-head-actions{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    transform:none !important;
+    max-width:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    flex-wrap:nowrap !important;
+    gap:4px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding-bottom:2px !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-head-btn{
+    flex:0 0 auto !important;
+    min-height:24px !important;
+    height:24px !important;
+    padding:0 7px !important;
+    font-size:.54rem !important;
+    border-radius:7px !important;
+    gap:3px !important;
+    white-space:nowrap !important;
+  }
+
+  #fileViewerModal .file-viewer-layout{
+    grid-template-columns:0 minmax(0,1fr) !important;
+  }
+
+  #fileViewerModal .file-side-pane{
+    display:none !important;
+  }
+
+  #fileViewerModal .file-preview-shell{
+    padding:6px 6px 0 !important;
+  }
+
+  #fileViewerModal .file-preview-stage{
+    border-radius:10px !important;
+  }
+
+  #fileViewerModal .pdf-preview-wrap{
+    padding:6px 6px 44px !important;
+  }
+
+  #fileViewerModal .pdf-preview-pages{
+    gap:8px !important;
+  }
+
+  /* bottom controls: two rows with scrollbar if needed */
+  #fileViewerModal .file-preview-toolbar{
+    padding:6px 6px 8px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    scrollbar-width:thin !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-main{
+    display:grid !important;
+    grid-auto-flow:column !important;
+    grid-template-rows:repeat(2, minmax(28px, auto)) !important;
+    grid-auto-columns:minmax(104px, 1fr) !important;
+    gap:4px !important;
+    width:max-content !important;
+    min-width:100% !important;
+    align-items:stretch !important;
+    justify-content:start !important;
+  }
+
+  #fileViewerModal .file-preview-toolbar-left,
+  #fileViewerModal .file-preview-toolbar-center,
+  #fileViewerModal .file-preview-toolbar-right{
+    display:contents !important;
+  }
+
+  #fileViewerModal .toolbar-btn,
+  #fileViewerModal .toolbar-link,
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill,
+  #fileViewerModal .file-nav-btn,
+  #fileViewerModal .preview-link{
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    font-size:.56rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+    white-space:nowrap !important;
+    width:auto !important;
+    min-width:0 !important;
+    justify-content:center !important;
+  }
+
+  #fileViewerModal .current-file-pill,
+  #fileViewerModal .current-zoom-pill{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  #fileViewerModal .pdf-page-toolbar{
+    display:none !important;
   }
 }
 
@@ -15017,6 +16242,56 @@ if (navToggle && mobilePanel){
     document.addEventListener('DOMContentLoaded', syncMobileTableHeader);
   } else {
     syncMobileTableHeader();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function syncAndPlaceMobileTableHeader(){
+    const mq = window.matchMedia('(max-width: 768px)');
+    const dock = document.getElementById('tableHeaderDock');
+    const wrap = document.getElementById('tableWrap');
+    const head = document.getElementById('tableHeaderScroll');
+    const controls = document.querySelector('.controls-wrap');
+    if(!dock || !wrap || !head) return;
+
+    if (dock.nextElementSibling !== wrap && wrap.parentNode){
+      wrap.parentNode.insertBefore(dock, wrap);
+    }
+
+    const syncFromBody = () => { head.scrollLeft = wrap.scrollLeft; };
+    const syncFromHead = () => { wrap.scrollLeft = head.scrollLeft; };
+
+    if (!wrap.dataset.mobileHeaderSyncBound){
+      wrap.addEventListener('scroll', syncFromBody, {passive:true});
+      head.addEventListener('scroll', syncFromHead, {passive:true});
+      wrap.dataset.mobileHeaderSyncBound = '1';
+    }
+    syncFromBody();
+
+    if (mq.matches && controls){
+      const r = controls.getBoundingClientRect();
+      dock.style.top = Math.max(0, Math.round(r.bottom)) + 'px';
+    } else {
+      dock.style.top = '';
+    }
+  }
+
+  function bindMobileHeaderHelpers(){
+    syncAndPlaceMobileTableHeader();
+    window.addEventListener('resize', syncAndPlaceMobileTableHeader, {passive:true});
+    window.addEventListener('scroll', syncAndPlaceMobileTableHeader, {passive:true});
+    document.addEventListener('click', function(){
+      setTimeout(syncAndPlaceMobileTableHeader, 30);
+    }, {passive:true});
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', bindMobileHeaderHelpers);
+  } else {
+    bindMobileHeaderHelpers();
   }
 })();
 </script>
