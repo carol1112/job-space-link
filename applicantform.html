@@ -3817,33 +3817,82 @@ header .auth-buttons a:hover{
     overflow:hidden !important;
   }
   #pdfPreviewBox.vs-mobile-pdf #pdfTopBar{
-    min-height:64px !important;
-    padding:10px 92px 8px 10px !important;
+    min-height:54px !important;
+    padding:6px 152px 6px 8px !important;
     align-items:flex-start !important;
-    gap:8px !important;
+    gap:6px !important;
   }
   #pdfPreviewBox.vs-mobile-pdf #pdfTopMeta{
     width:100% !important;
     min-width:0 !important;
+    max-width:100% !important;
     align-items:flex-start !important;
-    gap:8px !important;
+    gap:6px !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf #pdfProfileThumbWrap{
+    width:38px !important;
+    height:38px !important;
+    border-radius:12px !important;
+    flex:0 0 38px !important;
+    cursor:zoom-in !important;
+    touch-action:manipulation !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf #pdfProfileThumb,
+  #pdfPreviewBox.vs-mobile-pdf #pdfProfileThumbPlaceholder{
+    border-radius:12px !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf #pdfTitleWrap{
+    min-width:0 !important;
+    width:100% !important;
+    gap:2px !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf #pdfTitle{
+    font-size:.72rem !important;
+    line-height:1.05 !important;
+    gap:6px !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf #pdfPreviewStatus{
+    font-size:.56rem !important;
+    line-height:1.05 !important;
   }
   #pdfPreviewBox.vs-mobile-pdf .pdfTopActions{
     position:absolute !important;
-    top:10px !important;
-    right:10px !important;
+    top:6px !important;
+    right:8px !important;
     width:auto !important;
     justify-content:flex-end !important;
-    gap:6px !important;
+    gap:4px !important;
     flex-wrap:nowrap !important;
     z-index:40 !important;
   }
   #pdfPreviewBox.vs-mobile-pdf .pdfTopBtn{
-    min-height:32px !important;
-    padding:6px 9px !important;
-    font-size:.64rem !important;
-    border-radius:10px !important;
-    box-shadow:0 8px 18px rgba(2,6,23,0.20) !important;
+    min-height:28px !important;
+    padding:4px 6px !important;
+    font-size:.56rem !important;
+    line-height:1 !important;
+    border-radius:9px !important;
+    gap:4px !important;
+    box-shadow:0 6px 14px rgba(2,6,23,0.18) !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf .pdfTopBtn i{
+    font-size:.70rem !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf.mobile-thumb-zoom #pdfProfileThumbWrap{
+    z-index:120 !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf.mobile-thumb-zoom #pdfProfileThumb{
+    display:block !important;
+    position:fixed !important;
+    top:70px !important;
+    left:12px !important;
+    width:138px !important;
+    height:172px !important;
+    padding:4px !important;
+    border-radius:18px !important;
+    border:2px solid rgba(34,211,238,0.72) !important;
+    background:linear-gradient(180deg, rgba(2,6,23,0.98), rgba(8,15,35,0.98)) !important;
+    box-shadow:0 24px 56px rgba(2,6,23,0.56), 0 0 0 100vmax rgba(2,6,23,0.34) !important;
+    z-index:130 !important;
   }
   #pdfPreviewBox.vs-mobile-pdf #pdfPreviewBody{
     position:relative !important;
@@ -3897,17 +3946,33 @@ header .auth-buttons a:hover{
     position:sticky !important;
     bottom:0 !important;
     z-index:16 !important;
+    min-height:54px !important;
+    padding:6px 6px 7px !important;
+    gap:6px 8px !important;
     background:linear-gradient(180deg, rgba(2,6,23,0.88), rgba(2,6,23,0.98)) !important;
     box-shadow:0 -10px 22px rgba(2,6,23,0.24) !important;
     border-top:1px solid rgba(255,255,255,0.08) !important;
   }
+  #pdfPreviewBox.vs-mobile-pdf .pdf-toolbar-group{
+    gap:6px !important;
+  }
   #pdfPreviewBox.vs-mobile-pdf .pdf-toolbar-btn,
   #pdfPreviewBox.vs-mobile-pdf #pdfZoomPct,
   #pdfPreviewBox.vs-mobile-pdf #pdfToolbarPageWrap{
-    min-height:32px !important;
-    padding:6px 8px !important;
-    font-size:.66rem !important;
-    border-radius:10px !important;
+    min-height:28px !important;
+    padding:5px 6px !important;
+    font-size:.58rem !important;
+    line-height:1 !important;
+    border-radius:9px !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf .pdf-toolbar-btn i{
+    font-size:.68rem !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf #pdfToolbarPageWrap{
+    min-width:88px !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf #pdfZoomPct{
+    min-width:50px !important;
   }
 }
 
@@ -3953,22 +4018,28 @@ header .auth-buttons a:hover{
     font-size:.58rem !important;
   }
   #pdfPreviewBox.vs-mobile-pdf #pdfTopBar{
-    min-height:58px !important;
-    padding:8px 78px 6px 8px !important;
+    min-height:50px !important;
+    padding:6px 138px 5px 6px !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf #pdfProfileThumbWrap{
+    width:34px !important;
+    height:34px !important;
+    flex-basis:34px !important;
+    border-radius:11px !important;
   }
   #pdfPreviewBox.vs-mobile-pdf .pdfTopActions{
-    top:8px !important;
-    right:8px !important;
-    gap:5px !important;
+    top:6px !important;
+    right:6px !important;
+    gap:4px !important;
   }
   #pdfPreviewBox.vs-mobile-pdf .pdfTopBtn,
   #pdfPreviewBox.vs-mobile-pdf .pdf-toolbar-btn,
   #pdfPreviewBox.vs-mobile-pdf #pdfZoomPct,
   #pdfPreviewBox.vs-mobile-pdf #pdfToolbarPageWrap{
-    min-height:30px !important;
-    padding:6px 7px !important;
-    font-size:.60rem !important;
-    border-radius:9px !important;
+    min-height:26px !important;
+    padding:4px 5px !important;
+    font-size:.54rem !important;
+    border-radius:8px !important;
   }
   #pdfPreviewBox.vs-mobile-pdf #pdfPreviewSidebar{
     width:min(84vw, 250px) !important;
@@ -3979,10 +4050,17 @@ header .auth-buttons a:hover{
     max-width:250px !important;
   }
   #pdfPreviewBox.vs-mobile-pdf #pdfTitle{
-    font-size:.74rem !important;
+    font-size:.66rem !important;
   }
   #pdfPreviewBox.vs-mobile-pdf #pdfPreviewStatus{
-    font-size:.58rem !important;
+    font-size:.52rem !important;
+  }
+  #pdfPreviewBox.vs-mobile-pdf.mobile-thumb-zoom #pdfProfileThumb{
+    top:64px !important;
+    left:8px !important;
+    width:124px !important;
+    height:154px !important;
+    border-radius:16px !important;
   }
 }
 </style>
@@ -9855,6 +9933,31 @@ function isViewStaffMobileModalMode(){
   return !!(window.matchMedia && window.matchMedia("(max-width:768px)").matches);
 }
 
+function setPdfMobileThumbZoom(on){
+  if (!pdfPreviewBox) return;
+  pdfPreviewBox.classList.toggle("mobile-thumb-zoom", !!on);
+}
+
+function bindPdfMobileThumbZoom(){
+  var wrap = document.getElementById("pdfProfileThumbWrap");
+  if (!wrap || wrap.dataset.mobileZoomBound === "1") return;
+  wrap.dataset.mobileZoomBound = "1";
+
+  wrap.addEventListener("click", function(e){
+    if (!isViewStaffMobileModalMode()) return;
+    if (!pdfPreviewBox || !pdfPreviewBox.classList.contains("vs-mobile-pdf")) return;
+    if (!pdfProfileThumb || pdfProfileThumb.style.display === "none") return;
+    e.stopPropagation();
+    setPdfMobileThumbZoom(!pdfPreviewBox.classList.contains("mobile-thumb-zoom"));
+  });
+
+  document.addEventListener("click", function(e){
+    if (!pdfPreviewBox || !pdfPreviewBox.classList.contains("mobile-thumb-zoom")) return;
+    if (wrap.contains(e.target)) return;
+    setPdfMobileThumbZoom(false);
+  }, true);
+}
+
 function refreshViewStaffMobileModalState(){
   var mobile = isViewStaffMobileModalMode();
 
@@ -9863,6 +9966,9 @@ function refreshViewStaffMobileModalState(){
   }
   if (pdfPreviewBox){
     pdfPreviewBox.classList.toggle("vs-mobile-pdf", mobile);
+    if (!mobile){
+      setPdfMobileThumbZoom(false);
+    }
   }
 
   if (mobile && fileViewerBox && fileViewerToggleSidebarBtn){
@@ -9874,13 +9980,52 @@ function refreshViewStaffMobileModalState(){
       (sidebarHidden ? ('Show ' + labelBase) : ('Hide ' + labelBase));
   }
 
-  if (mobile && pdfPreviewBox && pdfToolbarTocBtn && pdfToggleContentsTopBtn){
+  if (pdfPreviewBox && pdfToolbarTocBtn && pdfToggleContentsTopBtn){
     var pdfHidden = pdfPreviewBox.classList.contains("pdf-toc-collapsed");
-    var pdfLabel = pdfHidden ? "Show Pages" : "Hide Pages";
+    var pdfLabel = mobile ? "Pages" : (pdfHidden ? "Show Pages" : "Hide Pages");
     var pdfIcon = pdfHidden ? "fa-eye" : "fa-eye-slash";
     pdfToolbarTocBtn.innerHTML = '<i class="fa-solid ' + pdfIcon + '"></i> ' + pdfLabel;
     pdfToggleContentsTopBtn.innerHTML = '<i class="fa-solid ' + pdfIcon + '"></i> ' + pdfLabel;
   }
+
+  if (pdfDownloadBtn){
+    pdfDownloadBtn.innerHTML = mobile
+      ? '<i class="fa-solid fa-download"></i> Save'
+      : '<i class="fa-solid fa-download"></i> Download';
+  }
+  if (pdfCloseBtn){
+    pdfCloseBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> Close';
+  }
+  if (pdfToolbarPrevBtn){
+    pdfToolbarPrevBtn.innerHTML = mobile
+      ? '<i class="fa-solid fa-chevron-left"></i> Prev'
+      : '<i class="fa-solid fa-chevron-left"></i> Prev Page';
+  }
+  if (pdfToolbarNextBtn){
+    pdfToolbarNextBtn.innerHTML = mobile
+      ? 'Next <i class="fa-solid fa-chevron-right"></i>'
+      : 'Next Page <i class="fa-solid fa-chevron-right"></i>';
+  }
+  if (pdfToolbarZoomOutBtn){
+    pdfToolbarZoomOutBtn.innerHTML = mobile
+      ? '<i class="fa-solid fa-magnifying-glass-minus"></i> Out'
+      : '<i class="fa-solid fa-magnifying-glass-minus"></i> Zoom Out';
+  }
+  if (pdfToolbarZoomInBtn){
+    pdfToolbarZoomInBtn.innerHTML = mobile
+      ? '<i class="fa-solid fa-magnifying-glass-plus"></i> In'
+      : '<i class="fa-solid fa-magnifying-glass-plus"></i> Zoom In';
+  }
+  if (pdfToolbarActualBtn){
+    pdfToolbarActualBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Reset';
+  }
+  if (pdfToolbarFitBtn){
+    pdfToolbarFitBtn.innerHTML = mobile
+      ? '<i class="fa-solid fa-left-right"></i> Fit'
+      : '<i class="fa-solid fa-left-right"></i> Fit Page';
+  }
+
+  bindPdfMobileThumbZoom();
 }
 
 (function(){
@@ -9929,6 +10074,7 @@ function refreshViewStaffMobileModalState(){
 
   var __origClosePdfModal = closePdfModal;
   closePdfModal = function(){
+    setPdfMobileThumbZoom(false);
     var out = __origClosePdfModal.apply(this, arguments);
     refreshViewStaffMobileModalState();
     return out;
