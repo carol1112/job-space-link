@@ -16706,5 +16706,133 @@ if (navToggle && mobilePanel){
 })();
 </script>
 
+
+<style id="final-mobile-files-pages-sticky-controls-row-patch">
+@media (max-width:768px){
+  /* Keep FILES and PAGES side by side in one row on mobile */
+  #fileViewerModal .file-side-tab-row,
+  #fileViewerModal .file-viewer-layout.sidebar-hidden .file-side-tab-row{
+    display:grid !important;
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+    align-items:stretch !important;
+    gap:5px !important;
+    margin:0 8px 6px !important;
+    padding:0 0 6px !important;
+    border-bottom:0 !important;
+  }
+
+  #fileViewerModal .file-side-tab,
+  #fileViewerModal .file-viewer-layout.sidebar-hidden .file-side-tab{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:28px !important;
+    height:28px !important;
+    padding:0 6px !important;
+    font-size:.58rem !important;
+    border-radius:8px !important;
+    white-space:nowrap !important;
+    justify-content:center !important;
+  }
+
+  /* Put Search / Reset / Refresh directly after Date filter */
+  #controlsWrap .controls-grid{
+    align-items:center !important;
+  }
+
+  #mobileActionsStrip.mobile-actions-strip.active{
+    grid-column:1 / -1 !important;
+    margin:0 !important;
+    order:8 !important;
+  }
+
+  #mobileActionsStrip.mobile-actions-strip.active .search-btn,
+  #mobileActionsStrip.mobile-actions-strip.active .ghost-btn,
+  #mobileActionsStrip.mobile-actions-strip.active #autoRefreshPill{
+    min-height:32px !important;
+    height:32px !important;
+  }
+
+  /* Make floating table header stay fixed under sticky controls while scrolling */
+  #tableView,
+  .view-panel,
+  #tableWrap,
+  #tableHeaderDock,
+  #tableHeaderDock .table-header-scroll{
+    overflow:visible !important;
+  }
+
+  #tableHeaderDock.table-header-dock,
+  body.logged-in-directory-mode:not(.public-directory-mode) #tableHeaderDock.table-header-dock{
+    position:sticky !important;
+    top:var(--mobile-table-header-top, calc(var(--header-h) + var(--topbar-h) + var(--controlsbar-h) - 1px)) !important;
+    z-index:72 !important;
+    margin:0 !important;
+  }
+
+  #tableWrap.table-wrap{
+    position:relative !important;
+  }
+}
+</style>
+
+<script id="final-mobile-files-pages-sticky-controls-row-script">
+(function(){
+  function moveMobileActionStripAfterDateFilter(){
+    var controlsGrid = document.querySelector('#controlsWrap .controls-grid');
+    var strip = document.getElementById('mobileActionsStrip');
+    var dateMode = document.getElementById('dateMode');
+    var dateGroup = dateMode ? dateMode.closest('.field-group') : null;
+    if (!controlsGrid || !strip || window.innerWidth > 768) return;
+
+    if (strip.parentElement !== controlsGrid){
+      controlsGrid.insertBefore(strip, dateGroup ? dateGroup.nextSibling : null);
+    } else if (dateGroup && strip.previousElementSibling !== dateGroup){
+      controlsGrid.insertBefore(strip, dateGroup.nextSibling);
+    }
+  }
+
+  function updateMobileStickyTableHeaderTop(){
+    if (window.innerWidth > 768) {
+      var dockDesktop = document.getElementById('tableHeaderDock');
+      if (dockDesktop) dockDesktop.style.removeProperty('top');
+      document.documentElement.style.removeProperty('--mobile-table-header-top');
+      return;
+    }
+
+    var controlsWrap = document.getElementById('controlsWrap');
+    var tableDock = document.getElementById('tableHeaderDock');
+    if (!controlsWrap || !tableDock) return;
+
+    var rect = controlsWrap.getBoundingClientRect();
+    var topValue = Math.max(0, Math.round(rect.bottom) - 1);
+    document.documentElement.style.setProperty('--mobile-table-header-top', topValue + 'px');
+    tableDock.style.top = topValue + 'px';
+  }
+
+  function applyFinalMobileDashboardPatch(){
+    moveMobileActionStripAfterDateFilter();
+    updateMobileStickyTableHeaderTop();
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(applyFinalMobileDashboardPatch, 80);
+    setTimeout(applyFinalMobileDashboardPatch, 240);
+  });
+
+  window.addEventListener('load', function(){
+    setTimeout(applyFinalMobileDashboardPatch, 80);
+    setTimeout(applyFinalMobileDashboardPatch, 240);
+  });
+
+  window.addEventListener('resize', applyFinalMobileDashboardPatch, { passive:true });
+  window.addEventListener('scroll', updateMobileStickyTableHeaderTop, { passive:true });
+
+  var mo = new MutationObserver(function(){
+    applyFinalMobileDashboardPatch();
+  });
+  mo.observe(document.documentElement, { attributes:false, childList:true, subtree:true });
+})();
+</script>
+
 </body>
 </html>
