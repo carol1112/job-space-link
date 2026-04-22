@@ -1026,7 +1026,70 @@
         grid-template-columns:1fr !important;
       }
     }
-  </style>
+  
+
+/* ============================================================
+   FINAL MOBILE HEADER LOCK PATCH
+   Force logo left + hamburger right inside header
+============================================================ */
+@media (max-width: 768px){
+  header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+    padding:0 12px !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    margin:0 !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 auto !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    position:relative !important;
+    right:0 !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    padding:0 10px !important;
+    gap:8px !important;
+  }
+
+  header .logo{
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    margin-left:auto !important;
+    margin-right:0 !important;
+  }
+}
+
+</style>
 </head>
 
 <body>
