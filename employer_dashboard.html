@@ -17003,5 +17003,159 @@ if (navToggle && mobilePanel){
 })();
 </script>
 
+
+<style id="final-mobile-refine-about-filters-viewbuttons-style">
+@media (max-width:768px){
+  #directoryTopbar #directoryTitleWrap,
+  #mobilePostedJobsTitle{
+    display:none !important;
+  }
+
+  #directoryTopbar{
+    padding:6px 7px !important;
+    gap:4px !important;
+  }
+  #directoryTopbar #topbarActions{
+    width:100% !important;
+    justify-content:center !important;
+    gap:0 !important;
+  }
+  #directoryTopbar .view-switcher{
+    width:100% !important;
+    min-width:0 !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:4px !important;
+    overflow:visible !important;
+  }
+  #directoryTopbar .view-toggle{
+    min-width:0 !important;
+    width:100% !important;
+    height:30px !important;
+    min-height:30px !important;
+    padding:0 2px !important;
+    gap:2px !important;
+    font-size:.58rem !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    border-radius:10px !important;
+  }
+  #directoryTopbar .view-toggle i{
+    font-size:.62rem !important;
+  }
+
+  #controlsWrap .controls-grid{
+    display:grid !important;
+    grid-template-columns:repeat(14,minmax(0,1fr)) !important;
+    gap:5px !important;
+    align-items:center !important;
+  }
+  #controlsWrap .controls-grid > *{
+    min-width:0 !important;
+    width:100% !important;
+  }
+  #controlsWrap .controls-grid > :nth-child(1){ grid-column:span 3 !important; }
+  #controlsWrap .controls-grid > :nth-child(2){ grid-column:span 5 !important; }
+  #controlsWrap .controls-grid > :nth-child(3){ grid-column:span 3 !important; }
+  #controlsWrap .controls-grid > :nth-child(4){ grid-column:span 3 !important; }
+  #controlsWrap .controls-grid > :nth-child(5){ grid-column:span 2 !important; }
+  #controlsWrap .controls-grid > :nth-child(6){ grid-column:span 2 !important; }
+  #controlsWrap .controls-grid > :nth-child(7){ grid-column:span 4 !important; }
+  #controlsWrap .controls-grid > :nth-child(8){ grid-column:span 2 !important; }
+  #controlsWrap .controls-grid > :nth-child(9){ grid-column:span 2 !important; }
+  #controlsWrap .controls-grid > :nth-child(10){ grid-column:span 2 !important; }
+
+  #controlsWrap #searchBtn,
+  #controlsWrap #resetBtn{
+    order:8 !important;
+  }
+
+  #controlsWrap #cityFilter,
+  #controlsWrap #employmentTypeFilter{
+    font-size:.61rem !important;
+  }
+
+  #mobileActionsStrip{
+    display:none !important;
+  }
+}
+</style>
+<script id="final-mobile-refine-about-filters-viewbuttons-script">
+(function(){
+  const mq = window.matchMedia('(max-width: 768px)');
+  let rafId = null;
+
+  function refineMobileAboutLink(){
+    const aboutToggle = document.getElementById('mobileAboutToggle');
+    if (!aboutToggle || aboutToggle.dataset.directAboutBound === '1') return;
+    aboutToggle.dataset.directAboutBound = '1';
+    aboutToggle.addEventListener('click', function(){
+      if (window.innerWidth <= 768){
+        window.location.href = 'about.html';
+      }
+    });
+  }
+
+  function refineMobileLayout(){
+    const searchBtn = document.getElementById('searchBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const refreshPill = document.getElementById('autoRefreshPill');
+    const controlsGrid = document.querySelector('#controlsWrap .controls-grid');
+    const topbarActions = document.getElementById('topbarActions');
+    const dateGroup = document.querySelector('#controlsWrap .controls-grid > .field-group');
+    const mobileTitle = document.getElementById('mobilePostedJobsTitle');
+    const sourceTitleWrap = document.getElementById('directoryTitleWrap');
+    const strip = document.getElementById('mobileActionsStrip');
+
+    if (mobileTitle) mobileTitle.remove();
+    if (sourceTitleWrap && mq.matches) sourceTitleWrap.style.display = 'none';
+    if (strip) strip.classList.remove('active');
+
+    if (mq.matches){
+      if (controlsGrid && dateGroup && searchBtn){
+        controlsGrid.insertBefore(searchBtn, dateGroup.nextSibling);
+      }
+      if (controlsGrid && resetBtn && searchBtn){
+        controlsGrid.insertBefore(resetBtn, searchBtn.nextSibling);
+      }
+      if (controlsGrid && refreshPill && resetBtn){
+        controlsGrid.insertBefore(refreshPill, resetBtn.nextSibling);
+      }
+    } else {
+      if (topbarActions && refreshPill && refreshPill.parentElement !== topbarActions){
+        topbarActions.appendChild(refreshPill);
+      }
+    }
+
+    const controlsWrap = document.getElementById('controlsWrap');
+    const directoryTopbar = document.getElementById('directoryTopbar');
+    if (controlsWrap){
+      document.documentElement.style.setProperty('--controlsbar-h', `${Math.ceil(controlsWrap.getBoundingClientRect().height)}px`);
+    }
+    if (directoryTopbar){
+      document.documentElement.style.setProperty('--topbar-h', `${Math.ceil(directoryTopbar.getBoundingClientRect().height)}px`);
+    }
+  }
+
+  function schedule(){
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(function(){
+      refineMobileAboutLink();
+      refineMobileLayout();
+      setTimeout(refineMobileLayout, 80);
+      setTimeout(refineMobileLayout, 260);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', schedule);
+  window.addEventListener('load', schedule);
+  window.addEventListener('resize', schedule);
+  if (mq.addEventListener) mq.addEventListener('change', schedule);
+  else if (mq.addListener) mq.addListener(schedule);
+})();
+</script>
+
 </body>
 </html>
