@@ -1153,6 +1153,99 @@ tbody tr:hover{
   }
 }
 
+
+
+/* ============================================================
+   FINAL MOBILE HEADER ABSOLUTE LOCK
+   Exact image-style placement: logo left, hamburger right
+============================================================ */
+@media (max-width: 768px){
+  header{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    display:block !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 !important;
+  }
+
+  header .header-left{
+    position:absolute !important;
+    left:8px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:auto !important;
+    max-width:calc(100% - 78px) !important;
+    min-width:0 !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+    overflow:visible !important;
+    flex:none !important;
+  }
+
+  header .header-right{
+    position:absolute !important;
+    right:10px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:auto !important;
+    min-width:0 !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:0 !important;
+    overflow:visible !important;
+    flex:none !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  header .logo{
+    margin:0 !important;
+    padding:0 !important;
+    flex:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    position:relative !important;
+    margin:0 !important;
+    left:auto !important;
+    right:auto !important;
+    align-self:center !important;
+    flex:none !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  header .header-left{ left:8px !important; max-width:calc(100% - 82px) !important; }
+  header .header-right{ right:12px !important; }
+  header .logo img{ height:54px !important; width:auto !important; }
+  .nav-toggle{ width:40px !important; height:40px !important; border-radius:10px !important; }
+}
+
+@media (max-width: 480px){
+  header .header-left{ left:8px !important; max-width:calc(100% - 76px) !important; }
+  header .header-right{ right:10px !important; }
+  header .logo img{ height:50px !important; width:auto !important; }
+  .nav-toggle{ width:38px !important; height:38px !important; border-radius:9px !important; }
+}
+
 </style>
 </head>
 
