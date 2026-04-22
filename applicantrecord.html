@@ -2702,4 +2702,2808 @@ document.addEventListener("DOMContentLoaded", async () => {
 </script>
 
 </body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Job Trace | Job Space Link</title>
+
+<link rel="stylesheet" href="jobspacelink.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Poppins","Segoe UI",sans-serif;
+}
+
+:root{
+  --header-h:78px;
+  --bg1:#020617;
+  --bg2:#1e1b4b;
+  --bg3:#0ea5e9;
+  --card:rgba(15,23,42,.90);
+  --card2:rgba(15,23,42,.96);
+  --line:rgba(255,255,255,.10);
+  --line2:rgba(59,130,246,.30);
+  --txt:#e5e7eb;
+  --muted:#cbd5e1;
+  --blue:#38bdf8;
+  --violet:#8b5cf6;
+  --green:#22c55e;
+  --amber:#f59e0b;
+  --red:#ef4444;
+}
+
+html,body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 16px);
+}
+
+body{
+  min-height:100vh;
+  color:var(--txt);
+  background:radial-gradient(circle at 20% 20%, var(--bg3), var(--bg2) 60%, var(--bg1));
+  padding-top:var(--header-h);
+}
+
+/* ============================================================
+   HEADER - INDEX STYLE
+============================================================ */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:50px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:1rem;
+}
+
+/* Mobile panel */
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav .mnav-group{
+  display:grid;
+  gap:8px;
+}
+
+.mobile-panel .mnav .mnav-about-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 52px;
+  gap:8px;
+  align-items:stretch;
+}
+
+.mobile-panel .mnav .mnav-about-link{
+  min-width:0;
+}
+
+.mobile-panel .mnav .mnav-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  color:#e5e7eb;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav .mnav-toggle .mnav-caret{
+  font-size:0.95rem;
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav .mnav-submenu{
+  display:none;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+
+.mobile-panel .mnav .mnav-group.open .mnav-submenu{
+  display:grid;
+}
+
+.mobile-panel .mnav .mnav-sub-link{
+  margin-left:14px;
+  width:calc(100% - 14px);
+  padding-left:16px;
+  font-size:0.95em;
+  background:rgba(255,255,255,0.03);
+}
+
+.mobile-panel .mnav .mnav-sub-link:hover{
+  transform:translateX(3px);
+}
+
+/* About dropdown */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+/* ============================================================
+   PAGE CONTENT
+============================================================ */
+.page{
+  width:min(1680px, calc(100vw - 24px));
+  margin:24px auto 34px;
+}
+
+.top-hero{
+  display:grid;
+  grid-template-columns:1.3fr .9fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+
+.hero-card,
+.side-card,
+.panel,
+.modal-card{
+  background:var(--card);
+  border:1px solid var(--line2);
+  border-radius:22px;
+  backdrop-filter:blur(14px);
+  box-shadow:0 0 28px rgba(2,6,23,.42);
+}
+
+.hero-card{
+  padding:22px 22px 18px;
+}
+
+.hero-title{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:1.55rem;
+  font-weight:900;
+  color:#fff;
+  margin-bottom:8px;
+}
+
+.hero-title i{
+  color:var(--blue);
+}
+
+.hero-sub{
+  color:var(--muted);
+  line-height:1.6;
+  font-size:.94rem;
+}
+
+.side-card{
+  padding:18px;
+  display:grid;
+  gap:12px;
+}
+
+.side-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.05);
+}
+
+.side-row i{
+  color:var(--blue);
+  margin-top:2px;
+}
+
+.side-row .label{
+  font-size:.77rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#93c5fd;
+  font-weight:800;
+}
+
+.side-row .value{
+  font-size:.94rem;
+  color:#fff;
+  margin-top:3px;
+  word-break:break-word;
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(6, minmax(0,1fr));
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.stat-card{
+  background:rgba(15,23,42,.92);
+  border:1px solid var(--line2);
+  border-radius:18px;
+  padding:16px 14px;
+  box-shadow:0 0 20px rgba(2,6,23,.30);
+}
+
+.stat-k{
+  font-size:.76rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#93c5fd;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.stat-v{
+  font-size:1.28rem;
+  font-weight:900;
+  color:#fff;
+}
+
+.main-grid{
+  display:grid;
+  grid-template-columns:360px minmax(0,1fr);
+  gap:16px;
+}
+
+.panel{
+  padding:18px;
+  min-width:0;
+}
+
+.panel-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+
+.panel-title h2{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:1.08rem;
+  color:#fff;
+}
+
+.panel-title h2 i{
+  color:var(--blue);
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#dbeafe;
+  font-size:.8rem;
+  white-space:nowrap;
+}
+
+.filters{
+  display:grid;
+  gap:12px;
+}
+
+.field{
+  display:grid;
+  gap:6px;
+}
+
+.field label{
+  font-size:.82rem;
+  color:#cbd5e1;
+  font-weight:700;
+}
+
+.input,
+.select{
+  width:100%;
+  padding:12px 13px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(2,6,23,.66);
+  color:#fff;
+  outline:none;
+  font-size:.92rem;
+}
+
+.input:focus,
+.select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(56,189,248,.12), 0 0 14px rgba(56,189,248,.18);
+}
+
+.btn-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.btn{
+  border:none;
+  cursor:pointer;
+  padding:12px 14px;
+  border-radius:14px;
+  font-weight:800;
+  font-size:.92rem;
+  transition:.2s ease;
+  color:#fff;
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+}
+
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  box-shadow:0 0 18px rgba(56,189,248,.20);
+}
+
+.btn-secondary{
+  background:linear-gradient(135deg,var(--green),#16a34a);
+}
+
+.btn-ghost{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.small-note{
+  margin-top:4px;
+  border-radius:16px;
+  padding:12px 14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.10);
+  color:#dbeafe;
+  font-size:.86rem;
+  line-height:1.55;
+}
+
+.trace-tools{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.table-wrap{
+  width:100%;
+  overflow:auto;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+}
+
+.trace-table{
+  width:100%;
+  min-width:1320px;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+.trace-table thead th{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:linear-gradient(90deg,var(--blue),var(--violet));
+  color:#fff;
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  font-weight:800;
+  text-align:left;
+  padding:12px 10px;
+  border-right:1px solid rgba(255,255,255,.10);
+  white-space:nowrap;
+}
+
+.trace-table thead th:last-child{
+  border-right:none;
+}
+
+.trace-table tbody td{
+  padding:12px 10px;
+  border-top:1px solid rgba(255,255,255,.07);
+  vertical-align:top;
+  font-size:.84rem;
+  line-height:1.45;
+  color:#e5e7eb;
+  background:rgba(255,255,255,.03);
+}
+
+.trace-table tbody tr:nth-child(even) td{
+  background:rgba(255,255,255,.05);
+}
+
+.trace-table tbody tr:hover td{
+  background:rgba(56,189,248,.08);
+}
+
+.trace-type{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.75rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.trace-type.applied{
+  background:rgba(34,197,94,.14);
+  color:#dcfce7;
+  border:1px solid rgba(34,197,94,.25);
+}
+
+.trace-type.favorite{
+  background:rgba(239,68,68,.12);
+  color:#fee2e2;
+  border:1px solid rgba(239,68,68,.22);
+}
+
+.state-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.75rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.state-pill.active{
+  background:rgba(34,197,94,.14);
+  color:#dcfce7;
+  border:1px solid rgba(34,197,94,.25);
+}
+
+.state-pill.removed{
+  background:rgba(245,158,11,.12);
+  color:#fde68a;
+  border:1px solid rgba(245,158,11,.22);
+}
+
+.state-pill.trace{
+  background:rgba(59,130,246,.12);
+  color:#dbeafe;
+  border:1px solid rgba(59,130,246,.22);
+}
+
+.muted{
+  color:#cbd5e1;
+}
+
+.link-btn{
+  padding:8px 10px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:.8rem;
+  font-weight:700;
+}
+
+.link-btn:hover{
+  background:rgba(255,255,255,.14);
+}
+
+.pagination{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:14px;
+  flex-wrap:wrap;
+}
+
+.pagination button{
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.pagination button.active{
+  background:linear-gradient(90deg,var(--blue),var(--violet));
+  border-color:transparent;
+}
+
+.status-box{
+  margin-bottom:12px;
+}
+
+.status-line{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.05);
+  font-size:.88rem;
+  line-height:1.5;
+}
+
+.status-line.info i{ color:var(--blue); }
+.status-line.success i{ color:var(--green); }
+.status-line.warn i{ color:var(--amber); }
+.status-line.error i{ color:var(--red); }
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.76);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:12000;
+  padding:18px;
+}
+
+.modal-card{
+  width:min(920px,100%);
+  max-height:88vh;
+  overflow:auto;
+  padding:20px;
+}
+
+.modal-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.modal-top h3{
+  font-size:1.06rem;
+  color:#fff;
+}
+
+.json-box{
+  width:100%;
+  min-height:360px;
+  border-radius:16px;
+  padding:14px;
+  background:rgba(2,6,23,.84);
+  border:1px solid rgba(255,255,255,.12);
+  color:#dbeafe;
+  font-size:.84rem;
+  line-height:1.55;
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-family:Consolas, "Courier New", monospace;
+}
+
+.loading{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.72);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:13000;
+  padding:18px;
+}
+
+.loading-card{
+  width:min(360px,100%);
+  background:var(--card2);
+  border:1px solid var(--line2);
+  border-radius:22px;
+  padding:24px 20px;
+  text-align:center;
+  box-shadow:0 0 32px rgba(2,6,23,.60);
+}
+
+.spinner{
+  width:54px;
+  height:54px;
+  margin:0 auto 14px;
+  border-radius:999px;
+  border:4px solid rgba(255,255,255,.12);
+  border-top-color:var(--blue);
+  animation:spin 1s linear infinite;
+}
+
+.loading-card h4{
+  font-size:1.04rem;
+  color:#fff;
+  margin-bottom:8px;
+}
+
+.loading-card p{
+  color:#cbd5e1;
+  font-size:.9rem;
+  line-height:1.5;
+}
+
+@keyframes spin{
+  to{ transform:rotate(360deg); }
+}
+
+
+@media (min-width:1800px){
+  header{
+    gap:18px;
+    padding:0 22px 0 10px;
+  }
+
+  header .logo img{
+    height:56px;
+  }
+
+  header nav{
+    gap:18px;
+    margin-left:8px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.94rem;
+  }
+
+  header .auth-buttons{
+    gap:10px;
+  }
+
+  header .auth-buttons a{
+    height:38px;
+    padding:0 14px;
+    font-size:0.85rem;
+  }
+
+  .page{
+    width:min(1760px, calc(100vw - 34px));
+  }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header{
+    gap:14px;
+    padding:0 16px 0 8px;
+  }
+
+  header .logo img{
+    height:50px;
+  }
+
+  header nav{
+    gap:12px;
+    margin-left:4px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.88rem;
+  }
+
+  header .auth-buttons a{
+    height:36px;
+    padding:0 11px;
+    font-size:0.82rem;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  .summary-grid{
+    grid-template-columns:repeat(3, minmax(0,1fr));
+  }
+
+  .main-grid,
+  .top-hero{
+    grid-template-columns:1fr;
+  }
+
+  header,
+  header nav,
+  header .auth-buttons{
+    flex-wrap:nowrap;
+  }
+
+  header{
+    gap:8px;
+    padding:0 10px 0 6px;
+  }
+
+  header .logo{
+    margin-left:-2px;
+  }
+
+  header .logo img{
+    height:46px;
+  }
+
+  header nav{
+    gap:8px;
+    margin-left:2px;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.74rem;
+    height:34px;
+    padding:0 2px;
+  }
+
+  .nav-dropdown{
+    height:34px;
+  }
+
+  .nav-dropdown-toggle{
+    width:22px;
+    height:22px;
+  }
+
+  header .auth-buttons{
+    gap:5px;
+  }
+
+  header .auth-buttons a{
+    height:32px;
+    padding:0 7px;
+    font-size:0.69rem;
+    gap:5px;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  .summary-grid{
+    grid-template-columns:repeat(3, minmax(0,1fr));
+  }
+
+  .main-grid,
+  .top-hero{
+    grid-template-columns:1fr;
+  }
+
+  .page{
+    width:calc(100vw - 12px);
+    margin:16px auto 20px;
+  }
+
+  header,
+  header nav,
+  header .auth-buttons{
+    flex-wrap:nowrap;
+  }
+
+  header{
+    gap:5px;
+    padding:0 6px 0 3px;
+    justify-content:space-between;
+    overflow:hidden;
+  }
+
+  header .logo{
+    margin-left:0;
+  }
+
+  header .logo img{
+    height:40px;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto;
+    min-width:0;
+    gap:5px;
+    margin-left:2px;
+    justify-content:flex-start;
+    overflow:hidden;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:30px;
+    padding:0 1px;
+    font-size:0.60rem;
+    letter-spacing:-0.01em;
+  }
+
+  .nav-dropdown{
+    height:30px;
+  }
+
+  .nav-dropdown-trigger{
+    gap:0;
+  }
+
+  .nav-dropdown-toggle{
+    width:17px;
+    height:17px;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.66rem;
+  }
+
+  .nav-dropdown-menu{
+    top:calc(100% + 8px);
+    min-width:190px;
+  }
+
+  .nav-dropdown-menu a{
+    font-size:0.75rem;
+    padding:10px 12px;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto;
+    gap:4px;
+    overflow:hidden;
+  }
+
+  header .auth-buttons a{
+    height:29px;
+    padding:0 5px;
+    border-radius:8px;
+    font-size:0.58rem;
+    gap:3px;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+}
+
+@media (min-width:481px) and (max-width:768px){
+  :root{
+    --header-h:74px;
+  }
+
+  .page{
+    width:calc(100vw - 12px);
+    margin:14px auto 18px;
+  }
+
+  .top-hero,
+  .main-grid{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  .summary-grid{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:10px;
+    margin-bottom:12px;
+  }
+
+  .hero-card,
+  .side-card,
+  .panel,
+  .modal-card{
+    border-radius:18px;
+    padding:14px;
+  }
+
+  .hero-title{
+    font-size:1.14rem;
+    gap:10px;
+    margin-bottom:6px;
+  }
+
+  .hero-sub,
+  .small-note,
+  .side-row .value,
+  .status-line{
+    font-size:.85rem;
+    line-height:1.45;
+  }
+
+  .side-card{
+    gap:8px;
+  }
+
+  .side-row,
+  .stat-card{
+    padding:10px 12px;
+    border-radius:14px;
+  }
+
+  .stat-v{
+    font-size:1.08rem;
+  }
+
+  .panel-title{
+    margin-bottom:12px;
+  }
+
+  .panel-title h2{
+    font-size:1rem;
+  }
+
+  .trace-tools{
+    gap:8px;
+  }
+
+  .badge{
+    padding:7px 10px;
+    font-size:.76rem;
+  }
+
+  .filters{
+    gap:10px;
+  }
+
+  .field label{
+    font-size:.78rem;
+  }
+
+  .input,
+  .select{
+    padding:10px 11px;
+    font-size:.88rem;
+    border-radius:12px;
+  }
+
+  .btn-row{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:8px;
+  }
+
+  .btn{
+    padding:10px 11px;
+    border-radius:12px;
+    font-size:.84rem;
+  }
+
+  .table-wrap{
+    border-radius:16px;
+  }
+
+  .trace-table{
+    min-width:1120px;
+  }
+
+  .trace-table thead th{
+    padding:10px 9px;
+    font-size:.68rem;
+  }
+
+  .trace-table tbody td{
+    padding:10px 9px;
+    font-size:.8rem;
+  }
+
+  .pagination{
+    gap:6px;
+    margin-top:12px;
+  }
+
+  .pagination button{
+    padding:7px 10px;
+    font-size:.8rem;
+  }
+
+  header{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:10px;
+    padding:0 12px;
+  }
+
+  header .logo{
+    grid-column:1;
+    margin-left:0;
+    justify-self:start;
+    align-items:center;
+  }
+
+  header .logo img{
+    height:42px;
+    max-width:min(178px, 56vw);
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3;
+    justify-self:end;
+    display:inline-flex;
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    align-items:center;
+    justify-content:center;
+  }
+}
+
+
+@media (max-width:480px){
+  :root{
+    --header-h:70px;
+  }
+
+  .page{
+    width:calc(100vw - 10px);
+    margin:12px auto 16px;
+  }
+
+  .top-hero,
+  .main-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .summary-grid{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:8px;
+    margin-bottom:10px;
+  }
+
+  .hero-card,
+  .side-card,
+  .panel,
+  .modal-card{
+    border-radius:15px;
+    padding:12px;
+  }
+
+  .hero-title{
+    font-size:1.02rem;
+    gap:8px;
+    margin-bottom:6px;
+  }
+
+  .hero-sub,
+  .small-note,
+  .side-row .value,
+  .status-line{
+    font-size:.8rem;
+    line-height:1.4;
+  }
+
+  .side-card{
+    gap:7px;
+  }
+
+  .side-row{
+    gap:8px;
+    padding:9px 10px;
+    border-radius:13px;
+  }
+
+  .side-row .label,
+  .stat-k{
+    font-size:.68rem;
+  }
+
+  .stat-card{
+    padding:10px 10px;
+    border-radius:14px;
+  }
+
+  .stat-v{
+    font-size:.98rem;
+  }
+
+  .panel-title{
+    margin-bottom:10px;
+    gap:8px;
+  }
+
+  .panel-title h2{
+    font-size:.94rem;
+    gap:8px;
+  }
+
+  .trace-tools{
+    gap:6px;
+    width:100%;
+  }
+
+  .badge{
+    padding:6px 9px;
+    font-size:.72rem;
+  }
+
+  .filters{
+    gap:9px;
+  }
+
+  .field{
+    gap:5px;
+  }
+
+  .field label{
+    font-size:.74rem;
+  }
+
+  .input,
+  .select{
+    padding:9px 10px;
+    font-size:.84rem;
+    border-radius:11px;
+  }
+
+  .btn-row{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:7px;
+  }
+
+  .btn{
+    padding:9px 10px;
+    border-radius:11px;
+    font-size:.8rem;
+  }
+
+  .table-wrap{
+    border-radius:14px;
+  }
+
+  .trace-table{
+    min-width:1040px;
+  }
+
+  .trace-table thead th{
+    padding:9px 8px;
+    font-size:.64rem;
+  }
+
+  .trace-table tbody td{
+    padding:9px 8px;
+    font-size:.76rem;
+    line-height:1.35;
+  }
+
+  .trace-type,
+  .state-pill{
+    padding:5px 8px;
+    font-size:.68rem;
+    gap:5px;
+  }
+
+  .link-btn{
+    padding:7px 8px;
+    font-size:.74rem;
+  }
+
+  .pagination{
+    gap:5px;
+    margin-top:10px;
+  }
+
+  .pagination button{
+    padding:6px 8px;
+    font-size:.76rem;
+  }
+
+  header{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:10px;
+    padding:0 10px;
+  }
+
+  header .logo{
+    grid-column:1;
+    margin-left:0;
+    justify-self:start;
+    align-items:center;
+  }
+
+  header .logo img{
+    height:38px;
+    max-width:min(164px, 54vw);
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3;
+    justify-self:end;
+    display:inline-flex;
+    width:42px;
+    height:42px;
+    border-radius:13px;
+    align-items:center;
+    justify-content:center;
+  }
+}
+
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
+  </div>
+
+  <nav>
+    <a href="index.html">Home</a>
+
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </button>
+      </div>
+
+      <div class="nav-dropdown-menu" id="aboutNavMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+
+    <a href="postedhiring.html">Job Hiring</a>
+        <a href="dashboard.html">Jobseeker</a>
+
+    <a href="postjob.html">Post Jobs</a>
+    <a href="employer_dashboard.html">Employer Directory</a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+  </nav>
+
+  <div class="auth-buttons">
+    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
+    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<!-- MOBILE PANEL -->
+
+<!-- Mobile panel -->
+<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+  <div class="mnav">
+    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+
+    <div class="mnav-group" id="mobileAboutGroup">
+      <div class="mnav-about-row">
+        <a href="about.html" class="mnav-about-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
+
+      <div class="mnav-submenu" id="mobileAboutMenu">
+        <a href="why choose us.html" class="mnav-sub-link">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html" class="mnav-sub-link">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
+   <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
+
+    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<div class="page">
+  <section class="top-hero">
+    <div class="hero-card">
+      <div class="hero-title">
+        <i class="fa-solid fa-map-location-dot"></i>
+        Admin Applied / Favorite Job Trace
+      </div>
+      <div class="hero-sub">
+        This admin page reconstructs user job activity using
+        <strong>staff_requirements</strong>,
+        <strong>applicant_master_table</strong>, and
+        <strong>applicant_transaction_table</strong>.
+        It traces who applied, who favorited, the matched job post, and the related timestamps.
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-row">
+        <i class="fa-solid fa-shield-halved"></i>
+        <div>
+          <div class="label">Access</div>
+          <div class="value">Admin-only protected page</div>
+        </div>
+      </div>
+
+      <div class="side-row">
+        <i class="fa-solid fa-database"></i>
+        <div>
+          <div class="label">Source Tables</div>
+          <div class="value">staff_requirements · applicant_master_table · applicant_transaction_table</div>
+        </div>
+      </div>
+
+      <div class="side-row">
+        <i class="fa-solid fa-circle-nodes"></i>
+        <div>
+          <div class="label">Matching Logic</div>
+          <div class="value">job id + fallback fingerprint matching by company, position, and employer email</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <div class="stat-card">
+      <div class="stat-k">Normal Jobs</div>
+      <div class="stat-v" id="statJobs">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-k">Applicants</div>
+      <div class="stat-v" id="statApplicants">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-k">Transactions</div>
+      <div class="stat-v" id="statTransactions">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-k">Applied Traces</div>
+      <div class="stat-v" id="statApplied">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-k">Favorite Traces</div>
+      <div class="stat-v" id="statFavorites">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-k">Active Favorites</div>
+      <div class="stat-v" id="statActiveFavs">0</div>
+    </div>
+  </section>
+
+  <div class="main-grid">
+    <aside class="panel">
+      <div class="panel-title">
+        <h2><i class="fa-solid fa-filter"></i> Filters</h2>
+        <div class="badge"><i class="fa-solid fa-user-shield"></i> Admin Trace Console</div>
+      </div>
+
+      <div class="filters">
+        <div class="field">
+          <label for="traceTypeFilter">Trace Type</label>
+          <select id="traceTypeFilter" class="select">
+            <option value="all">All Traces</option>
+            <option value="applied">Applied Only</option>
+            <option value="favorite">Favorite Only</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="favoriteStateFilter">Favorite State</label>
+          <select id="favoriteStateFilter" class="select">
+            <option value="all">All Favorite States</option>
+            <option value="active">Active Favorites Only</option>
+            <option value="removed">Removed Favorites Only</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="applicantSearch">Applicant Name / Email</label>
+          <input id="applicantSearch" class="input" type="text" placeholder="Search applicant full name or email..." />
+        </div>
+
+        <div class="field">
+          <label for="companySearch">Company</label>
+          <input id="companySearch" class="input" type="text" placeholder="Search company..." />
+        </div>
+
+        <div class="field">
+          <label for="positionSearch">Position</label>
+          <input id="positionSearch" class="input" type="text" placeholder="Search position..." />
+        </div>
+
+        <div class="field">
+          <label for="dateSearch">Date / Time</label>
+          <input id="dateSearch" class="input" type="text" placeholder="Search date text..." />
+        </div>
+
+        <div class="btn-row">
+          <button id="applyFilterBtn" class="btn btn-primary" type="button">
+            <i class="fa-solid fa-magnifying-glass"></i> Apply
+          </button>
+          <button id="resetFilterBtn" class="btn btn-ghost" type="button">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+        </div>
+
+        <div class="btn-row">
+          <button id="reloadBtn" class="btn btn-secondary" type="button">
+            <i class="fa-solid fa-arrows-rotate"></i> Reload
+          </button>
+          <button id="logoutBtn" class="btn btn-ghost" type="button">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+
+        <div class="small-note">
+          Favorite traces are derived from <strong>favorite shadow rows</strong> in <strong>staff_requirements</strong>.
+          Applied traces are derived from <strong>job-related rows</strong> in <strong>applicant_transaction_table</strong>.
+        </div>
+      </div>
+    </aside>
+
+    <section class="panel">
+      <div class="panel-title">
+        <h2><i class="fa-solid fa-table-list"></i> Trace Results</h2>
+        <div class="trace-tools">
+          <div class="badge" id="resultCountBadge"><i class="fa-solid fa-layer-group"></i> 0 results</div>
+          <div class="badge"><i class="fa-solid fa-clock-rotate-left"></i> Latest first</div>
+        </div>
+      </div>
+
+      <div class="status-box" id="statusBox">
+        <div class="status-line info">
+          <i class="fa-solid fa-circle-info"></i>
+          <div>Waiting to load trace data.</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="trace-table">
+          <thead>
+            <tr>
+              <th>Trace Type</th>
+              <th>State</th>
+              <th>Applicant Full Name</th>
+              <th>Applicant Email</th>
+              <th>Company</th>
+              <th>Position</th>
+              <th>Department</th>
+              <th>Employer Email</th>
+              <th>Job Ref</th>
+              <th>Trace Date</th>
+              <th>Source Table</th>
+              <th>Raw</th>
+            </tr>
+          </thead>
+          <tbody id="traceTableBody">
+            <tr>
+              <td colspan="12" style="text-align:center;padding:18px;">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination" id="pagination"></div>
+    </section>
+  </div>
+</div>
+
+<div class="modal" id="jsonModal" aria-hidden="true">
+  <div class="modal-card">
+    <div class="modal-top">
+      <h3 id="jsonModalTitle">Raw Trace Data</h3>
+      <button class="btn btn-ghost" id="closeJsonModalBtn" type="button">
+        <i class="fa-solid fa-xmark"></i> Close
+      </button>
+    </div>
+    <pre class="json-box" id="jsonBox"></pre>
+  </div>
+</div>
+
+<div class="loading" id="loadingOverlay" aria-hidden="true">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <h4>Loading admin trace data</h4>
+    <p>Please wait while the page reads staff requirements, master applicants, and applicant transactions.</p>
+  </div>
+</div>
+
+<script>
+const sb = window.supabase;
+
+const traceTypeFilter = document.getElementById("traceTypeFilter");
+const favoriteStateFilter = document.getElementById("favoriteStateFilter");
+const applicantSearch = document.getElementById("applicantSearch");
+const companySearch = document.getElementById("companySearch");
+const positionSearch = document.getElementById("positionSearch");
+const dateSearch = document.getElementById("dateSearch");
+
+const applyFilterBtn = document.getElementById("applyFilterBtn");
+const resetFilterBtn = document.getElementById("resetFilterBtn");
+const reloadBtn = document.getElementById("reloadBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+const traceTableBody = document.getElementById("traceTableBody");
+const pagination = document.getElementById("pagination");
+const statusBox = document.getElementById("statusBox");
+const resultCountBadge = document.getElementById("resultCountBadge");
+
+const statJobs = document.getElementById("statJobs");
+const statApplicants = document.getElementById("statApplicants");
+const statTransactions = document.getElementById("statTransactions");
+const statApplied = document.getElementById("statApplied");
+const statFavorites = document.getElementById("statFavorites");
+const statActiveFavs = document.getElementById("statActiveFavs");
+
+const jsonModal = document.getElementById("jsonModal");
+const jsonModalTitle = document.getElementById("jsonModalTitle");
+const jsonBox = document.getElementById("jsonBox");
+const closeJsonModalBtn = document.getElementById("closeJsonModalBtn");
+
+const loadingOverlay = document.getElementById("loadingOverlay");
+
+const PAGE_SIZE = 20;
+
+let allTraces = [];
+let filteredTraces = [];
+let currentPage = 1;
+
+let normalJobs = [];
+let favoriteRows = [];
+let applicantMasters = [];
+let applicantTransactions = [];
+
+/* =========================
+   HEADER MENUS - INDEX STYLE
+========================= */
+function initHeaderMenus(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(dd && toggle && menu){
+    function closeAboutMenu(){
+      dd.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+
+    function openAboutMenu(){
+      dd.classList.add("open");
+      toggle.setAttribute("aria-expanded", "true");
+    }
+
+    toggle.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+
+      const isOpen = dd.classList.contains("open");
+      if(isOpen){
+        closeAboutMenu();
+      }else{
+        openAboutMenu();
+      }
+    });
+
+    document.addEventListener("click", function(e){
+      if(!dd.contains(e.target)){
+        closeAboutMenu();
+      }
+    });
+
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape"){
+        closeAboutMenu();
+      }
+    });
+
+    menu.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click", function(){
+        closeAboutMenu();
+      });
+    });
+  }
+
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+
+  if(btn && panel){
+    const mobileAboutGroup = document.getElementById("mobileAboutGroup");
+    const mobileAboutToggle = document.getElementById("mobileAboutToggle");
+    const mobileAboutMenu = document.getElementById("mobileAboutMenu");
+
+    function closeMobileAboutMenu(){
+      if(!mobileAboutGroup || !mobileAboutToggle || !mobileAboutMenu) return;
+      mobileAboutGroup.classList.remove("open");
+      mobileAboutToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleMobileAboutMenu(){
+      if(!mobileAboutGroup || !mobileAboutToggle || !mobileAboutMenu) return;
+      const isOpen = mobileAboutGroup.classList.toggle("open");
+      mobileAboutToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+
+    function closeMobilePanel(){
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden","true");
+      btn.setAttribute("aria-expanded","false");
+      closeMobileAboutMenu();
+    }
+
+    btn.addEventListener("click", () => {
+      const open = panel.classList.toggle("open");
+      panel.setAttribute("aria-hidden", open ? "false" : "true");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      if(!open) closeMobileAboutMenu();
+    });
+
+    if(mobileAboutToggle){
+      mobileAboutToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMobileAboutMenu();
+      });
+    }
+
+    panel.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMobilePanel));
+
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeMobilePanel();
+    });
+
+    document.addEventListener("click", (e) => {
+      if(panel.classList.contains("open")){
+        const header = document.querySelector("header");
+        if(header && header.contains(e.target)) return;
+        if(panel.contains(e.target)) return;
+        closeMobilePanel();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if(window.innerWidth > 920) closeMobilePanel();
+    }, { passive:true });
+  }
+}
+
+/* =========================
+   UI HELPERS
+========================= */
+function showStatus(type, message){
+  const iconMap = {
+    info: "fa-circle-info",
+    success: "fa-circle-check",
+    warn: "fa-triangle-exclamation",
+    error: "fa-circle-xmark"
+  };
+  const icon = iconMap[type] || iconMap.info;
+
+  statusBox.innerHTML = `
+    <div class="status-line ${type}">
+      <i class="fa-solid ${icon}"></i>
+      <div>${message}</div>
+    </div>
+  `;
+}
+
+function showLoading(show){
+  loadingOverlay.style.display = show ? "flex" : "none";
+  loadingOverlay.setAttribute("aria-hidden", show ? "false" : "true");
+  document.body.style.overflow = show ? "hidden" : "";
+}
+
+function safeStr(v){
+  return v === null || v === undefined ? "" : String(v);
+}
+
+function normalize(v){
+  return safeStr(v).toLowerCase().trim();
+}
+
+function normEmail(v){
+  return safeStr(v).toLowerCase().replace(/\s+/g, "").trim();
+}
+
+function uniq(arr){
+  const seen = new Set();
+  const out = [];
+  (arr || []).forEach(v => {
+    const s = safeStr(v).trim();
+    if (!s) return;
+    const k = s.toLowerCase();
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push(s);
+  });
+  return out;
+}
+
+function rowTimeValue(row){
+  const cols = ["created_at","updated_at","inserted_at","timestamp","date_created","applied_at","favorited_at"];
+  for (const c of cols){
+    const t = new Date(row?.[c] || 0).getTime();
+    if (Number.isFinite(t) && t > 0) return t;
+  }
+  const idNum = Number(row?.id ?? row?.transaction_id ?? row?.master_id ?? 0);
+  return Number.isFinite(idNum) ? idNum : 0;
+}
+
+function sortByRecencyDesc(a,b){
+  return rowTimeValue(b) - rowTimeValue(a);
+}
+
+function formatDateTime(v){
+  if (!v) return "-";
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return safeStr(v) || "-";
+  return d.toLocaleString("en-US");
+}
+
+function titleCase(v){
+  return safeStr(v)
+    .toLowerCase()
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+function compactJson(v){
+  try{
+    return JSON.stringify(v, null, 2);
+  }catch(e){
+    return safeStr(v);
+  }
+}
+
+function escapeHtml(v){
+  return safeStr(v)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+/* =========================
+   AUTH
+========================= */
+async function requireAdmin(){
+  if (!sb){
+    alert("Supabase is not initialized. Check supabase_config.js");
+    window.location.href = "admin.html";
+    return false;
+  }
+
+  try{
+    const { data:{ session }, error: sessionErr } = await sb.auth.getSession();
+    if (sessionErr || !session){
+      alert("Please log in as admin first.");
+      window.location.href = "admin.html";
+      return false;
+    }
+
+    const { data:{ user }, error: userErr } = await sb.auth.getUser();
+    if (userErr || !user){
+      alert("Unable to verify user.");
+      window.location.href = "admin.html";
+      return false;
+    }
+
+    const { data: profile, error: profErr } = await sb
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profErr || profile?.role !== "admin"){
+      alert("Access denied: Admins only.");
+      await sb.auth.signOut().catch(() => {});
+      window.location.href = "admin.html";
+      return false;
+    }
+
+    return true;
+  }catch(err){
+    console.error("requireAdmin error:", err);
+    alert("Unexpected admin validation error.");
+    window.location.href = "admin.html";
+    return false;
+  }
+}
+
+/* =========================
+   TABLE LOADERS
+========================= */
+async function fetchAllRows(tableName, orderColumn = "created_at"){
+  let page = 0;
+  const pageSize = 1000;
+  let out = [];
+
+  while (true){
+    let query = sb
+      .from(tableName)
+      .select("*")
+      .range(page * pageSize, (page * pageSize) + pageSize - 1);
+
+    if (orderColumn){
+      query = query.order(orderColumn, { ascending:false });
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const rows = Array.isArray(data) ? data : [];
+    out = out.concat(rows);
+
+    if (rows.length < pageSize) break;
+    page++;
+  }
+
+  return out;
+}
+
+/* =========================
+   USER HELPERS
+========================= */
+function getNamePieces(row){
+  return {
+    first: safeStr(row?.first_name ?? row?.firstname ?? row?.given_name ?? row?.fname).trim(),
+    middle: safeStr(row?.middle_name ?? row?.middlename ?? row?.middle ?? row?.mname).trim(),
+    last: safeStr(row?.last_name ?? row?.lastname ?? row?.surname ?? row?.lname ?? row?.family_name).trim(),
+    suffix: safeStr(row?.suffix).trim()
+  };
+}
+
+function buildFullName(row){
+  const direct = [
+    row?.full_name,
+    row?.fullname,
+    row?.applicant_name,
+    row?.employee_name,
+    row?.jobseeker_name,
+    row?.display_name,
+    row?.name
+  ].map(safeStr).map(v => v.trim()).find(Boolean);
+
+  if (direct) return direct.replace(/\s+/g, " ").trim();
+
+  const p = getNamePieces(row);
+  return [p.first, p.middle, p.last, p.suffix]
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizePersonName(value){
+  return safeStr(value)
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function buildBestApplicantName(){
+  const rows = Array.from(arguments).filter(Boolean);
+
+  for (const row of rows){
+    const full = buildFullName(row);
+    if (full) return full;
+  }
+
+  return "";
+}
+
+function pickMasterEmail(row){
+  return [
+    row?.email,
+    row?.employee_email,
+    row?.jobseeker_email,
+    row?.applicant_email,
+    row?.user_email,
+    row?.login_email
+  ].map(normEmail).find(Boolean) || "";
+}
+
+function pickTxEmail(row){
+  return [
+    row?.email,
+    row?.employee_email,
+    row?.jobseeker_email,
+    row?.applicant_email,
+    row?.user_email,
+    row?.login_email
+  ].map(normEmail).find(Boolean) || "";
+}
+
+function buildMasterIndexes(rows){
+  const byEmail = new Map();
+  const byMasterId = new Map();
+  const byName = new Map();
+
+  (rows || []).forEach(row => {
+    const email = pickMasterEmail(row);
+    const masterIdCandidates = uniq([
+      safeStr(row?.master_id).trim(),
+      safeStr(row?.id).trim(),
+      safeStr(row?.applicant_id).trim(),
+      safeStr(row?.user_id).trim()
+    ]);
+    const fullName = buildFullName(row);
+    const normalizedName = normalizePersonName(fullName);
+
+    if (email && !byEmail.has(email)) byEmail.set(email, row);
+
+    masterIdCandidates.forEach(idValue => {
+      if (idValue && !byMasterId.has(idValue)) byMasterId.set(idValue, row);
+    });
+
+    if (normalizedName && !byName.has(normalizedName)) byName.set(normalizedName, row);
+  });
+
+  return { byEmail, byMasterId, byName };
+}
+
+/* =========================
+   JOB HELPERS
+========================= */
+function getContactEmail(item){
+  return safeStr(
+    item?.contact_email ??
+    item?.contactEmail ??
+    item?.company_email ??
+    item?.companyEmail ??
+    item?.email ??
+    item?.employer_email ??
+    item?.hr_email ??
+    ""
+  ).trim();
+}
+
+function buildJobComparableShape(obj){
+  const explicitRef = safeStr(
+    obj?.original_staff_requirement_id ??
+    obj?.parent_job_id ??
+    obj?.job_post_id ??
+    obj?.posted_job_id ??
+    obj?.original_job_id ??
+    obj?.job_id ??
+    obj?.staff_requirement_id ??
+    obj?.requirement_id ??
+    obj?.id ??
+    ""
+  ).trim();
+
+  const company = safeStr(obj?.company_name ?? obj?.company ?? "").trim();
+  const position = safeStr(obj?.position ?? "").trim();
+  const department = safeStr(obj?.department ?? "").trim();
+  const contactEmail = getContactEmail(obj);
+  const employmentType = safeStr(obj?.employment_type ?? "").trim();
+
+  return {
+    explicitRef: normalize(explicitRef),
+    strong: normalize([company, position, department, contactEmail, employmentType].join("|")),
+    compact: normalize([company, position, contactEmail].join("|"))
+  };
+}
+
+function isFavoriteShadowRow(row){
+  const sourceType = normalize(row?.source_type);
+  return !!(
+    sourceType === "favorite" ||
+    safeStr(row?.favorite_tagged_user).trim() ||
+    normEmail(row?.favorite_email_address) ||
+    safeStr(row?.favorite_heart_status).trim()
+  );
+}
+
+function normalizeFavoriteHeartStatus(value){
+  const raw = safeStr(value).replace(/\uFE0F/g, "").trim();
+
+  if (!raw) return "";
+  if (raw === "❤" || raw === "❤️".replace(/\uFE0F/g, "")) return "❤️";
+  if (raw === "🤍") return "🤍";
+
+  const low = raw.toLowerCase();
+  if (low === "active") return "❤️";
+  if (low === "removed" || low === "inactive") return "🤍";
+
+  return safeStr(value).trim();
+}
+
+function isFavoriteActive(row){
+  const heart = normalizeFavoriteHeartStatus(row?.favorite_heart_status);
+  return heart === "❤️" || heart === "";
+}
+
+function isFavoriteRemoved(row){
+  return normalizeFavoriteHeartStatus(row?.favorite_heart_status) === "🤍";
+}
+
+function buildJobIndexes(jobRows){
+  const byExplicit = new Map();
+  const byStrong = new Map();
+  const byCompact = new Map();
+
+  (jobRows || []).forEach(job => {
+    const shape = buildJobComparableShape(job);
+    if (shape.explicitRef && !byExplicit.has(shape.explicitRef)) byExplicit.set(shape.explicitRef, job);
+    if (shape.strong && !byStrong.has(shape.strong)) byStrong.set(shape.strong, job);
+    if (shape.compact && !byCompact.has(shape.compact)) byCompact.set(shape.compact, job);
+  });
+
+  return { byExplicit, byStrong, byCompact };
+}
+
+function resolveJobFromAnyRow(row, jobIndexes){
+  const shape = buildJobComparableShape(row);
+  if (shape.explicitRef && jobIndexes.byExplicit.has(shape.explicitRef)) return jobIndexes.byExplicit.get(shape.explicitRef);
+  if (shape.strong && jobIndexes.byStrong.has(shape.strong)) return jobIndexes.byStrong.get(shape.strong);
+  if (shape.compact && jobIndexes.byCompact.has(shape.compact)) return jobIndexes.byCompact.get(shape.compact);
+  return null;
+}
+
+function favoriteOwnerFromRow(row, masterIndexes){
+  const email = normEmail(row?.favorite_email_address);
+  const taggedUser = safeStr(row?.favorite_tagged_user).trim();
+  const taggedUserKey = normalizePersonName(taggedUser);
+
+  let master = null;
+  if (email && masterIndexes.byEmail.has(email)) master = masterIndexes.byEmail.get(email);
+  if (!master && taggedUserKey && masterIndexes.byName.has(taggedUserKey)) master = masterIndexes.byName.get(taggedUserKey);
+
+  const bestName = buildBestApplicantName(master, row) || taggedUser;
+
+  return {
+    email: email || pickMasterEmail(master || {}),
+    name: bestName || "Unknown Applicant",
+    masterRow: master || null
+  };
+}
+
+/* =========================
+   APPLICATION HELPERS
+========================= */
+function rowLooksLikeApplication(txRow, jobIndexes){
+  const sourceType = normalize(txRow?.source_type ?? txRow?.transaction_type ?? txRow?.type ?? txRow?.action_type ?? txRow?.action);
+  if (
+    sourceType.includes("apply") ||
+    sourceType.includes("application") ||
+    sourceType.includes("job application")
+  ){
+    return true;
+  }
+
+  const explicitRef = buildJobComparableShape(txRow).explicitRef;
+  if (explicitRef) return true;
+
+  const matchedJob = resolveJobFromAnyRow(txRow, jobIndexes);
+  if (matchedJob) return true;
+
+  return false;
+}
+
+function resolveApplicantFromTx(txRow, masterIndexes){
+  const email = pickTxEmail(txRow);
+  const masterIdCandidates = uniq([
+    safeStr(txRow?.master_id).trim(),
+    safeStr(txRow?.applicant_id).trim(),
+    safeStr(txRow?.user_id).trim()
+  ]);
+  const txNameKey = normalizePersonName(buildFullName(txRow));
+
+  let master = null;
+  if (email && masterIndexes.byEmail.has(email)) master = masterIndexes.byEmail.get(email);
+
+  if (!master){
+    for (const idValue of masterIdCandidates){
+      if (idValue && masterIndexes.byMasterId.has(idValue)){
+        master = masterIndexes.byMasterId.get(idValue);
+        break;
+      }
+    }
+  }
+
+  if (!master && txNameKey && masterIndexes.byName.has(txNameKey)){
+    master = masterIndexes.byName.get(txNameKey);
+  }
+
+  return {
+    email: email || pickMasterEmail(master || {}),
+    name: buildBestApplicantName(master, txRow) || "Unknown Applicant",
+    masterRow: master || null
+  };
+}
+
+/* =========================
+   TRACE BUILDERS
+========================= */
+function buildFavoriteTraces(favoriteRowsInput, masterIndexes, jobIndexes){
+  const rows = (favoriteRowsInput || []).slice().sort(sortByRecencyDesc);
+
+  return rows.map(row => {
+    const owner = favoriteOwnerFromRow(row, masterIndexes);
+    const matchedJob = resolveJobFromAnyRow(row, jobIndexes);
+
+    const company = titleCase(matchedJob?.company_name || row?.company_name || row?.company) || "-";
+    const position = titleCase(matchedJob?.position || row?.position) || "-";
+    const department = titleCase(matchedJob?.department || row?.department) || "-";
+    const employerEmail = getContactEmail(matchedJob || row) || "-";
+    const jobRef = safeStr(
+      matchedJob?.id ??
+      row?.original_staff_requirement_id ??
+      row?.parent_job_id ??
+      row?.job_post_id ??
+      row?.original_job_id ??
+      row?.job_id ??
+      row?.staff_requirement_id ??
+      row?.requirement_id ??
+      row?.id ??
+      ""
+    ).trim() || "-";
+
+    return {
+      traceType: "favorite",
+      state: isFavoriteRemoved(row) ? "removed" : "active",
+      applicantName: owner.name || "-",
+      applicantEmail: owner.email || "-",
+      company,
+      position,
+      department,
+      employerEmail,
+      jobRef,
+      traceDate: formatDateTime(row?.created_at || row?.updated_at || row?.timestamp),
+      traceTimeValue: rowTimeValue(row),
+      sourceTable: "staff_requirements",
+      raw: row
+    };
+  });
+}
+
+function buildAppliedTraces(txRows, masterIndexes, jobIndexes){
+  const out = [];
+
+  (txRows || []).forEach(row => {
+    if (!rowLooksLikeApplication(row, jobIndexes)) return;
+
+    const applicant = resolveApplicantFromTx(row, masterIndexes);
+    const matchedJob = resolveJobFromAnyRow(row, jobIndexes);
+
+    const company = titleCase(
+      matchedJob?.company_name ||
+      row?.company_name ||
+      row?.company
+    ) || "-";
+
+    const position = titleCase(
+      matchedJob?.position ||
+      row?.position
+    ) || "-";
+
+    const department = titleCase(
+      matchedJob?.department ||
+      row?.department
+    ) || "-";
+
+    const employerEmail = getContactEmail(matchedJob || row) || "-";
+
+    const jobRef = safeStr(
+      matchedJob?.id ??
+      row?.original_staff_requirement_id ??
+      row?.parent_job_id ??
+      row?.job_post_id ??
+      row?.posted_job_id ??
+      row?.original_job_id ??
+      row?.job_id ??
+      row?.staff_requirement_id ??
+      row?.requirement_id ??
+      ""
+    ).trim() || "-";
+
+    out.push({
+      traceType: "applied",
+      state: "trace",
+      applicantName: applicant.name || "-",
+      applicantEmail: applicant.email || "-",
+      company,
+      position,
+      department,
+      employerEmail,
+      jobRef,
+      traceDate: formatDateTime(
+        row?.created_at ||
+        row?.applied_at ||
+        row?.updated_at ||
+        row?.timestamp
+      ),
+      traceTimeValue: rowTimeValue(row),
+      sourceTable: "applicant_transaction_table",
+      raw: row
+    });
+  });
+
+  return out.sort((a,b) => b.traceTimeValue - a.traceTimeValue);
+}
+
+/* =========================
+   FILTERS
+========================= */
+function applyFilters(){
+  const traceType = traceTypeFilter.value;
+  const favState = favoriteStateFilter.value;
+  const applicantQ = normalize(applicantSearch.value);
+  const companyQ = normalize(companySearch.value);
+  const positionQ = normalize(positionSearch.value);
+  const dateQ = normalize(dateSearch.value);
+
+  filteredTraces = allTraces.filter(row => {
+    if (traceType !== "all" && row.traceType !== traceType) return false;
+
+    if (row.traceType === "favorite" && favState !== "all"){
+      if (row.state !== favState) return false;
+    }
+
+    const applicantBlob = normalize(`${row.applicantName} ${row.applicantEmail}`);
+    if (applicantQ && !applicantBlob.includes(applicantQ)) return false;
+
+    if (companyQ && !normalize(row.company).includes(companyQ)) return false;
+    if (positionQ && !normalize(row.position).includes(positionQ)) return false;
+    if (dateQ && !normalize(row.traceDate).includes(dateQ)) return false;
+
+    return true;
+  });
+
+  filteredTraces.sort((a,b) => b.traceTimeValue - a.traceTimeValue);
+
+  currentPage = 1;
+  renderTable();
+}
+
+/* =========================
+   RENDER
+========================= */
+function renderSummary(){
+  const activeFavorites = allTraces.filter(t => t.traceType === "favorite" && t.state === "active").length;
+
+  statJobs.textContent = normalJobs.length.toLocaleString();
+  statApplicants.textContent = applicantMasters.length.toLocaleString();
+  statTransactions.textContent = applicantTransactions.length.toLocaleString();
+  statApplied.textContent = allTraces.filter(t => t.traceType === "applied").length.toLocaleString();
+  statFavorites.textContent = allTraces.filter(t => t.traceType === "favorite").length.toLocaleString();
+  statActiveFavs.textContent = activeFavorites.toLocaleString();
+}
+
+function renderTable(){
+  resultCountBadge.innerHTML = `<i class="fa-solid fa-layer-group"></i> ${filteredTraces.length.toLocaleString()} results`;
+
+  if (!filteredTraces.length){
+    traceTableBody.innerHTML = `
+      <tr>
+        <td colspan="12" style="text-align:center;padding:18px;">No trace results found.</td>
+      </tr>
+    `;
+    renderPagination(1);
+    return;
+  }
+
+  const totalPages = Math.max(1, Math.ceil(filteredTraces.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageRows = filteredTraces.slice(start, start + PAGE_SIZE);
+
+  traceTableBody.innerHTML = pageRows.map((row, idx) => {
+    const typeHtml = row.traceType === "applied"
+      ? `<span class="trace-type applied"><i class="fa-solid fa-paper-plane"></i> Applied</span>`
+      : `<span class="trace-type favorite"><i class="fa-solid fa-heart"></i> Favorite</span>`;
+
+    const stateHtml = row.state === "active"
+      ? `<span class="state-pill active"><i class="fa-solid fa-circle-check"></i> Active</span>`
+      : row.state === "removed"
+      ? `<span class="state-pill removed"><i class="fa-solid fa-circle-minus"></i> Removed</span>`
+      : `<span class="state-pill trace"><i class="fa-solid fa-clock-rotate-left"></i> Trace</span>`;
+
+    return `
+      <tr>
+        <td>${typeHtml}</td>
+        <td>${stateHtml}</td>
+        <td><strong>${escapeHtml(row.applicantName)}</strong></td>
+        <td>${escapeHtml(row.applicantEmail)}</td>
+        <td>${escapeHtml(row.company)}</td>
+        <td>${escapeHtml(row.position)}</td>
+        <td>${escapeHtml(row.department)}</td>
+        <td>${escapeHtml(row.employerEmail)}</td>
+        <td>${escapeHtml(row.jobRef)}</td>
+        <td>${escapeHtml(row.traceDate)}</td>
+        <td>${escapeHtml(row.sourceTable)}</td>
+        <td>
+          <button class="link-btn" type="button" onclick="openRawTrace(${start + idx})">
+            <i class="fa-solid fa-code"></i> View
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages){
+  pagination.innerHTML = "";
+
+  const prev = document.createElement("button");
+  prev.textContent = "Previous";
+  prev.disabled = currentPage === 1;
+  prev.onclick = () => {
+    if (currentPage > 1){
+      currentPage--;
+      renderTable();
+    }
+  };
+  pagination.appendChild(prev);
+
+  const windowSize = 7;
+  let start = Math.max(1, currentPage - Math.floor(windowSize / 2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+
+  for (let i = start; i <= end; i++){
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) btn.classList.add("active");
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable();
+    };
+    pagination.appendChild(btn);
+  }
+
+  const next = document.createElement("button");
+  next.textContent = "Next";
+  next.disabled = currentPage === totalPages;
+  next.onclick = () => {
+    if (currentPage < totalPages){
+      currentPage++;
+      renderTable();
+    }
+  };
+  pagination.appendChild(next);
+}
+
+/* =========================
+   MODAL
+========================= */
+function openRawTrace(index){
+  const row = filteredTraces[index];
+  if (!row) return;
+
+  jsonModalTitle.textContent = `${row.traceType.toUpperCase()} TRACE · ${row.applicantName} · ${row.company} · ${row.position}`;
+  jsonBox.textContent = compactJson(row.raw);
+  jsonModal.style.display = "flex";
+  jsonModal.setAttribute("aria-hidden","false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeRawTrace(){
+  jsonModal.style.display = "none";
+  jsonModal.setAttribute("aria-hidden","true");
+  document.body.style.overflow = "";
+}
+
+window.openRawTrace = openRawTrace;
+
+/* =========================
+   LOAD + BUILD
+========================= */
+async function loadAllTraceData(){
+  showLoading(true);
+  showStatus("info", "Loading staff requirements, applicant masters, and applicant transactions...");
+
+  try{
+    const [staffRows, masterRows, txRows] = await Promise.all([
+      fetchAllRows("staff_requirements", "created_at"),
+      fetchAllRows("applicant_master_table", "created_at"),
+      fetchAllRows("applicant_transaction_table", "created_at")
+    ]);
+
+    applicantMasters = Array.isArray(masterRows) ? masterRows : [];
+    applicantTransactions = Array.isArray(txRows) ? txRows : [];
+
+    const staff = Array.isArray(staffRows) ? staffRows : [];
+    favoriteRows = staff.filter(isFavoriteShadowRow).sort(sortByRecencyDesc);
+    normalJobs = staff.filter(row => !isFavoriteShadowRow(row)).sort(sortByRecencyDesc);
+
+    const masterIndexes = buildMasterIndexes(applicantMasters);
+    const jobIndexes = buildJobIndexes(normalJobs);
+
+    const favoriteTraces = buildFavoriteTraces(favoriteRows, masterIndexes, jobIndexes);
+    const appliedTraces = buildAppliedTraces(applicantTransactions, masterIndexes, jobIndexes);
+
+    allTraces = [...favoriteTraces, ...appliedTraces].sort((a,b) => b.traceTimeValue - a.traceTimeValue);
+    filteredTraces = [...allTraces];
+
+    renderSummary();
+    renderTable();
+
+    showStatus(
+      "success",
+      `Loaded ${normalJobs.length.toLocaleString()} jobs, ${applicantMasters.length.toLocaleString()} applicants, ${applicantTransactions.length.toLocaleString()} transactions, and ${allTraces.length.toLocaleString()} trace rows.`
+    );
+  }catch(err){
+    console.error("loadAllTraceData error:", err);
+    showStatus("error", `Failed to load admin trace data: ${err?.message || err}`);
+    traceTableBody.innerHTML = `
+      <tr>
+        <td colspan="12" style="text-align:center;padding:18px;">Failed to load data.</td>
+      </tr>
+    `;
+  }finally{
+    showLoading(false);
+  }
+}
+
+/* =========================
+   EVENTS
+========================= */
+applyFilterBtn.addEventListener("click", applyFilters);
+
+resetFilterBtn.addEventListener("click", () => {
+  traceTypeFilter.value = "all";
+  favoriteStateFilter.value = "all";
+  applicantSearch.value = "";
+  companySearch.value = "";
+  positionSearch.value = "";
+  dateSearch.value = "";
+  filteredTraces = [...allTraces];
+  currentPage = 1;
+  renderTable();
+});
+
+reloadBtn.addEventListener("click", loadAllTraceData);
+
+logoutBtn.addEventListener("click", async () => {
+  try{
+    await sb.auth.signOut();
+  }catch(e){}
+  window.location.href = "admin.html";
+});
+
+[applicantSearch, companySearch, positionSearch, dateSearch].forEach(el => {
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "Enter"){
+      e.preventDefault();
+      applyFilters();
+    }
+  });
+});
+
+closeJsonModalBtn.addEventListener("click", closeRawTrace);
+
+jsonModal.addEventListener("click", (e) => {
+  if (e.target === jsonModal) closeRawTrace();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape"){
+    closeRawTrace();
+  }
+});
+
+/* =========================
+   INIT
+========================= */
+document.addEventListener("DOMContentLoaded", async () => {
+  initHeaderMenus();
+
+  const ok = await requireAdmin();
+  if (!ok) return;
+
+  await loadAllTraceData();
+});
+</script>
+
+</body>
 </html>
