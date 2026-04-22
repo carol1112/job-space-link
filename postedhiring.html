@@ -3095,11 +3095,14 @@ header .auth-buttons a:hover{
 ============================================================ */
 @media (max-width:768px){
   header{
-    display:flex !important;
-    align-items:center !important;
-    justify-content:space-between !important;
-    gap:10px !important;
-    padding:0 12px !important;
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    display:block !important;
+    justify-content:initial !important;
+    align-items:initial !important;
+    padding:0 !important;
+    overflow:visible !important;
   }
 
   header nav,
@@ -3108,73 +3111,99 @@ header .auth-buttons a:hover{
   }
 
   header .logo{
-    order:1 !important;
-    flex:0 0 auto !important;
+    position:absolute !important;
+    left:8px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    padding:0 !important;
+    width:auto !important;
+    max-width:calc(100% - 74px) !important;
     display:flex !important;
     align-items:center !important;
     justify-content:flex-start !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-    min-width:0 !important;
-    padding-left:0 !important;
-    padding-right:0 !important;
-    transform:none !important;
+    z-index:2 !important;
   }
 
   header .logo img{
     display:block !important;
+    width:auto !important;
+    max-width:min(170px, calc(100vw - 88px)) !important;
     margin:0 !important;
+    object-fit:contain !important;
+    object-position:left center !important;
   }
 
   .nav-toggle{
-    order:2 !important;
+    position:absolute !important;
+    right:10px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
     display:inline-flex !important;
     align-items:center !important;
     justify-content:center !important;
-    flex:0 0 auto !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
-    position:relative !important;
-    left:auto !important;
-    right:auto !important;
-    transform:none !important;
+    z-index:3 !important;
   }
 }
 
 @media (min-width:481px) and (max-width:768px){
+  :root{ --siteHeaderOffset:72px !important; }
+
   header{
-    padding:0 12px !important;
+    height:72px !important;
+    min-height:72px !important;
+  }
+
+  .mobile-panel{
+    top:72px !important;
+  }
+
+  header .logo{
+    left:10px !important;
+    max-width:calc(100% - 82px) !important;
   }
 
   header .logo img{
-    height:54px !important;
+    height:52px !important;
   }
 
   .nav-toggle{
     width:40px !important;
     height:40px !important;
     border-radius:10px !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
+    right:12px !important;
   }
 }
 
 @media (max-width:480px){
+  :root{ --siteHeaderOffset:70px !important; }
+
   header{
-    padding:0 10px !important;
-    gap:8px !important;
+    height:70px !important;
+    min-height:70px !important;
+  }
+
+  .mobile-panel{
+    top:70px !important;
+  }
+
+  header .logo{
+    left:8px !important;
+    max-width:calc(100% - 74px) !important;
   }
 
   header .logo img{
-    height:50px !important;
+    height:48px !important;
+    max-width:min(160px, calc(100vw - 82px)) !important;
   }
 
   .nav-toggle{
     width:38px !important;
     height:38px !important;
     border-radius:9px !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
+    right:10px !important;
   }
 }
 
