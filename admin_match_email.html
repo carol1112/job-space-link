@@ -1585,10 +1585,11 @@ header .auth-buttons a:hover{
   header{
     display:flex !important;
     align-items:center !important;
-    justify-content:space-between !important;
-    gap:10px !important;
-    padding:0 10px !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+    padding:0 64px 0 10px !important;
     overflow:hidden;
+    position:fixed;
   }
 
   header > *{
@@ -1604,7 +1605,8 @@ header .auth-buttons a:hover{
     order:1;
     flex:1 1 auto;
     min-width:0;
-    max-width:calc(100% - 56px);
+    max-width:100%;
+    width:100%;
     margin-left:0 !important;
     display:flex;
     align-items:center;
@@ -1624,24 +1626,24 @@ header .auth-buttons a:hover{
   .nav-toggle{
     order:2;
     display:inline-flex !important;
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
     flex:0 0 44px;
     width:44px;
     height:44px;
-    margin-left:auto !important;
+    margin:0 !important;
     border-radius:13px;
     align-items:center;
     justify-content:center;
+    z-index:2;
   }
 }
 
 @media (max-width:480px){
   header{
-    gap:10px !important;
-    padding:0 10px !important;
-  }
-
-  header .logo{
-    max-width:calc(100% - 54px);
+    padding:0 58px 0 10px !important;
   }
 
   header .logo img{
@@ -1650,12 +1652,14 @@ header .auth-buttons a:hover{
   }
 
   .nav-toggle{
+    right:10px;
     flex:0 0 42px;
     width:42px;
     height:42px;
     border-radius:12px;
   }
 }
+
 
 </style>
 </head>
