@@ -3087,6 +3087,97 @@ header .auth-buttons a:hover{
   }
 }
 
+
+
+/* ============================================================
+   FINAL MOBILE HEADER IMAGE-MATCH PATCH
+   Logo left + hamburger right inside header
+============================================================ */
+@media (max-width:768px){
+  header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+    padding:0 12px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    min-width:0 !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+    transform:none !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 auto !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+    transform:none !important;
+  }
+}
+
+@media (min-width:481px) and (max-width:768px){
+  header{
+    padding:0 12px !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+  }
+}
+
+@media (max-width:480px){
+  header{
+    padding:0 10px !important;
+    gap:8px !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+  }
+}
+
 </style>
 </head>
 
