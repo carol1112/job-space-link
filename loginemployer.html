@@ -1716,6 +1716,107 @@
   }
 }
 
+
+
+
+/* ============================================================
+   FINAL MOBILE HEADER IMAGE-MATCH LOCK
+   Logo left + hamburger right inside header
+============================================================ */
+@media (max-width: 768px){
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    justify-content:unset !important;
+    column-gap:8px !important;
+    row-gap:0 !important;
+    padding:0 10px !important;
+    width:100% !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    order:unset !important;
+    justify-self:start !important;
+    align-self:center !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    transform:none !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    width:auto !important;
+    max-width:none !important;
+    margin:0 !important;
+    object-fit:contain !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    order:unset !important;
+    justify-self:end !important;
+    align-self:center !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+    left:auto !important;
+    right:auto !important;
+    position:relative !important;
+    transform:none !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    height:72px !important;
+    padding:0 12px !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    height:70px !important;
+    padding:0 10px !important;
+    column-gap:8px !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+  }
+}
+
 </style>
 </head>
 
