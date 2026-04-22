@@ -1068,57 +1068,8 @@ header .auth-buttons a:hover{
 }
 
 @media (min-width:481px) and (max-width:768px){
-  .page{
-    width:calc(100vw - 14px);
-    margin:18px auto 22px;
-  }
-
-  .summary-grid{
-    grid-template-columns:repeat(2, minmax(0,1fr));
-  }
-
-  .hero-card,
-  .side-card,
-  .panel,
-  .modal-card{
-    border-radius:18px;
-    padding:16px;
-  }
-
-  .hero-title{
-    font-size:1.28rem;
-  }
-
-  .btn-row{
-    grid-template-columns:1fr;
-  }
-
-  header{
-    justify-content:space-between;
-    padding:0 12px 0 8px;
-  }
-
-  header .logo{
-    margin-left:-1px;
-  }
-
-  header .logo img{
-    height:44px;
-  }
-
-  header nav,
-  header .auth-buttons{
-    display:none !important;
-  }
-
-  .nav-toggle{
-    display:inline-flex;
-  }
-}
-
-@media (max-width:480px){
   :root{
-    --header-h:72px;
+    --header-h:74px;
   }
 
   .page{
@@ -1126,37 +1077,143 @@ header .auth-buttons a:hover{
     margin:14px auto 18px;
   }
 
-  .summary-grid{
+  .top-hero,
+  .main-grid{
     grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  .summary-grid{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:10px;
+    margin-bottom:12px;
   }
 
   .hero-card,
   .side-card,
   .panel,
   .modal-card{
-    border-radius:16px;
+    border-radius:18px;
     padding:14px;
   }
 
   .hero-title{
-    font-size:1.12rem;
+    font-size:1.14rem;
+    gap:10px;
+    margin-bottom:6px;
+  }
+
+  .hero-sub,
+  .small-note,
+  .side-row .value,
+  .status-line{
+    font-size:.85rem;
+    line-height:1.45;
+  }
+
+  .side-card{
+    gap:8px;
+  }
+
+  .side-row,
+  .stat-card{
+    padding:10px 12px;
+    border-radius:14px;
+  }
+
+  .stat-v{
+    font-size:1.08rem;
+  }
+
+  .panel-title{
+    margin-bottom:12px;
+  }
+
+  .panel-title h2{
+    font-size:1rem;
+  }
+
+  .trace-tools{
+    gap:8px;
+  }
+
+  .badge{
+    padding:7px 10px;
+    font-size:.76rem;
+  }
+
+  .filters{
+    gap:10px;
+  }
+
+  .field label{
+    font-size:.78rem;
+  }
+
+  .input,
+  .select{
+    padding:10px 11px;
+    font-size:.88rem;
+    border-radius:12px;
   }
 
   .btn-row{
-    grid-template-columns:1fr;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:8px;
+  }
+
+  .btn{
+    padding:10px 11px;
+    border-radius:12px;
+    font-size:.84rem;
+  }
+
+  .table-wrap{
+    border-radius:16px;
+  }
+
+  .trace-table{
+    min-width:1120px;
+  }
+
+  .trace-table thead th{
+    padding:10px 9px;
+    font-size:.68rem;
+  }
+
+  .trace-table tbody td{
+    padding:10px 9px;
+    font-size:.8rem;
+  }
+
+  .pagination{
+    gap:6px;
+    margin-top:12px;
+  }
+
+  .pagination button{
+    padding:7px 10px;
+    font-size:.8rem;
   }
 
   header{
-    justify-content:space-between;
-    padding:0 10px 0 6px;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:10px;
+    padding:0 12px;
   }
 
   header .logo{
-    margin-left:-1px;
+    grid-column:1;
+    margin-left:0;
+    justify-self:start;
+    align-items:center;
   }
 
   header .logo img{
-    height:40px;
+    height:42px;
+    max-width:min(178px, 56vw);
   }
 
   header nav,
@@ -1165,9 +1222,214 @@ header .auth-buttons a:hover{
   }
 
   .nav-toggle{
+    grid-column:3;
+    justify-self:end;
     display:inline-flex;
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    align-items:center;
+    justify-content:center;
   }
 }
+
+
+@media (max-width:480px){
+  :root{
+    --header-h:70px;
+  }
+
+  .page{
+    width:calc(100vw - 10px);
+    margin:12px auto 16px;
+  }
+
+  .top-hero,
+  .main-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .summary-grid{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:8px;
+    margin-bottom:10px;
+  }
+
+  .hero-card,
+  .side-card,
+  .panel,
+  .modal-card{
+    border-radius:15px;
+    padding:12px;
+  }
+
+  .hero-title{
+    font-size:1.02rem;
+    gap:8px;
+    margin-bottom:6px;
+  }
+
+  .hero-sub,
+  .small-note,
+  .side-row .value,
+  .status-line{
+    font-size:.8rem;
+    line-height:1.4;
+  }
+
+  .side-card{
+    gap:7px;
+  }
+
+  .side-row{
+    gap:8px;
+    padding:9px 10px;
+    border-radius:13px;
+  }
+
+  .side-row .label,
+  .stat-k{
+    font-size:.68rem;
+  }
+
+  .stat-card{
+    padding:10px 10px;
+    border-radius:14px;
+  }
+
+  .stat-v{
+    font-size:.98rem;
+  }
+
+  .panel-title{
+    margin-bottom:10px;
+    gap:8px;
+  }
+
+  .panel-title h2{
+    font-size:.94rem;
+    gap:8px;
+  }
+
+  .trace-tools{
+    gap:6px;
+    width:100%;
+  }
+
+  .badge{
+    padding:6px 9px;
+    font-size:.72rem;
+  }
+
+  .filters{
+    gap:9px;
+  }
+
+  .field{
+    gap:5px;
+  }
+
+  .field label{
+    font-size:.74rem;
+  }
+
+  .input,
+  .select{
+    padding:9px 10px;
+    font-size:.84rem;
+    border-radius:11px;
+  }
+
+  .btn-row{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:7px;
+  }
+
+  .btn{
+    padding:9px 10px;
+    border-radius:11px;
+    font-size:.8rem;
+  }
+
+  .table-wrap{
+    border-radius:14px;
+  }
+
+  .trace-table{
+    min-width:1040px;
+  }
+
+  .trace-table thead th{
+    padding:9px 8px;
+    font-size:.64rem;
+  }
+
+  .trace-table tbody td{
+    padding:9px 8px;
+    font-size:.76rem;
+    line-height:1.35;
+  }
+
+  .trace-type,
+  .state-pill{
+    padding:5px 8px;
+    font-size:.68rem;
+    gap:5px;
+  }
+
+  .link-btn{
+    padding:7px 8px;
+    font-size:.74rem;
+  }
+
+  .pagination{
+    gap:5px;
+    margin-top:10px;
+  }
+
+  .pagination button{
+    padding:6px 8px;
+    font-size:.76rem;
+  }
+
+  header{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:10px;
+    padding:0 10px;
+  }
+
+  header .logo{
+    grid-column:1;
+    margin-left:0;
+    justify-self:start;
+    align-items:center;
+  }
+
+  header .logo img{
+    height:38px;
+    max-width:min(164px, 54vw);
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3;
+    justify-self:end;
+    display:inline-flex;
+    width:42px;
+    height:42px;
+    border-radius:13px;
+    align-items:center;
+    justify-content:center;
+  }
+}
+
 
 </style>
 </head>
@@ -1364,7 +1626,7 @@ header .auth-buttons a:hover{
 
         <div class="field">
           <label for="applicantSearch">Applicant Name / Email</label>
-          <input id="applicantSearch" class="input" type="text" placeholder="Search applicant..." />
+          <input id="applicantSearch" class="input" type="text" placeholder="Search applicant full name or email..." />
         </div>
 
         <div class="field">
@@ -1429,7 +1691,7 @@ header .auth-buttons a:hover{
             <tr>
               <th>Trace Type</th>
               <th>State</th>
-              <th>Applicant</th>
+              <th>Applicant Full Name</th>
               <th>Applicant Email</th>
               <th>Company</th>
               <th>Position</th>
@@ -1807,10 +2069,32 @@ function buildFullName(row){
     row?.name
   ].map(safeStr).map(v => v.trim()).find(Boolean);
 
-  if (direct) return direct;
+  if (direct) return direct.replace(/\s+/g, " ").trim();
 
   const p = getNamePieces(row);
-  return [p.first, p.middle, p.last, p.suffix].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+  return [p.first, p.middle, p.last, p.suffix]
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizePersonName(value){
+  return safeStr(value)
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function buildBestApplicantName(){
+  const rows = Array.from(arguments).filter(Boolean);
+
+  for (const row of rows){
+    const full = buildFullName(row);
+    if (full) return full;
+  }
+
+  return "";
 }
 
 function pickMasterEmail(row){
@@ -1838,16 +2122,29 @@ function pickTxEmail(row){
 function buildMasterIndexes(rows){
   const byEmail = new Map();
   const byMasterId = new Map();
+  const byName = new Map();
 
   (rows || []).forEach(row => {
     const email = pickMasterEmail(row);
-    const masterId = safeStr(row?.master_id).trim();
+    const masterIdCandidates = uniq([
+      safeStr(row?.master_id).trim(),
+      safeStr(row?.id).trim(),
+      safeStr(row?.applicant_id).trim(),
+      safeStr(row?.user_id).trim()
+    ]);
+    const fullName = buildFullName(row);
+    const normalizedName = normalizePersonName(fullName);
 
     if (email && !byEmail.has(email)) byEmail.set(email, row);
-    if (masterId && !byMasterId.has(masterId)) byMasterId.set(masterId, row);
+
+    masterIdCandidates.forEach(idValue => {
+      if (idValue && !byMasterId.has(idValue)) byMasterId.set(idValue, row);
+    });
+
+    if (normalizedName && !byName.has(normalizedName)) byName.set(normalizedName, row);
   });
 
-  return { byEmail, byMasterId };
+  return { byEmail, byMasterId, byName };
 }
 
 /* =========================
@@ -1951,13 +2248,18 @@ function resolveJobFromAnyRow(row, jobIndexes){
 
 function favoriteOwnerFromRow(row, masterIndexes){
   const email = normEmail(row?.favorite_email_address);
-  const master = masterIndexes.byEmail.get(email);
-  const nameFromMaster = buildFullName(master || {});
   const taggedUser = safeStr(row?.favorite_tagged_user).trim();
+  const taggedUserKey = normalizePersonName(taggedUser);
+
+  let master = null;
+  if (email && masterIndexes.byEmail.has(email)) master = masterIndexes.byEmail.get(email);
+  if (!master && taggedUserKey && masterIndexes.byName.has(taggedUserKey)) master = masterIndexes.byName.get(taggedUserKey);
+
+  const bestName = buildBestApplicantName(master, row) || taggedUser;
 
   return {
     email: email || pickMasterEmail(master || {}),
-    name: nameFromMaster || taggedUser || "Unknown Applicant",
+    name: bestName || "Unknown Applicant",
     masterRow: master || null
   };
 }
@@ -1986,15 +2288,32 @@ function rowLooksLikeApplication(txRow, jobIndexes){
 
 function resolveApplicantFromTx(txRow, masterIndexes){
   const email = pickTxEmail(txRow);
-  const masterId = safeStr(txRow?.master_id).trim();
+  const masterIdCandidates = uniq([
+    safeStr(txRow?.master_id).trim(),
+    safeStr(txRow?.applicant_id).trim(),
+    safeStr(txRow?.user_id).trim()
+  ]);
+  const txNameKey = normalizePersonName(buildFullName(txRow));
 
   let master = null;
   if (email && masterIndexes.byEmail.has(email)) master = masterIndexes.byEmail.get(email);
-  if (!master && masterId && masterIndexes.byMasterId.has(masterId)) master = masterIndexes.byMasterId.get(masterId);
+
+  if (!master){
+    for (const idValue of masterIdCandidates){
+      if (idValue && masterIndexes.byMasterId.has(idValue)){
+        master = masterIndexes.byMasterId.get(idValue);
+        break;
+      }
+    }
+  }
+
+  if (!master && txNameKey && masterIndexes.byName.has(txNameKey)){
+    master = masterIndexes.byName.get(txNameKey);
+  }
 
   return {
     email: email || pickMasterEmail(master || {}),
-    name: buildFullName(master || txRow || {}) || "Unknown Applicant",
+    name: buildBestApplicantName(master, txRow) || "Unknown Applicant",
     masterRow: master || null
   };
 }
@@ -2191,7 +2510,7 @@ function renderTable(){
       <tr>
         <td>${typeHtml}</td>
         <td>${stateHtml}</td>
-        <td>${escapeHtml(row.applicantName)}</td>
+        <td><strong>${escapeHtml(row.applicantName)}</strong></td>
         <td>${escapeHtml(row.applicantEmail)}</td>
         <td>${escapeHtml(row.company)}</td>
         <td>${escapeHtml(row.position)}</td>
