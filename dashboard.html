@@ -13207,6 +13207,315 @@ body.employer-logged-in .employer-session-account-card{
   }
 }
 
+
+
+/* ============================================================
+   FINAL MOBILE REFINEMENT — APPLICANT DASHBOARD ONLY
+   - Logout beside logged-in account
+   - Table / Grid / Location in one compressed row
+   - Logo left + hamburger right like employer dashboard
+   - File viewer controls compressed into 2 centered rows
+============================================================ */
+@media (max-width: 768px){
+  body > header{
+    justify-content:space-between !important;
+    gap:10px !important;
+    padding:0 10px 0 8px !important;
+  }
+
+  body > header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+  }
+
+  body > header .logo img{
+    height:50px !important;
+  }
+
+  body > header .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  body.employer-logged-in .employer-session-center{
+    display:none !important;
+  }
+
+  body.employer-logged-in .employer-session-bar.active{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+    padding:8px 10px !important;
+    align-items:stretch !important;
+  }
+
+  body.employer-logged-in .employer-session-account-card{
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:8px !important;
+    padding:8px 10px !important;
+    border-radius:14px !important;
+    flex-wrap:nowrap !important;
+  }
+
+  body.employer-logged-in .employer-session-left{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    gap:8px !important;
+    align-items:center !important;
+  }
+
+  body.employer-logged-in .employer-session-logo-wrap{
+    width:76px !important;
+    height:48px !important;
+    flex:0 0 76px !important;
+    border-radius:12px !important;
+  }
+
+  body.employer-logged-in .employer-session-kicker{
+    font-size:0.62rem !important;
+    letter-spacing:0.10em !important;
+    margin-bottom:2px !important;
+  }
+
+  body.employer-logged-in .employer-session-name{
+    font-size:0.80rem !important;
+    line-height:1.03 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  body.employer-logged-in .employer-session-email{
+    font-size:0.66rem !important;
+    line-height:1.05 !important;
+    margin-top:2px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  body.employer-logged-in .employer-session-account-card .employer-logout-btn{
+    margin-left:auto !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:82px !important;
+    min-height:34px !important;
+    padding:6px 8px !important;
+    font-size:0.64rem !important;
+    gap:5px !important;
+    border-radius:11px !important;
+    box-shadow:0 5px 10px rgba(71,85,105,0.12) !important;
+  }
+
+  body.employer-logged-in .dashboard-title{
+    display:block !important;
+    margin-bottom:8px !important;
+  }
+
+  body.employer-logged-in .dashboard-title h1,
+  body.employer-logged-in .dashboard-title .refresh-chip{
+    display:none !important;
+  }
+
+  body.employer-logged-in .directory-view-row{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1fr) minmax(92px, auto) !important;
+    gap:6px !important;
+    align-items:center !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  body.employer-logged-in .directory-view-row .view-toggle{
+    width:100% !important;
+    min-width:0 !important;
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    overflow:hidden !important;
+    border-radius:11px !important;
+  }
+
+  body.employer-logged-in .directory-view-row .view-toggle button{
+    min-width:0 !important;
+    width:100% !important;
+    min-height:34px !important;
+    padding:6px 4px !important;
+    font-size:0.62rem !important;
+    gap:4px !important;
+    justify-content:center !important;
+    white-space:nowrap !important;
+  }
+
+  body.employer-logged-in .directory-view-row #locationViewBtn,
+  body.employer-logged-in .directory-view-row .location-btn{
+    width:100% !important;
+    min-width:92px !important;
+    min-height:34px !important;
+    padding:6px 6px !important;
+    font-size:0.62rem !important;
+    gap:4px !important;
+    justify-content:center !important;
+    white-space:nowrap !important;
+    margin:0 !important;
+  }
+
+  #docModal{
+    padding:10px !important;
+  }
+
+  #docViewer{
+    width:min(98vw, 98vw) !important;
+    height:min(94vh, 94vh) !important;
+    border-radius:22px !important;
+  }
+
+  .doc-viewer-head{
+    min-height:60px !important;
+    padding:8px 12px !important;
+  }
+
+  .doc-viewer-title{
+    max-width:calc(100% - 190px) !important;
+    font-size:0.90rem !important;
+  }
+
+  .doc-head-actions{
+    right:10px !important;
+    gap:6px !important;
+  }
+
+  .doc-head-btn,
+  #closeDocModal{
+    min-height:34px !important;
+    padding:0 10px !important;
+    font-size:0.66rem !important;
+    gap:5px !important;
+    border-radius:11px !important;
+  }
+
+  .doc-page-toolbar,
+  .doc-bottom-toolbar{
+    width:100% !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+  }
+
+  .doc-page-toolbar{
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    gap:6px !important;
+    padding:6px 8px !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+
+  .doc-page-toolbar .ctrl-btn,
+  .doc-page-toolbar .ctrl-pill,
+  .doc-page-toolbar #pagePill{
+    min-width:0 !important;
+    width:100% !important;
+    min-height:32px !important;
+    padding:6px 6px !important;
+    font-size:0.60rem !important;
+    gap:4px !important;
+    justify-content:center !important;
+    white-space:nowrap !important;
+    border-radius:10px !important;
+  }
+
+  .doc-bottom-toolbar{
+    display:grid !important;
+    grid-template-columns:repeat(5, minmax(0, 1fr)) !important;
+    gap:6px !important;
+    padding:6px 8px 8px !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+
+  .doc-bottom-left,
+  .doc-bottom-center,
+  .doc-bottom-right{
+    display:contents !important;
+  }
+
+  .doc-bottom-toolbar .nav-btn,
+  .doc-bottom-toolbar .ctrl-btn,
+  .doc-bottom-toolbar .download-btn{
+    min-width:0 !important;
+    width:100% !important;
+    min-height:32px !important;
+    padding:6px 4px !important;
+    font-size:0.58rem !important;
+    gap:4px !important;
+    justify-content:center !important;
+    white-space:nowrap !important;
+    border-radius:10px !important;
+  }
+
+  .doc-bottom-toolbar .ctrl-pill,
+  .doc-bottom-toolbar #zoomPill{
+    display:none !important;
+  }
+
+  #fitPageBtn{
+    display:none !important;
+  }
+
+  #docViewer.sidebar-hidden .doc-page-toolbar{
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    gap:6px !important;
+    padding:6px 8px !important;
+  }
+
+  #docViewer.sidebar-hidden .doc-bottom-toolbar{
+    display:grid !important;
+    grid-template-columns:repeat(5, minmax(0, 1fr)) !important;
+    gap:6px !important;
+    padding:6px 8px 8px !important;
+  }
+
+  #docViewer.sidebar-hidden .doc-bottom-left,
+  #docViewer.sidebar-hidden .doc-bottom-center,
+  #docViewer.sidebar-hidden .doc-bottom-right{
+    display:contents !important;
+  }
+
+  #docViewer.sidebar-hidden .doc-page-toolbar .ctrl-btn,
+  #docViewer.sidebar-hidden .doc-page-toolbar .ctrl-pill,
+  #docViewer.sidebar-hidden .doc-page-toolbar #pagePill,
+  #docViewer.sidebar-hidden .doc-bottom-toolbar .nav-btn,
+  #docViewer.sidebar-hidden .doc-bottom-toolbar .ctrl-btn,
+  #docViewer.sidebar-hidden .doc-bottom-toolbar .download-btn{
+    min-width:0 !important;
+    width:100% !important;
+    min-height:32px !important;
+    padding:6px 4px !important;
+    font-size:0.58rem !important;
+    gap:4px !important;
+    justify-content:center !important;
+    white-space:nowrap !important;
+    border-radius:10px !important;
+  }
+
+  #docViewer.sidebar-hidden .doc-bottom-toolbar .ctrl-pill,
+  #docViewer.sidebar-hidden .doc-bottom-toolbar #zoomPill,
+  #docViewer.sidebar-hidden #fitPageBtn{
+    display:none !important;
+  }
+}
+
 </style>
 
 
