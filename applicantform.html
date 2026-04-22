@@ -7636,6 +7636,152 @@ async function ensureAuthSession(opts){
     return null;
   }
 }
+
+
+const APPLICANT_FORM_EDGE_FUNCTION = "applicant-form-backend";
+
+async function callApplicantFormBackend(action, payload){
+  var client = window.supabase;
+  if (!client || !client.functions || typeof client.functions.invoke !== "function"){
+    throw new Error("Supabase Edge Functions client is not available. Check supabase_config.js.");
+  }
+
+  await ensureAuthSession({ silent:true });
+
+  var resp = await client.functions.invoke(APPLICANT_FORM_EDGE_FUNCTION, {
+    body: { action: action, payload: payload || {} }
+  });
+
+  if (resp.error){
+    throw new Error(resp.error.message || "Applicant form backend request failed.");
+  }
+
+  var data = resp.data || {};
+  if (data.ok === false){
+    throw new Error(data.error || "Applicant form backend request failed.");
+  }
+
+  return data;
+}
+
+function applyLoadedRecordFromBackend(masterRow, lastTrans, sourceMode, preferredTransaction){
+  if (preferredTransaction){
+    if (!lastTrans){
+      lastTrans = buildOptimisticTransactionRow(preferredTransaction);
+    } else {
+      var preferredRow = buildOptimisticTransactionRow(preferredTransaction);
+      var dbIsLatest = !!(lastTrans && lastTrans.is_latest === true);
+      var preferredIsLatest = !!(preferredRow && preferredRow.is_latest === true);
+
+      if ((preferredIsLatest && !dbIsLatest) || transactionSortValue(preferredRow) >= transactionSortValue(lastTrans)){
+        lastTrans = preferredRow;
+      }
+    }
+  }
+
+  lastTransactionCache = lastTrans || null;
+
+  if (sourceMode === "existing"){
+    window._loadedExistingRecord = true;
+  } else if (sourceMode === "new"){
+    window._loadedExistingRecord = false;
+  }
+
+  if (masterRow){
+    document.getElementById("first_name").value = masterRow.first_name || "";
+    document.getElementById("middle_name").value = masterRow.middle_name || "";
+    document.getElementById("last_name").value = masterRow.last_name || "";
+    birthdayEl.value = masterRow.birthday || "";
+    updateAgeHidden();
+  }
+
+  if (lastTrans){
+    document.getElementById("email").value = lastTrans.email || "";
+    document.getElementById("phone_number").value = lastTrans.phone || "";
+    document.getElementById("position").value = lastTrans.position || "";
+    document.getElementById("address").value = lastTrans.address || "";
+    document.getElementById("gender").value = lastTrans.gender || "";
+    document.getElementById("preferred_work_setup").value = lastTrans.preferred_work_setup || "";
+    document.getElementById("employment_status").value = lastTrans.employment_status || "";
+    noteEl.value = lastTrans.notes || "";
+
+    desiredSalaryEl.value = extractSalaryNumber(lastTrans.desired_salary);
+    setSalaryUIBySymbol(extractSalarySymbol(lastTrans.desired_salary, lastTrans.country || ""));
+
+    if (lastTrans.country){
+      country.value = lastTrans.country;
+      buildLocationLists();
+    }
+    if (lastTrans.city){
+      var match = null;
+      for (var i=0; i<city.options.length; i++){
+        var o = city.options[i];
+        if (o.value === lastTrans.city){
+          if (!lastTrans.province || (o.dataset.province||"") === lastTrans.province){
+            match = o; break;
+          }
+          if (!match) match = o;
+        }
+      }
+      if (match){
+        city.value = match.value;
+        city.dispatchEvent(new Event("change"));
+      }
+    }
+    if (lastTrans.zipcode){
+      zipcode.value = lastTrans.zipcode;
+    }
+
+    old_docs    = lastTrans.documents || [];
+    old_resume  = lastTrans.resume || "";
+    old_picture = lastTrans.pictures || "";
+    old_pdf = lastTrans.pdf || "";
+
+    if (old_pdf){
+      lastSavedPdfUrl = old_pdf;
+      lastSavedPdfName = fileNameFromUrlLocal(old_pdf) || "Applicant_Profile.pdf";
+      try{
+        var parsed = parseSupabaseStorageUrl(old_pdf);
+        lastSavedPdfPath = parsed ? parsed.path : "";
+      }catch(e){ lastSavedPdfPath=""; }
+    } else {
+      lastSavedPdfUrl = "";
+      lastSavedPdfPath = "";
+      lastSavedPdfName = "";
+    }
+
+    setStatusDisplay(lastTrans.status || deriveStatusFromMaster(masterRow));
+
+    selectedDocs=[]; selectedPicture=null; selectedResume=null;
+  } else {
+    setStatusDisplay(deriveStatusFromMaster(masterRow));
+  }
+
+  if (masterRow && masterRow.id != null){
+    currentMasterId = masterRow.id;
+  }
+
+  window.isUpdateMode = !!(masterRow && masterRow.id != null);
+  window.isViewOnlyMode = false;
+
+  setViewOnlyMode(false);
+  lockIdentityFields();
+  refreshButtonsLayout();
+  refreshStatusButtonStyle();
+
+  renderPicPreview();
+  renderResumePreview();
+  renderDocPreview();
+  validateUploads();
+
+  baselineSnapshot = buildCurrentSnapshot();
+  rememberCurrentApplicantEmail("record-loaded");
+
+  if (!window._isRestoringApplicantState){
+    persistLoadedRecordSessionState("refresh-loaded-record");
+  }
+}
+
 function isRlsErrorMessage(msg){
   var m = String(msg||"").toLowerCase();
   return m.includes("row-level") || m.includes("rls") || m.includes("permission") || m.includes("not allowed");
@@ -8138,34 +8284,13 @@ async function tryFetchLastTransactionOrdered(masterId, orderColumns){
   return (r.data && r.data[0]) ? r.data[0] : null;
 }
 
+
 async function fetchLastTransaction(masterId){
-  var client = window.supabase;
-  await ensureAuthSession({ silent:true });
-
-  var orderAttempts = [
-    ["is_latest", "created_at", "updated_at", "id"],
-    ["created_at", "updated_at", "id"],
-    ["updated_at", "created_at", "id"],
-    ["id"],
-    ["transaction_id"],
-    ["trans_id"]
-  ];
-
-  for (var i=0; i<orderAttempts.length; i++){
-    try{
-      var latest = await tryFetchLastTransactionOrdered(masterId, orderAttempts[i]);
-      if (latest) return latest;
-    }catch(e){}
-  }
-
-  var r = await client.from("applicant_transaction_table")
-    .select("*")
-    .eq("master_id", masterId)
-    .limit(200);
-
-  if (r.error) return null;
-  return pickLatestRow(r.data || []);
+  if (!masterId) return null;
+  var data = await callApplicantFormBackend("fetch_last_transaction", { masterId: masterId });
+  return data.lastTransaction || null;
 }
+
 
 function buildOptimisticTransactionRow(payload){
   var row = Object.assign({}, payload || {});
@@ -8175,90 +8300,27 @@ function buildOptimisticTransactionRow(payload){
   return row;
 }
 
+
 async function insertApplicantTransactionRecord(payload){
-  var client = window.supabase;
-  if (!client) throw new Error("Supabase client not initialized.");
-
-  var candidates = [];
-  candidates.push(Object.assign({}, payload || {}));
-
-  var fallbackPayload = Object.assign({}, payload || {});
-  delete fallbackPayload.is_latest;
-  delete fallbackPayload.is_active;
-  candidates.push(fallbackPayload);
-
-  var lastError = null;
-
-  for (var i=0; i<candidates.length; i++){
-    var candidate = candidates[i];
-
-    var ins = await client.from("applicant_transaction_table").insert([candidate]);
-    if (!ins.error){
-      var latest = await fetchLastTransaction(candidate.master_id);
-      return latest || buildOptimisticTransactionRow(candidate);
-    }
-
-    var low = String(ins.error.message || "").toLowerCase();
-    if (isRlsErrorMessage(low)) throw new Error(rlsHelpMessage());
-    lastError = ins.error;
-  }
-
-  throw lastError || new Error("Unable to save applicant transaction.");
+  var data = await callApplicantFormBackend("insert_transaction", { payload: payload || {} });
+  return data.lastTransaction || buildOptimisticTransactionRow(payload || {});
 }
+
+
 
 async function fetchMasterRow(masterId){
-  var client = window.supabase;
-  await ensureAuthSession({ silent:true });
-
-  var r = await client
-    .from("applicant_master_table")
-    .select("*")
-    .eq("id", masterId)
-    .maybeSingle();
-
-  if (r.error) return null;
-  return r.data || null;
+  if (!masterId) return null;
+  var data = await callApplicantFormBackend("fetch_master_row", { masterId: masterId });
+  return data.master || null;
 }
+
+
 
 async function updateMasterFields(master_id, fields){
-  var client = window.supabase;
-  if (!client || !master_id) return;
-  await ensureAuthSession({ silent:true });
-
-  var r = await client.from("applicant_master_table")
-    .update(fields)
-    .eq("id", master_id);
-
-  if (!r.error) return;
-
-  var msg = String(r.error.message||"").toLowerCase();
-  if (isRlsErrorMessage(msg)) throw new Error(rlsHelpMessage());
-
-  var safe = Object.assign({}, fields);
-  if (msg.includes("column") || msg.includes("schema cache") || msg.includes("could not find")){
-    if (msg.includes("status")) delete safe.status;
-  }
-
-  var retry = await client.from("applicant_master_table")
-    .update(safe)
-    .eq("id", master_id);
-
-  if (!retry.error) return;
-
-  var msg2 = String(retry.error.message||"").toLowerCase();
-  if (isRlsErrorMessage(msg2)) throw new Error(rlsHelpMessage());
-
-  if (fields.status != null){
-    try{
-      await client.from("applicant_master_table")
-        .update({ is_active: (fields.status !== "Not Active") })
-        .eq("id", master_id);
-      return;
-    }catch(e){}
-  }
-
-  throw retry.error;
+  if (!master_id) return;
+  await callApplicantFormBackend("update_master_fields", { master_id: master_id, fields: fields || {} });
 }
+
 
 function isMasterRecordActive(masterRow){
   if (!masterRow) return false;
@@ -8272,65 +8334,20 @@ function deriveStatusFromMaster(masterRow){
   return isMasterRecordActive(masterRow) ? "Active" : "Not Active";
 }
 
+
 async function markTransactionsNotLatest(masterId){
-  var client = window.supabase;
-  if (!client || !masterId) return;
-  await ensureAuthSession({ silent:true });
-
-  var attempts = [
-    { is_latest:false, is_active:false, status:"Not Active" },
-    { is_latest:false, status:"Not Active" },
-    { is_active:false, status:"Not Active" },
-    { status:"Not Active" },
-    { is_latest:false, is_active:false },
-    { is_latest:false },
-    { is_active:false }
-  ];
-
-  for (var i=0; i<attempts.length; i++){
-    try{
-      var r = await client.from("applicant_transaction_table")
-        .update(attempts[i])
-        .eq("master_id", masterId);
-      if (!r.error) return;
-    }catch(e){}
-  }
+  if (!masterId) return;
+  await callApplicantFormBackend("mark_transactions_not_latest", { masterId: masterId });
 }
+
+
 
 async function savePdfUrlToLatestTransaction(masterId, pdfUrl){
-  var client = window.supabase;
-  if (!client || !masterId) return false;
-  await ensureAuthSession({ silent:true });
-
-  try{
-    var up = await client.from("applicant_transaction_table")
-      .update({ pdf: pdfUrl })
-      .eq("master_id", masterId)
-      .eq("is_latest", true);
-
-    if (!up.error) return true;
-  }catch(e){}
-
-  var last = await fetchLastTransaction(masterId);
-  if (!last) return false;
-
-  var pk = (last.id != null) ? "id"
-         : (last.transaction_id != null) ? "transaction_id"
-         : (last.trans_id != null) ? "trans_id"
-         : null;
-  if (!pk) return false;
-
-  var up2 = await client.from("applicant_transaction_table")
-    .update({ pdf: pdfUrl })
-    .eq(pk, last[pk]);
-
-  if (up2.error){
-    var low = String(up2.error.message||"").toLowerCase();
-    if (isRlsErrorMessage(low)) throw new Error(rlsHelpMessage());
-    return false;
-  }
-  return true;
+  if (!masterId || !pdfUrl) return false;
+  var data = await callApplicantFormBackend("save_pdf_url", { masterId: masterId, pdfUrl: pdfUrl });
+  return !!data.saved;
 }
+
 
 function buildTransactionPayloadForStatus(master_id, statusValue, computedAge){
   return {
@@ -8362,124 +8379,17 @@ function buildTransactionPayloadForStatus(master_id, statusValue, computedAge){
   };
 }
 
+
 async function refreshLoadedRecordFromLatest(masterId, sourceMode, preferredTransaction){
-  var masterRow = await fetchMasterRow(masterId);
-  var lastTrans = await fetchLastTransaction(masterId);
-  if (preferredTransaction){
-    if (!lastTrans){
-      lastTrans = buildOptimisticTransactionRow(preferredTransaction);
-    } else {
-      var preferredRow = buildOptimisticTransactionRow(preferredTransaction);
-      var dbIsLatest = !!(lastTrans && lastTrans.is_latest === true);
-      var preferredIsLatest = !!(preferredRow && preferredRow.is_latest === true);
-
-      if ((preferredIsLatest && !dbIsLatest) || transactionSortValue(preferredRow) >= transactionSortValue(lastTrans)){
-        lastTrans = preferredRow;
-      }
-    }
-  }
-  lastTransactionCache = lastTrans;
-
-  if (sourceMode === "existing"){
-    window._loadedExistingRecord = true;
-  } else if (sourceMode === "new"){
-    window._loadedExistingRecord = false;
-  }
-
-  if (masterRow){
-    document.getElementById("first_name").value = masterRow.first_name || "";
-    document.getElementById("middle_name").value = masterRow.middle_name || "";
-    document.getElementById("last_name").value = masterRow.last_name || "";
-    birthdayEl.value = masterRow.birthday || "";
-    updateAgeHidden();
-  }
-
-  if (lastTrans){
-    document.getElementById("email").value = lastTrans.email || "";
-    document.getElementById("phone_number").value = lastTrans.phone || "";
-    document.getElementById("position").value = lastTrans.position || "";
-    document.getElementById("address").value = lastTrans.address || "";
-    document.getElementById("gender").value = lastTrans.gender || "";
-    document.getElementById("preferred_work_setup").value = lastTrans.preferred_work_setup || "";
-    document.getElementById("employment_status").value = lastTrans.employment_status || "";
-    noteEl.value = lastTrans.notes || "";
-
-    desiredSalaryEl.value = extractSalaryNumber(lastTrans.desired_salary);
-    setSalaryUIBySymbol(extractSalarySymbol(lastTrans.desired_salary, lastTrans.country || ""));
-
-    if (lastTrans.country){
-      country.value = lastTrans.country;
-      buildLocationLists();
-    }
-    if (lastTrans.city){
-      var match = null;
-      for (var i=0; i<city.options.length; i++){
-        var o = city.options[i];
-        if (o.value === lastTrans.city){
-          if (!lastTrans.province || (o.dataset.province||"") === lastTrans.province){
-            match = o; break;
-          }
-          if (!match) match = o;
-        }
-      }
-      if (match){
-        city.value = match.value;
-        city.dispatchEvent(new Event("change"));
-      }
-    }
-    if (lastTrans.zipcode){
-      zipcode.value = lastTrans.zipcode;
-    }
-
-    old_docs    = lastTrans.documents || [];
-    old_resume  = lastTrans.resume || "";
-    old_picture = lastTrans.pictures || "";
-    old_pdf = lastTrans.pdf || "";
-
-    if (old_pdf){
-      lastSavedPdfUrl = old_pdf;
-      lastSavedPdfName = fileNameFromUrlLocal(old_pdf) || "Applicant_Profile.pdf";
-      try{
-        var parsed = parseSupabaseStorageUrl(old_pdf);
-        lastSavedPdfPath = parsed ? parsed.path : "";
-      }catch(e){ lastSavedPdfPath=""; }
-    } else {
-      lastSavedPdfUrl = "";
-      lastSavedPdfPath = "";
-      lastSavedPdfName = "";
-    }
-
-    setStatusDisplay(lastTrans.status || deriveStatusFromMaster(masterRow));
-
-    selectedDocs=[]; selectedPicture=null; selectedResume=null;
-  } else {
-    setStatusDisplay(deriveStatusFromMaster(masterRow));
-  }
-
-  window.isUpdateMode = true;
-  window.isViewOnlyMode = false;
-
-  setViewOnlyMode(false);
-  lockIdentityFields();
-  refreshButtonsLayout();
-  refreshStatusButtonStyle();
-
-  renderPicPreview();
-  renderResumePreview();
-  renderDocPreview();
-  validateUploads();
-
-  baselineSnapshot = buildCurrentSnapshot();
-  rememberCurrentApplicantEmail("record-loaded");
-
-  if (!window._isRestoringApplicantState){
-    persistLoadedRecordSessionState("refresh-loaded-record");
-  }
+  var data = await callApplicantFormBackend("refresh_record", { masterId: masterId });
+  applyLoadedRecordFromBackend(data.master || null, data.lastTransaction || null, sourceMode, preferredTransaction);
 }
+
 
 /* ==========================================================
    EXISTING RECORD LOOKUP
 ========================================================== */
+
 async function checkExistingApplicant(){
   if (window.isUpdateMode && currentMasterId) return;
 
@@ -8489,43 +8399,40 @@ async function checkExistingApplicant(){
   var bd=birthdayEl.value;
   if(!fn || !ln || !bd) return;
 
-  var client = window.supabase;
-  await ensureAuthSession({ silent:true });
+  try{
+    var data = await callApplicantFormBackend("lookup_existing", {
+      first_name: fn,
+      middle_name: mn || null,
+      last_name: ln,
+      birthday: bd
+    });
 
-  var q = client.from("applicant_master_table")
-    .select("*")
-    .eq("first_name",fn)
-    .eq("last_name",ln)
-    .eq("birthday",bd);
+    var master = data.master || null;
+    if (!master) return;
 
-  q = mn ? q.eq("middle_name",mn) : q.is("middle_name",null);
+    currentMasterId = master.id;
+    window.isUpdateMode = true;
+    window._loadedExistingRecord = true;
 
-  var r = await q.maybeSingle();
-  if(r.error){ console.warn("Existing lookup failed:", r.error.message); return; }
+    applyLoadedRecordFromBackend(master, data.lastTransaction || null, "existing");
 
-  var master = r.data;
-  if(!master) return;
-  if (!isMasterRecordActive(master)) return;
+    window.isViewOnlyMode = true;
+    setViewOnlyMode(true);
+    lockIdentityFields();
+    refreshButtonsLayout();
 
-  currentMasterId = master.id;
-  window.isUpdateMode = true;
-  window._loadedExistingRecord = true;
+    setStatusDisplay((data.lastTransaction && data.lastTransaction.status) ? data.lastTransaction.status : deriveStatusFromMaster(master));
+    refreshStatusButtonStyle();
 
-  await refreshLoadedRecordFromLatest(master.id, "existing");
-
-  window.isViewOnlyMode = true;
-  setViewOnlyMode(true);
-  lockIdentityFields();
-  refreshButtonsLayout();
-
-  setStatusDisplay((lastTransactionCache && lastTransactionCache.status) ? lastTransactionCache.status : deriveStatusFromMaster(master));
-  refreshStatusButtonStyle();
-
-  baselineSnapshot = buildCurrentSnapshot();
-  rememberCurrentApplicantEmail("existing-record-found");
-  persistLoadedRecordSessionState("existing-record-found");
-  existingPopup.style.display = "flex";
+    baselineSnapshot = buildCurrentSnapshot();
+    rememberCurrentApplicantEmail("existing-record-found");
+    persistLoadedRecordSessionState("existing-record-found");
+    existingPopup.style.display = "flex";
+  }catch(err){
+    console.warn("Existing lookup failed:", err && err.message ? err.message : err);
+  }
 }
+
 
 btnExistingUpdate.onclick = async function(){
   existingPopup.style.display="none";
@@ -8601,27 +8508,20 @@ btnExistingCancel.onclick = function(){
 /* ==========================================================
    EMPLOYEE ACCOUNTS (OPTIONAL PASSWORD)
 ========================================================== */
+
 async function getEmployeeAccountByEmail(email){
-  var client = window.supabase;
-  await ensureAuthSession({ silent:true });
   var eml = String(email||"").trim().toLowerCase();
   if (!eml) return null;
-
-  var r = await client
-    .from("employee_accounts")
-    .select("id,email,password_hash,is_active,employee_name")
-    .ilike("email", eml)
-    .order("id", { ascending:false })
-    .limit(1)
-    .maybeSingle();
-
-  if (r.error) return null;
-  return r.data || null;
+  var data = await callApplicantFormBackend("get_employee_account", { email: eml });
+  return data.account || null;
 }
+
+
 async function isAlreadyRegistered(email){
   var row = await getEmployeeAccountByEmail(email);
   return !!(row && row.password_hash);
 }
+
 async function sha256Hex(text){
   var enc = new TextEncoder();
   var data = enc.encode(String(text||""));
@@ -8629,72 +8529,21 @@ async function sha256Hex(text){
   var hashArr = Array.from(new Uint8Array(hashBuf));
   return hashArr.map(function(b){ return b.toString(16).padStart(2,"0"); }).join("");
 }
-async function ensureEmailOnlyEmployeeAccount(email, employeeName){
-  var client = window.supabase;
-  await ensureAuthSession({ silent:true });
 
+async function ensureEmailOnlyEmployeeAccount(email, employeeName){
   var eml = (email || "").trim();
   if (!eml) return;
-
-  var existing = await getEmployeeAccountByEmail(eml);
-  if (existing) return;
-
-  var base = { email: eml, password_hash: null, is_active: true, employee_name: (employeeName||"Applicant") };
-  var r = await client.from("employee_accounts").insert([base]);
-  if (r.error){
-    var low = String(r.error.message||"").toLowerCase();
-    if (isRlsErrorMessage(low)) throw new Error(rlsHelpMessage());
-    if (low.includes("column") && low.includes("employee_name")){
-      var r2 = await client.from("employee_accounts").insert([{ email: eml, password_hash: null, is_active: true }]);
-      if (r2.error) throw r2.error;
-      return;
-    }
-    throw r.error;
-  }
+  await callApplicantFormBackend("ensure_email_only_account", {
+    email: eml,
+    employee_name: (employeeName || "Applicant")
+  });
 }
+
+
 async function savePasswordToEmployeeAccounts(obj){
-  var client = window.supabase;
-  await ensureAuthSession({ silent:true });
-
-  var eml = (obj.email || "").trim();
-  var emp = (obj.employee_name || "").trim() || "Applicant";
-  var pwd = (obj.password_plain || "").trim();
-  if (!eml) throw new Error("Email is required.");
-  if (!pwd) throw new Error("Password is required.");
-
-  var password_hash = await sha256Hex(pwd);
-  var existing = await getEmployeeAccountByEmail(eml);
-
-  if (existing && existing.id){
-    var u = await client.from("employee_accounts")
-      .update({ password_hash: password_hash, is_active:true, employee_name: emp })
-      .eq("id", existing.id);
-
-    if (u.error){
-      var low = String(u.error.message||"").toLowerCase();
-      if (isRlsErrorMessage(low)) throw new Error(rlsHelpMessage());
-      if (low.includes("column") && low.includes("employee_name")){
-        var u2 = await client.from("employee_accounts")
-          .update({ password_hash: password_hash, is_active:true })
-          .eq("id", existing.id);
-        if (u2.error) throw u2.error;
-      } else throw u.error;
-    }
-  } else {
-    var ins = await client.from("employee_accounts")
-      .insert([{ email: eml, password_hash: password_hash, is_active:true, employee_name: emp }]);
-
-    if (ins.error){
-      var low2 = String(ins.error.message||"").toLowerCase();
-      if (isRlsErrorMessage(low2)) throw new Error(rlsHelpMessage());
-      if (low2.includes("column") && low2.includes("employee_name")){
-        var ins2 = await client.from("employee_accounts")
-          .insert([{ email: eml, password_hash: password_hash, is_active:true }]);
-        if (ins2.error) throw ins2.error;
-      } else throw ins.error;
-    }
-  }
+  await callApplicantFormBackend("save_password", obj || {});
 }
+
 
 /* Auth popup */
 function showAuthPopup(email, successMsg){
@@ -9455,6 +9304,7 @@ async function html2pdfToBlob(root, fileName){
   return pdf.output("blob");
 }
 
+
 async function uploadGeneratedPdfToStorage(pdfBlob, fileName){
   var client = window.supabase;
   if (!client) throw new Error("Supabase client not initialized.");
@@ -9505,6 +9355,7 @@ async function uploadGeneratedPdfToStorage(pdfBlob, fileName){
   persistLoadedRecordSessionState("pdf-uploaded");
   return { url: viewUrl, path: storagePath, name: safeName };
 }
+
 
 async function buildProfilePdfBlob(){
   if (!window.html2pdf) throw new Error("html2pdf library not loaded.");
@@ -9586,6 +9437,7 @@ async function generateAndUploadPdf(openModal){
 /* ==========================================================
    SUBMIT / SAVE
 ========================================================== */
+
 appForm.addEventListener("submit", async function(e){
   e.preventDefault();
 
@@ -9654,61 +9506,23 @@ appForm.addEventListener("submit", async function(e){
 
     lastSubmittedFullName = [fn,mn,ln].filter(Boolean).join(" ").trim();
 
-    var master_id = currentMasterId;
     var startedAsExistingRecord = !!window._loadedExistingRecord;
+    var masterResolve = await callApplicantFormBackend("resolve_master", {
+      master_id: currentMasterId || null,
+      first_name: fn,
+      middle_name: mn || null,
+      last_name: ln,
+      birthday: bd
+    });
 
-    if (!master_id){
-      var q = client.from("applicant_master_table")
-        .select("*")
-        .eq("first_name", fn)
-        .eq("last_name", ln)
-        .eq("birthday", bd);
-      q = mn ? q.eq("middle_name", mn) : q.is("middle_name", null);
-
-      var qr = await q.maybeSingle();
-      if (qr.error){
-        var lowq = String(qr.error.message||"").toLowerCase();
-        if (isRlsErrorMessage(lowq)) throw new Error(rlsHelpMessage());
-        throw qr.error;
-      }
-
-      if (!qr.data){
-        var insM = await client
-          .from("applicant_master_table")
-          .insert([{
-            first_name: fn,
-            middle_name: mn || null,
-            last_name: ln,
-            birthday: bd
-          }])
-          .select()
-          .single();
-
-        if (insM.error){
-          var lowm = String(insM.error.message||"").toLowerCase();
-          if (isRlsErrorMessage(lowm)) throw new Error(rlsHelpMessage());
-          throw insM.error;
-        }
-        master_id = insM.data.id;
-      } else {
-        master_id = qr.data.id;
-        startedAsExistingRecord = true;
-      }
-      currentMasterId = master_id;
-    }
+    var master_id = masterResolve.master_id;
+    if (!master_id) throw new Error("Unable to resolve applicant profile record.");
+    currentMasterId = master_id;
+    startedAsExistingRecord = !!masterResolve.startedAsExistingRecord;
 
     var statusValue = "Active";
     setStatusDisplay(statusValue);
     refreshStatusButtonStyle();
-
-    await updateMasterFields(master_id, {
-      first_name: fn,
-      middle_name: mn || null,
-      last_name: ln,
-      birthday: bd,
-      status: statusValue,
-      is_active: true
-    });
 
     var folder = "applicants/" + master_id + "_" + cleanPath(fn) + "_" + cleanPath(ln) + "/";
     var ts = Date.now();
@@ -9752,8 +9566,6 @@ appForm.addEventListener("submit", async function(e){
       return true;
     });
 
-    await markTransactionsNotLatest(master_id);
-
     var payload = {
       master_id: master_id,
       phone: safeTrim(document.getElementById("phone_number").value) || null,
@@ -9765,12 +9577,10 @@ appForm.addEventListener("submit", async function(e){
       city: safeTrim(city.value),
       zipcode: safeTrim(zipcode.value),
       gender: safeTrim(document.getElementById("gender").value),
-
       pictures: picture_url || null,
       documents: documentsToSave,
       resume: resume_url || null,
       pdf: old_pdf || null,
-
       desired_salary: formatSalaryForDBOrNull(desiredSalaryEl.value, country.value),
       age: computedAge,
       source: detectSource(),
@@ -9782,7 +9592,19 @@ appForm.addEventListener("submit", async function(e){
       is_active: true
     };
 
-    var latestSavedTransaction = await insertApplicantTransactionRecord(payload);
+    var submitData = await callApplicantFormBackend("submit_profile", {
+      master_id: master_id,
+      identity: {
+        first_name: fn,
+        middle_name: mn || null,
+        last_name: ln,
+        birthday: bd
+      },
+      statusValue: statusValue,
+      transaction: payload
+    });
+
+    var latestSavedTransaction = submitData.lastTransaction || buildOptimisticTransactionRow(payload);
 
     old_picture = picture_url || "";
     old_resume = resume_url || "";
@@ -9795,7 +9617,7 @@ appForm.addEventListener("submit", async function(e){
     window.isViewOnlyMode = false;
     window._loadedExistingRecord = !!startedAsExistingRecord;
 
-    await refreshLoadedRecordFromLatest(master_id, startedAsExistingRecord ? "existing" : "new", latestSavedTransaction || payload);
+    applyLoadedRecordFromBackend(submitData.master || { id: master_id, first_name: fn, middle_name: mn || null, last_name: ln, birthday: bd }, latestSavedTransaction, startedAsExistingRecord ? "existing" : "new", latestSavedTransaction || payload);
     lockIdentityFields();
     submitBtn.disabled = false;
 
@@ -9845,9 +9667,11 @@ appForm.addEventListener("submit", async function(e){
   }
 });
 
+
 /* ==========================================================
    ACTIVATE / DEACTIVATE
 ========================================================== */
+
 statusActionBtn.addEventListener("click", async function(){
   if (window.isViewOnlyMode) return;
   if (!currentMasterId){
@@ -9867,20 +9691,16 @@ statusActionBtn.addEventListener("click", async function(){
 
   try{
     showWorkingPopup(nextStatus === "Active" ? "Activating record..." : "Deactivating record...");
-    var client = window.supabase;
-    await ensureAuthSession({ silent:true });
-
-    await updateMasterFields(currentMasterId, {
-      status: nextStatus,
-      is_active: (nextStatus !== "Not Active")
-    });
 
     var computedAge = calculateAge(birthdayEl.value) || null;
-    await markTransactionsNotLatest(currentMasterId);
-
     var payload = buildTransactionPayloadForStatus(currentMasterId, nextStatus, computedAge);
-    var latestSavedTransaction = await insertApplicantTransactionRecord(payload);
-    await refreshLoadedRecordFromLatest(currentMasterId, "existing", latestSavedTransaction || payload);
+    var statusData = await callApplicantFormBackend("update_status", {
+      master_id: currentMasterId,
+      nextStatus: nextStatus,
+      payload: payload
+    });
+
+    applyLoadedRecordFromBackend(statusData.master || null, statusData.lastTransaction || null, "existing", statusData.lastTransaction || payload);
 
     setStatusDisplay(nextStatus);
     refreshStatusButtonStyle();
@@ -9911,6 +9731,7 @@ statusActionBtn.addEventListener("click", async function(){
     alert((err && err.message) ? err.message : "Unable to update status.");
   }
 });
+
 
 /* ==========================================================
    LOGOUT
