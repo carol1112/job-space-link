@@ -1248,7 +1248,98 @@ header .auth-buttons a:hover{
     font-size:0.84rem !important;
   }
 }
-  </style>
+  
+
+/* ==========================================================
+   FINAL MOBILE HEADER POSITION PATCH
+   Mobile only: logo left, hamburger right inside header
+========================================================== */
+@media (max-width: 768px){
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    justify-content:initial !important;
+    column-gap:10px !important;
+    row-gap:0 !important;
+    padding:0 12px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    margin:0 !important;
+    order:1 !important;
+    flex:none !important;
+    min-width:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    width:auto !important;
+    max-width:none !important;
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    margin:0 !important;
+    order:3 !important;
+    flex:none !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    padding:0 12px !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    padding:0 10px !important;
+    column-gap:8px !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+  }
+}
+
+</style>
 </head>
 
 <body>
@@ -1315,11 +1406,10 @@ header .auth-buttons a:hover{
     <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
     <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html">Employer Login <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="subscribe.html">Subscribe <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="subscriptionstatus.html">Subscription Status <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html">Employer  <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
     <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
