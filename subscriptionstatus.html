@@ -948,6 +948,110 @@ input:focus{
   }
 }
 
+
+
+/* ============================================================
+   FINAL MOBILE HEADER IMAGE-MATCH LOCK
+   Logo left + hamburger right inside header
+============================================================ */
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    position:fixed !important;
+    height:var(--header-h) !important;
+    padding:0 12px !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    position:absolute !important;
+    left:8px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    z-index:3 !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+    width:auto !important;
+    max-width:none !important;
+    display:block !important;
+    object-fit:contain !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    position:absolute !important;
+    right:12px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    z-index:4 !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    position:fixed !important;
+    height:var(--header-h) !important;
+    padding:0 10px !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    position:absolute !important;
+    left:8px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    z-index:3 !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+    width:auto !important;
+    max-width:none !important;
+    display:block !important;
+    object-fit:contain !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    display:inline-flex !important;
+    position:absolute !important;
+    right:10px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    z-index:4 !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+  }
+}
+
 </style>
 </head>
 
