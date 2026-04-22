@@ -19656,6 +19656,118 @@ startAutoRefresh();
 }
 </style>
 
+
+<style id="final-mobile-header-height-right-hamburger-patch">
+/* ============================================================
+   FINAL MOBILE HEADER PATCH — APPLICANT DASHBOARD ONLY
+   - logo fixed on the left
+   - hamburger fixed on the right
+   - slightly shorter header to prevent hidden mobile nav links
+============================================================ */
+@media (max-width: 768px){
+  :root{
+    --header-h:66px !important;
+    --hdrH:66px !important;
+    --app-header-offset:66px !important;
+  }
+
+  html{
+    scroll-padding-top: calc(var(--header-h) + 12px) !important;
+  }
+
+  body{
+    padding-top:var(--header-h) !important;
+  }
+
+  body > header,
+  header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    justify-content:unset !important;
+    gap:8px !important;
+    padding:0 10px 0 8px !important;
+    z-index:2100 !important;
+  }
+
+  body > header .logo,
+  header .logo{
+    order:1 !important;
+    min-width:0 !important;
+    width:auto !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    flex:0 1 auto !important;
+  }
+
+  body > header .logo img,
+  header .logo img{
+    height:44px !important;
+    max-height:44px !important;
+    width:auto !important;
+    object-fit:contain !important;
+    display:block !important;
+  }
+
+  body > header nav,
+  body > header .auth-buttons,
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  body > header .nav-toggle,
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    min-height:36px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    border-radius:10px !important;
+    flex:0 0 36px !important;
+    align-self:center !important;
+  }
+
+  .nav-toggle i{
+    font-size:0.94rem !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow:auto !important;
+    padding:10px 12px 12px !important;
+    z-index:2090 !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:6px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    min-height:40px !important;
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.82rem !important;
+  }
+}
+</style>
+
 <script>
 /* ============================================================
    MOBILE-ONLY EMPLOYER DASHBOARD HEADER + FILE VIEWER SYNC
