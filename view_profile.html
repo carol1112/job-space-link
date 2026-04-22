@@ -4370,6 +4370,88 @@ header .auth-buttons a:hover{
   transform:translateX(3px);
 }
 
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03);
+}
+
 .nav-dropdown{
   position:relative;
   display:inline-flex;
@@ -5096,10 +5178,16 @@ header .auth-buttons a:hover{
 
   .mobile-panel .mnav{ gap:8px !important; }
 
-  .mobile-panel .mnav a{
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
     padding:11px 12px !important;
     border-radius:11px !important;
     font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
   }
 
   .page{
@@ -5456,10 +5544,16 @@ header .auth-buttons a:hover{
 
   .mobile-panel .mnav{ gap:7px !important; }
 
-  .mobile-panel .mnav a{
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
     padding:10px 11px !important;
     border-radius:10px !important;
     font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
   }
 
   .page{
@@ -5857,9 +5951,28 @@ header .auth-buttons a:hover{
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="about.html">About <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+
+    <div class="mnav-group" id="mobileAboutGroup">
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
+
+      <div class="mnav-submenu" id="mobileAboutMenu">
+        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
     <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
     <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
@@ -6287,6 +6400,8 @@ header .auth-buttons a:hover{
   const aboutNavMenu = document.getElementById("aboutNavMenu");
   const navToggle = document.getElementById("navToggle");
   const mobilePanel = document.getElementById("mobilePanel");
+  const mobileAboutGroup = document.getElementById("mobileAboutGroup");
+  const mobileAboutToggle = document.getElementById("mobileAboutToggle");
   const aboutLinks = aboutNavMenu ? Array.from(aboutNavMenu.querySelectorAll("a")) : [];
   const mobileLinks = mobilePanel ? Array.from(mobilePanel.querySelectorAll("a")) : [];
 
@@ -6296,11 +6411,25 @@ header .auth-buttons a:hover{
     aboutNavToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
+  function closeMobileAbout(){
+    if(!mobileAboutGroup || !mobileAboutToggle) return;
+    mobileAboutGroup.classList.remove("open");
+    mobileAboutToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleMobileAbout(){
+    if(!mobileAboutGroup || !mobileAboutToggle) return;
+    const willOpen = !mobileAboutGroup.classList.contains("open");
+    mobileAboutGroup.classList.toggle("open", willOpen);
+    mobileAboutToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+  }
+
   function closeMobilePanel(){
     if(!mobilePanel || !navToggle) return;
     mobilePanel.classList.remove("open");
     mobilePanel.setAttribute("aria-hidden", "true");
     navToggle.setAttribute("aria-expanded", "false");
+    closeMobileAbout();
   }
 
   if(aboutNavToggle){
@@ -6337,6 +6466,15 @@ header .auth-buttons a:hover{
       mobilePanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
       navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
       if(isOpen) setAboutOpen(false);
+      if(!isOpen) closeMobileAbout();
+    });
+  }
+
+  if(mobileAboutToggle){
+    mobileAboutToggle.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMobileAbout();
     });
   }
 
