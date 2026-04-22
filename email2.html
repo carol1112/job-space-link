@@ -1021,6 +1021,75 @@ header .auth-buttons a:hover{
     border-radius:13px;
   }
 }
+
+/* ============================================================
+   MOBILE HEADER PLACEMENT REFINEMENT
+   Keep logo left and hamburger right like reference image
+============================================================ */
+@media (max-width:920px){
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:0 12px;
+  }
+
+  header .logo{
+    flex:1 1 auto;
+    min-width:0;
+    max-width:calc(100% - 58px);
+    margin-left:0;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+  }
+
+  header .logo img{
+    display:block;
+    width:auto;
+    height:44px;
+    max-width:min(178px, 56vw);
+    margin:0;
+    object-fit:contain;
+    object-position:left center;
+  }
+
+  .nav-toggle{
+    flex:0 0 44px;
+    width:44px;
+    height:44px;
+    margin-left:0;
+    border-radius:13px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+}
+
+@media (max-width:480px){
+  header{
+    gap:10px;
+    padding:0 10px;
+  }
+
+  header .logo{
+    max-width:calc(100% - 54px);
+  }
+
+  header .logo img{
+    height:40px;
+    max-width:min(166px, 54vw);
+  }
+
+  .nav-toggle{
+    flex:0 0 42px;
+    width:42px;
+    height:42px;
+    border-radius:12px;
+  }
+}
+
 </style>
 </head>
 
