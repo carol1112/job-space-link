@@ -226,6 +226,94 @@ header .auth-buttons a:hover{
   transform:translateX(3px);
 }
 
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:stretch;
+  gap:8px;
+}
+
+.mobile-panel .mnav-link{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 50px;
+  width:50px;
+  min-width:50px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:none;
+  border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  color:#e5e7eb;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle:focus-visible,
+.mobile-panel .mnav-link:focus-visible,
+.mobile-panel .mnav-submenu a:focus-visible{
+  outline:2px solid rgba(56,189,248,0.9);
+  outline-offset:2px;
+}
+
+.mobile-panel .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#dbeafe;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  font-weight:600;
+  font-size:0.95rem;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-submenu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
 /* About dropdown */
 .nav-dropdown{
   position:relative;
@@ -1000,18 +1088,19 @@ header .auth-buttons a:hover{
     <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
-      <button
-        type="button"
-        class="mnav-toggle"
-        id="mobileAboutToggle"
-        aria-expanded="false"
-        aria-controls="mobileAboutMenu"
-      >
-        <span class="mnav-toggle-left">
-          <span>About</span>
-        </span>
-        <i class="fa-solid fa-caret-down mnav-caret"></i>
-      </button>
+      <div class="mnav-row">
+        <a href="about.html" class="mnav-link" id="mobileAboutLink">About <i class="fa-solid fa-arrow-right"></i></a>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileAboutToggle"
+          aria-expanded="false"
+          aria-controls="mobileAboutMenu"
+          aria-label="Toggle About submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
 
       <div class="mnav-submenu" id="mobileAboutMenu">
         <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
@@ -1024,8 +1113,7 @@ header .auth-buttons a:hover{
     <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
     <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
-   <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
-
+    <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
     <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
@@ -1316,24 +1404,54 @@ function initHeaderMenus(){
 
   const btn = document.getElementById("navToggle");
   const panel = document.getElementById("mobilePanel");
+  const mobileAboutGroup = document.getElementById("mobileAboutGroup");
+  const mobileAboutToggle = document.getElementById("mobileAboutToggle");
+  const mobileAboutMenu = document.getElementById("mobileAboutMenu");
 
   if(btn && panel){
+    function closeMobileAbout(){
+      if(!mobileAboutGroup || !mobileAboutToggle) return;
+      mobileAboutGroup.classList.remove("open");
+      mobileAboutToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleMobileAbout(e){
+      if(e){
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if(!mobileAboutGroup || !mobileAboutToggle) return;
+      const willOpen = !mobileAboutGroup.classList.contains("open");
+      mobileAboutGroup.classList.toggle("open", willOpen);
+      mobileAboutToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    }
+
     function closeMobilePanel(){
       panel.classList.remove("open");
       panel.setAttribute("aria-hidden","true");
       btn.setAttribute("aria-expanded","false");
+      closeMobileAbout();
     }
 
     btn.addEventListener("click", ()=>{
       const open = panel.classList.toggle("open");
       panel.setAttribute("aria-hidden", open ? "false" : "true");
       btn.setAttribute("aria-expanded", open ? "true" : "false");
+      if(!open){
+        closeMobileAbout();
+      }
     });
+
+    if(mobileAboutToggle){
+      mobileAboutToggle.addEventListener("click", toggleMobileAbout);
+    }
 
     panel.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMobilePanel));
 
     document.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape") closeMobilePanel();
+      if(e.key === "Escape"){
+        closeMobilePanel();
+      }
     });
 
     document.addEventListener("click", (e)=>{
@@ -1344,6 +1462,12 @@ function initHeaderMenus(){
         closeMobilePanel();
       }
     });
+
+    if(mobileAboutMenu){
+      mobileAboutMenu.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", closeMobilePanel);
+      });
+    }
 
     window.addEventListener("resize", ()=>{
       if(window.innerWidth > 920) closeMobilePanel();
