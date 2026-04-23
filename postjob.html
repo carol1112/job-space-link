@@ -3849,6 +3849,101 @@ function getDb(){
   return null;
 }
 
+async function getEdgeAuthHeaders(){
+  const headers = {};
+  const anonKey = String(window.SUPABASE_ANON_KEY || window.supabaseAnonKey || "").trim();
+  if(anonKey){
+    headers.apikey = anonKey;
+    headers.Authorization = `Bearer ${anonKey}`;
+  }
+
+  const db = getDb();
+  if(db && db.auth && typeof db.auth.getSession === "function"){
+    try{
+      const { data } = await db.auth.getSession();
+      const accessToken = data?.session?.access_token || "";
+      if(accessToken){
+        headers.Authorization = `Bearer ${accessToken}`;
+      }
+    }catch(error){}
+  }
+
+  return headers;
+}
+
+async function invokePostStaffRequirementsEdge(action, payload = {}){
+  const db = getDb();
+  const body = { action, ...payload };
+
+  if(db && db.functions && typeof db.functions.invoke === "function"){
+    const { data, error } = await db.functions.invoke("post-staff-requirements", { body });
+    if(error) throw new Error(error.message || String(error));
+    if(data && data.ok === false){
+      throw new Error(data.error || "Edge Function request failed.");
+    }
+    return data || {};
+  }
+
+  const baseUrl = String(window.SUPABASE_URL || window.supabaseUrl || "").replace(/\/+$/, "");
+  if(!baseUrl){
+    throw new Error("Supabase URL is missing. Check supabase_config.js.");
+  }
+
+  const response = await fetch(`${baseUrl}/functions/v1/post-staff-requirements`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(await getEdgeAuthHeaders())
+    },
+    body: JSON.stringify(body)
+  });
+
+  const text = await response.text();
+  let data = {};
+  try{
+    data = text ? JSON.parse(text) : {};
+  }catch(parseError){
+    data = {};
+  }
+
+  if(!response.ok){
+    throw new Error(data?.error || text || `Edge Function request failed (${response.status}).`);
+  }
+  if(data && data.ok === false){
+    throw new Error(data.error || "Edge Function request failed.");
+  }
+
+  return data || {};
+}
+
+async function fileToBase64(file){
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 0x8000;
+  let binary = "";
+  for(let i = 0; i < bytes.length; i += chunkSize){
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return btoa(binary);
+}
+
+async function serializeFilesForEdge(files){
+  const list = files ? Array.from(files) : [];
+  const out = [];
+
+  for(const file of list){
+    out.push({
+      name: file.name || "upload.bin",
+      type: file.type || "application/octet-stream",
+      size: Number(file.size || 0),
+      base64: await fileToBase64(file)
+    });
+  }
+
+  return out;
+}
+
 const EMPLOYER_DASHBOARD_REFRESH_FLAG = "jobspacelink_employer_dashboard_refresh";
 const EMPLOYER_DASHBOARD_UPDATE_KEY = "jobspacelink_recent_staff_requirement_update";
 const EMPLOYER_DASHBOARD_UPDATE_AT_KEY = "jobspacelink_recent_staff_requirement_update_at";
@@ -4459,71 +4554,9 @@ function collectEditContext(){
 }
 
 async function fetchEditRecord(context){
-  const db = getDb();
-  if(!db) return null;
-
-  const ids = uniqueNonEmpty(context?.ids || []);
-  const email = normalizeSpaces(context?.contactEmail || "").toLowerCase();
-  const position = normalizeSpaces(context?.position || "").toLowerCase();
-  const companyName = normalizeSpaces(context?.companyName || "").toLowerCase();
-  const searchColumns = ["id","requirement_id","staff_requirement_id","job_id","post_id","record_id","row_id"];
-
-  const scoreRecord = (record)=>{
-    const row = record && typeof record === 'object' ? record : {};
-    const rowIds = uniqueNonEmpty([row.id, row.requirement_id, row.staff_requirement_id, row.job_id, row.post_id, row.record_id, row.row_id]);
-    const rowEmails = uniqueNonEmpty([row.contact_email, row.company_email, row.contact_email_address, row.email]).map(v => String(v).toLowerCase());
-    const rowNames = uniqueNonEmpty([row.company_name, row.company, row.business_name, row.employer_name]).map(v => String(v).toLowerCase());
-    const rowPositions = uniqueNonEmpty([row.position, row.job_title, row.title, row.role]).map(v => String(v).toLowerCase());
-    let score = 0;
-    if(ids.length && rowIds.some(v => ids.includes(String(v)))) score += 200;
-    if(email && rowEmails.includes(email)) score += 70;
-    if(companyName && rowNames.includes(companyName)) score += 35;
-    if(position && rowPositions.includes(position)) score += 45;
-    return score;
-  };
-
-  const chooseBest = (rows)=>{
-    const list = Array.isArray(rows) ? rows.filter(Boolean) : [];
-    if(!list.length) return null;
-    return [...list].sort((a, b) => scoreRecord(b) - scoreRecord(a))[0] || null;
-  };
-
-  for(const id of ids){
-    for(const column of searchColumns){
-      try{
-        const { data, error } = await db.from("staff_requirements").select("*").eq(column, id).order("created_at", { ascending:false, nullsFirst:false }).limit(20);
-        if(!error && Array.isArray(data) && data.length){
-          const best = chooseBest(data);
-          if(best) return best;
-        }
-      }catch(error){}
-    }
-  }
-
-  if(email){
-    for(const emailColumn of ["contact_email","company_email","contact_email_address","email"]){
-      try{
-        const { data, error } = await db.from("staff_requirements").select("*").eq(emailColumn, email).order("created_at", { ascending:false, nullsFirst:false }).limit(50);
-        if(!error && Array.isArray(data) && data.length){
-          const exact = chooseBest(data);
-          if(exact && scoreRecord(exact) >= 70) return exact;
-          if(exact && !position && !companyName) return exact;
-        }
-      }catch(error){}
-    }
-  }
-
-  if(companyName && position){
-    try{
-      const { data, error } = await db.from("staff_requirements").select("*").eq("position", smartTitleCase(context?.position || "")).order("created_at", { ascending:false, nullsFirst:false }).limit(50);
-      if(!error && Array.isArray(data) && data.length){
-        const exact = chooseBest(data);
-        if(exact && scoreRecord(exact) >= 80) return exact;
-      }
-    }catch(error){}
-  }
-
-  return null;
+  if(!context) return null;
+  const response = await invokePostStaffRequirementsEdge("fetch_edit_record", { context });
+  return response && response.record ? response.record : null;
 }
 
 function buildMergedEditRecord(context, fetchedRecord){
@@ -5344,35 +5377,15 @@ function validateSalaryRangeOptional(showPop = true){
   return { ok:true, min:minNum, max:maxNum };
 }
 
-/* ================= UPLOAD HELPERS ================= */
-async function uploadFilesToBucket(files, folder, prefix, bucketName = "job_pdfs"){
-  const db = getDb();
-  if(!db) throw new Error("Supabase client not initialized. Check supabase_config.js.");
+/* ================= BACKEND MOVED TO EDGE FUNCTION =================
+   These server-side operations now live in:
+   supabase/functions/post-staff-requirements/index.ts
 
-  const outUrls = [];
-  const timeBase = Date.now();
-
-  for(let i = 0; i < files.length; i++){
-    const file = files[i];
-    const ext = getFileExt(file.name) || "bin";
-    const safeName = safeFileName(file.name);
-    const baseNoExt = safeName.replace(/\.[a-z0-9]+$/i, "");
-    const path = `${folder}/${prefix}_${timeBase}_${i + 1}_${baseNoExt}.${ext}`;
-
-    const { error: upErr } = await db.storage
-      .from(bucketName)
-      .upload(path, file, { upsert:true, contentType:file.type || undefined });
-
-    if(upErr) throw upErr;
-
-    const { data:urlData, error:urlErr } = db.storage.from(bucketName).getPublicUrl(path);
-    if(urlErr) throw urlErr;
-
-    outUrls.push(urlData.publicUrl);
-  }
-
-  return outUrls;
-}
+   - file uploads to Storage
+   - insert with optional-column fallback
+   - update with match-candidate fallback
+   - edit-record lookup queries
+================================================================= */
 
 function getResolvedPositionValue(){
   const p = String(position.value || "").trim();
@@ -5396,172 +5409,8 @@ function buildOptionalCurrencyColumns(basePayload, salaryDisplay){
 
 /* ======================= PART 3 OF 3 ======================= */
 
-/* ================= DB INSERT WITH SMART OPTIONAL-COLUMN FALLBACK ================= */
-async function insertStaffRequirementWithFallback(db, payload){
-  const optionalColumnsInDropOrder = [
-    "salary_range_display",
-    "salary_max_display",
-    "salary_min_display",
-    "salary_currency_symbol",
-    "salary_currency",
-    "company_email",
-    "contact_email"
-  ];
-
-  let workingPayload = { ...payload };
-
-  for(let attempt = 0; attempt <= optionalColumnsInDropOrder.length; attempt++){
-    const { error } = await db.from("staff_requirements").insert([workingPayload]);
-    if(!error) return true;
-
-    const msg = String(error.message || error || "").toLowerCase();
-    const missingColumnMatch =
-      msg.match(/column\s+"?([a-zA-Z0-9_]+)"?\s+of\s+relation/i) ||
-      msg.match(/could not find the ['"]?([a-zA-Z0-9_]+)['"]? column/i) ||
-      msg.match(/column ['"]?([a-zA-Z0-9_]+)['"]? does not exist/i);
-
-    if(missingColumnMatch && missingColumnMatch[1]){
-      const badColumn = missingColumnMatch[1];
-      if(Object.prototype.hasOwnProperty.call(workingPayload, badColumn)){
-        delete workingPayload[badColumn];
-        continue;
-      }
-    }
-
-    let removedSomething = false;
-    for(const col of optionalColumnsInDropOrder){
-      if(Object.prototype.hasOwnProperty.call(workingPayload, col)){
-        delete workingPayload[col];
-        removedSomething = true;
-        break;
-      }
-    }
-
-    if(removedSomething){
-      continue;
-    }
-
-    throw error;
-  }
-
-  throw new Error("Unable to insert data into staff_requirements.");
-}
-
-function extractMissingColumnName(error){
-  const message = String(error?.message || error || "");
-  const match =
-    message.match(/column\s+"?([a-zA-Z0-9_]+)"?\s+of\s+relation/i) ||
-    message.match(/could not find the ['"]?([a-zA-Z0-9_]+)['"]? column/i) ||
-    message.match(/column ['"]?([a-zA-Z0-9_]+)['"]? does not exist/i);
-  return match && match[1] ? String(match[1]).trim() : "";
-}
-
-function buildUpdateMatchCandidates(identifiers = {}, payload = {}){
-  const row = identifiers && typeof identifiers.row === "object" ? identifiers.row : {};
-  const seen = new Set();
-  const out = [];
-  const add = (column, value)=>{
-    const nextValue = String(value || "").trim();
-    if(!column || !nextValue) return;
-    const key = `${column}::${nextValue}`;
-    if(seen.has(key)) return;
-    seen.add(key);
-    out.push({ column, value: nextValue });
-  };
-
-  add("id", identifiers.recordId);
-  add("id", row.id);
-  add("requirement_id", identifiers.requirementId || payload?.requirement_id);
-  add("requirement_id", row.requirement_id);
-  add("staff_requirement_id", identifiers.staffRequirementId || payload?.staff_requirement_id);
-  add("staff_requirement_id", row.staff_requirement_id);
-  add("job_id", identifiers.jobId || payload?.job_id);
-  add("job_id", row.job_id);
-  add("post_id", identifiers.postId || payload?.post_id);
-  add("post_id", row.post_id);
-  add("record_id", identifiers.rowRecordId || row.record_id);
-  add("row_id", identifiers.rowId || row.row_id);
-
-  return out;
-}
-
-async function updateStaffRequirementWithFallback(db, identifiers, payload){
-  const matchCandidates = buildUpdateMatchCandidates(identifiers, payload);
-  if(!matchCandidates.length){
-    throw new Error("Unable to update because the selected job record id is missing.");
-  }
-
-  const optionalColumnsInDropOrder = [
-    "salary_range_display",
-    "salary_max_display",
-    "salary_min_display",
-    "salary_currency_symbol",
-    "salary_currency",
-    "company_email",
-    "contact_email",
-    "updated_at"
-  ];
-
-  let workingPayload = { ...payload };
-  let candidatePairs = [...matchCandidates];
-
-  for(let attempt = 0; attempt <= (optionalColumnsInDropOrder.length + candidatePairs.length + 8); attempt++){
-    let lastError = null;
-    let retryImmediately = false;
-
-    for(const pair of candidatePairs){
-      try{
-        const { error } = await db.from("staff_requirements").update(workingPayload).eq(pair.column, pair.value);
-        if(!error){
-          return { matchedColumn: pair.column, matchedValue: pair.value };
-        }
-        lastError = error;
-      }catch(error){
-        lastError = error;
-      }
-
-      const badColumn = extractMissingColumnName(lastError);
-      if(badColumn){
-        if(Object.prototype.hasOwnProperty.call(workingPayload, badColumn)){
-          delete workingPayload[badColumn];
-          retryImmediately = true;
-          break;
-        }
-
-        const nextPairs = candidatePairs.filter(candidate => candidate.column !== badColumn);
-        if(nextPairs.length !== candidatePairs.length){
-          candidatePairs = nextPairs;
-          retryImmediately = true;
-          break;
-        }
-      }
-    }
-
-    if(retryImmediately){
-      if(!candidatePairs.length){
-        throw lastError || new Error("Unable to update the selected staff requirement.");
-      }
-      continue;
-    }
-
-    let removedSomething = false;
-    for(const col of optionalColumnsInDropOrder){
-      if(Object.prototype.hasOwnProperty.call(workingPayload, col)){
-        delete workingPayload[col];
-        removedSomething = true;
-        break;
-      }
-    }
-
-    if(removedSomething){
-      continue;
-    }
-
-    throw lastError || new Error("Unable to update the selected staff requirement.");
-  }
-
-  throw new Error("Unable to update the selected staff requirement.");
-}
+/* ================= EDGE FUNCTION DATA OPS ================= */
+/* insert/update fallback helpers moved to Supabase Edge Function */
 
 /* ================= FORM RESET ================= */
 function resetForm(showMessage = true){
@@ -5668,9 +5517,6 @@ async function submitStaffRequirement(){
   showStatus(editState.isEditMode ? "Saving post changes…" : "Submitting job requirement…", "warn");
 
   try{
-    const db = getDb();
-    if(!db) throw new Error("Supabase client not initialized. Check supabase_config.js.");
-
     const companyVal = smartTitleCase(companyName.value);
     const emailVal = normalizeSpaces(contactEmail.value).toLowerCase();
     const srcVal = String(sourceType.value || "").trim();
@@ -5748,18 +5594,6 @@ async function submitStaffRequirement(){
       expNum = num;
     }
 
-    const folder = cleanFolder(companyVal || "COMPANY");
-
-    let jdUrls = editState.isEditMode ? [...(editState.existingJdUrls || [])] : [];
-    if(jdFiles.length){
-      jdUrls = await uploadFilesToBucket(jdFiles, folder, "JD", "job_pdfs");
-    }
-
-    let companyProfileUrls = editState.isEditMode ? [...(editState.existingCompanyProfileUrls || [])] : [];
-    if(companyPics.length){
-      companyProfileUrls = await uploadFilesToBucket(companyPics, folder, "PROFILE", "job_pdfs");
-    }
-
     const salaryDisplay = buildSalaryDisplay(sal.min, sal.max, countryVal);
 
     const basePayload = {
@@ -5785,11 +5619,11 @@ async function submitStaffRequirement(){
 
       skills: normalizeSpaces(skills.value || "") || null,
 
-      pdf_url: jdUrls.length ? jdUrls[0] : null,
-      pdf_urls: jdUrls.length ? jdUrls : [],
+      pdf_url: null,
+      pdf_urls: editState.isEditMode ? [...(editState.existingJdUrls || [])] : [],
 
-      company_profile_url: companyProfileUrls.length ? companyProfileUrls[0] : null,
-      company_profile_urls: companyProfileUrls.length ? companyProfileUrls : []
+      company_profile_url: null,
+      company_profile_urls: editState.isEditMode ? [...(editState.existingCompanyProfileUrls || [])] : []
     };
 
     const payload = buildOptionalCurrencyColumns(basePayload, salaryDisplay);
@@ -5797,8 +5631,10 @@ async function submitStaffRequirement(){
       payload.requirement_id = editState.requirementId;
     }
 
-    if(editState.isEditMode){
-      await updateStaffRequirementWithFallback(db, {
+    const response = await invokePostStaffRequirementsEdge("submit_staff_requirement", {
+      mode: editState.isEditMode ? "update" : "insert",
+      payload,
+      identifiers: editState.isEditMode ? {
         recordId: editState.recordId,
         requirementId: editState.requirementId,
         staffRequirementId: editState.requirementId,
@@ -5807,20 +5643,54 @@ async function submitStaffRequirement(){
         rowRecordId: (editState.mergedRecord || {}).record_id || "",
         rowId: (editState.mergedRecord || {}).row_id || "",
         row: editState.mergedRecord || editState.fetchedRecord || editState.rawRecord || {}
-      }, payload);
+      } : {},
+      existing_jd_urls: editState.isEditMode ? [...(editState.existingJdUrls || [])] : [],
+      existing_company_profile_urls: editState.isEditMode ? [...(editState.existingCompanyProfileUrls || [])] : [],
+      jd_files: await serializeFilesForEdge(jdFiles),
+      company_picture_files: await serializeFilesForEdge(companyPics)
+    });
+
+    const returnedRecord = response && response.record && typeof response.record === "object" ? response.record : {};
+    const jdUrls = normalizeUrlArray(
+      response?.jd_urls ||
+      returnedRecord?.pdf_urls ||
+      (returnedRecord?.pdf_url ? [returnedRecord.pdf_url] : payload.pdf_urls || [])
+    );
+    const companyProfileUrls = normalizeUrlArray(
+      response?.company_profile_urls ||
+      returnedRecord?.company_profile_urls ||
+      (returnedRecord?.company_profile_url ? [returnedRecord.company_profile_url] : payload.company_profile_urls || [])
+    );
+
+    await ensureSubmitAnimationMinimum(animationStartedAt, 1400);
+    await finishSubmitFlight("success");
+
+    if(editState.isEditMode){
+      editState.recordId = String(returnedRecord.id || editState.recordId || "").trim();
+      editState.requirementId = String(returnedRecord.requirement_id || editState.requirementId || "").trim();
       editState.existingJdUrls = [...jdUrls];
       editState.existingCompanyProfileUrls = [...companyProfileUrls];
-      editState.mergedRecord = { ...(editState.mergedRecord || {}), ...payload, id: editState.recordId, requirement_id: editState.requirementId || (editState.mergedRecord || {}).requirement_id || "", updated_at: payload.updated_at };
-      editState.originalSnapshot = JSON.parse(JSON.stringify(editState.mergedRecord));
+      editState.fetchedRecord = returnedRecord || editState.fetchedRecord;
 
-      await ensureSubmitAnimationMinimum(animationStartedAt, 1400);
-      await finishSubmitFlight("success");
+      editState.mergedRecord = {
+        ...(editState.mergedRecord || {}),
+        ...payload,
+        ...returnedRecord,
+        id: String(returnedRecord.id || editState.recordId || ""),
+        requirement_id: String(returnedRecord.requirement_id || editState.requirementId || payload.requirement_id || ""),
+        pdf_url: jdUrls.length ? jdUrls[0] : null,
+        pdf_urls: jdUrls,
+        company_profile_url: companyProfileUrls.length ? companyProfileUrls[0] : null,
+        company_profile_urls: companyProfileUrls
+      };
+      editState.originalSnapshot = JSON.parse(JSON.stringify(editState.mergedRecord));
 
       companyPicCountText.textContent = makeFileCountLabel(editState.existingCompanyProfileUrls.length, "existing image");
       jdCountText.textContent = makeFileCountLabel(editState.existingJdUrls.length, "existing file");
       if(editState.existingCompanyProfileUrls.length && !companyPics.length){
         setCompanyPreviewFromUrl(editState.existingCompanyProfileUrls[0]);
       }
+
       showStatus("Post updated successfully.", "success");
 
       broadcastEmployerDashboardUpdate(editState.mergedRecord || payload);
@@ -5831,48 +5701,29 @@ async function submitStaffRequirement(){
 
       showPopup(
         "Post Updated Successfully!",
-        `The posted job for "${posVal}" at "${companyVal}" has been updated.
-` +
-        `Contact Email: ${emailVal}
-` +
-        `Location: ${cityVal}, ${stateVal} ${zipVal} (${countryVal})
-` +
-        `Salary Range: ${salaryDisplay.salary_range_display || "Not provided"}
-` +
-        `Currency Saved: ${salaryDisplay.currency_code} (${salaryDisplay.currency_symbol})
-` +
-        `Source Type: ${srcVal}
-` +
-        `Saved JD files: ${jdUrls.length}
-` +
+        `The posted job for "${posVal}" at "${companyVal}" has been updated.\n` +
+        `Contact Email: ${emailVal}\n` +
+        `Location: ${cityVal}, ${stateVal} ${zipVal} (${countryVal})\n` +
+        `Salary Range: ${salaryDisplay.salary_range_display || "Not provided"}\n` +
+        `Currency Saved: ${salaryDisplay.currency_code} (${salaryDisplay.currency_symbol})\n` +
+        `Source Type: ${srcVal}\n` +
+        `Saved JD files: ${jdUrls.length}\n` +
         `Saved company pics: ${companyProfileUrls.length}`,
         "fa-solid fa-pen-to-square"
       );
     }else{
-      await insertStaffRequirementWithFallback(db, payload);
-
-      await ensureSubmitAnimationMinimum(animationStartedAt, 1400);
-      await finishSubmitFlight("success");
-
       resetForm(false);
       showStatus("Job posted successfully.", "success");
 
       showPopup(
         "Job Posted Successfully!",
-        `The job for "${posVal}" at "${companyVal}" has been saved.
-` +
-        `Contact Email: ${emailVal}
-` +
-        `Location: ${cityVal}, ${stateVal} ${zipVal} (${countryVal})
-` +
-        `Salary Range: ${salaryDisplay.salary_range_display || "Not provided"}
-` +
-        `Currency Saved: ${salaryDisplay.currency_code} (${salaryDisplay.currency_symbol})
-` +
-        `Source Type: ${srcVal}
-` +
-        `Uploaded JD files: ${jdUrls.length}
-` +
+        `The job for "${posVal}" at "${companyVal}" has been saved.\n` +
+        `Contact Email: ${emailVal}\n` +
+        `Location: ${cityVal}, ${stateVal} ${zipVal} (${countryVal})\n` +
+        `Salary Range: ${salaryDisplay.salary_range_display || "Not provided"}\n` +
+        `Currency Saved: ${salaryDisplay.currency_code} (${salaryDisplay.currency_symbol})\n` +
+        `Source Type: ${srcVal}\n` +
+        `Uploaded JD files: ${jdUrls.length}\n` +
         `Uploaded company pics: ${companyProfileUrls.length}`,
         "fa-solid fa-clipboard-check"
       );
