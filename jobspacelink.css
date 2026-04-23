@@ -39,7 +39,7 @@ header{
   top:0; left:0; right:0;
   z-index:1000;
   animation:fadeDown 0.7s ease;
-  height:100px;
+  height:78px;
 }
 .auth-buttons {
   display: flex;
