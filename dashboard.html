@@ -14542,6 +14542,7 @@ const EMPLOYER_LOGO_STORAGE_KEYS = ["loggedInEmployerLogo", "employerLogo", "com
 const EMPLOYER_APPLICANT_FAVORITES_TABLE = "employer_applicant_favorites";
 const EMPLOYER_APPLICANT_CONTACTS_TABLE = "employer_applicant_contacts";
 const CONTACT_EMAIL_EDGE_FUNCTION = "send-applicant-contact-email";
+const APPLICANT_DASHBOARD_EDGE_FUNCTION = "applicant-dashboard-api";
 const PLATFORM_SENDER_EMAIL = "info@jobspacelink.com";
 const EMPLOYER_LOGO_BUCKET = "job_pdfs";
 const EMPLOYER_LOGO_BUCKETS = ["job_pdfs"];
@@ -14553,6 +14554,40 @@ let favoriteActionPending = new Set();
 let contactActionPending = new Set();
 let contactTargetApplicant = null;
 
+async function callApplicantDashboardApi(action, payload = {}){
+  if (!window.supabase?.functions?.invoke){
+    throw new Error("Supabase Edge Functions are not available on this page.");
+  }
+
+  const { data, error } = await supabase.functions.invoke(APPLICANT_DASHBOARD_EDGE_FUNCTION, {
+    body: { action, payload }
+  });
+
+  if (error) throw error;
+  if (data && typeof data === "object" && data.error) throw new Error(data.error);
+  return data || {};
+}
+
+function applyEmployerInteractionRows(favorites = [], contacts = []){
+  employerFavoriteMap = new Map();
+  employerContactMap = new Map();
+
+  if (Array.isArray(favorites)){
+    favorites.forEach((row) => {
+      const key = String(row?.applicant_master_id || "").trim();
+      if (!key) return;
+      employerFavoriteMap.set(key, row?.favorite_status === "favorited" ? "favorited" : "unfavorited");
+    });
+  }
+
+  if (Array.isArray(contacts)){
+    contacts.forEach((row) => {
+      const key = String(row?.applicant_master_id || "").trim();
+      if (!key) return;
+      employerContactMap.set(key, row?.contact_status === "contacted" ? "contacted" : "not_contacted");
+    });
+  }
+}
 
 /* ============================================================
    Helpers
@@ -15060,42 +15095,29 @@ function buildDefaultContactPlainMessage(app){
   ].join("\n");
 }
 async function persistApplicantContactStatus(app, subject, message){
-  const applicantEmail = getApplicantEmail(app);
-  const { error: contactError } = await supabase
-    .from(EMPLOYER_APPLICANT_CONTACTS_TABLE)
-    .upsert({
-      employer_email: employerIdentity.email,
-      employer_company_name: employerIdentity.company || "",
-      applicant_master_id: Number(app.master_id) || app.master_id,
-      applicant_email: applicantEmail,
-      contact_status: "contacted",
-      contacted_at: new Date().toISOString(),
-      last_message_subject: subject,
-      last_message_preview: message.slice(0, 500),
-      updated_at: new Date().toISOString()
-    }, { onConflict: "employer_email,applicant_master_id" });
-
-  if (contactError) throw contactError;
-  employerContactMap.set(getApplicantKey(app), "contacted");
+  const key = getApplicantKey(app);
+  if (key) employerContactMap.set(key, "contacted");
+  return {
+    applicant_email: getApplicantEmail(app),
+    last_message_subject: subject,
+    last_message_preview: String(message || "").slice(0, 500),
+    contact_status: "contacted"
+  };
 }
 async function performApplicantContactSend(app, subject, message){
   const applicantEmail = getApplicantEmail(app);
   if (!applicantEmail) throw new Error("Applicant email address is missing.");
 
-  const { error } = await supabase.functions.invoke(CONTACT_EMAIL_EDGE_FUNCTION, {
-    body: {
-      to: applicantEmail,
-      subject,
-      html: buildContactEmailHtml(app, message),
-      applicant_name: app.full_name || "",
-      employer_company_name: employerIdentity.company || "",
-      employer_email: employerIdentity.email || "",
-      reply_to: employerIdentity.email || "",
-      from: `Job Space Link <${PLATFORM_SENDER_EMAIL}>`
-    }
-  });
-  if (error) throw error;
+  const payload = {
+    applicant_master_id: Number(app.master_id) || app.master_id,
+    applicant_email: applicantEmail,
+    applicant_name: app.full_name || "",
+    subject,
+    message,
+    html: buildContactEmailHtml(app, message)
+  };
 
+  await callApplicantDashboardApi("send_contact_email", payload);
   await persistApplicantContactStatus(app, subject, message);
 }
 async function quickContactApplicant(app){
@@ -15133,29 +15155,13 @@ async function loadEmployerInteractionMaps(){
   employerFavoriteMap = new Map();
   employerContactMap = new Map();
 
-  if (!isEmployerLoggedIn() || !window.supabase) return;
+  if (!isEmployerLoggedIn()) return;
 
   try{
-    const [favRes, contactRes] = await Promise.all([
-      supabase.from(EMPLOYER_APPLICANT_FAVORITES_TABLE).select("*").eq("employer_email", employerIdentity.email),
-      supabase.from(EMPLOYER_APPLICANT_CONTACTS_TABLE).select("*").eq("employer_email", employerIdentity.email)
-    ]);
-
-    if (!favRes.error && Array.isArray(favRes.data)){
-      favRes.data.forEach(row => {
-        employerFavoriteMap.set(String(row.applicant_master_id), row.favorite_status === "favorited" ? "favorited" : "unfavorited");
-      });
-    } else if (favRes.error && favRes.error.code !== "42P01"){
-      console.warn("Favorites load error:", favRes.error);
-    }
-
-    if (!contactRes.error && Array.isArray(contactRes.data)){
-      contactRes.data.forEach(row => {
-        employerContactMap.set(String(row.applicant_master_id), row.contact_status === "contacted" ? "contacted" : "not_contacted");
-      });
-    } else if (contactRes.error && contactRes.error.code !== "42P01"){
-      console.warn("Contacts load error:", contactRes.error);
-    }
+    const data = await callApplicantDashboardApi("get_employer_interactions", {
+      employer_email: employerIdentity.email || ""
+    });
+    applyEmployerInteractionRows(data?.favorites || [], data?.contacts || []);
   }catch(error){
     console.warn("Interaction map load error:", error);
   }
@@ -15166,7 +15172,7 @@ function refreshRoleSensitiveUi(){
 }
 async function toggleApplicantFavorite(app){
   if (!isEmployerLoggedIn()){
-    showEmployerLoginRequired("add or remove favorites");
+    showEmployerLoginRequired("add or remove favorites", "favorite");
     return;
   }
 
@@ -15182,25 +15188,16 @@ async function toggleApplicantFavorite(app){
   render();
 
   try{
-    const payload = {
-      employer_email: employerIdentity.email,
-      employer_company_name: employerIdentity.company || "",
+    await callApplicantDashboardApi("toggle_favorite", {
       applicant_master_id: Number(app.master_id) || app.master_id,
       applicant_email: getApplicantEmail(app),
-      favorite_status: nextStatus,
-      updated_at: new Date().toISOString()
-    };
-
-    const { error } = await supabase
-      .from(EMPLOYER_APPLICANT_FAVORITES_TABLE)
-      .upsert(payload, { onConflict: "employer_email,applicant_master_id" });
-
-    if (error) throw error;
+      favorite_status: nextStatus
+    });
 
     employerFavoriteMap.set(key, nextStatus);
   }catch(error){
     console.error("Favorite update error:", error);
-    alert("Unable to update favorite. Make sure the employer_applicant_favorites table and policies are installed.");
+    alert("Unable to update favorite through the applicant-dashboard-api Edge Function.");
   } finally {
     favoriteActionPending.delete(key);
     render();
@@ -15929,6 +15926,16 @@ async function resolveEmployerIdentity(){
   const storedCompany = getStoredValue(EMPLOYER_COMPANY_STORAGE_KEYS);
   const storedLogo = getStoredValue(EMPLOYER_LOGO_STORAGE_KEYS);
 
+  if (!authEmail && !authUserId){
+    clearStoredValues(EMPLOYER_EMAIL_STORAGE_KEYS);
+    clearStoredValues(EMPLOYER_COMPANY_STORAGE_KEYS);
+    clearStoredValues(EMPLOYER_LOGO_STORAGE_KEYS);
+    applyEmployerInteractionRows([], []);
+    renderEmployerSession({ company:"", email:"", logo:"" });
+    refreshRoleSensitiveUi();
+    return { company:"", email:"", logo:"" };
+  }
+
   const fastEmail = String(authEmail || storedEmail || "").trim();
   const fastCompany = String(storedCompany || "").trim();
   const fastLogo = String(storedLogo || "").trim();
@@ -15943,69 +15950,46 @@ async function resolveEmployerIdentity(){
     refreshRoleSensitiveUi();
   }
 
-  let record = null;
-  for (const userCandidate of [authUserId]){
-    if (!userCandidate) continue;
-    record = await queryEmployerRecordByValue(userCandidate, EMPLOYER_USER_ID_COLUMNS);
-    if (record) break;
+  try{
+    const data = await callApplicantDashboardApi("get_employer_context", {
+      fallback_email: storedEmail || authEmail || "",
+      fallback_company: storedCompany || "",
+      fallback_logo: storedLogo || ""
+    });
+
+    const identity = data?.identity || {};
+    const company = String(identity.company || storedCompany || "").trim();
+    const email = String(identity.email || authEmail || storedEmail || "").trim();
+    const logo = String(identity.logo || storedLogo || "").trim();
+    const logoCandidates = mergeUniqueLogoCandidates(
+      Array.isArray(identity.logoCandidates) ? identity.logoCandidates : [],
+      createEmployerLogoCandidates(logo)
+    );
+
+    if (company) setStoredValue(EMPLOYER_COMPANY_STORAGE_KEYS, company);
+    else clearStoredValues(EMPLOYER_COMPANY_STORAGE_KEYS);
+
+    if (email) setStoredValue(EMPLOYER_EMAIL_STORAGE_KEYS, email);
+    else clearStoredValues(EMPLOYER_EMAIL_STORAGE_KEYS);
+
+    if (logo) setStoredValue(EMPLOYER_LOGO_STORAGE_KEYS, logo);
+    else clearStoredValues(EMPLOYER_LOGO_STORAGE_KEYS);
+
+    renderEmployerSession({ company, email, logo, logoCandidates });
+    applyEmployerInteractionRows(data?.favorites || [], data?.contacts || []);
+    refreshRoleSensitiveUi();
+    return { company, email, logo };
+  }catch(error){
+    console.warn("Employer identity edge load error:", error);
+    renderEmployerSession({
+      company: storedCompany || "",
+      email: authEmail || storedEmail || "",
+      logo: storedLogo || "",
+      logoCandidates: createEmployerLogoCandidates(storedLogo || "")
+    });
+    refreshRoleSensitiveUi();
+    return { company: storedCompany || "", email: authEmail || storedEmail || "", logo: storedLogo || "" };
   }
-  if (!record){
-    for (const emailCandidate of [authEmail, storedEmail]){
-      if (!emailCandidate) continue;
-      record = await queryEmployerRecordByValue(emailCandidate, EMPLOYER_EMAIL_COLUMNS);
-      if (record) break;
-    }
-  }
-  if (!record){
-    for (const companyCandidate of [storedCompany]){
-      if (!companyCandidate) continue;
-      record = await queryEmployerRecordByValue(companyCandidate, EMPLOYER_COMPANY_COLUMNS);
-      if (record) break;
-    }
-  }
-
-  const company = pickEmployerCompany(record) || storedCompany;
-  const email = pickEmployerEmail(record) || authEmail || storedEmail;
-
-  const [staffRowsByEmail, staffRowsByCompany] = await Promise.all([
-    email ? queryStaffRequirementsRowsByValue(email, STAFF_REQUIREMENTS_EMAIL_COLUMNS) : Promise.resolve([]),
-    company ? queryStaffRequirementsRowsByValue(company, STAFF_REQUIREMENTS_COMPANY_COLUMNS) : Promise.resolve([])
-  ]);
-
-  const exactIdentityRows = filterStaffRequirementRowsByIdentity(
-    mergeUniqueRows(staffRowsByEmail, staffRowsByCompany),
-    email,
-    company
-  );
-
-  let logoCandidates = mergeUniqueLogoCandidates(
-    collectLogoCandidatesFromRows(exactIdentityRows),
-    collectLogoCandidatesFromRows(staffRowsByEmail),
-    collectLogoCandidatesFromRows(staffRowsByCompany),
-    createEmployerLogoCandidates(pickEmployerLogo(record)),
-    createEmployerLogoCandidates(storedLogo)
-  );
-
-  if (!logoCandidates.length){
-    const bucketLogo = await findCompanyLogoInBucket(company, email, EMPLOYER_LOGO_BUCKETS);
-    logoCandidates = mergeUniqueLogoCandidates(logoCandidates, bucketLogo ? [bucketLogo] : []);
-  }
-
-  const logo = logoCandidates[0] || "";
-
-  if (company) setStoredValue(EMPLOYER_COMPANY_STORAGE_KEYS, company);
-  if (email) setStoredValue(EMPLOYER_EMAIL_STORAGE_KEYS, email);
-  if (logo) setStoredValue(EMPLOYER_LOGO_STORAGE_KEYS, logo);
-  else clearStoredValues(EMPLOYER_LOGO_STORAGE_KEYS);
-
-  renderEmployerSession({ company, email, logo, logoCandidates });
-  refreshRoleSensitiveUi();
-
-  loadEmployerInteractionMaps()
-    .then(() => refreshRoleSensitiveUi())
-    .catch((error) => console.warn("Interaction map load error:", error));
-
-  return { company, email, logo };
 }
 async function handleEmployerLogout(){
   employerLogoutBtn.disabled = true;
@@ -16211,27 +16195,11 @@ async function loadApplicants(silent, keepPage){
   try{
     if (!silent) statusMsg.textContent = "Loading applicants...";
 
-    const [masterRes, transRes] = await Promise.all([
-      supabase.from("applicant_master_table").select("*"),
-      supabase.from("applicant_transaction_table").select("*")
-    ]);
+    const apiData = await callApplicantDashboardApi("get_applicants");
+    const master = Array.isArray(apiData?.master) ? apiData.master : [];
+    const trans = Array.isArray(apiData?.trans) ? apiData.trans : [];
 
-    const { data: master, error: masterError } = masterRes;
-    const { data: trans, error: transError } = transRes;
-
-    if (masterError){
-      console.error("Master table error:", masterError);
-      statusMsg.textContent = "Error loading applicant master data.";
-      return;
-    }
-
-    if (transError){
-      console.error("Transaction table error:", transError);
-      statusMsg.textContent = "Error loading applicant transaction data.";
-      return;
-    }
-
-    if (!master?.length || !trans?.length){
+    if (!master.length || !trans.length){
       allApplicants = [];
       activeApplicants = [];
       filtered = [];
@@ -16243,7 +16211,6 @@ async function loadApplicants(silent, keepPage){
     const masterMap = {};
     master.forEach(m => { masterMap[m.id] = m; });
 
-    /* ✅ ONLY LATEST TRANSACTION PER master_id */
     const latestTxMap = pickLatestTransactionsByMasterId(trans);
     const latestTxList = Object.values(latestTxMap);
 
@@ -16267,8 +16234,7 @@ async function loadApplicants(silent, keepPage){
         address: t.address || m.address || "",
         address_line: t.address_line || m.address_line || "",
         address1: t.address1 || m.address1 || "",
-        home_address: t.home_address || m.home_address || "",
-        house_address: t.house_address || m.house_address || "",
+        house_no: t.house_no || m.house_no || "",
         subdivision: t.subdivision || m.subdivision || "",
         barangay: t.barangay || m.barangay || t.brgy || m.brgy || "",
         district: t.district || m.district || ""
@@ -16303,8 +16269,6 @@ async function loadApplicants(silent, keepPage){
     });
 
     allApplicants = mapped;
-
-    /* ✅ FINAL SAFETY FILTER: deactivated/inactive applicants must never appear */
     activeApplicants = allApplicants.filter(a => !isNotActiveStatus(a.status));
     activeApplicants.sort((a,b) => getRowRecencyValue(b) - getRowRecencyValue(a));
 
