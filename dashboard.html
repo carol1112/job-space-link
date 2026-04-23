@@ -14589,6 +14589,79 @@ function applyEmployerInteractionRows(favorites = [], contacts = []){
   }
 }
 
+let serverFilterOptions = { positions: [], countries: [], cities: [] };
+
+function buildDashboardFilterPayload(){
+  return {
+    search_field: String(searchFieldEl?.value || 'all').trim(),
+    search_query: String(searchInput?.value || '').trim(),
+    position: String(filterPosition?.value || '').trim(),
+    country: String(filterCountry?.value || '').trim(),
+    city: String(filterCity?.value || '').trim(),
+    gender: String(filterGender?.value || '').trim(),
+    date_mode: String(filterDateMode?.value || '').trim(),
+    date_from: String(dateFrom?.value || '').trim(),
+    date_to: String(dateTo?.value || '').trim()
+  };
+}
+
+function sortOptionValues(values){
+  return [...new Set((Array.isArray(values) ? values : []).map(v => String(v || '').trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b));
+}
+
+function renderSelectOptions(selectEl, placeholder, values, preserveValue){
+  if (!selectEl) return;
+  const currentValue = String(typeof preserveValue === 'string' ? preserveValue : selectEl.value || '').trim();
+  const normalizedValues = sortOptionValues(values);
+  selectEl.innerHTML = `<option value="">${escapeHTML(placeholder)}</option>` + normalizedValues
+    .map(v => `<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`)
+    .join('');
+  if (currentValue && [...selectEl.options].some(option => option.value === currentValue)) {
+    selectEl.value = currentValue;
+  }
+}
+
+function renderServerFilterOptions(filterOptions = {}, preserveSelections = true){
+  serverFilterOptions = {
+    positions: sortOptionValues(filterOptions?.positions || []),
+    countries: sortOptionValues(filterOptions?.countries || []),
+    cities: sortOptionValues(filterOptions?.cities || [])
+  };
+
+  renderSelectOptions(filterPosition, 'Position', serverFilterOptions.positions, preserveSelections ? filterPosition.value : '');
+  renderSelectOptions(filterCountry, 'Country', serverFilterOptions.countries, preserveSelections ? filterCountry.value : '');
+  renderSelectOptions(filterCity, 'City', serverFilterOptions.cities, preserveSelections ? filterCity.value : '');
+}
+
+function applyDashboardApiResult(apiData, { silent = false, keepPage = false } = {}){
+  const activeRows = Array.isArray(apiData?.active_applicants) ? apiData.active_applicants : [];
+  const filteredRows = Array.isArray(apiData?.filtered_applicants) ? apiData.filtered_applicants : activeRows;
+
+  allApplicants = [...activeRows];
+  activeApplicants = [...activeRows];
+  filtered = [...filteredRows];
+
+  renderServerFilterOptions(apiData?.filter_options || {}, true);
+
+  if (!keepPage) page = 1;
+  syncPageSizeAndClamp();
+  render();
+
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  lastRefreshTexts.forEach((node) => { if (node) node.textContent = ` • ${hh}:${mm}:${ss}`; });
+
+  if (!silent) {
+    statusMsg.textContent = filtered.length ? '' : 'No applicants match your filters.';
+  }
+
+  updateDashboardStickyMetrics();
+  scrollActiveResultsToTop();
+}
+
 /* ============================================================
    Helpers
 ============================================================ */
@@ -16195,104 +16268,32 @@ async function loadApplicants(silent, keepPage){
   try{
     if (!silent) statusMsg.textContent = "Loading applicants...";
 
-    const apiData = await callApplicantDashboardApi("get_applicants");
-    const master = Array.isArray(apiData?.master) ? apiData.master : [];
-    const trans = Array.isArray(apiData?.trans) ? apiData.trans : [];
-
-    if (!master.length || !trans.length){
-      allApplicants = [];
-      activeApplicants = [];
-      filtered = [];
-      render();
-      statusMsg.textContent = "No applicants found.";
-      return;
-    }
-
-    const masterMap = {};
-    master.forEach(m => { masterMap[m.id] = m; });
-
-    const latestTxMap = pickLatestTransactionsByMasterId(trans);
-    const latestTxList = Object.values(latestTxMap);
-
-    const mapped = latestTxList.map(t => {
-      const m = masterMap[t.master_id] || {};
-      const full_name = [m.first_name, m.middle_name, m.last_name].filter(Boolean).join(" ");
-
-      const ageVal = numOrNull(t.age);
-
-      const salaryRaw = (t.desired_salary ?? t.desire_salary ?? t.salary_desired ?? t.desiredSalary ?? "");
-      const salaryParsed = parseSalaryText(salaryRaw);
-
-      const empRaw = (t.employment_status ?? t.employmentStatus ?? "");
-      const empNorm = normalizeEmploymentStatus(empRaw);
-
-      const finalStatus = deriveApplicantStatus(m, t);
-
-      const mergedAddress = {
-        street: t.street || m.street || "",
-        street_address: t.street_address || m.street_address || "",
-        address: t.address || m.address || "",
-        address_line: t.address_line || m.address_line || "",
-        address1: t.address1 || m.address1 || "",
-        house_no: t.house_no || m.house_no || "",
-        subdivision: t.subdivision || m.subdivision || "",
-        barangay: t.barangay || m.barangay || t.brgy || m.brgy || "",
-        district: t.district || m.district || ""
-      };
-
-      return {
-        ...t,
-        ...mergedAddress,
-        transaction_id: t.id,
-        master_id: t.master_id,
-
-        full_name,
-        picture: t.pictures,
-        resume: t.resume,
-        documents: Array.isArray(t.documents) ? t.documents : [],
-        applicant_email: String(t.email || t.email_address || t.applicant_email || m.email || m.email_address || m.applicant_email || "").trim(),
-        zipcode: t.zipcode,
-        province: t.province || "",
-        age: ageVal,
-
-        desired_salary_raw: salaryRaw,
-        desired_salary_num: salaryParsed.value,
-        desired_salary_display: formatSalary(salaryRaw),
-
-        employment_status: empNorm,
-        status: finalStatus,
-
-        createdNice: new Date(t.created_at).toLocaleDateString("en-US", {
-          year:"numeric", month:"long", day:"numeric"
-        })
-      };
+    const apiData = await callApplicantDashboardApi("bootstrap_dashboard", {
+      ...buildDashboardFilterPayload(),
+      fallback_email: employerIdentity?.email || "",
+      fallback_company: employerIdentity?.company || "",
+      fallback_logo: employerIdentity?.logo || ""
     });
 
-    allApplicants = mapped;
-    activeApplicants = allApplicants.filter(a => !isNotActiveStatus(a.status));
-    activeApplicants.sort((a,b) => getRowRecencyValue(b) - getRowRecencyValue(a));
-
-    populateFilters(activeApplicants, true);
-
-    if (!filtersDirty){
-      applyFiltersInternal(activeApplicants, keepPage);
-    } else {
-      render();
+    if (apiData?.identity){
+      const identity = apiData.identity || {};
+      const company = String(identity.company || employerIdentity.company || "").trim();
+      const email = String(identity.email || employerIdentity.email || "").trim();
+      const logo = String(identity.logo || employerIdentity.logo || "").trim();
+      const logoCandidates = Array.isArray(identity.logoCandidates) ? identity.logoCandidates : [];
+      renderEmployerSession({ company, email, logo, logoCandidates });
+      applyEmployerInteractionRows(apiData?.favorites || [], apiData?.contacts || []);
+      refreshRoleSensitiveUi();
     }
 
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2,"0");
-    const mm = String(now.getMinutes()).padStart(2,"0");
-    const ss = String(now.getSeconds()).padStart(2,"0");
-    lastRefreshTexts.forEach((node) => { if (node) node.textContent = ` • ${hh}:${mm}:${ss}`; });
-
-    if (!silent && filtered.length === 0){
-      statusMsg.textContent = "No applicants match your filters.";
-    }
-
+    applyDashboardApiResult(apiData, { silent, keepPage });
   } catch(err){
     console.error("Unexpected loadApplicants error:", err);
     statusMsg.textContent = "Unexpected error loading applicants.";
+    allApplicants = [];
+    activeApplicants = [];
+    filtered = [];
+    render();
   }
 }
 
@@ -16300,49 +16301,21 @@ async function loadApplicants(silent, keepPage){
    FILTERS
 ============================================================ */
 function populateFilters(activeList, preserveSelections){
-  const prevPos = preserveSelections ? filterPosition.value : "";
-  const prevCountry = preserveSelections ? filterCountry.value : "";
-  const prevCity = preserveSelections ? filterCity.value : "";
-
-  const positions = [...new Set(activeList.map(a => a.position).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
-  const countries = [...new Set(activeList.map(a => a.country).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
-
-  filterPosition.innerHTML = `<option value="">Position</option>`;
-  positions.forEach(pos => { filterPosition.innerHTML += `<option value="${escapeHTML(pos)}">${escapeHTML(pos)}</option>`; });
-
-  filterCountry.innerHTML = `<option value="">Country</option>`;
-  countries.forEach(c => { filterCountry.innerHTML += `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`; });
-
-  if (preserveSelections){
-    if ([...filterPosition.options].some(o => o.value === prevPos)) filterPosition.value = prevPos;
-    if ([...filterCountry.options].some(o => o.value === prevCountry)) filterCountry.value = prevCountry;
-  }
-
-  updateCityFilter(activeList, preserveSelections ? prevCity : "");
+  renderServerFilterOptions(serverFilterOptions, preserveSelections);
 }
 function updateCityFilter(activeList, tryRestoreCity){
-  const c = (filterCountry.value || "").trim();
-
+  const selectedCountry = String(filterCountry?.value || '').trim();
   const cities = [...new Set(
-    activeList
-      .filter(a => !c || (String(a.country || "").trim() === c))
-      .map(a => a.city)
+    (Array.isArray(activeApplicants) ? activeApplicants : [])
+      .filter((app) => !selectedCountry || String(app?.country || '').trim() === selectedCountry)
+      .map((app) => String(app?.city || '').trim())
       .filter(Boolean)
-  )].sort((a,b)=>String(a).localeCompare(String(b)));
+  )].sort((a, b) => a.localeCompare(b));
 
-  filterCity.innerHTML = `<option value="">City</option>`;
-  cities.forEach(city => { filterCity.innerHTML += `<option value="${escapeHTML(city)}">${escapeHTML(city)}</option>`; });
-
-  if (tryRestoreCity && [...filterCity.options].some(o => o.value === tryRestoreCity)){
-    filterCity.value = tryRestoreCity;
-  } else {
-    if (filterCity.value && ![...filterCity.options].some(o => o.value === filterCity.value)){
-      filterCity.value = "";
-    }
-  }
+  renderSelectOptions(filterCity, 'City', cities, typeof tryRestoreCity === 'string' ? tryRestoreCity : filterCity.value);
 }
 
-function resetFilters(){
+async function resetFilters(){
   clearFiltersDirty();
 
   searchFieldEl.value  = "all";
@@ -16358,10 +16331,21 @@ function resetFilters(){
   dateTo.value         = "";
   dateTo.style.display = "none";
 
-  populateFilters(activeApplicants, false);
+  try{
+    const apiData = await callApplicantDashboardApi("query_applicants", buildDashboardFilterPayload());
+    filtered = Array.isArray(apiData?.filtered_applicants) ? apiData.filtered_applicants : [...activeApplicants];
+    renderServerFilterOptions(apiData?.filter_options || {}, false);
+  }catch(error){
+    console.error('Reset filter load error:', error);
+    filtered = [...activeApplicants];
+    renderServerFilterOptions({
+      positions: [...new Set(activeApplicants.map(a => a.position).filter(Boolean))],
+      countries: [...new Set(activeApplicants.map(a => a.country).filter(Boolean))],
+      cities: [...new Set(activeApplicants.map(a => a.city).filter(Boolean))]
+    }, false);
+  }
 
   page = 1;
-  filtered = [...activeApplicants];
   syncPageSizeAndClamp();
   render();
   scrollActiveResultsToTop();
@@ -16377,156 +16361,28 @@ function getLocalYMDFromValue(value){
   return `${y}-${m}-${day}`;
 }
 
-function applyFiltersInternal(baseActive, keepPage){
-  const field = (searchFieldEl.value || "all").trim();
-  const query = searchInput.value.trim();
-
-  const priorPage = page;
-
-  const posVal = (filterPosition.value || "").trim();
-  const countryVal = (filterCountry.value || "").trim();
-  const cityVal = (filterCity.value || "").trim();
-  const genderVal = (filterGender.value || "").trim();
-
-  filtered = baseActive.filter(a => {
-    if (posVal && String(a.position || "").trim() !== posVal) return false;
-    if (countryVal && String(a.country || "").trim() !== countryVal) return false;
-    if (cityVal && String(a.city || "").trim() !== cityVal) return false;
-    if (genderVal && String(a.gender || "").trim() !== genderVal) return false;
-
-    if (filterDateMode.value){
-      const rowDateStr = getLocalYMDFromValue(a.created_at);
-      const todayStr   = getLocalYMDFromValue(new Date());
-      const fromStr    = dateFrom.value || "";
-      const toStr      = dateTo.value || "";
-      if (!rowDateStr) return false;
-
-      switch (filterDateMode.value){
-        case "today":
-          if (rowDateStr !== todayStr) return false;
-          break;
-        case "exact":
-          if (!fromStr || rowDateStr !== fromStr) return false;
-          break;
-        case "before":
-          if (!fromStr || !(rowDateStr < fromStr)) return false;
-          break;
-        case "after":
-          if (!fromStr || !(rowDateStr > fromStr)) return false;
-          break;
-        case "between":
-          if (!fromStr || !toStr) return false;
-          const start = fromStr < toStr ? fromStr : toStr;
-          const end   = fromStr < toStr ? toStr : fromStr;
-          if (!(rowDateStr > start && rowDateStr < end)) return false;
-          break;
-      }
-    }
-
-    if (query){
-      if (!matchesFieldSearch(a, field, query)) return false;
-    }
-
-    return true;
-  });
-
-  filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-
-  if (!keepPage) page = 1;
-  else page = priorPage;
-
-  syncPageSizeAndClamp();
-  render();
-  scrollActiveResultsToTop();
+async function applyFiltersInternal(baseActive, keepPage){
+  try{
+    const apiData = await callApplicantDashboardApi("query_applicants", buildDashboardFilterPayload());
+    filtered = Array.isArray(apiData?.filtered_applicants) ? apiData.filtered_applicants : [];
+    renderServerFilterOptions(apiData?.filter_options || {}, true);
+    if (!keepPage) page = 1;
+    syncPageSizeAndClamp();
+    render();
+    scrollActiveResultsToTop();
+    statusMsg.textContent = filtered.length ? '' : 'No applicants match your filters.';
+  }catch(error){
+    console.error('Apply filter error:', error);
+    statusMsg.textContent = 'Unable to apply filters right now.';
+  }
 }
 
-function applyFilters(){
+async function applyFilters(){
   clearFiltersDirty();
   updateCityFilter(activeApplicants, filterCity.value);
-  applyFiltersInternal(activeApplicants, false);
+  await applyFiltersInternal(activeApplicants, false);
 }
 
-/* ============================================================
-   EVENTS
-============================================================ */
-filterDateMode.addEventListener("change", () => {
-  dateTo.style.display = (filterDateMode.value === "between") ? "inline-block" : "none";
-  if (filterDateMode.value !== "between") dateTo.value = "";
-  markFiltersDirty();
-});
-dateFrom.addEventListener("change", () => {
-  if (!filterDateMode.value) filterDateMode.value = "exact";
-  markFiltersDirty();
-});
-dateTo.addEventListener("change", () => markFiltersDirty());
-
-filterCountry.addEventListener("change", () => {
-  updateCityFilter(activeApplicants, "");
-  markFiltersDirty();
-});
-filterCity.addEventListener("change", () => markFiltersDirty());
-filterPosition.addEventListener("change", () => markFiltersDirty());
-filterGender.addEventListener("change", () => markFiltersDirty());
-searchFieldEl.addEventListener("change", () => markFiltersDirty());
-searchInput.addEventListener("input", () => markFiltersDirty());
-
-searchInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") applyFilters();
-});
-
-applyFiltersBtn.addEventListener("click", applyFilters);
-resetBtn.addEventListener("click", resetFilters);
-
-
-/* ============================================================
-   INTEGRATED LOCATION VIEW
-============================================================ */
-function initLocationMapIfNeeded(){
-  if (locationMapReady || !locationMapEl || !window.L) return;
-  locationMap = L.map("locationMap", { zoomControl: true }).setView([14.5995, 120.9842], 6);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors"
-  }).addTo(locationMap);
-  locationMarkersLayer = L.layerGroup().addTo(locationMap);
-  locationMapReady = true;
-  setTimeout(() => { try{ locationMap.invalidateSize(); }catch(e){} }, 250);
-}
-function locationGeoCacheKey(app){
-  const id = getApplicantKey(app) || "unknown";
-  return `appdash_geo_${id}`;
-}
-function getCachedLocationGeo(app){
-  try{
-    const raw = localStorage.getItem(locationGeoCacheKey(app));
-    if (!raw) return null;
-    const obj = JSON.parse(raw);
-    if (!obj || typeof obj.lat !== "number" || typeof obj.lon !== "number") return null;
-    return obj;
-  }catch(e){ return null; }
-}
-function setCachedLocationGeo(app, lat, lon, display_name){
-  try{
-    localStorage.setItem(locationGeoCacheKey(app), JSON.stringify({ lat, lon, display_name: display_name || "", ts: Date.now() }));
-  }catch(e){}
-}
-function locationAreaCacheKey(q){
-  return `appdash_geo_area_${String(q || "").trim().toLowerCase()}`;
-}
-function getCachedLocationArea(q){
-  try{
-    const raw = localStorage.getItem(locationAreaCacheKey(q));
-    if (!raw) return null;
-    const obj = JSON.parse(raw);
-    if (!obj || typeof obj.lat !== "number" || typeof obj.lon !== "number") return null;
-    return obj;
-  }catch(e){ return null; }
-}
-function setCachedLocationArea(q, lat, lon, display_name){
-  try{
-    localStorage.setItem(locationAreaCacheKey(q), JSON.stringify({ lat, lon, display_name: display_name || "", ts: Date.now() }));
-  }catch(e){}
-}
 async function geocodeLocationAddress(address){
   if (!address) return null;
   const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`;
