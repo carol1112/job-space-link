@@ -5862,22 +5862,7 @@ async function getBlobFromFileOrUrl(f){
 
   var url = f.url;
   if (!url) throw new Error("Missing file URL.");
-
-  try{
-    var r1 = await fetch(url, { cache:"no-store" });
-    if (r1.ok) return await r1.blob();
-  }catch(e){}
-
-  try{
-    var p = parseSupabaseStorageUrl(url);
-    if (p && window.supabase && window.supabase.storage){
-      await ensureSupabaseSessionIfPossible();
-      var dl = await window.supabase.storage.from(p.bucket).download(p.path);
-      if (dl && !dl.error && dl.data) return dl.data;
-    }
-  }catch(e2){}
-
-  throw new Error("Unable to download file.");
+  return await fetchApplicantStorageResource(url, "blob");
 }
 
 async function getArrayBufferFromFileOrUrl(f){
@@ -5885,22 +5870,7 @@ async function getArrayBufferFromFileOrUrl(f){
 
   var url = f.url;
   if (!url) throw new Error("Missing file URL.");
-
-  try{
-    var r1 = await fetch(url, { cache:"no-store" });
-    if (r1.ok) return await r1.arrayBuffer();
-  }catch(e){}
-
-  try{
-    var p = parseSupabaseStorageUrl(url);
-    if (p && window.supabase && window.supabase.storage){
-      await ensureSupabaseSessionIfPossible();
-      var dl = await window.supabase.storage.from(p.bucket).download(p.path);
-      if (dl && !dl.error && dl.data) return await dl.data.arrayBuffer();
-    }
-  }catch(e2){}
-
-  throw new Error("Unable to load file.");
+  return await fetchApplicantStorageResource(url, "arrayBuffer");
 }
 
 async function getTextFromFileOrUrl(f){
@@ -5908,22 +5878,7 @@ async function getTextFromFileOrUrl(f){
 
   var url = f.url;
   if (!url) throw new Error("Missing file URL.");
-
-  try{
-    var r1 = await fetch(url, { cache:"no-store" });
-    if (r1.ok) return await r1.text();
-  }catch(e){}
-
-  try{
-    var p = parseSupabaseStorageUrl(url);
-    if (p && window.supabase && window.supabase.storage){
-      await ensureSupabaseSessionIfPossible();
-      var dl = await window.supabase.storage.from(p.bucket).download(p.path);
-      if (dl && !dl.error && dl.data) return await dl.data.text();
-    }
-  }catch(e2){}
-
-  throw new Error("Unable to load file.");
+  return await fetchApplicantStorageResource(url, "text");
 }
 
 async function buildPdfThumb(page){
@@ -6676,17 +6631,12 @@ async function fetchPdfArrayBufferFromUrl(url){
   if (!url) throw new Error("Missing PDF URL.");
 
   try{
-    var r1 = await fetch(url, { cache:"no-store" });
-    if (r1.ok) return await r1.arrayBuffer();
+    return await fetchApplicantStorageResource(url, "arrayBuffer");
   }catch(e){}
 
   try{
-    var p = parseSupabaseStorageUrl(url);
-    if (p && window.supabase && window.supabase.storage){
-      await ensureSupabaseSessionIfPossible();
-      var dl = await window.supabase.storage.from(p.bucket).download(p.path);
-      if (dl && !dl.error && dl.data) return await dl.data.arrayBuffer();
-    }
+    var r1 = await fetch(url, { cache:"no-store" });
+    if (r1.ok) return await r1.arrayBuffer();
   }catch(e2){}
 
   throw new Error("Unable to load PDF preview.");
@@ -7662,6 +7612,131 @@ async function callApplicantFormBackend(action, payload){
   return data;
 }
 
+
+async function fileToBase64Data(file){
+  if (!(file instanceof Blob)) throw new Error("A file blob is required.");
+  return await new Promise(function(resolve, reject){
+    var reader = new FileReader();
+    reader.onload = function(){
+      var res = String(reader.result || "");
+      var comma = res.indexOf(",");
+      resolve(comma >= 0 ? res.slice(comma + 1) : res);
+    };
+    reader.onerror = function(){ reject(reader.error || new Error("Unable to read file.")); };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function resolveApplicantStorageAccessUrl(rawUrl, explicitBucket, explicitPath){
+  var directUrl = String(rawUrl || "").trim();
+  var parsed = null;
+
+  if (explicitBucket && explicitPath){
+    parsed = { bucket: String(explicitBucket || '').trim(), path: String(explicitPath || '').trim() };
+  } else {
+    parsed = parseSupabaseStorageUrl(directUrl);
+  }
+
+  if (!parsed || !parsed.bucket || !parsed.path){
+    return directUrl;
+  }
+
+  var data = await callApplicantFormBackend("resolve_storage_url", {
+    bucket: parsed.bucket,
+    path: parsed.path,
+    url: directUrl || null
+  });
+
+  return String((data && (data.url || data.signedUrl || data.publicUrl)) || directUrl || "").trim();
+}
+
+function base64ToBlob(base64, contentType){
+  var clean = String(base64 || "").replace(/^data:[^,]+,/, "");
+  var bin = atob(clean);
+  var bytes = new Uint8Array(bin.length);
+  for (var i=0; i<bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: contentType || "application/octet-stream" });
+}
+
+async function fetchApplicantStorageResource(rawUrl, mode, explicitBucket, explicitPath){
+  var directUrl = String(rawUrl || "").trim();
+  var parsed = null;
+
+  if (explicitBucket && explicitPath){
+    parsed = { bucket: String(explicitBucket || '').trim(), path: String(explicitPath || '').trim() };
+  } else {
+    parsed = parseSupabaseStorageUrl(directUrl);
+  }
+
+  if (parsed && parsed.bucket && parsed.path){
+    try{
+      var blobData = await callApplicantFormBackend("download_storage_blob", {
+        bucket: parsed.bucket,
+        path: parsed.path,
+        url: directUrl || null
+      });
+      var proxiedBlob = base64ToBlob(blobData.base64, blobData.contentType || "application/octet-stream");
+      if (mode === "arrayBuffer") return await proxiedBlob.arrayBuffer();
+      if (mode === "text") return await proxiedBlob.text();
+      return proxiedBlob;
+    }catch(proxyErr){
+      /* fall through to short-lived signed-url fetch to preserve preview behavior for larger files */
+    }
+  }
+
+  var resolvedUrl = await resolveApplicantStorageAccessUrl(directUrl, explicitBucket, explicitPath);
+  if (!resolvedUrl) throw new Error("Unable to resolve file access URL.");
+  var resp = await fetch(resolvedUrl, { cache:"no-store" });
+  if (!resp.ok) throw new Error("Unable to load file resource.");
+  if (mode === "arrayBuffer") return await resp.arrayBuffer();
+  if (mode === "text") return await resp.text();
+  return await resp.blob();
+}
+
+async function uploadApplicantStorageFile(fileBlob, options){
+  options = options || {};
+  if (!(fileBlob instanceof Blob)) throw new Error("A file blob is required for upload.");
+
+  if (!currentMasterId){
+    throw new Error("No saved profile loaded yet. Submit first or load an existing profile.");
+  }
+
+  var fn = proper(document.getElementById("first_name").value);
+  var ln = proper(document.getElementById("last_name").value);
+  var fileName = options.fileName || fileBlob.name || "file.bin";
+  var contentType = options.contentType || fileBlob.type || "application/octet-stream";
+  var base64 = await fileToBase64Data(fileBlob);
+
+  var data = await callApplicantFormBackend("upload_storage_file", {
+    bucket: options.bucket || "applicantfile",
+    masterId: currentMasterId,
+    firstName: fn,
+    lastName: ln,
+    fileName: fileName,
+    contentType: contentType,
+    fileBase64: base64,
+    kind: options.kind || "FILE"
+  });
+
+  if (!data || !data.file || !data.file.url){
+    throw new Error("Storage upload succeeded but no file URL was returned.");
+  }
+
+  return data.file;
+}
+
+async function ensureApplicantAuthUser(email, password, userMeta){
+  var eml = String(email || "").trim();
+  var pass = String(password || "").trim();
+  if (!eml || !pass) throw new Error("Email and password are required.");
+
+  return await callApplicantFormBackend("ensure_auth_user", {
+    email: eml,
+    password: pass,
+    user_metadata: userMeta || {}
+  });
+}
+
 function applyLoadedRecordFromBackend(masterRow, lastTrans, sourceMode, preferredTransaction){
   if (preferredTransaction){
     if (!lastTrans){
@@ -8267,21 +8342,6 @@ function pickLatestRow(rows){
   return best || rows[rows.length - 1];
 }
 
-async function tryFetchLastTransactionOrdered(masterId, orderColumns){
-  var client = window.supabase;
-  var q = client.from("applicant_transaction_table")
-    .select("*")
-    .eq("master_id", masterId);
-
-  for (var i=0; i<orderColumns.length; i++){
-    q = q.order(orderColumns[i], { ascending:false, nullsFirst:false });
-  }
-
-  var r = await q.limit(1);
-  if (r.error) throw r.error;
-  return (r.data && r.data[0]) ? r.data[0] : null;
-}
-
 
 async function fetchLastTransaction(masterId){
   if (!masterId) return null;
@@ -8605,7 +8665,11 @@ authSaveBtn.addEventListener("click", async function(){
       return;
     }
 
-    try{ await client.auth.signUp({ email: email, password: pass, options: { data: { role:"applicant", source: detectSource() } }}); }catch(e){}
+    await ensureApplicantAuthUser(email, pass, {
+      role: "applicant",
+      source: detectSource(),
+      full_name: (lastSubmittedFullName || "Applicant").trim()
+    });
 
     await savePasswordToEmployeeAccounts({
       employee_name: (lastSubmittedFullName || "Applicant").trim(),
@@ -8788,34 +8852,7 @@ function nextPaint(){
 async function fetchBlobFromUrl(url){
   var u = String(url || "").trim();
   if (!u) throw new Error("Missing URL.");
-
-  try{
-    var r1 = await fetch(u, { cache:"no-store" });
-    if (r1.ok) return await r1.blob();
-  }catch(e){}
-
-  try{
-    var p = parseSupabaseStorageUrl(u);
-    if (p && window.supabase && window.supabase.storage){
-      await ensureAuthSession({ silent:true });
-      var dl = await window.supabase.storage.from(p.bucket).download(p.path);
-      if (dl && !dl.error && dl.data) return dl.data;
-    }
-  }catch(e2){}
-
-  try{
-    var p2 = parseSupabaseStorageUrl(u);
-    if (p2 && window.supabase && window.supabase.storage){
-      await ensureAuthSession({ silent:true });
-      var sign = await window.supabase.storage.from(p2.bucket).createSignedUrl(p2.path, 60 * 10);
-      if (!sign.error && sign.data && sign.data.signedUrl){
-        var r2 = await fetch(sign.data.signedUrl, { cache:"no-store" });
-        if (r2.ok) return await r2.blob();
-      }
-    }
-  }catch(e3){}
-
-  throw new Error("Unable to load attachment.");
+  return await fetchApplicantStorageResource(u, "blob");
 }
 
 async function ensureBlobForPdfPreview(blob, ext){
@@ -9304,41 +9341,26 @@ async function html2pdfToBlob(root, fileName){
 
 
 async function uploadGeneratedPdfToStorage(pdfBlob, fileName){
-  var client = window.supabase;
-  if (!client) throw new Error("Supabase client not initialized.");
-  await ensureAuthSession({ silent:true });
-
   if (!currentMasterId){
     throw new Error("No saved profile loaded yet. Submit first or load an existing profile.");
   }
 
-  var fn = proper(document.getElementById("first_name").value);
-  var ln = proper(document.getElementById("last_name").value);
-  var folder = "applicants/" + currentMasterId + "_" + cleanPath(fn) + "_" + cleanPath(ln) + "/";
-  var ts = Date.now();
-
   var safeName = sanitizeFileName(fileName || "Applicant_Profile.pdf");
   if (!safeName.toLowerCase().endsWith(".pdf")) safeName += ".pdf";
 
-  var storagePath = folder + "PDF_" + ts + "_" + safeName;
   var pdfFile = new File([pdfBlob], safeName, { type: "application/pdf" });
-
-  var up = await client.storage.from("applicantfile").upload(storagePath, pdfFile, {
-    upsert: true,
+  var saved = await uploadApplicantStorageFile(pdfFile, {
+    bucket: "applicantfile",
+    kind: "PDF",
+    fileName: safeName,
     contentType: "application/pdf"
   });
 
-  if (up.error){
-    var low = String(up.error.message || "").toLowerCase();
-    if (isRlsErrorMessage(low)) throw new Error(rlsHelpMessage());
-    throw up.error;
-  }
-
-  var pub = client.storage.from("applicantfile").getPublicUrl(storagePath);
-  var viewUrl = (pub && pub.data) ? pub.data.publicUrl : "";
+  var viewUrl = String((saved && saved.url) || "").trim();
+  var storagePath = String((saved && saved.path) || "").trim();
 
   if (!viewUrl){
-    throw new Error("PDF uploaded but public URL could not be generated. Make sure applicantfile bucket is PUBLIC.");
+    throw new Error("PDF uploaded but no file URL was returned.");
   }
 
   lastSavedPdfUrl  = viewUrl;
@@ -9522,32 +9544,38 @@ appForm.addEventListener("submit", async function(e){
     setStatusDisplay(statusValue);
     refreshStatusButtonStyle();
 
-    var folder = "applicants/" + master_id + "_" + cleanPath(fn) + "_" + cleanPath(ln) + "/";
-    var ts = Date.now();
-
     var picture_url = old_picture;
     if (selectedPicture){
-      var picPath = folder + "PIC_" + ts + "_" + cleanPath(selectedPicture.name);
-      var up1 = await client.storage.from("applicantfile").upload(picPath, selectedPicture, { upsert:true });
-      if (up1.error) throw up1.error;
-      picture_url = client.storage.from("applicantfile").getPublicUrl(picPath).data.publicUrl;
+      var savedPicture = await uploadApplicantStorageFile(selectedPicture, {
+        bucket: "applicantfile",
+        kind: "PIC",
+        fileName: selectedPicture.name,
+        contentType: selectedPicture.type || "application/octet-stream"
+      });
+      picture_url = String((savedPicture && savedPicture.url) || "").trim();
     }
 
     var resume_url = old_resume;
     if (selectedResume){
-      var rp = folder + "RESUME_" + ts + "_" + cleanPath(selectedResume.name);
-      var upR = await client.storage.from("applicantfile").upload(rp, selectedResume, { upsert:true });
-      if (upR.error) throw upR.error;
-      resume_url = client.storage.from("applicantfile").getPublicUrl(rp).data.publicUrl;
+      var savedResume = await uploadApplicantStorageFile(selectedResume, {
+        bucket: "applicantfile",
+        kind: "RESUME",
+        fileName: selectedResume.name,
+        contentType: selectedResume.type || "application/octet-stream"
+      });
+      resume_url = String((savedResume && savedResume.url) || "").trim();
     }
 
     var new_doc_urls = [];
     for (var d=0; d<selectedDocs.length; d++){
       var f = selectedDocs[d];
-      var pth = folder + "DOC_" + ts + "_" + cleanPath(f.name);
-      var upD = await client.storage.from("applicantfile").upload(pth, f, { upsert:true });
-      if (upD.error) throw upD.error;
-      new_doc_urls.push(client.storage.from("applicantfile").getPublicUrl(pth).data.publicUrl);
+      var savedDoc = await uploadApplicantStorageFile(f, {
+        bucket: "applicantfile",
+        kind: "DOC",
+        fileName: f.name,
+        contentType: f.type || "application/octet-stream"
+      });
+      new_doc_urls.push(String((savedDoc && savedDoc.url) || "").trim());
     }
 
     var shouldReplaceExistingDocs = isDocsReplacementPending();
