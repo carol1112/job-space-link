@@ -3811,6 +3811,901 @@ header .auth-buttons a:hover{
   }
 }
 
+
+
+/* ============================================================
+   EXACT LATEST INDEX HEADER OVERRIDE - APPLIED TO APPLICANT FORM
+   Matches the latest Index header: nav icons, dropdown hover effects,
+   refined Employer/Jobseeker icons, desktop no-overlap sizing,
+   and mobile logo-left / hamburger-right layout.
+============================================================ */
+/* ============================================================
+   APPLICANT FORM HEADER HEIGHT SYNC
+   Keeps this page layout aligned with the exact Index header height.
+============================================================ */
+:root{
+  --header-h:78px;
+  --hdrH:var(--header-h) !important;
+}
+
+.mobile-panel{
+  top:var(--header-h) !important;
+}
+
+/* ============================================================
+   FINAL HEADER RESPONSIVE PATCH
+   Exact requested breakpoints
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:2px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+
+  header .logo{
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:15px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:9px !important;
+    padding:0 12px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:66px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:9px !important;
+    margin-left:3px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:34px !important;
+    padding:0 2px !important;
+    font-size:0.75rem !important;
+  }
+
+  .nav-dropdown{
+    height:34px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    height:20px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.74rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:5px !important;
+  }
+
+  header .auth-buttons a{
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:7px !important;
+    padding:0 8px 0 5px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-dropdown{
+    height:31px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ============================================================
+   FINAL MOBILE HEADER LOCK
+   Force logo left + hamburger right inside header
+============================================================ */
+@media (max-width: 768px){
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    column-gap:10px !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    min-width:0 !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    margin:0 !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    height:38px !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    padding-left:8px !important;
+    padding-right:10px !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
+  }
+}
+
+
+
+/* ============================================================
+   NAV ICON + NO-OVERLAP HEADER PATCH
+   Adds icons to every nav item and compresses safely by screen size.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  gap:7px !important;
+  min-width:0 !important;
+  overflow:visible !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  flex:0 0 auto;
+  color:#38bdf8;
+  text-shadow:0 0 10px rgba(56,189,248,0.35);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  width:16px;
+  min-width:16px;
+  text-align:center;
+  font-size:0.92em;
+}
+
+header nav .nav-text,
+.mobile-panel .nav-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.nav-dropdown-trigger{
+  gap:2px !important;
+}
+
+.nav-dropdown-toggle{
+  flex:0 0 auto !important;
+}
+
+.nav-dropdown-menu{
+  min-width:238px !important;
+}
+
+.nav-dropdown-menu a{
+  gap:11px !important;
+  font-size:0.88rem !important;
+}
+
+.nav-dropdown-menu a i{
+  width:20px !important;
+  min-width:20px !important;
+  text-align:center !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link{
+  min-width:0 !important;
+}
+
+.mobile-panel .mnav-left{
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+
+.mobile-panel .mnav-left i{
+  width:18px;
+  min-width:18px;
+  text-align:center;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  flex:0 0 auto;
+  color:#93c5fd;
+}
+
+.mobile-panel .mnav-row{
+  display:grid !important;
+  grid-template-columns:minmax(0, 1fr) 46px !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+.mobile-panel .mnav-toggle{
+  width:46px !important;
+  min-width:46px !important;
+  max-width:46px !important;
+  height:auto !important;
+  align-self:stretch !important;
+  justify-content:center !important;
+  padding:0 !important;
+  flex:0 0 46px !important;
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:#e5e7eb !important;
+}
+
+@media (min-width:1800px){
+  header nav > a,
+  header nav .nav-main-link{ gap:8px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:17px !important; min-width:17px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header nav{ gap:13px !important; }
+  header nav > a,
+  header nav .nav-main-link{ gap:6px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:15px !important; min-width:15px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header{ gap:8px !important; padding-left:6px !important; padding-right:10px !important; }
+  header nav{ gap:6px !important; margin-left:2px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:4px !important;
+    padding:0 1px !important;
+    font-size:0.69rem !important;
+    letter-spacing:-0.01em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
+  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
+  header .auth-buttons{ gap:4px !important; }
+  header .auth-buttons a{ padding:0 6px !important; font-size:0.66rem !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header{ gap:5px !important; padding-left:4px !important; padding-right:6px !important; }
+  header .logo img{ height:54px !important; }
+  header nav{ gap:4px !important; margin-left:1px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:3px !important;
+    padding:0 1px !important;
+    font-size:0.58rem !important;
+    letter-spacing:-0.03em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:0.78em !important;
+  }
+  .nav-dropdown-toggle{ width:15px !important; height:15px !important; }
+  .nav-dropdown-toggle i{ font-size:0.58rem !important; }
+  header .auth-buttons{ gap:3px !important; }
+  header .auth-buttons a{
+    height:28px !important;
+    padding:0 4px !important;
+    font-size:0.56rem !important;
+    gap:3px !important;
+  }
+  header .auth-buttons a i{ font-size:0.70em !important; }
+}
+
+@media (max-width:768px){
+  .mobile-panel{
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link{
+    justify-content:space-between !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left{ gap:9px !important; }
+  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0, 1fr) 42px !important; gap:7px !important; }
+  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
+}
+
+
+/* ============================================================
+   FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
+   Applies dropdown-style hover to desktop nav links and refines
+   Employer / Jobseeker button icons without causing overlap.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  border-radius:12px !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    text-shadow 0.25s ease !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12));
+  opacity:0;
+  transform:scaleX(0.72);
+  transform-origin:center;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:-1;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#ffffff !important;
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
+  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
+  transform:translateY(-1px) !important;
+}
+
+header nav > a:hover::before,
+header nav > a:focus-visible::before,
+header nav .nav-main-link:hover::before,
+header nav .nav-main-link:focus-visible::before,
+.nav-dropdown.open .nav-main-link::before{
+  opacity:1;
+  transform:scaleX(1);
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
+  transform:scale(1.08);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+.nav-dropdown-menu a{
+  border:1px solid transparent !important;
+  border-radius:10px !important;
+  margin:0 8px !important;
+  padding:12px 12px !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.24) !important;
+  color:#ffffff !important;
+  transform:translateX(3px);
+  box-shadow:0 0 14px rgba(0,198,255,0.12);
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+header .auth-buttons a{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  gap:7px !important;
+}
+
+header .auth-buttons a::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  opacity:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+  transition:opacity 0.25s ease;
+  z-index:-1;
+}
+
+header .auth-buttons a:hover::before,
+header .auth-buttons a:focus-visible::before{
+  opacity:1;
+}
+
+header .auth-buttons a i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  font-size:0.85rem !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.16) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
+  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+header .auth-buttons a.employer-auth i{
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+}
+
+header .auth-buttons a.jobseeker-auth i{
+  background:rgba(167,139,250,0.22) !important;
+  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
+}
+
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  transform:scale(1.10) rotate(-3deg);
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+header .auth-buttons .auth-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#ffffff !important;
+  transform:scale(1.08);
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+.mobile-panel .mnav-left i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:9px !important;
+  }
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:8px !important;
+  }
+  header .auth-buttons a i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
+  }
+}
+
 </style>
 <style id="viewstaff-mobile-modal-behavior-patch">
 @media (max-width:768px){
@@ -4209,41 +5104,55 @@ header .auth-buttons a:hover{
 <!-- ==========================================================
      HEADER
 ========================================================== -->
+<!-- HEADER -->
 <header>
   <div class="logo">
     <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
   </div>
 
   <nav>
-    <a href="index.html">Home</a>
+    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
-        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
-        <button type="button" class="nav-dropdown-toggle" id="aboutNavToggle" aria-expanded="false" aria-controls="aboutNavMenu" aria-label="Toggle About menu">
+        <a href="about.html" id="aboutNavLink" class="nav-main-link"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></a>
+        <button
+          type="button"
+          class="nav-dropdown-toggle"
+          id="aboutNavToggle"
+          aria-expanded="false"
+          aria-controls="aboutNavMenu"
+          aria-label="Toggle About menu"
+        >
           <i class="fa-solid fa-caret-down nav-caret"></i>
         </button>
       </div>
+
       <div class="nav-dropdown-menu" id="aboutNavMenu">
-        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
-        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i><span class="nav-text">Why Choose Us</span></a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i><span class="nav-text">How It Works</span></a>
       </div>
     </div>
 
-    <a href="postedhiring.html">Job Hiring</a>
-        <a href="dashboard.html">Jobseeker</a>
-
-    <a href="postjob.html">Post Jobs</a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
   <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
-    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
-    
+    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
+    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
+  
   </div>
 
-  <button type="button" class="nav-toggle" id="navToggle" aria-label="Open mobile menu" aria-expanded="false">
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
     <i class="fa-solid fa-bars"></i>
   </button>
 </header>
@@ -4251,11 +5160,11 @@ header .auth-buttons a:hover{
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
-        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="about.html" class="mnav-main-link"><span class="mnav-left"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></span><i class="fa-solid fa-arrow-right"></i></a>
         <button
           type="button"
           class="mnav-toggle"
@@ -4269,212 +5178,17 @@ header .auth-buttons a:hover{
       </div>
 
       <div class="mnav-submenu" id="mobileAboutMenu">
-        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="why choose us.html"><span class="mnav-left"><i class="fa-solid fa-circle-check"></i><span class="nav-text">Why Choose Us</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html"><span class="mnav-left"><i class="fa-solid fa-diagram-project"></i><span class="nav-text">How It Works</span></span><i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
 
-    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
-   <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
-  </div>
-</div>
-
-
-
-<!-- SUCCESS / STATUS POPUP -->
-<div id="successPopup">
-  <div id="successBox">
-    <div id="successIconWrap">
-      <span class="popup-plane-glow popup-plane-glow-a" aria-hidden="true"></span>
-      <span class="popup-plane-glow popup-plane-glow-b" aria-hidden="true"></span>
-      <i id="successIcon" class="fa-solid fa-circle-check"></i>
-    </div>
-    <p id="successMessage">Success!</p>
-    <div id="successSubmessage" style="display:none;"></div>
-  </div>
-</div>
-
-<div id="submitPlaneLaunch" aria-hidden="true"></div>
-
-<!-- EXISTING POPUP -->
-<div id="existingPopup">
-  <div id="existingBox">
-    <p style="opacity:.95;">Found an existing profile.<br/>Do you want to continue?</p>
-    <div class="actions">
-      <button id="btnExistingUpdate" type="button">Update</button>
-      <button id="btnExistingCancel" type="button">View</button>
-    </div>
-  </div>
-</div>
-
-<!-- OPTIONAL AUTH POPUP -->
-<div id="authPopup">
-  <div id="authBox">
-    <p>
-      <br/>
-      ✅ You can login using <b>Email only</b> anytime.<br/>
-      If you want password login, set a password now (optional).
-      <br/><br/>
-    </p>
-
-    <div class="auth-grid">
-      <div class="auth-field">
-        <label>Email</label>
-        <input id="authEmail" type="email" readonly autocomplete="email" />
-      </div>
-
-      <div class="auth-field">
-        <label>Password (Optional)</label>
-        <div class="pwd-wrap">
-          <input id="authPassword" type="password" placeholder="Leave blank to use Email-only login" autocomplete="new-password" />
-          <button id="authTogglePwd" type="button" title="Show/Hide Password"><i class="fa-solid fa-eye"></i></button>
-        </div>
-      </div>
-    </div>
-
-    <div id="authError"></div>
-
-    <div class="auth-actions">
-      <button class="auth-btn" id="authSaveBtn" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- CUSTOM CONFIRM POPUP -->
-<div id="confirmPopup">
-  <div id="confirmBox">
-    <div id="confirmIcon"><i class="fa-solid fa-circle-question"></i></div>
-    <div id="confirmMessage">Confirm?</div>
-    <div class="confirmActions">
-      <button id="confirmCancel" type="button" class="confirmBtn"><i class="fa-solid fa-xmark"></i> CANCEL</button>
-      <button id="confirmOk" type="button" class="confirmBtn"><i class="fa-solid fa-check"></i> OK</button>
-    </div>
-  </div>
-</div>
-
-<!-- PDF PREVIEW MODAL -->
-<div id="pdfPreviewPopup">
-  <div id="pdfPreviewBox">
-    <div id="pdfTopBar">
-      <div id="pdfTopMeta">
-        <div id="pdfProfileThumbWrap">
-          <img id="pdfProfileThumb" alt="Applicant picture" />
-          <div id="pdfProfileThumbPlaceholder"><i class="fa-solid fa-file-pdf"></i></div>
-        </div>
-        <div id="pdfTitleWrap">
-          <div id="pdfTitle"><i class="fa-solid fa-file-pdf"></i> Applicant Profile PDF Preview</div>
-          <div id="pdfPreviewStatus">Ready</div>
-        </div>
-      </div>
-      <div class="pdfTopActions">
-        <button id="pdfToggleContentsTopBtn" class="pdfTopBtn active" type="button"><i class="fa-solid fa-eye-slash"></i> Hide Content</button>
-        <button id="pdfDownloadBtn" class="pdfTopBtn" type="button"><i class="fa-solid fa-download"></i> Download</button>
-        <button id="pdfCloseBtn" class="pdfTopBtn" type="button"><i class="fa-solid fa-xmark"></i> Close</button>
-      </div>
-    </div>
-
-    <div id="pdfPreviewBody">
-      <div id="pdfPreviewViewport">
-        <div id="pdfPreviewContent">
-          <div id="pdfPreviewSidebar">
-            <div id="pdfPreviewSidebarCard">
-              <div id="pdfPreviewSidebarTitle"><i class="fa-solid fa-copy"></i> Pages</div>
-              <div id="pdfPreviewThumbList"></div>
-            </div>
-          </div>
-          <div id="pdfPreviewCanvasCard">
-            <div id="pdfPreviewScrollWrap" class="pdf-modal-scroll-wrap"></div>
-          </div>
-        </div>
-        <div id="pdfPreviewEmpty" class="pdf-preview-empty">Loading PDF preview...</div>
-      </div>
-    </div>
-
-    <div id="pdfViewerToolbar">
-      <div class="pdf-toolbar-group">
-        <button id="pdfToolbarPrevBtn" class="pdf-toolbar-btn" type="button" title="Previous page"><i class="fa-solid fa-chevron-left"></i> Prev Page</button>
-        <div id="pdfToolbarPageWrap"><span id="pdfToolbarPageLabel">Page 1 / 1</span></div>
-        <button id="pdfToolbarNextBtn" class="pdf-toolbar-btn" type="button" title="Next page">Next Page <i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-
-      <div class="pdf-toolbar-group">
-        <button id="pdfToolbarTocBtn" class="pdf-toolbar-btn active" type="button" title="Show or hide content"><i class="fa-solid fa-eye-slash"></i> Hide Content</button>
-        <button id="pdfToolbarZoomOutBtn" class="pdf-toolbar-btn" type="button" title="Zoom out"><i class="fa-solid fa-magnifying-glass-minus"></i> Zoom Out</button>
-        <div id="pdfZoomPct">100%</div>
-        <button id="pdfToolbarZoomInBtn" class="pdf-toolbar-btn" type="button" title="Zoom in"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom In</button>
-        <button id="pdfToolbarActualBtn" class="pdf-toolbar-btn" type="button" title="Reset zoom"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
-        <button id="pdfToolbarFitBtn" class="pdf-toolbar-btn active" type="button" title="Fit page"><i class="fa-solid fa-left-right"></i> Fit Page</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FILE VIEWER -->
-<div id="fileViewerPopup">
-  <div id="fileViewerBox">
-    <div id="fileViewerTopActions">
-      <button id="fileViewerToggleSidebarBtn" type="button" class="viewer-top-action"><i class="fa-solid fa-eye-slash"></i> Hide Content</button>
-      <button id="fileViewerClose" type="button" class="viewer-top-action"><i class="fa-solid fa-xmark"></i> Close</button>
-    </div>
-
-    <div id="viewerSidebar">
-      <div id="sidebarTop">
-        <div id="sidebarProfile">
-          <img id="sidebarPicture" alt="Applicant picture" />
-          <div>
-            <div id="sidebarName">Applicant Files</div>
-            <div id="workspaceLabel">Profile</div>
-          </div>
-        </div>
-        <button id="resumePagesBtn" type="button"><i class="fa-solid fa-copy"></i> Pages</button>
-        <div id="sidebarTabs">
-          <button id="tabFiles" type="button" class="sidebar-tab active">FILES</button>
-          <button id="tabPages" type="button" class="sidebar-tab" disabled>PAGES</button>
-        </div>
-      </div>
-      <div id="thumbGridWrap"><div id="thumbGrid"></div></div>
-    </div>
-
-    <div id="viewerMain">
-      <div id="fileViewerHiddenHeader">
-        <div id="fileViewerHiddenMeta">
-          <div id="fileViewerHiddenThumbWrap">
-            <img id="fileViewerHiddenThumb" alt="Applicant picture" />
-            <div id="fileViewerHiddenThumbPlaceholder"><i class="fa-solid fa-file-lines"></i></div>
-          </div>
-          <div id="fileViewerHiddenText">
-            <div id="fileViewerHiddenTitle">File Viewer</div>
-            <div id="fileViewerHiddenSub">Applicant Files</div>
-          </div>
-        </div>
-      </div>
-      <div id="profileHeader"><div id="profileName">File Viewer</div></div>
-      <div id="fileViewerBody"></div>
-
-      <div id="pdfControls">
-        <button id="pdfPrev" class="pdf-btn" type="button"><i class="fa-solid fa-chevron-left"></i> Previous Page</button>
-        <div id="pdfPageLabel">Page 1 / 1</div>
-        <button id="pdfNext" class="pdf-btn" type="button">Next Page <i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-
-      <div id="viewerNav">
-        <button id="prevFile" class="nav-btn" type="button"><i class="fa-solid fa-arrow-left"></i> Previous File</button>
-        <div id="zoomControls">
-          <button id="zoomOut" class="zoom-btn" type="button"><i class="fa-solid fa-magnifying-glass-minus"></i> Zoom Out</button>
-          <div id="zoomLabel">100%</div>
-          <button id="zoomIn" class="zoom-btn" type="button"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom In</button>
-          <button id="zoomReset" class="zoom-btn" type="button"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
-          <button id="fitPageBtn" class="zoom-btn fit" type="button"><i class="fa-solid fa-left-right"></i> Fit Page</button>
-                    <button id="fullPageBtn" class="zoom-btn fullpage" type="button"><i class="fa-solid fa-expand"></i> Full Page</button>
-          <button id="downloadViewerFileBtn" class="zoom-btn download" type="button"><i class="fa-solid fa-download"></i> Download</button>
-        </div>
-        <button id="nextFile" class="nav-btn" type="button">Next File <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
+    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 

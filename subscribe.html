@@ -1384,11 +1384,910 @@ input[readonly]{
   }
 }
 
+
+
+/* ============================================================
+   EXACT LATEST INDEX HEADER OVERRIDE - APPLIED TO SUBSCRIBE PAGE
+   Matches the latest Index header: nav icons, dropdown hover effects,
+   refined Employer/Jobseeker icons, desktop no-overlap sizing,
+   and mobile logo-left / hamburger-right layout.
+============================================================ */
+/* ============================================================
+   SUBSCRIBE HEADER HEIGHT SYNC
+   Keeps the subscription form layout aligned with the exact Index header height.
+============================================================ */
+:root{ --header-h:78px; }
+
+body.subscribe-page{
+  padding-top:var(--header-h) !important;
+}
+
+.mobile-panel{
+  top:var(--header-h) !important;
+  max-height:calc(100vh - var(--header-h)) !important;
+  overflow-y:auto !important;
+}
+
+/* ============================================================
+   FINAL HEADER RESPONSIVE PATCH
+   Exact requested breakpoints
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:2px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+
+  header .logo{
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:15px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:9px !important;
+    padding:0 12px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:66px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:9px !important;
+    margin-left:3px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:34px !important;
+    padding:0 2px !important;
+    font-size:0.75rem !important;
+  }
+
+  .nav-dropdown{
+    height:34px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    height:20px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.74rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:5px !important;
+  }
+
+  header .auth-buttons a{
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:7px !important;
+    padding:0 8px 0 5px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-dropdown{
+    height:31px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ============================================================
+   FINAL MOBILE HEADER LOCK
+   Force logo left + hamburger right inside header
+============================================================ */
+@media (max-width: 768px){
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    column-gap:10px !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    min-width:0 !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    margin:0 !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    height:38px !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    padding-left:8px !important;
+    padding-right:10px !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
+  }
+}
+
+
+
+/* ============================================================
+   NAV ICON + NO-OVERLAP HEADER PATCH
+   Adds icons to every nav item and compresses safely by screen size.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  gap:7px !important;
+  min-width:0 !important;
+  overflow:visible !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  flex:0 0 auto;
+  color:#38bdf8;
+  text-shadow:0 0 10px rgba(56,189,248,0.35);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  width:16px;
+  min-width:16px;
+  text-align:center;
+  font-size:0.92em;
+}
+
+header nav .nav-text,
+.mobile-panel .nav-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.nav-dropdown-trigger{
+  gap:2px !important;
+}
+
+.nav-dropdown-toggle{
+  flex:0 0 auto !important;
+}
+
+.nav-dropdown-menu{
+  min-width:238px !important;
+}
+
+.nav-dropdown-menu a{
+  gap:11px !important;
+  font-size:0.88rem !important;
+}
+
+.nav-dropdown-menu a i{
+  width:20px !important;
+  min-width:20px !important;
+  text-align:center !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link{
+  min-width:0 !important;
+}
+
+.mobile-panel .mnav-left{
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+
+.mobile-panel .mnav-left i{
+  width:18px;
+  min-width:18px;
+  text-align:center;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  flex:0 0 auto;
+  color:#93c5fd;
+}
+
+.mobile-panel .mnav-row{
+  display:grid !important;
+  grid-template-columns:minmax(0, 1fr) 46px !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+.mobile-panel .mnav-toggle{
+  width:46px !important;
+  min-width:46px !important;
+  max-width:46px !important;
+  height:auto !important;
+  align-self:stretch !important;
+  justify-content:center !important;
+  padding:0 !important;
+  flex:0 0 46px !important;
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:#e5e7eb !important;
+}
+
+@media (min-width:1800px){
+  header nav > a,
+  header nav .nav-main-link{ gap:8px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:17px !important; min-width:17px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header nav{ gap:13px !important; }
+  header nav > a,
+  header nav .nav-main-link{ gap:6px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:15px !important; min-width:15px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header{ gap:8px !important; padding-left:6px !important; padding-right:10px !important; }
+  header nav{ gap:6px !important; margin-left:2px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:4px !important;
+    padding:0 1px !important;
+    font-size:0.69rem !important;
+    letter-spacing:-0.01em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
+  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
+  header .auth-buttons{ gap:4px !important; }
+  header .auth-buttons a{ padding:0 6px !important; font-size:0.66rem !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header{ gap:5px !important; padding-left:4px !important; padding-right:6px !important; }
+  header .logo img{ height:54px !important; }
+  header nav{ gap:4px !important; margin-left:1px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:3px !important;
+    padding:0 1px !important;
+    font-size:0.58rem !important;
+    letter-spacing:-0.03em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:0.78em !important;
+  }
+  .nav-dropdown-toggle{ width:15px !important; height:15px !important; }
+  .nav-dropdown-toggle i{ font-size:0.58rem !important; }
+  header .auth-buttons{ gap:3px !important; }
+  header .auth-buttons a{
+    height:28px !important;
+    padding:0 4px !important;
+    font-size:0.56rem !important;
+    gap:3px !important;
+  }
+  header .auth-buttons a i{ font-size:0.70em !important; }
+}
+
+@media (max-width:768px){
+  .mobile-panel{
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link{
+    justify-content:space-between !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left{ gap:9px !important; }
+  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0, 1fr) 42px !important; gap:7px !important; }
+  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
+}
+
+
+/* ============================================================
+   FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
+   Applies dropdown-style hover to desktop nav links and refines
+   Employer / Jobseeker button icons without causing overlap.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  border-radius:12px !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    text-shadow 0.25s ease !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12));
+  opacity:0;
+  transform:scaleX(0.72);
+  transform-origin:center;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:-1;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#ffffff !important;
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
+  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
+  transform:translateY(-1px) !important;
+}
+
+header nav > a:hover::before,
+header nav > a:focus-visible::before,
+header nav .nav-main-link:hover::before,
+header nav .nav-main-link:focus-visible::before,
+.nav-dropdown.open .nav-main-link::before{
+  opacity:1;
+  transform:scaleX(1);
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
+  transform:scale(1.08);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+.nav-dropdown-menu a{
+  border:1px solid transparent !important;
+  border-radius:10px !important;
+  margin:0 8px !important;
+  padding:12px 12px !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.24) !important;
+  color:#ffffff !important;
+  transform:translateX(3px);
+  box-shadow:0 0 14px rgba(0,198,255,0.12);
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+header .auth-buttons a{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  gap:7px !important;
+}
+
+header .auth-buttons a::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  opacity:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+  transition:opacity 0.25s ease;
+  z-index:-1;
+}
+
+header .auth-buttons a:hover::before,
+header .auth-buttons a:focus-visible::before{
+  opacity:1;
+}
+
+header .auth-buttons a i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  font-size:0.85rem !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.16) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
+  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+header .auth-buttons a.employer-auth i{
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+}
+
+header .auth-buttons a.jobseeker-auth i{
+  background:rgba(167,139,250,0.22) !important;
+  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
+}
+
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  transform:scale(1.10) rotate(-3deg);
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+header .auth-buttons .auth-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#ffffff !important;
+  transform:scale(1.08);
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+.mobile-panel .mnav-left i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:9px !important;
+  }
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:8px !important;
+  }
+  header .auth-buttons a i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
+  }
+}
+
 </style>
 </head>
 
 <body class="subscribe-page">
 
+<!-- HEADER -->
 <!-- HEADER -->
 <header>
   <div class="logo">
@@ -1396,11 +2295,11 @@ input[readonly]{
   </div>
 
   <nav>
-    <a href="index.html">Home</a>
+    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
-        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <a href="about.html" id="aboutNavLink" class="nav-main-link"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></a>
         <button
           type="button"
           class="nav-dropdown-toggle"
@@ -1414,22 +2313,21 @@ input[readonly]{
       </div>
 
       <div class="nav-dropdown-menu" id="aboutNavMenu">
-        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
-        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i><span class="nav-text">Why Choose Us</span></a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i><span class="nav-text">How It Works</span></a>
       </div>
     </div>
 
-    <a href="postedhiring.html">Job Hiring</a>
-        <a href="dashboard.html">Jobseeker</a>
-
-    <a href="postjob.html">Post Jobs</a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
   <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
-    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
-    
+    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
+    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
+  
   </div>
 
   <button
@@ -1443,14 +2341,14 @@ input[readonly]{
   </button>
 </header>
 
-<!-- MOBILE PANEL -->
+<!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
-        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="about.html" class="mnav-main-link"><span class="mnav-left"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></span><i class="fa-solid fa-arrow-right"></i></a>
         <button
           type="button"
           class="mnav-toggle"
@@ -1464,25 +2362,24 @@ input[readonly]{
       </div>
 
       <div class="mnav-submenu" id="mobileAboutMenu">
-        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="why choose us.html"><span class="mnav-left"><i class="fa-solid fa-circle-check"></i><span class="nav-text">Why Choose Us</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html"><span class="mnav-left"><i class="fa-solid fa-diagram-project"></i><span class="nav-text">How It Works</span></span><i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
 
-    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html">Employer  <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
-  
+    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
 <div class="wrap">
   <div class="title"><i class="fa-solid fa-credit-card"></i> Employer Subscription</div>
   <div class="sub">
-    If an employer account is logged in, the <b>company name</b> and <b>company email</b> will auto-fill. Expired subscriptions are also auto-marked as <b>not active</b>.
+    If an employer account is logged in, the <b>company name</b> and <b>company email</b> will auto-fill. Expired subscriptions are auto-marked as <b>not active</b> using the USA/Supabase subscription date. Employers must subscribe first before employer login.
   </div>
 
   <div class="card">
@@ -1533,7 +2430,7 @@ input[readonly]{
 <script>
 /* ============================================================
    ABOUT DROPDOWN
-=========================================================== */
+============================================================ */
 (function(){
   const dd = document.getElementById("aboutNavDropdown");
   const toggle = document.getElementById("aboutNavToggle");
@@ -1584,7 +2481,7 @@ input[readonly]{
 
 /* ============================================================
    MOBILE MENU
-=========================================================== */
+============================================================ */
 (function(){
   const btn = document.getElementById("navToggle");
   const panel = document.getElementById("mobilePanel");
@@ -1645,7 +2542,7 @@ input[readonly]{
 
 /* ============================================================
    SUPABASE CLIENT RESOLUTION
-=========================================================== */
+============================================================ */
 function isSupabaseClient(obj){
   return !!(
     obj &&
@@ -1666,7 +2563,8 @@ function resolveSupabaseClient(){
   if (isSupabaseClient(window.supabase)) return window.supabase;
   if (window.supabaseClient && isSupabaseClient(window.supabaseClient)) return window.supabaseClient;
   if (isSupabaseNamespace(window.supabase) && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
-    return window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    return window.supabaseClient;
   }
   return null;
 }
@@ -1675,7 +2573,7 @@ let supabaseClient = resolveSupabaseClient();
 
 /* ============================================================
    ELEMENTS
-=========================================================== */
+============================================================ */
 const form = document.getElementById("subForm");
 const msg = document.getElementById("msg");
 const payBtn = document.getElementById("payBtn");
@@ -1689,8 +2587,17 @@ const cardExpiryInput = document.getElementById("cardExpiry");
 const cardCvvInput = document.getElementById("cardCvv");
 
 /* ============================================================
+   SUBSCRIPTION DATE SETTINGS
+   USA date is used for matching subscription_end_date.
+   If your table is pure Supabase UTC date, change to "UTC".
+============================================================ */
+const SUBSCRIPTION_DATE_TIME_ZONE = "America/New_York";
+const INACTIVE_SUBSCRIPTION_STATUS = "not active";
+const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "paid", "approved", "current"];
+
+/* ============================================================
    HELPERS
-=========================================================== */
+============================================================ */
 function clearMessage(){
   msg.textContent = "";
   msg.innerHTML = "";
@@ -1704,6 +2611,10 @@ function showErr(t){
 
 function showOk(t){
   msg.innerHTML = `<span style="color:#bbf7d0"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(t)}</span>`;
+}
+
+function showWarn(t){
+  msg.innerHTML = `<span style="color:#fde68a"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(t)}</span>`;
 }
 
 function escapeHtml(value){
@@ -1743,19 +2654,77 @@ function getRecordField(obj, names, fallback = ""){
   return fallback;
 }
 
-function toDateOnly(value){
-  if(!value) return null;
-  const d = new Date(value);
-  if(isNaN(d)) return null;
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+function hasOwnField(obj, name){
+  return !!(obj && Object.prototype.hasOwnProperty.call(obj, name));
 }
 
-function getTodayDateOnly(){
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+function getSafeSupabaseUrl(){
+  return window.SUPABASE_URL || (typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : "");
 }
 
-function isExpiredByEndDate(record){
+function getSafeSupabaseAnonKey(){
+  return window.SUPABASE_ANON_KEY || (typeof SUPABASE_ANON_KEY !== "undefined" ? SUPABASE_ANON_KEY : "");
+}
+
+function pad2(value){
+  return String(value).padStart(2, "0");
+}
+
+function getDateKeyInTimeZone(date = new Date(), timeZone = SUBSCRIPTION_DATE_TIME_ZONE){
+  try{
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).formatToParts(date);
+
+    const map = {};
+    parts.forEach(part => { map[part.type] = part.value; });
+
+    if(map.year && map.month && map.day){
+      return `${map.year}-${map.month}-${map.day}`;
+    }
+  }catch(err){
+    console.warn("Timezone date conversion failed. Falling back to UTC date.", err);
+  }
+
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getTodaySubscriptionDateKey(){
+  return getDateKeyInTimeZone(new Date(), SUBSCRIPTION_DATE_TIME_ZONE);
+}
+
+function normalizeDateKey(value){
+  if(value == null) return "";
+
+  const raw = String(value).trim();
+  if(!raw) return "";
+
+  const yyyyMmDd = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(yyyyMmDd){
+    return `${yyyyMmDd[1]}-${pad2(yyyyMmDd[2])}-${pad2(yyyyMmDd[3])}`;
+  }
+
+  const mmDdYyyy = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(mmDdYyyy){
+    return `${mmDdYyyy[3]}-${pad2(mmDdYyyy[1])}-${pad2(mmDdYyyy[2])}`;
+  }
+
+  const d = new Date(raw);
+  if(isNaN(d.getTime())) return "";
+
+  return getDateKeyInTimeZone(d, SUBSCRIPTION_DATE_TIME_ZONE);
+}
+
+function compareDateKeys(a, b){
+  if(!a || !b) return null;
+  if(a === b) return 0;
+  return a < b ? -1 : 1;
+}
+
+function getSubscriptionEndDateKey(record){
   const endValue = getRecordField(record, [
     "subscription_end_date",
     "end_date",
@@ -1764,21 +2733,56 @@ function isExpiredByEndDate(record){
     "expiration_date"
   ], "");
 
-  const endDate = toDateOnly(endValue);
-  if(!endDate) return false;
+  return normalizeDateKey(endValue);
+}
 
-  const today = getTodayDateOnly();
-  return endDate < today;
+function getSubscriptionStartDateKey(record){
+  const startValue = getRecordField(record, [
+    "subscription_start_date",
+    "start_date",
+    "date_start",
+    "created_at"
+  ], "");
+
+  return normalizeDateKey(startValue);
+}
+
+function isExpiredByEndDate(record){
+  const endDateKey = getSubscriptionEndDateKey(record);
+  if(!endDateKey) return false;
+
+  const todayKey = getTodaySubscriptionDateKey();
+  const comparison = compareDateKeys(endDateKey, todayKey);
+
+  return comparison !== null && comparison <= 0;
 }
 
 function isActiveStatus(record){
   const statusText = normalizeText(getRecordField(record, [
     "status",
-    "payment_status",
-    "subscription_status"
+    "subscription_status",
+    "payment_status"
   ], ""));
 
-  return ["active", "paid", "approved", "current"].includes(statusText);
+  return ACTIVE_SUBSCRIPTION_STATUSES.includes(statusText);
+}
+
+function getWritableStatusColumn(record){
+  if(hasOwnField(record, "status")) return "status";
+  if(hasOwnField(record, "subscription_status")) return "subscription_status";
+  return "status";
+}
+
+function buildInactiveUpdatePayload(record){
+  const statusColumn = getWritableStatusColumn(record);
+  const payload = {};
+  payload[statusColumn] = INACTIVE_SUBSCRIPTION_STATUS;
+
+  if(hasOwnField(record, "days_remaining")){
+    payload.days_remaining = 0;
+  }
+
+  return payload;
 }
 
 function setupCardFormatting(){
@@ -1797,7 +2801,7 @@ function setupCardFormatting(){
 
 /* ============================================================
    FORM RESET
-=========================================================== */
+============================================================ */
 function clearFormPreserveIdentity(){
   cardNameInput.value = "";
   cardNumberInput.value = "";
@@ -1810,14 +2814,27 @@ function clearFormPreserveIdentity(){
   logoutBtn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout`;
 }
 
+function setLoadingState(isLoading, text = "Processing..."){
+  payBtn.disabled = isLoading;
+  logoutBtn.disabled = isLoading;
+
+  if(isLoading){
+    payBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${escapeHtml(text)}`;
+  }else{
+    payBtn.innerHTML = `<i class="fa-solid fa-shield"></i> Pay $10 Now`;
+    logoutBtn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout`;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   clearFormPreserveIdentity();
   setupCardFormatting();
 
   try{
+    await autoExpireAllSubscriptionsOnPageOpen();
     await autofillEmployerIfLoggedIn();
   }catch(err){
-    console.error("Autofill load error:", err);
+    console.error("Subscription startup check error:", err);
   }
 });
 
@@ -1827,7 +2844,7 @@ window.addEventListener("pageshow", () => {
 
 /* ============================================================
    AUTO FILL LOGGED-IN EMPLOYER
-=========================================================== */
+============================================================ */
 async function getLoggedInSessionEmail(){
   if(!supabaseClient) return "";
 
@@ -1877,6 +2894,7 @@ async function autofillEmployerIfLoggedIn(){
 
   if(!employerRow){
     companyEmailInput.value = sessionEmail;
+    showWarn("No employer profile found. Enter your company name, subscribe, then login again.");
     return;
   }
 
@@ -1904,18 +2922,37 @@ async function autofillEmployerIfLoggedIn(){
   localStorage.setItem("employerEmail", companyEmail);
 
   const updateResult = await autoMarkExpiredSubscriptions(companyName, companyEmail);
+
+  let accessResult = {
+    hasActiveSubscription: !!updateResult.hasActiveSubscription,
+    activeEndDate: updateResult.activeEndDate || ""
+  };
+
+  if(!updateResult.serverUsed){
+    accessResult = await getEmployerSubscriptionAccess(companyName, companyEmail);
+  }
+
   if(updateResult.updated > 0){
-    showOk(`${updateResult.updated} expired subscription record(s) were updated to not active.`);
+    showWarn(`${updateResult.updated} expired subscription record(s) matched the USA/Supabase date and were updated to not active. Please subscribe first before employer login.`);
+    return;
+  }
+
+  if(accessResult.hasActiveSubscription){
+    showOk(`Your subscription is active until ${accessResult.activeEndDate || "your subscription end date"}. You can login/open the employer dashboard.`);
+  }else{
+    showWarn("No active subscription found. Please subscribe first before employer login.");
   }
 }
 
 /* ============================================================
    AUTO-MARK EXPIRED SUBSCRIPTIONS
-=========================================================== */
+============================================================ */
 async function fetchEmployerPaymentRowsByEmail(email){
   if(!supabaseClient || !email) return [];
 
   const emailColumns = ["company_email", "email", "contact_email", "employer_email"];
+  const allRows = [];
+  const seenIds = new Set();
 
   for(const emailColumn of emailColumns){
     let result = await supabaseClient
@@ -1937,40 +2974,24 @@ async function fetchEmployerPaymentRowsByEmail(email){
     }
 
     if(Array.isArray(result.data) && result.data.length){
-      return result.data;
+      result.data.forEach(row => {
+        const key = row?.id != null ? `id:${row.id}` : JSON.stringify(row);
+        if(!seenIds.has(key)){
+          seenIds.add(key);
+          allRows.push(row);
+        }
+      });
     }
   }
 
-  return [];
+  return allRows;
 }
 
-async function updateSingleRowNotActive(rowId){
-  if(!rowId) return false;
-
-  const { error } = await supabaseClient
-    .from("employer_payment_transactions")
-    .update({ status: "not active" })
-    .eq("id", rowId);
-
-  if(error){
-    console.error("Failed updating row to not active:", error);
-    return false;
-  }
-
-  return true;
-}
-
-async function autoMarkExpiredSubscriptions(companyName, companyEmail){
-  const result = { updated: 0 };
-
-  if(!supabaseClient || !companyEmail) return result;
-
-  const rows = await fetchEmployerPaymentRowsByEmail(companyEmail);
-  if(!rows.length) return result;
-
+function filterMatchingSubscriptionRows(rows, companyName, companyEmail){
   const normalizedCompany = normalizeCompanyKey(companyName);
+  const normalizedEmail = normalizeText(companyEmail);
 
-  const matchingRows = rows.filter(row => {
+  return rows.filter(row => {
     const rowCompany = normalizeCompanyKey(getRecordField(row, [
       "company_name",
       "company",
@@ -1985,16 +3006,168 @@ async function autoMarkExpiredSubscriptions(companyName, companyEmail){
       "employer_email"
     ], ""));
 
-    const companyMatches = !normalizedCompany || rowCompany === normalizedCompany;
-    const emailMatches = rowEmail === normalizeText(companyEmail);
+    const companyMatches = !normalizedCompany || !rowCompany || rowCompany === normalizedCompany;
+    const emailMatches = rowEmail === normalizedEmail;
 
     return companyMatches && emailMatches;
   });
+}
+
+async function updateSingleRowNotActive(row){
+  const rowId = row?.id;
+  if(!rowId) return false;
+
+  const payload = buildInactiveUpdatePayload(row);
+
+  let { error } = await supabaseClient
+    .from("employer_payment_transactions")
+    .update(payload)
+    .eq("id", rowId);
+
+  if(error && hasOwnField(payload, "days_remaining")){
+    const retryPayload = {};
+    retryPayload[getWritableStatusColumn(row)] = INACTIVE_SUBSCRIPTION_STATUS;
+
+    const retry = await supabaseClient
+      .from("employer_payment_transactions")
+      .update(retryPayload)
+      .eq("id", rowId);
+
+    error = retry.error;
+  }
+
+  if(error){
+    console.error("Failed updating row to not active:", error);
+    return false;
+  }
+
+  return true;
+}
+
+async function runServerSubscriptionMaintenance(companyName = "", companyEmail = "", options = {}){
+  const supabaseUrl = getSafeSupabaseUrl();
+  const supabaseAnonKey = getSafeSupabaseAnonKey();
+
+  if(!supabaseUrl || !supabaseAnonKey){
+    return { ok:false, error:"Supabase config is missing." };
+  }
+
+  try{
+    const res = await fetch(`${supabaseUrl}/functions/v1/expire-employer-subscriptions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": supabaseAnonKey,
+        "Authorization": `Bearer ${supabaseAnonKey}`
+      },
+      body: JSON.stringify({
+        company_name: companyName || "",
+        company_email: companyEmail || "",
+        subscription_time_zone: SUBSCRIPTION_DATE_TIME_ZONE,
+        client_subscription_date: getTodaySubscriptionDateKey(),
+        update_all: options.updateAll !== false
+      })
+    });
+
+    const json = await res.json().catch(() => ({}));
+
+    if(!res.ok || !json.ok){
+      console.warn("expire-employer-subscriptions function did not complete:", json);
+      return { ok:false, status:res.status, error:json.error || "Subscription maintenance function failed." };
+    }
+
+    return json;
+  }catch(err){
+    console.warn("expire-employer-subscriptions function is unavailable:", err);
+    return { ok:false, error:String(err?.message || err) };
+  }
+}
+
+async function autoExpireAllSubscriptionsOnPageOpen(){
+  const serverResult = await runServerSubscriptionMaintenance("", "", { updateAll:true });
+
+  if(serverResult.ok && Number(serverResult.updated || 0) > 0){
+    showWarn(`${serverResult.updated} expired subscription record(s) were changed to not active using ${serverResult.today || "today"}.`);
+  }
+
+  return serverResult;
+}
+
+async function autoMarkExpiredSubscriptions(companyName, companyEmail){
+  const result = {
+    updated: 0,
+    checkedToday: getTodaySubscriptionDateKey(),
+    timeZone: SUBSCRIPTION_DATE_TIME_ZONE,
+    serverUsed: false,
+    serverError: ""
+  };
+
+  /*
+    Best fix: let the Edge Function update the table with the service role key.
+    This fixes the issue where the browser cannot update the highlighted row because of RLS
+    or because the row is not matched by the logged-in employer email.
+  */
+  const serverResult = await runServerSubscriptionMaintenance(companyName, companyEmail, { updateAll:true });
+
+  if(serverResult.ok){
+    result.serverUsed = true;
+    result.updated = Number(serverResult.updated || 0);
+    result.checkedToday = serverResult.today || result.checkedToday;
+    result.hasActiveSubscription = !!serverResult.has_active_subscription;
+    result.activeEndDate = serverResult.active_end_date || "";
+    return result;
+  }
+
+  result.serverError = serverResult.error || "Edge Function not available. Browser fallback used.";
+
+  /* Browser fallback: works only for rows allowed by your RLS policies. */
+  if(!supabaseClient || !companyEmail) return result;
+
+  const rows = await fetchEmployerPaymentRowsByEmail(companyEmail);
+  if(!rows.length) return result;
+
+  const matchingRows = filterMatchingSubscriptionRows(rows, companyName, companyEmail);
 
   for(const row of matchingRows){
     if(isExpiredByEndDate(row) && isActiveStatus(row)){
-      const updated = await updateSingleRowNotActive(row.id);
+      const updated = await updateSingleRowNotActive(row);
       if(updated) result.updated += 1;
+    }
+  }
+
+  return result;
+}
+
+async function getEmployerSubscriptionAccess(companyName, companyEmail){
+  const result = {
+    hasActiveSubscription: false,
+    activeEndDate: "",
+    latestEndDate: "",
+    activeRow: null
+  };
+
+  if(!supabaseClient || !companyEmail) return result;
+
+  const rows = await fetchEmployerPaymentRowsByEmail(companyEmail);
+  const matchingRows = filterMatchingSubscriptionRows(rows, companyName, companyEmail);
+
+  const sortedRows = matchingRows.sort((a, b) => {
+    const bEnd = getSubscriptionEndDateKey(b) || getSubscriptionStartDateKey(b) || "";
+    const aEnd = getSubscriptionEndDateKey(a) || getSubscriptionStartDateKey(a) || "";
+    return bEnd.localeCompare(aEnd);
+  });
+
+  for(const row of sortedRows){
+    const endDateKey = getSubscriptionEndDateKey(row);
+    if(endDateKey && !result.latestEndDate){
+      result.latestEndDate = endDateKey;
+    }
+
+    if(isActiveStatus(row) && !isExpiredByEndDate(row)){
+      result.hasActiveSubscription = true;
+      result.activeEndDate = endDateKey;
+      result.activeRow = row;
+      break;
     }
   }
 
@@ -2003,7 +3176,7 @@ async function autoMarkExpiredSubscriptions(companyName, companyEmail){
 
 /* ============================================================
    LOGOUT
-=========================================================== */
+============================================================ */
 async function logoutAndRedirect(){
   clearMessage();
 
@@ -2050,7 +3223,7 @@ logoutBtn.addEventListener("click", logoutAndRedirect);
 
 /* ============================================================
    SUBMIT
-=========================================================== */
+============================================================ */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   clearMessage();
@@ -2071,24 +3244,34 @@ form.addEventListener("submit", async (e) => {
   if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) return showErr("Expiry must be MM/YY.");
   if (cardCvv.length < 3 || cardCvv.length > 4) return showErr("Invalid CVV.");
 
-  payBtn.disabled = true;
-  logoutBtn.disabled = true;
-  payBtn.textContent = "Processing...";
+  const supabaseUrl = getSafeSupabaseUrl();
+  const supabaseAnonKey = getSafeSupabaseAnonKey();
+
+  if(!supabaseUrl || !supabaseAnonKey){
+    return showErr("Supabase config is missing. Check supabase_config.js.");
+  }
+
+  setLoadingState(true, "Processing...");
 
   try {
     await autoMarkExpiredSubscriptions(company_name, company_email);
 
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/manual-subscribe`, {
+    const res = await fetch(`${supabaseUrl}/functions/v1/manual-subscribe`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+        "apikey": supabaseAnonKey,
+        "Authorization": `Bearer ${supabaseAnonKey}`
       },
-      body: JSON.stringify({ company_name, company_email })
+      body: JSON.stringify({
+        company_name,
+        company_email,
+        subscription_time_zone: SUBSCRIPTION_DATE_TIME_ZONE,
+        client_subscription_date: getTodaySubscriptionDateKey()
+      })
     });
 
-    const json = await res.json();
+    const json = await res.json().catch(() => ({}));
 
     if (!res.ok || !json.ok) {
       console.error("manual-subscribe error:", json);
@@ -2103,6 +3286,8 @@ form.addEventListener("submit", async (e) => {
 
     localStorage.setItem("lastSubscribedEmail", company_email);
     localStorage.setItem("lastSubscribedCompanyName", company_name);
+    localStorage.setItem("employerEmail", company_email);
+    localStorage.setItem("employerCompanyName", company_name);
 
     setTimeout(() => {
       clearFormPreserveIdentity();
@@ -2113,13 +3298,11 @@ form.addEventListener("submit", async (e) => {
     console.error(err);
     showErr("Network error. Please try again.");
   } finally {
-    payBtn.disabled = false;
-    logoutBtn.disabled = false;
-    payBtn.innerHTML = `<i class="fa-solid fa-shield"></i> Pay $10 Now`;
-    logoutBtn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout`;
+    setLoadingState(false);
   }
 });
 </script>
+
 
 </body>
 </html>

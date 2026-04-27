@@ -1817,22 +1817,924 @@
   }
 }
 
+
+/* ============================================================
+   ACCESS RESTRICTED MODAL PRIORITY PATCH
+   Keeps the warning modal above the portal popup when inactive users
+   click Applicant Dashboard or Employer Dashboard.
+============================================================ */
+#gateModal{
+  z-index:1800 !important;
+}
+
+#gateModal .modal{
+  border-color:rgba(239,68,68,0.55) !important;
+  box-shadow:0 0 30px rgba(239,68,68,0.24), 0 18px 44px rgba(0,0,0,0.45) !important;
+}
+
+#gateModal .modal-title{
+  color:#fecaca !important;
+}
+
+
+
+/* ============================================================
+   EXACT LATEST INDEX HEADER OVERRIDE - APPLIED TO EMPLOYER LOGIN
+   Matches the latest index header: nav icons, dropdown hover effects,
+   refined Employer/Jobseeker icons, desktop no-overlap sizing,
+   and mobile logo-left / hamburger-right layout.
+============================================================ */
+/* ============================================================
+   FINAL HEADER RESPONSIVE PATCH
+   Exact requested breakpoints
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:2px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+
+  header .logo{
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:15px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:9px !important;
+    padding:0 12px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:66px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:9px !important;
+    margin-left:3px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:34px !important;
+    padding:0 2px !important;
+    font-size:0.75rem !important;
+  }
+
+  .nav-dropdown{
+    height:34px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    height:20px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.74rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:5px !important;
+  }
+
+  header .auth-buttons a{
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:7px !important;
+    padding:0 8px 0 5px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-dropdown{
+    height:31px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ============================================================
+   FINAL MOBILE HEADER LOCK
+   Force logo left + hamburger right inside header
+============================================================ */
+@media (max-width: 768px){
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    column-gap:10px !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    min-width:0 !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    margin:0 !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    height:38px !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    padding-left:8px !important;
+    padding-right:10px !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
+  }
+}
+
+
+
+/* ============================================================
+   NAV ICON + NO-OVERLAP HEADER PATCH
+   Adds icons to every nav item and compresses safely by screen size.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  gap:7px !important;
+  min-width:0 !important;
+  overflow:visible !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  flex:0 0 auto;
+  color:#38bdf8;
+  text-shadow:0 0 10px rgba(56,189,248,0.35);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  width:16px;
+  min-width:16px;
+  text-align:center;
+  font-size:0.92em;
+}
+
+header nav .nav-text,
+.mobile-panel .nav-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.nav-dropdown-trigger{
+  gap:2px !important;
+}
+
+.nav-dropdown-toggle{
+  flex:0 0 auto !important;
+}
+
+.nav-dropdown-menu{
+  min-width:238px !important;
+}
+
+.nav-dropdown-menu a{
+  gap:11px !important;
+  font-size:0.88rem !important;
+}
+
+.nav-dropdown-menu a i{
+  width:20px !important;
+  min-width:20px !important;
+  text-align:center !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link{
+  min-width:0 !important;
+}
+
+.mobile-panel .mnav-left{
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+
+.mobile-panel .mnav-left i{
+  width:18px;
+  min-width:18px;
+  text-align:center;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  flex:0 0 auto;
+  color:#93c5fd;
+}
+
+.mobile-panel .mnav-row{
+  display:grid !important;
+  grid-template-columns:minmax(0, 1fr) 46px !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+.mobile-panel .mnav-toggle{
+  width:46px !important;
+  min-width:46px !important;
+  max-width:46px !important;
+  height:auto !important;
+  align-self:stretch !important;
+  justify-content:center !important;
+  padding:0 !important;
+  flex:0 0 46px !important;
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:#e5e7eb !important;
+}
+
+@media (min-width:1800px){
+  header nav > a,
+  header nav .nav-main-link{ gap:8px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:17px !important; min-width:17px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header nav{ gap:13px !important; }
+  header nav > a,
+  header nav .nav-main-link{ gap:6px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:15px !important; min-width:15px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header{ gap:8px !important; padding-left:6px !important; padding-right:10px !important; }
+  header nav{ gap:6px !important; margin-left:2px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:4px !important;
+    padding:0 1px !important;
+    font-size:0.69rem !important;
+    letter-spacing:-0.01em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
+  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
+  header .auth-buttons{ gap:4px !important; }
+  header .auth-buttons a{ padding:0 6px !important; font-size:0.66rem !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header{ gap:5px !important; padding-left:4px !important; padding-right:6px !important; }
+  header .logo img{ height:54px !important; }
+  header nav{ gap:4px !important; margin-left:1px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:3px !important;
+    padding:0 1px !important;
+    font-size:0.58rem !important;
+    letter-spacing:-0.03em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:0.78em !important;
+  }
+  .nav-dropdown-toggle{ width:15px !important; height:15px !important; }
+  .nav-dropdown-toggle i{ font-size:0.58rem !important; }
+  header .auth-buttons{ gap:3px !important; }
+  header .auth-buttons a{
+    height:28px !important;
+    padding:0 4px !important;
+    font-size:0.56rem !important;
+    gap:3px !important;
+  }
+  header .auth-buttons a i{ font-size:0.70em !important; }
+}
+
+@media (max-width:768px){
+  .mobile-panel{
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link{
+    justify-content:space-between !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left{ gap:9px !important; }
+  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0, 1fr) 42px !important; gap:7px !important; }
+  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
+}
+
+
+/* ============================================================
+   FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
+   Applies dropdown-style hover to desktop nav links and refines
+   Employer / Jobseeker button icons without causing overlap.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  border-radius:12px !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    text-shadow 0.25s ease !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12));
+  opacity:0;
+  transform:scaleX(0.72);
+  transform-origin:center;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:-1;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#ffffff !important;
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
+  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
+  transform:translateY(-1px) !important;
+}
+
+header nav > a:hover::before,
+header nav > a:focus-visible::before,
+header nav .nav-main-link:hover::before,
+header nav .nav-main-link:focus-visible::before,
+.nav-dropdown.open .nav-main-link::before{
+  opacity:1;
+  transform:scaleX(1);
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
+  transform:scale(1.08);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+.nav-dropdown-menu a{
+  border:1px solid transparent !important;
+  border-radius:10px !important;
+  margin:0 8px !important;
+  padding:12px 12px !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.24) !important;
+  color:#ffffff !important;
+  transform:translateX(3px);
+  box-shadow:0 0 14px rgba(0,198,255,0.12);
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+header .auth-buttons a{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  gap:7px !important;
+}
+
+header .auth-buttons a::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  opacity:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+  transition:opacity 0.25s ease;
+  z-index:-1;
+}
+
+header .auth-buttons a:hover::before,
+header .auth-buttons a:focus-visible::before{
+  opacity:1;
+}
+
+header .auth-buttons a i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  font-size:0.85rem !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.16) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
+  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+header .auth-buttons a.employer-auth i{
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+}
+
+header .auth-buttons a.jobseeker-auth i{
+  background:rgba(167,139,250,0.22) !important;
+  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
+}
+
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  transform:scale(1.10) rotate(-3deg);
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+header .auth-buttons .auth-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#ffffff !important;
+  transform:scale(1.08);
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+.mobile-panel .mnav-left i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:9px !important;
+  }
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:8px !important;
+  }
+  header .auth-buttons a i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
+  }
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="logo">
     <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
   </div>
 
   <nav>
-    <a href="index.html">Home</a>
+    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
-        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <a href="about.html" id="aboutNavLink" class="nav-main-link"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></a>
         <button
           type="button"
           class="nav-dropdown-toggle"
@@ -1846,22 +2748,21 @@
       </div>
 
       <div class="nav-dropdown-menu" id="aboutNavMenu">
-        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
-        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i><span class="nav-text">Why Choose Us</span></a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i><span class="nav-text">How It Works</span></a>
       </div>
     </div>
 
-    <a href="postedhiring.html">Job Hiring</a>
-            <a href="dashboard.html">Jobseeker</a>
-
-    <a href="postjob.html">Post Jobs</a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
   <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
-    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
-    
+    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
+    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
+  
   </div>
 
   <button
@@ -1875,13 +2776,14 @@
   </button>
 </header>
 
+<!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
-        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="about.html" class="mnav-main-link"><span class="mnav-left"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></span><i class="fa-solid fa-arrow-right"></i></a>
         <button
           type="button"
           class="mnav-toggle"
@@ -1895,19 +2797,17 @@
       </div>
 
       <div class="mnav-submenu" id="mobileAboutMenu">
-        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="why choose us.html"><span class="mnav-left"><i class="fa-solid fa-circle-check"></i><span class="nav-text">Why Choose Us</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html"><span class="mnav-left"><i class="fa-solid fa-diagram-project"></i><span class="nav-text">How It Works</span></span><i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
 
-    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html">Jobseeker  <i class="fa-solid fa-arrow-right"></i></a>
-  
-  
+    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
@@ -1915,7 +2815,7 @@
   <section class="login-box">
     <h2><i class="fa-solid fa-right-to-bracket"></i> Employer Login</h2>
     <div class="subtext">
-      Login to continue. <b>Employer dashboard requires an active subscription</b>.
+      Login to continue. <b>Applicant and employer dashboards require an active subscription</b>.
     </div>
 
     <form id="loginForm" autocomplete="on">
@@ -2023,7 +2923,7 @@
       </div>
 
       <div class="portal-note">
-        Employer dashboard opens only when subscription is active.
+        Applicant and employer dashboards open only when subscription is active.
       </div>
     </div>
   </div>
@@ -2142,6 +3042,9 @@
     }, { passive:true });
   })();
 
+  /* ============================================================
+     ELEMENTS
+  ============================================================ */
   const loginForm = document.getElementById("loginForm");
   const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
@@ -2162,21 +3065,184 @@
   const goSubscribe = document.getElementById("goSubscribe");
   const goSubscriptionStatus = document.getElementById("goSubscriptionStatus");
 
+  /* ============================================================
+     SUBSCRIPTION / EDGE FUNCTION SETTINGS
+  ============================================================ */
+  const EXPIRE_SUBSCRIPTIONS_FUNCTION = "expire-employer-subscriptions";
+  const SUBSCRIPTION_DATE_TIME_ZONE = "America/New_York";
+  const INACTIVE_SUBSCRIPTION_STATUS = "not active";
+  const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "paid", "approved", "current"];
+
   let currentEmployerUserId = null;
+  let currentEmployerEmail = "";
   let currentSubscriptionInfo = {
     active: false,
     reason: "unknown",
     record: null,
-    remaining: 0
+    remaining: 0,
+    edgeResult: null
   };
 
-  function openModal(msg){
-    modalMessage.textContent = msg || "Sign up first before you can login. To open employer dashboard, you also need an active subscription.";
+  /* When an inactive/expired subscription warning is closed,
+     send the user back to a clean login form. */
+  let redirectToClearedLoginAfterWarningClose = false;
+
+  /* ============================================================
+     SUPABASE HELPERS
+  ============================================================ */
+  function isSupabaseClient(obj){
+    return !!(
+      obj &&
+      typeof obj.from === "function" &&
+      obj.auth &&
+      typeof obj.auth.getSession === "function"
+    );
+  }
+
+  function isSupabaseNamespace(obj){
+    return !!(obj && typeof obj.createClient === "function");
+  }
+
+  function getSafeSupabaseUrl(){
+    return window.SUPABASE_URL || (typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : "");
+  }
+
+  function getSafeSupabaseAnonKey(){
+    return window.SUPABASE_ANON_KEY || (typeof SUPABASE_ANON_KEY !== "undefined" ? SUPABASE_ANON_KEY : "");
+  }
+
+  function getSupabaseClient(){
+    if(isSupabaseClient(window.supabase)) return window.supabase;
+    if(isSupabaseClient(window.supabaseClient)) return window.supabaseClient;
+
+    const url = getSafeSupabaseUrl();
+    const anonKey = getSafeSupabaseAnonKey();
+
+    if(isSupabaseNamespace(window.supabase) && url && anonKey){
+      window.supabaseClient = window.supabase.createClient(url, anonKey);
+      return window.supabaseClient;
+    }
+
+    return null;
+  }
+
+  async function getCurrentAccessToken(){
+    const client = getSupabaseClient();
+    const anonKey = getSafeSupabaseAnonKey();
+
+    try{
+      if(client?.auth?.getSession){
+        const { data } = await client.auth.getSession();
+        return data?.session?.access_token || anonKey || "";
+      }
+    }catch(err){
+      console.warn("Unable to read Supabase access token:", err);
+    }
+
+    return anonKey || "";
+  }
+
+  /* ============================================================
+     UI HELPERS
+  ============================================================ */
+  function openModal(msg, options = {}){
+    /* Keep the Access Restricted modal visible above the Employer Portal popup. */
+    if(portalModal){
+      portalModal.style.display = "none";
+    }
+
+    redirectToClearedLoginAfterWarningClose = !!options.redirectToClearedLogin;
+
+    modalMessage.textContent = msg || "Sign up first before you can login. Applicant and employer dashboards require an active subscription.";
     gateModal.style.display = "flex";
   }
 
+  function clearLoginFormAfterPopupClose(){
+    if(loginForm && typeof loginForm.reset === "function"){
+      loginForm.reset();
+    }
+
+    if(emailInput) emailInput.value = "";
+
+    if(passwordInput){
+      passwordInput.value = "";
+      passwordInput.type = "password";
+    }
+
+    if(togglePassword){
+      togglePassword.innerHTML = '<i class="fa-solid fa-eye"></i>';
+    }
+
+    setLoginButtonLoading(false);
+  }
+
+  function resetEmployerLoginSessionState(){
+    currentEmployerUserId = null;
+    currentEmployerEmail = "";
+    currentSubscriptionInfo = {
+      active: false,
+      reason: "unknown",
+      record: null,
+      remaining: 0,
+      edgeResult: null
+    };
+  }
+
+  async function signOutEmployerSafely(){
+    try{
+      const client = getSupabaseClient();
+      if(client?.auth?.signOut){
+        await client.auth.signOut();
+      }
+    }catch(err){
+      console.warn("Employer sign-out skipped:", err);
+    }
+  }
+
+  function redirectToCleanLoginForm(){
+    clearLoginFormAfterPopupClose();
+    resetEmployerLoginSessionState();
+
+    signOutEmployerSafely().finally(() => {
+      /* Reload the same login page so the user sees a clean, cleared login form. */
+      window.location.href = "loginemployer.html";
+    });
+  }
+
   function hideModal(){
+    const shouldRedirect = redirectToClearedLoginAfterWarningClose;
+    redirectToClearedLoginAfterWarningClose = false;
+
     gateModal.style.display = "none";
+
+    if(shouldRedirect){
+      redirectToCleanLoginForm();
+      return;
+    }
+
+    clearLoginFormAfterPopupClose();
+  }
+
+  function getInactivePortalCloseMessage(info = currentSubscriptionInfo){
+    const reason = String(info?.reason || "inactive").toLowerCase();
+
+    if(reason === "expired"){
+      return "Your subscription is expired or reached its end date. Please subscribe first before opening the Applicant Dashboard or Employer Dashboard.";
+    }
+
+    if(reason === "inactive"){
+      return "Your subscription is inactive. Please subscribe first before opening the Applicant Dashboard or Employer Dashboard.";
+    }
+
+    if(reason === "no_subscription"){
+      return "No active subscription found. Please subscribe first before opening the Applicant Dashboard or Employer Dashboard.";
+    }
+
+    if(reason === "edge_failed"){
+      return "Unable to verify subscription status from the server. Please try again before opening the dashboards.";
+    }
+
+    return "Active subscription required before opening the Applicant Dashboard or Employer Dashboard. Please click Subscribe or Subscription Status.";
   }
 
   function openPortalModal(){
@@ -2185,57 +3251,53 @@
 
   function hidePortalModal(){
     portalModal.style.display = "none";
+
+    /* If the employer portal is closed while subscription is inactive/expired,
+       show the Access Restricted warning first. When that warning is closed,
+       the page redirects back to a clean login form. */
+    if(currentEmployerUserId && !currentSubscriptionInfo?.active){
+      openModal(getInactivePortalCloseMessage(currentSubscriptionInfo), {
+        redirectToClearedLogin: true
+      });
+      return;
+    }
+
+    clearLoginFormAfterPopupClose();
   }
 
-  if (closePortalModal) {
+  function setLoginButtonLoading(isLoading, text = "Logging in..."){
+    loginBtn.disabled = !!isLoading;
+    loginBtn.innerHTML = isLoading
+      ? `<i class="fa-solid fa-spinner fa-spin"></i> ${text}`
+      : `<i class="fa-solid fa-arrow-right-to-bracket"></i> Login`;
+  }
+
+  if(closePortalModal){
     closePortalModal.addEventListener("click", hidePortalModal);
   }
 
-  if (portalModal) {
+  if(portalModal){
     portalModal.addEventListener("click", function(e){
-      if (e.target === portalModal) hidePortalModal();
+      if(e.target === portalModal) hidePortalModal();
     });
   }
 
   document.addEventListener("keydown", function(e){
-    if (e.key === "Escape") {
+    if(e.key !== "Escape") return;
+
+    if(gateModal && gateModal.style.display === "flex"){
+      hideModal();
+      return;
+    }
+
+    if(portalModal && portalModal.style.display === "flex"){
       hidePortalModal();
     }
   });
 
-  function setPortalStatusUI(info){
-    const remaining = Number(info?.remaining || 0);
-
-    if (info?.active) {
-      portalStatusLine.className = "portal-status active";
-      portalStatusLine.innerHTML = `
-        <i class="fa-solid fa-circle-check"></i>
-        Active Subscription • ${remaining} day${remaining === 1 ? "" : "s"} remaining
-      `;
-      portalSubtext.textContent = "Select what you want to do after login.";
-    } else {
-      portalStatusLine.className = "portal-status inactive";
-
-      let message = "No active subscription found. Subscribe first to open employer dashboard.";
-      if (info?.reason === "expired") {
-        message = "Subscription expired. Renew subscription to open employer dashboard.";
-      } else if (info?.reason === "inactive") {
-        message = "Subscription is inactive. Check subscription status or subscribe again.";
-      } else if (info?.reason === "no_subscription") {
-        message = "No subscription found. Subscribe to open employer dashboard.";
-      }
-
-      portalStatusLine.innerHTML = `
-        <i class="fa-solid fa-circle-exclamation"></i>
-        ${message}
-      `;
-      portalSubtext.textContent = "You are logged in. Choose where you want to go next.";
-    }
-  }
-
   closeModal.addEventListener("click", hideModal);
   gateModal.addEventListener("click", (e) => {
-    if (e.target === gateModal) hideModal();
+    if(e.target === gateModal) hideModal();
   });
 
   togglePassword.addEventListener("click", () => {
@@ -2246,46 +3308,184 @@
       : '<i class="fa-solid fa-eye"></i>';
   });
 
-  function localYYYYMMDD(d = new Date()){
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
+  function setPortalStatusUI(info){
+    const remaining = Number(info?.remaining || 0);
+    const endDate = info?.record?.subscription_end_date
+      ? String(info.record.subscription_end_date).slice(0, 10)
+      : "";
+
+    if(info?.active){
+      portalStatusLine.className = "portal-status active";
+      portalStatusLine.innerHTML = `
+        <i class="fa-solid fa-circle-check"></i>
+        Active Subscription • ${remaining} day${remaining === 1 ? "" : "s"} remaining${endDate ? ` • Ends ${endDate}` : ""}
+      `;
+      portalSubtext.textContent = "Your subscription is active. You can open the Applicant Dashboard or Employer Dashboard.";
+    }else{
+      portalStatusLine.className = "portal-status inactive";
+
+      let message = "No active subscription found. Subscribe first before opening the dashboards.";
+      if(info?.reason === "expired"){
+        message = "Subscription expired or reached its end date. Renew subscription before opening the dashboards.";
+      }else if(info?.reason === "inactive"){
+        message = "Subscription is inactive. Please subscribe again before opening the dashboards.";
+      }else if(info?.reason === "no_subscription"){
+        message = "No subscription found. Subscribe first before opening the dashboards.";
+      }else if(info?.reason === "edge_failed"){
+        message = "Could not verify subscription status from the server. Please try again.";
+      }
+
+      portalStatusLine.innerHTML = `
+        <i class="fa-solid fa-circle-exclamation"></i>
+        ${message}
+      `;
+      portalSubtext.textContent = "You are logged in, but dashboard access is blocked until the subscription is active.";
+    }
   }
 
-  async function employerProfileExists(userId){
-    const { data, error } = await supabase
-      .from("employers")
-      .select("user_id")
-      .eq("user_id", userId)
-      .maybeSingle();
 
-    if (error) {
-      console.error("Employers lookup error:", error);
-      return false;
+
+  function openInactiveDashboardAccessModal(dashboardName, info = currentSubscriptionInfo){
+    const name = String(dashboardName || "dashboard").trim().toLowerCase();
+    const reason = String(info?.reason || "inactive").toLowerCase();
+
+    let message = `Active subscription required before opening the ${name}. Please click Subscribe or Subscription Status.`;
+
+    if(reason === "expired"){
+      message = `Your subscription is expired or reached its end date. Active subscription required before opening the ${name}. Please click Subscribe or Subscription Status.`;
+    }else if(reason === "inactive"){
+      message = `Your subscription is inactive. Active subscription required before opening the ${name}. Please click Subscribe or Subscription Status.`;
+    }else if(reason === "no_subscription"){
+      message = `No active subscription found. Active subscription required before opening the ${name}. Please click Subscribe or Subscription Status.`;
+    }else if(reason === "edge_failed"){
+      message = `Unable to verify subscription status from the server. Please try again before opening the ${name}.`;
     }
 
-    return !!data;
+    if(portalModal){
+      portalModal.style.display = "none";
+    }
+
+    openModal(message, { redirectToClearedLogin: true });
+  }
+  /* ============================================================
+     DATE HELPERS - USA/SUPABASE STYLE CHECK
+     The end date expires when subscription_end_date <= today.
+  ============================================================ */
+  function pad2(value){
+    return String(value).padStart(2, "0");
   }
 
-  async function getLatestSubscriptionByEmployerId(userId){
-    const { data: rows, error } = await supabase
-      .from("employer_payment_transactions")
-      .select("*")
-      .eq("employer_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(1);
+  function getDateKeyInTimeZone(date = new Date(), timeZone = SUBSCRIPTION_DATE_TIME_ZONE){
+    try{
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(date);
 
-    if (error) {
-      console.error("Subscription fetch error:", error);
-      return null;
+      const map = {};
+      parts.forEach(part => { map[part.type] = part.value; });
+
+      if(map.year && map.month && map.day){
+        return `${map.year}-${map.month}-${map.day}`;
+      }
+    }catch(err){
+      console.warn("Timezone date conversion failed. Falling back to UTC.", err);
     }
 
-    return (rows && rows.length) ? rows[0] : null;
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function todaySubscriptionDateKey(){
+    return getDateKeyInTimeZone(new Date(), SUBSCRIPTION_DATE_TIME_ZONE);
+  }
+
+  function normalizeDateKey(value){
+    if(value == null) return "";
+
+    const raw = String(value).trim();
+    if(!raw) return "";
+
+    const yyyyMmDd = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if(yyyyMmDd){
+      return `${yyyyMmDd[1]}-${pad2(yyyyMmDd[2])}-${pad2(yyyyMmDd[3])}`;
+    }
+
+    const mmDdYyyy = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if(mmDdYyyy){
+      return `${mmDdYyyy[3]}-${pad2(mmDdYyyy[1])}-${pad2(mmDdYyyy[2])}`;
+    }
+
+    const d = new Date(raw);
+    if(isNaN(d.getTime())) return "";
+
+    return getDateKeyInTimeZone(d, SUBSCRIPTION_DATE_TIME_ZONE);
+  }
+
+  function getRecordField(obj, names, fallback = ""){
+    for(const name of names){
+      if(obj && Object.prototype.hasOwnProperty.call(obj, name) && obj[name] != null && String(obj[name]).trim() !== ""){
+        return obj[name];
+      }
+    }
+    return fallback;
+  }
+
+  function hasOwnField(obj, name){
+    return !!(obj && Object.prototype.hasOwnProperty.call(obj, name));
+  }
+
+  function getSubscriptionEndDateKey(record){
+    return normalizeDateKey(getRecordField(record, [
+      "subscription_end_date",
+      "end_date",
+      "date_end",
+      "expiry_date",
+      "expiration_date"
+    ], ""));
+  }
+
+  function getSubscriptionStartDateKey(record){
+    return normalizeDateKey(getRecordField(record, [
+      "subscription_start_date",
+      "start_date",
+      "date_start",
+      "created_at"
+    ], ""));
+  }
+
+  function isExpiredByEndDate(record){
+    const endDateKey = getSubscriptionEndDateKey(record);
+    if(!endDateKey) return false;
+
+    const todayKey = todaySubscriptionDateKey();
+
+    /* IMPORTANT:
+       If the current USA/Supabase date MATCHES subscription_end_date,
+       it is already inactive.
+    */
+    return endDateKey <= todayKey;
+  }
+
+  function isActiveLikeStatus(record){
+    const status = String(getRecordField(record, ["status", "subscription_status", "payment_status"], "")).trim().toLowerCase();
+    return ACTIVE_SUBSCRIPTION_STATUSES.includes(status);
+  }
+
+  function getStatusText(record){
+    return String(getRecordField(record, ["status", "subscription_status", "payment_status"], "")).trim().toLowerCase();
+  }
+
+  function getWritableStatusColumn(record){
+    if(hasOwnField(record, "status")) return "status";
+    if(hasOwnField(record, "subscription_status")) return "subscription_status";
+    if(hasOwnField(record, "payment_status")) return "payment_status";
+    return "status";
   }
 
   function analyzeSubscriptionRecord(sub){
-    if (!sub) {
+    if(!sub){
       return {
         active: false,
         reason: "no_subscription",
@@ -2294,12 +3494,11 @@
       };
     }
 
-    const todayStr = localYYYYMMDD(new Date());
-    const status = String(sub.status || "").toLowerCase();
-    const remaining = Number(sub.days_remaining || 0);
-    const endStr = sub.subscription_end_date ? String(sub.subscription_end_date).slice(0, 10) : null;
+    const status = getStatusText(sub);
+    const remaining = Number(sub.days_remaining ?? 0);
+    const endDateKey = getSubscriptionEndDateKey(sub);
 
-    if (endStr && todayStr > endStr) {
+    if(isExpiredByEndDate(sub)){
       return {
         active: false,
         reason: "expired",
@@ -2308,10 +3507,19 @@
       };
     }
 
-    if (status !== "active" || remaining <= 0) {
+    if(!ACTIVE_SUBSCRIPTION_STATUSES.includes(status)){
       return {
         active: false,
-        reason: status === "active" ? "expired" : "inactive",
+        reason: "inactive",
+        record: sub,
+        remaining
+      };
+    }
+
+    if(hasOwnField(sub, "days_remaining") && remaining <= 0){
+      return {
+        active: false,
+        reason: "expired",
         record: sub,
         remaining
       };
@@ -2321,47 +3529,291 @@
       active: true,
       reason: "active",
       record: sub,
-      remaining
+      remaining: hasOwnField(sub, "days_remaining") ? remaining : 1,
+      endDate: endDateKey
     };
   }
 
-  async function getSubscriptionSnapshot(userId){
-    const sub = await getLatestSubscriptionByEmployerId(userId);
-    return analyzeSubscriptionRecord(sub);
+  function sortSubscriptionRows(rows){
+    return [...rows].sort((a, b) => {
+      const bEnd = getSubscriptionEndDateKey(b) || getSubscriptionStartDateKey(b) || "";
+      const aEnd = getSubscriptionEndDateKey(a) || getSubscriptionStartDateKey(a) || "";
+      const endCompare = bEnd.localeCompare(aEnd);
+      if(endCompare !== 0) return endCompare;
+
+      const bCreated = String(b?.created_at || "");
+      const aCreated = String(a?.created_at || "");
+      return bCreated.localeCompare(aCreated);
+    });
   }
 
-  async function deductSubscriptionDayIfNeeded(userId){
-    const sub = await getLatestSubscriptionByEmployerId(userId);
-    if (!sub) {
+  /* ============================================================
+     EDGE FUNCTION CALL
+     Calls /functions/v1/expire-employer-subscriptions after login
+     before checking status or redirecting dashboards.
+  ============================================================ */
+  async function callExpireEmployerSubscriptionsEdge(user){
+    const supabaseUrl = getSafeSupabaseUrl();
+    const anonKey = getSafeSupabaseAnonKey();
+
+    if(!supabaseUrl || !anonKey){
+      console.warn("Supabase URL or anon key missing. Cannot call Edge Function.");
+      return { ok:false, reason:"missing_config" };
+    }
+
+    const token = await getCurrentAccessToken();
+
+    try{
+      const res = await fetch(`${supabaseUrl}/functions/v1/${EXPIRE_SUBSCRIPTIONS_FUNCTION}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": anonKey,
+          "Authorization": `Bearer ${token || anonKey}`
+        },
+        body: JSON.stringify({
+          employer_id: user?.id || currentEmployerUserId || null,
+          employer_email: user?.email || currentEmployerEmail || null,
+          company_email: user?.email || currentEmployerEmail || null,
+          source: "employer-login",
+          subscription_time_zone: SUBSCRIPTION_DATE_TIME_ZONE,
+          client_subscription_date: todaySubscriptionDateKey()
+        })
+      });
+
+      const json = await res.json().catch(() => ({}));
+
+      if(!res.ok || json?.ok === false){
+        console.warn("expire-employer-subscriptions Edge Function returned an error:", json);
+        return {
+          ok:false,
+          reason:"edge_failed",
+          status: res.status,
+          data: json
+        };
+      }
+
+      return {
+        ok:true,
+        reason:"edge_success",
+        status: res.status,
+        data: json
+      };
+    }catch(err){
+      console.warn("expire-employer-subscriptions Edge Function call failed:", err);
+      return {
+        ok:false,
+        reason:"edge_failed",
+        error: err
+      };
+    }
+  }
+
+  /* ============================================================
+     DATABASE QUERIES
+  ============================================================ */
+  async function employerProfileExists(userId){
+    const client = getSupabaseClient();
+    if(!client || !userId) return false;
+
+    const { data, error } = await client
+      .from("employers")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if(error){
+      console.error("Employers lookup error:", error);
+      return false;
+    }
+
+    return !!data;
+  }
+
+  async function addUniqueRows(target, seen, rows){
+    if(!Array.isArray(rows)) return;
+
+    rows.forEach(row => {
+      const key = row?.id != null ? `id:${row.id}` : JSON.stringify(row);
+      if(!seen.has(key)){
+        seen.add(key);
+        target.push(row);
+      }
+    });
+  }
+
+  async function fetchSubscriptionRowsForEmployer(userId, email){
+    const client = getSupabaseClient();
+    const rows = [];
+    const seen = new Set();
+
+    if(!client) return rows;
+
+    async function fetchByColumn(column, value){
+      if(!value) return;
+
+      let result = await client
+        .from("employer_payment_transactions")
+        .select("*")
+        .eq(column, value)
+        .order("subscription_end_date", { ascending: false });
+
+      if(result.error){
+        result = await client
+          .from("employer_payment_transactions")
+          .select("*")
+          .eq(column, value)
+          .order("created_at", { ascending: false });
+      }
+
+      if(result.error){
+        console.warn(`Subscription lookup failed on "${column}":`, result.error.message || result.error);
+        return;
+      }
+
+      await addUniqueRows(rows, seen, result.data || []);
+    }
+
+    await fetchByColumn("employer_id", userId);
+
+    const normalizedEmail = String(email || "").trim().toLowerCase();
+    if(normalizedEmail){
+      await fetchByColumn("company_email", normalizedEmail);
+      await fetchByColumn("email", normalizedEmail);
+      await fetchByColumn("contact_email", normalizedEmail);
+      await fetchByColumn("employer_email", normalizedEmail);
+    }
+
+    return sortSubscriptionRows(rows);
+  }
+
+  async function getLatestSubscriptionByEmployer(userId, email){
+    const rows = await fetchSubscriptionRowsForEmployer(userId, email);
+    if(!rows.length) return null;
+
+    /* Prefer a currently active row if any exists. Otherwise use the newest/latest end date row. */
+    const activeRows = rows.filter(row => analyzeSubscriptionRecord(row).active);
+    if(activeRows.length) return sortSubscriptionRows(activeRows)[0];
+
+    return rows[0];
+  }
+
+  async function localFallbackExpireRows(userId, email){
+    const client = getSupabaseClient();
+    if(!client) return { updated: 0 };
+
+    const rows = await fetchSubscriptionRowsForEmployer(userId, email);
+    let updated = 0;
+
+    for(const row of rows){
+      if(!row?.id) continue;
+      if(!isExpiredByEndDate(row)) continue;
+      if(!isActiveLikeStatus(row)) continue;
+
+      const statusColumn = getWritableStatusColumn(row);
+      const payload = {};
+      payload[statusColumn] = INACTIVE_SUBSCRIPTION_STATUS;
+
+      if(hasOwnField(row, "days_remaining")){
+        payload.days_remaining = 0;
+      }
+
+      let { error } = await client
+        .from("employer_payment_transactions")
+        .update(payload)
+        .eq("id", row.id);
+
+      if(error && hasOwnField(payload, "days_remaining")){
+        const retryPayload = {};
+        retryPayload[statusColumn] = INACTIVE_SUBSCRIPTION_STATUS;
+
+        const retry = await client
+          .from("employer_payment_transactions")
+          .update(retryPayload)
+          .eq("id", row.id);
+
+        error = retry.error;
+      }
+
+      if(error){
+        console.warn("Browser fallback expire update failed. Edge Function should handle this server-side:", error);
+      }else{
+        updated += 1;
+      }
+    }
+
+    return { updated };
+  }
+
+  async function refreshSubscriptionStatusFromServer(user){
+    /* 1. First call the Edge Function so expired rows are changed to not active. */
+    const edgeResult = await callExpireEmployerSubscriptionsEdge(user);
+
+    /* 2. Browser fallback tries to expire rows too, in case RLS allows it. */
+    await localFallbackExpireRows(user?.id || currentEmployerUserId, user?.email || currentEmployerEmail);
+
+    /* 3. Re-read table after expiration update, then check active/inactive status. */
+    const latestSub = await getLatestSubscriptionByEmployer(
+      user?.id || currentEmployerUserId,
+      user?.email || currentEmployerEmail
+    );
+
+    const snapshot = analyzeSubscriptionRecord(latestSub);
+    snapshot.edgeResult = edgeResult;
+
+    return snapshot;
+  }
+
+  async function getSubscriptionSnapshot(userId, email){
+    const latestSub = await getLatestSubscriptionByEmployer(userId, email);
+    return analyzeSubscriptionRecord(latestSub);
+  }
+
+  /* ============================================================
+     DEDUCT DAYS ON EMPLOYER DASHBOARD OPEN
+  ============================================================ */
+  async function deductSubscriptionDayIfNeeded(userId, email){
+    const client = getSupabaseClient();
+    if(!client) return { ok:false, reason:"missing_client" };
+
+    /* Always call Edge Function again before deduction. */
+    const latestSnapshot = await refreshSubscriptionStatusFromServer({
+      id: userId,
+      email: email || currentEmployerEmail
+    });
+
+    if(!latestSnapshot.active){
+      return { ok:false, reason:latestSnapshot.reason };
+    }
+
+    const sub = latestSnapshot.record;
+    if(!sub?.id){
       return { ok:false, reason:"no_subscription" };
     }
 
-    const checked = analyzeSubscriptionRecord(sub);
-    if (!checked.active) {
-      return { ok:false, reason:checked.reason };
-    }
+    const todayStr = todaySubscriptionDateKey();
+    const lastLogin = sub.last_login_date ? normalizeDateKey(sub.last_login_date) : null;
 
-    const todayStr = localYYYYMMDD(new Date());
-    const lastLogin = sub.last_login_date ? String(sub.last_login_date).slice(0, 10) : null;
-
-    if (lastLogin === todayStr) {
-      return { ok:true };
+    if(lastLogin === todayStr){
+      return { ok:true, skipped:true, reason:"already_deducted_today" };
     }
 
     const currentRemaining = Number(sub.days_remaining || 0);
     const newRemaining = Math.max(0, currentRemaining - 1);
-    const newStatus = newRemaining > 0 ? "active" : "expired";
+    const newStatus = newRemaining > 0 ? "active" : INACTIVE_SUBSCRIPTION_STATUS;
 
-    const { error: updErr } = await supabase
+    const payload = {
+      days_remaining: newRemaining,
+      last_login_date: todayStr
+    };
+    payload[getWritableStatusColumn(sub)] = newStatus;
+
+    const { error: updErr } = await client
       .from("employer_payment_transactions")
-      .update({
-        days_remaining: newRemaining,
-        status: newStatus,
-        last_login_date: todayStr
-      })
+      .update(payload)
       .eq("id", sub.id);
 
-    if (updErr) {
+    if(updErr){
       console.error("Deduction update failed:", updErr);
       return { ok:false, reason:"update_failed" };
     }
@@ -2379,109 +3831,151 @@
     };
 
     setPortalStatusUI(currentSubscriptionInfo);
+
     return { ok:true };
   }
 
+  /* ============================================================
+     LOGIN FLOW
+  ============================================================ */
   async function processEmployerLoginSuccess(user){
+    const client = getSupabaseClient();
     currentEmployerUserId = user.id;
+    currentEmployerEmail = String(user.email || emailInput.value || "").trim().toLowerCase();
+
+    setLoginButtonLoading(true, "Checking profile...");
 
     const isSignedUp = await employerProfileExists(user.id);
-    if (!isSignedUp) {
-      await supabase.auth.signOut();
+    if(!isSignedUp){
+      if(client?.auth?.signOut) await client.auth.signOut();
+
       currentEmployerUserId = null;
+      currentEmployerEmail = "";
       currentSubscriptionInfo = {
         active: false,
         reason: "unknown",
         record: null,
         remaining: 0
       };
+
       openModal("Sign up first before you can login to employer portal.");
       return;
     }
 
-    currentSubscriptionInfo = await getSubscriptionSnapshot(user.id);
+    setLoginButtonLoading(true, "Checking subscription...");
+
+    currentSubscriptionInfo = await refreshSubscriptionStatusFromServer(user);
     setPortalStatusUI(currentSubscriptionInfo);
 
-    /* POPUP APPEARS ONLY AFTER SUCCESSFUL LOGIN */
+    /* Popup appears only after successful login.
+       Dashboard buttons still re-check the Edge Function before redirecting. */
     openPortalModal();
   }
 
-  goApplicantDashboard.addEventListener("click", function(){
-    window.location.href = "dashboard.html";
-  });
+  async function requireActiveSubscriptionBeforeRedirect(targetUrl, dashboardName, shouldDeductDay){
+    if(!currentEmployerUserId){
+      hidePortalModal();
+      openModal("Login session not found. Please login again.");
+      return;
+    }
 
-  goSubscribe.addEventListener("click", function(){
-    window.location.href = "subscribe.html";
-  });
+    const btnText = dashboardName === "applicant dashboard"
+      ? "Checking Applicant Dashboard access..."
+      : "Checking Employer Dashboard access...";
 
-  goSubscriptionStatus.addEventListener("click", function(){
-    window.location.href = "subscriptionstatus.html";
+    setLoginButtonLoading(true, btnText);
+
+    try{
+      const latestSnapshot = await refreshSubscriptionStatusFromServer({
+        id: currentEmployerUserId,
+        email: currentEmployerEmail
+      });
+
+      currentSubscriptionInfo = latestSnapshot;
+      setPortalStatusUI(currentSubscriptionInfo);
+
+      if(!latestSnapshot.active){
+        openInactiveDashboardAccessModal(dashboardName, latestSnapshot);
+        return;
+      }
+
+      if(shouldDeductDay){
+        const deductResult = await deductSubscriptionDayIfNeeded(currentEmployerUserId, currentEmployerEmail);
+
+        if(!deductResult.ok){
+          if(deductResult.reason === "update_failed"){
+            openModal("Subscription found but remaining days could not be updated. Please contact admin.");
+          }else{
+            openInactiveDashboardAccessModal(dashboardName, currentSubscriptionInfo);
+          }
+          return;
+        }
+      }
+
+      window.location.href = targetUrl;
+    }catch(err){
+      console.error("Dashboard access check failed:", err);
+      openModal("Unable to verify subscription right now. Please try again.");
+    }finally{
+      setLoginButtonLoading(false);
+    }
+  }
+
+  goApplicantDashboard.addEventListener("click", async function(){
+    /* NEW: Applicant Dashboard is now blocked until Edge Function confirms active subscription. */
+    await requireActiveSubscriptionBeforeRedirect("dashboard.html", "applicant dashboard", false);
   });
 
   goEmployerDashboard.addEventListener("click", async function(){
-    if (!currentEmployerUserId) {
-      openModal("Login session not found. Please login again.");
-      hidePortalModal();
-      return;
-    }
+    await requireActiveSubscriptionBeforeRedirect("employer_dashboard.html", "employer dashboard", true);
+  });
 
-    const latestSnapshot = await getSubscriptionSnapshot(currentEmployerUserId);
-    currentSubscriptionInfo = latestSnapshot;
-    setPortalStatusUI(currentSubscriptionInfo);
+  goSubscribe.addEventListener("click", function(){
+    window.location.href = currentEmployerEmail
+      ? `subscribe.html?email=${encodeURIComponent(currentEmployerEmail)}`
+      : "subscribe.html";
+  });
 
-    if (!latestSnapshot.active) {
-      openModal("Employer dashboard requires an active subscription. Please click Subscribe or Subscription Status.");
-      return;
-    }
-
-    const deductResult = await deductSubscriptionDayIfNeeded(currentEmployerUserId);
-    if (!deductResult.ok) {
-      if (deductResult.reason === "update_failed") {
-        openModal("Subscription found but remaining days could not be updated. Please contact admin.");
-      } else {
-        openModal("Employer dashboard requires an active subscription. Please click Subscribe or Subscription Status.");
-      }
-      return;
-    }
-
-    window.location.href = "employer_dashboard.html";
+  goSubscriptionStatus.addEventListener("click", function(){
+    window.location.href = currentEmployerEmail
+      ? `subscriptionstatus.html?email=${encodeURIComponent(currentEmployerEmail)}`
+      : "subscriptionstatus.html";
   });
 
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    if (!window.supabase) {
+    const client = getSupabaseClient();
+
+    if(!client){
       openModal("Supabase client not found. Please check supabase_config.js.");
       return;
     }
 
-    const email = emailInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
     const password = passwordInput.value;
 
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Logging in...`;
+    setLoginButtonLoading(true, "Logging in...");
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    try{
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
 
-      if (error || !data?.user) {
+      if(error || !data?.user){
         openModal("Invalid login credentials. Please try again.");
         return;
       }
 
       await processEmployerLoginSuccess(data.user);
 
-    } catch (err) {
+    }catch(err){
       console.error(err);
       openModal("Unable to login right now. Please try again.");
-    } finally {
-      loginBtn.disabled = false;
-      loginBtn.innerHTML = `<i class="fa-solid fa-arrow-right-to-bracket"></i> Login`;
+    }finally{
+      setLoginButtonLoading(false);
     }
   });
 
-  /* REMOVED AUTO POPUP ON PAGE LOAD
-     USER MUST LOGIN FIRST BEFORE PORTAL POPUP APPEARS */
+  /* USER MUST LOGIN FIRST BEFORE PORTAL POPUP APPEARS */
 </script>
 
 </body>

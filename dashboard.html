@@ -1,6 +1,10 @@
 <!-- ==========================================================
      Applicant Dashboard | Job Space Link  (FULL CODE - NO SHORTCUTS)
 
+     ✅ LATEST UPDATE APPLIED:
+     ✅ Header style, layout, mobile hamburger panel, About dropdown,
+        menu JavaScript, and Employer/Jobseeker header button styling are matched to the latest index file.
+
      ✅ UPDATE APPLIED NOW (NEW ENHANCEMENT):
      ✅ When applicant is DEACTIVATED (Not Active):
         - ✅ REMOVE ALL RECORDS for that applicant from the dashboard
@@ -11,7 +15,21 @@
         - Controls become TWO ROWS (compact)
         - Row 1: Search All + Type Search + Position + Country + City + Gender
         - Row 2: Date filter + Search + Reset + Table/Grid + Location
+
+     ✅ EMPLOYER LOGIN TRACKING + DAILY ACCESS DEDUCTION:
+        - When an employer session is confirmed, update employer_payment_transactions
+        - Records the latest login timestamp into the last-login-date column
+        - Deducts 1 day from days_remaining only once per calendar day
+        - FIXED: Verifies real deduction before marking today's login as counted
 =========================================================== -->
+<!-- ==========================================================
+     UPDATE APPLIED 2026-04-27:
+     Applicant Dashboard header is locked to the uploaded index file header.
+     Includes index desktop header layout, About dropdown, mobile hamburger
+     panel, logo-left / hamburger-right mobile layout, and Employer/Jobseeker
+     header button styling/hover behavior.
+=========================================================== -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +69,11 @@
 <style>
 
   
+/* ============================================================
+   APPLICANT DASHBOARD HEADER - EXACT INDEX HEADER STYLE
+   Copied from the latest index header: nav icons, dropdown hover,
+   refined Employer/Jobseeker icons, and no-overlap responsive layout.
+============================================================ */
 /* ============================================================
    PAGE RESET + FIXED FOOTER SPACING + SCROLL OFFSET
 =========================================================== */
@@ -197,6 +220,7 @@ header .auth-buttons a:hover{
   font-size:1rem;
 }
 
+/* Mobile panel */
 .mobile-panel{
   position:fixed;
   top:var(--header-h);
@@ -242,18 +266,105 @@ header .auth-buttons a:hover{
   transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
-.mobile-panel .mnav a:hover,
-.mobile-panel .mnav a:focus-visible{
+.mobile-panel .mnav a:hover{
   background:rgba(0,198,255,0.12);
   color:#fff;
   transform:translateX(3px);
-  outline:none;
+}
+
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-toggle-left{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03);
 }
 
 /* ============================================================
    ABOUT NAV FIX
 =========================================================== */
-body > header .nav-dropdown{
+.nav-dropdown{
   position:relative;
   display:inline-flex;
   align-items:center;
@@ -261,20 +372,20 @@ body > header .nav-dropdown{
   flex:0 0 auto;
 }
 
-body > header .nav-dropdown-trigger{
+.nav-dropdown-trigger{
   display:inline-flex;
   align-items:center;
   gap:2px;
   height:100%;
 }
 
-body > header .nav-main-link{
+.nav-main-link{
   display:inline-flex;
   align-items:center;
   text-decoration:none;
 }
 
-body > header .nav-dropdown-toggle{
+.nav-dropdown-toggle{
   appearance:none;
   -webkit-appearance:none;
   border:none;
@@ -292,13 +403,13 @@ body > header .nav-dropdown-toggle{
   line-height:1;
 }
 
-body > header .nav-dropdown-toggle i{
+.nav-dropdown-toggle i{
   pointer-events:none;
   color:#ffffff;
   font-size:0.9rem;
 }
 
-body > header .nav-dropdown-menu{
+.nav-dropdown-menu{
   position:absolute;
   top:calc(100% + 12px);
   left:0;
@@ -315,11 +426,11 @@ body > header .nav-dropdown-menu{
   z-index:1200;
 }
 
-body > header .nav-dropdown.open .nav-dropdown-menu{
+.nav-dropdown.open .nav-dropdown-menu{
   display:flex;
 }
 
-body > header .nav-dropdown-menu a{
+.nav-dropdown-menu a{
   display:flex;
   align-items:center;
   gap:10px;
@@ -330,151 +441,214 @@ body > header .nav-dropdown-menu a{
   transition:background 0.25s ease, color 0.25s ease;
 }
 
-body > header .nav-dropdown-menu a:hover,
-body > header .nav-dropdown-menu a:focus-visible{
+.nav-dropdown-menu a:hover{
   background:rgba(0,198,255,0.12);
   color:#ffffff;
-  outline:none;
 }
 
-body > header .nav-dropdown-menu i{
+.nav-dropdown-menu i{
   width:18px;
   text-align:center;
 }
 
+/* ============================================================
+   FINAL HEADER RESPONSIVE PATCH
+   Exact requested breakpoints
+============================================================ */
+
+/* ===== 1800px and above ===== */
 @media (min-width: 1800px){
-  :root{ --header-h:82px !important; }
+  :root{ --header-h:84px !important; }
 
-  body > header{
+  header{
     height:var(--header-h) !important;
-    gap:16px !important;
-    padding:0 20px 0 10px !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
   }
 
-  body > header .logo{
-    margin-left:-4px !important;
+  header .logo{
+    margin-left:-2px !important;
   }
 
-  body > header .logo img{
-    height:84px !important;
+  header .logo img{
+    height:88px !important;
   }
 
-  body > header nav{
-    gap:16px !important;
-    margin-left:8px !important;
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
   }
 
-  body > header nav > a,
-  body > header nav .nav-main-link{
+  header nav > a,
+  header nav .nav-main-link{
     height:38px !important;
+    padding:0 5px !important;
     font-size:0.94rem !important;
   }
 
-  body > header .auth-buttons{
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:2px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
     gap:10px !important;
   }
 
-  body > header .auth-buttons a{
+  header .auth-buttons a{
     height:38px !important;
     padding:0 14px !important;
     font-size:0.86rem !important;
+    border-radius:10px !important;
   }
 
-  .nav-toggle, .mobile-panel{ display:none !important; }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
 }
 
+/* ===== 1440px to 1799px ===== */
 @media (min-width: 1440px) and (max-width: 1799px){
   :root{ --header-h:78px !important; }
 
-  body > header{
+  header{
     height:var(--header-h) !important;
     gap:14px !important;
     padding:0 18px 0 10px !important;
   }
 
-  body > header .logo{
-    margin-left:-4px !important;
+  header .logo{
+    margin-left:-3px !important;
   }
 
-  body > header .logo img{
+  header .logo img{
     height:80px !important;
   }
 
-  body > header nav{
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
     gap:15px !important;
     margin-left:7px !important;
+    white-space:nowrap !important;
   }
 
-  body > header nav > a,
-  body > header nav .nav-main-link{
+  header nav > a,
+  header nav .nav-main-link{
     height:36px !important;
+    padding:0 4px !important;
     font-size:0.84rem !important;
   }
 
-  body > header .auth-buttons{
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
     gap:7px !important;
   }
 
-  body > header .auth-buttons a{
+  header .auth-buttons a{
     height:36px !important;
     padding:0 11px !important;
     font-size:0.79rem !important;
+    border-radius:10px !important;
   }
 
-  .nav-toggle, .mobile-panel{ display:none !important; }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
 }
 
+/* ===== 1024px to 1439px ===== */
 @media (min-width: 1024px) and (max-width: 1439px){
   :root{ --header-h:76px !important; }
 
-  body > header{
+  header{
     height:var(--header-h) !important;
     gap:9px !important;
     padding:0 12px 0 6px !important;
   }
 
-  body > header .logo{
-    margin-left:-3px !important;
+  header .logo{
+    margin-left:-2px !important;
   }
 
-  body > header .logo img{
+  header .logo img{
     height:66px !important;
   }
 
-  body > header nav{
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
     gap:9px !important;
     margin-left:3px !important;
+    white-space:nowrap !important;
   }
 
-  body > header nav > a,
-  body > header nav .nav-main-link{
+  header nav > a,
+  header nav .nav-main-link{
     height:34px !important;
     padding:0 2px !important;
     font-size:0.75rem !important;
   }
 
-  body > header .nav-dropdown{
+  .nav-dropdown{
     height:34px !important;
   }
 
-  body > header .nav-dropdown-trigger{
+  .nav-dropdown-trigger{
     gap:1px !important;
   }
 
-  body > header .nav-dropdown-toggle{
+  .nav-dropdown-toggle{
     width:20px !important;
     height:20px !important;
   }
 
-  body > header .nav-dropdown-toggle i{
+  .nav-dropdown-toggle i{
     font-size:0.74rem !important;
   }
 
-  body > header .auth-buttons{
+  header .auth-buttons{
+    display:flex !important;
     gap:5px !important;
   }
 
-  body > header .auth-buttons a{
+  header .auth-buttons a{
     height:32px !important;
     padding:0 8px !important;
     font-size:0.70rem !important;
@@ -482,60 +656,69 @@ body > header .nav-dropdown-menu i{
     gap:5px !important;
   }
 
-  .nav-toggle, .mobile-panel{ display:none !important; }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
 }
 
+/* ===== 769px to 1023px ===== */
 @media (min-width: 769px) and (max-width: 1023px){
   :root{ --header-h:74px !important; }
 
-  body > header{
+  header{
     height:var(--header-h) !important;
     gap:7px !important;
     padding:0 8px 0 5px !important;
   }
 
-  body > header .logo{
+  header .logo{
     margin-left:-2px !important;
   }
 
-  body > header .logo img{
+  header .logo img{
     height:58px !important;
   }
 
-  body > header nav{
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
     gap:7px !important;
     margin-left:2px !important;
+    white-space:nowrap !important;
   }
 
-  body > header nav > a,
-  body > header nav .nav-main-link{
+  header nav > a,
+  header nav .nav-main-link{
     height:31px !important;
     padding:0 2px !important;
     font-size:0.66rem !important;
   }
 
-  body > header .nav-dropdown{
+  .nav-dropdown{
     height:31px !important;
   }
 
-  body > header .nav-dropdown-trigger{
+  .nav-dropdown-trigger{
     gap:1px !important;
   }
 
-  body > header .nav-dropdown-toggle{
+  .nav-dropdown-toggle{
     width:18px !important;
     height:18px !important;
   }
 
-  body > header .nav-dropdown-toggle i{
+  .nav-dropdown-toggle i{
     font-size:0.68rem !important;
   }
 
-  body > header .auth-buttons{
+  header .auth-buttons{
+    display:flex !important;
     gap:4px !important;
   }
 
-  body > header .auth-buttons a{
+  header .auth-buttons a{
     height:30px !important;
     padding:0 6px !important;
     font-size:0.61rem !important;
@@ -543,33 +726,38 @@ body > header .nav-dropdown-menu i{
     gap:4px !important;
   }
 
-  .nav-toggle, .mobile-panel{ display:none !important; }
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
 }
 
+/* ===== 481px to 768px ===== */
 @media (min-width: 481px) and (max-width: 768px){
   :root{ --header-h:72px !important; }
 
-  body > header{
+  header{
     height:var(--header-h) !important;
-    gap:10px !important;
+    gap:8px !important;
     padding:0 12px 0 8px !important;
-    justify-content:flex-start !important;
+    justify-content:space-between !important;
     align-items:center !important;
   }
 
-  body > header .logo{
+  header .logo{
     order:1 !important;
     margin-left:0 !important;
     margin-right:0 !important;
     flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
   }
 
-  body > header .logo img{
+  header .logo img{
     height:54px !important;
   }
 
-  body > header nav{ display:none !important; }
-  body > header .auth-buttons{ display:none !important; }
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
     order:2 !important;
@@ -577,8 +765,8 @@ body > header .nav-dropdown-menu i{
     width:40px !important;
     height:40px !important;
     border-radius:10px !important;
-    margin-left:1px !important;
-    margin-right:auto !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
     flex:0 0 auto !important;
     align-self:center !important;
   }
@@ -599,20 +787,30 @@ body > header .nav-dropdown-menu i{
     border-radius:11px !important;
     font-size:0.88rem !important;
   }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
+  }
 }
 
+/* ===== 480px and below ===== */
 @media (max-width: 480px){
   :root{ --header-h:70px !important; }
 
-  body > header{
+  header{
     height:var(--header-h) !important;
-    gap:1px !important;
+    gap:8px !important;
     padding:0 10px 0 8px !important;
-    justify-content:flex-start !important;
+    justify-content:space-between !important;
     align-items:center !important;
   }
 
-  body > header .logo{
+  header .logo{
     order:1 !important;
     flex:0 0 auto !important;
     display:inline-flex !important;
@@ -622,12 +820,12 @@ body > header .nav-dropdown-menu i{
     margin-right:0 !important;
   }
 
-  body > header .logo img{
+  header .logo img{
     height:50px !important;
   }
 
-  body > header nav{ display:none !important; }
-  body > header .auth-buttons{ display:none !important; }
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
 
   .nav-toggle{
     order:2 !important;
@@ -635,8 +833,8 @@ body > header .nav-dropdown-menu i{
     width:38px !important;
     height:38px !important;
     border-radius:9px !important;
-    margin-left:0 !important;
-    margin-right:auto !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
     flex:0 0 auto !important;
     align-self:center !important;
   }
@@ -656,6 +854,474 @@ body > header .nav-dropdown-menu i{
     padding:10px 11px !important;
     border-radius:10px !important;
     font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ============================================================
+   FINAL MOBILE HEADER LOCK
+   Force logo left + hamburger right inside header
+============================================================ */
+@media (max-width: 768px){
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    column-gap:10px !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    min-width:0 !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    margin:0 !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    height:38px !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    padding-left:8px !important;
+    padding-right:10px !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
+  }
+}
+
+
+
+/* ============================================================
+   NAV ICON + NO-OVERLAP HEADER PATCH
+   Adds icons to every nav item and compresses safely by screen size.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  gap:7px !important;
+  min-width:0 !important;
+  overflow:visible !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  flex:0 0 auto;
+  color:#38bdf8;
+  text-shadow:0 0 10px rgba(56,189,248,0.35);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  width:16px;
+  min-width:16px;
+  text-align:center;
+  font-size:0.92em;
+}
+
+header nav .nav-text,
+.mobile-panel .nav-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.nav-dropdown-trigger{
+  gap:2px !important;
+}
+
+.nav-dropdown-toggle{
+  flex:0 0 auto !important;
+}
+
+.nav-dropdown-menu{
+  min-width:238px !important;
+}
+
+.nav-dropdown-menu a{
+  gap:11px !important;
+  font-size:0.88rem !important;
+}
+
+.nav-dropdown-menu a i{
+  width:20px !important;
+  min-width:20px !important;
+  text-align:center !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link{
+  min-width:0 !important;
+}
+
+.mobile-panel .mnav-left{
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+
+.mobile-panel .mnav-left i{
+  width:18px;
+  min-width:18px;
+  text-align:center;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  flex:0 0 auto;
+  color:#93c5fd;
+}
+
+.mobile-panel .mnav-row{
+  display:grid !important;
+  grid-template-columns:minmax(0, 1fr) 46px !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+.mobile-panel .mnav-toggle{
+  width:46px !important;
+  min-width:46px !important;
+  max-width:46px !important;
+  height:auto !important;
+  align-self:stretch !important;
+  justify-content:center !important;
+  padding:0 !important;
+  flex:0 0 46px !important;
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:#e5e7eb !important;
+}
+
+@media (min-width:1800px){
+  header nav > a,
+  header nav .nav-main-link{ gap:8px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:17px !important; min-width:17px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header nav{ gap:13px !important; }
+  header nav > a,
+  header nav .nav-main-link{ gap:6px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:15px !important; min-width:15px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header{ gap:8px !important; padding-left:6px !important; padding-right:10px !important; }
+  header nav{ gap:6px !important; margin-left:2px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:4px !important;
+    padding:0 1px !important;
+    font-size:0.69rem !important;
+    letter-spacing:-0.01em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
+  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
+  header .auth-buttons{ gap:4px !important; }
+  header .auth-buttons a{ padding:0 6px !important; font-size:0.66rem !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header{ gap:5px !important; padding-left:4px !important; padding-right:6px !important; }
+  header .logo img{ height:54px !important; }
+  header nav{ gap:4px !important; margin-left:1px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:3px !important;
+    padding:0 1px !important;
+    font-size:0.58rem !important;
+    letter-spacing:-0.03em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:0.78em !important;
+  }
+  .nav-dropdown-toggle{ width:15px !important; height:15px !important; }
+  .nav-dropdown-toggle i{ font-size:0.58rem !important; }
+  header .auth-buttons{ gap:3px !important; }
+  header .auth-buttons a{
+    height:28px !important;
+    padding:0 4px !important;
+    font-size:0.56rem !important;
+    gap:3px !important;
+  }
+  header .auth-buttons a i{ font-size:0.70em !important; }
+}
+
+@media (max-width:768px){
+  .mobile-panel{
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link{
+    justify-content:space-between !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left{ gap:9px !important; }
+  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0, 1fr) 42px !important; gap:7px !important; }
+  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
+}
+
+
+/* ============================================================
+   FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
+   Applies dropdown-style hover to desktop nav links and refines
+   Employer / Jobseeker button icons without causing overlap.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  border-radius:12px !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    text-shadow 0.25s ease !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12));
+  opacity:0;
+  transform:scaleX(0.72);
+  transform-origin:center;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:-1;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#ffffff !important;
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
+  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
+  transform:translateY(-1px) !important;
+}
+
+header nav > a:hover::before,
+header nav > a:focus-visible::before,
+header nav .nav-main-link:hover::before,
+header nav .nav-main-link:focus-visible::before,
+.nav-dropdown.open .nav-main-link::before{
+  opacity:1;
+  transform:scaleX(1);
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
+  transform:scale(1.08);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+.nav-dropdown-menu a{
+  border:1px solid transparent !important;
+  border-radius:10px !important;
+  margin:0 8px !important;
+  padding:12px 12px !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.24) !important;
+  color:#ffffff !important;
+  transform:translateX(3px);
+  box-shadow:0 0 14px rgba(0,198,255,0.12);
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+header .auth-buttons a{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  gap:7px !important;
+}
+
+header .auth-buttons a::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  opacity:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+  transition:opacity 0.25s ease;
+  z-index:-1;
+}
+
+header .auth-buttons a:hover::before,
+header .auth-buttons a:focus-visible::before{
+  opacity:1;
+}
+
+header .auth-buttons a i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  font-size:0.85rem !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.16) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
+  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+header .auth-buttons a.employer-auth i{
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+}
+
+header .auth-buttons a.jobseeker-auth i{
+  background:rgba(167,139,250,0.22) !important;
+  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
+}
+
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  transform:scale(1.10) rotate(-3deg);
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+header .auth-buttons .auth-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#ffffff !important;
+  transform:scale(1.08);
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+.mobile-panel .mnav-left i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:9px !important;
+  }
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:8px !important;
+  }
+  header .auth-buttons a i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
   }
 }
 
@@ -13515,7 +14181,6 @@ body.employer-logged-in .employer-session-account-card{
     display:none !important;
   }
 }
-
 </style>
 
 
@@ -13962,7 +14627,6 @@ body.employer-logged-in .employer-session-account-card{
   }
 }
 </style>
-
 </head>
 
 <body>
@@ -13974,11 +14638,11 @@ body.employer-logged-in .employer-session-account-card{
   </div>
 
   <nav>
-    <a href="index.html">Home</a>
+    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
-        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
+        <a href="about.html" id="aboutNavLink" class="nav-main-link"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></a>
         <button
           type="button"
           class="nav-dropdown-toggle"
@@ -13992,21 +14656,21 @@ body.employer-logged-in .employer-session-account-card{
       </div>
 
       <div class="nav-dropdown-menu" id="aboutNavMenu">
-        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
-        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i><span class="nav-text">Why Choose Us</span></a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i><span class="nav-text">How It Works</span></a>
       </div>
     </div>
 
-    <a href="postedhiring.html">Job Hiring</a>
-    <a href="dashboard.html">Jobseeker</a>
-    <a href="postjob.html">Post Jobs</a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
+    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
   <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
-    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
-    
+    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
+    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
+  
   </div>
 
   <button
@@ -14020,14 +14684,13 @@ body.employer-logged-in .employer-session-account-card{
   </button>
 </header>
 
-<!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
-        <a href="about.html" class="mnav-main-link">About <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="about.html" class="mnav-main-link"><span class="mnav-left"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></span><i class="fa-solid fa-arrow-right"></i></a>
         <button
           type="button"
           class="mnav-toggle"
@@ -14041,20 +14704,19 @@ body.employer-logged-in .employer-session-account-card{
       </div>
 
       <div class="mnav-submenu" id="mobileAboutMenu">
-        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="why choose us.html"><span class="mnav-left"><i class="fa-solid fa-circle-check"></i><span class="nav-text">Why Choose Us</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html"><span class="mnav-left"><i class="fa-solid fa-diagram-project"></i><span class="nav-text">How It Works</span></span><i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
 
-    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html">Jobseeker Directory <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
-
 
 <div class="dashboard-page-viewport" id="dashboardPageViewport">
 <div class="dashboard-scroll-shell" id="dashboardScrollShell">
@@ -14538,6 +15200,65 @@ const EMPLOYER_EMAIL_STORAGE_KEYS = ["loggedInEmployerEmail", "employerEmail", "
 const EMPLOYER_COMPANY_STORAGE_KEYS = ["loggedInCompanyName", "companyName", "employerCompanyName", "company_name", "jobspacelinkEmployerCompanyName"];
 const EMPLOYER_LOGO_STORAGE_KEYS = ["loggedInEmployerLogo", "employerLogo", "companyLogo", "company_logo", "jobspacelinkEmployerLogo"];
 
+const EMPLOYER_PAYMENT_TRANSACTIONS_TABLE = "employer_payment_transactions";
+const EMPLOYER_PAYMENT_LAST_LOGIN_COLUMNS = [
+  "last_login_date",
+  "last_log_in_date",
+  "last_login_at",
+  "last_logged_in_at",
+  "last_logged_in_date",
+  "login_date",
+  "latest_login_date"
+];
+const EMPLOYER_PAYMENT_EMAIL_MATCH_COLUMNS = [
+  "employer_email",
+  "company_email",
+  "email",
+  "email_address",
+  "contact_email",
+  "payment_email"
+];
+const EMPLOYER_PAYMENT_USER_ID_MATCH_COLUMNS = [
+  "employer_user_id",
+  "auth_user_id",
+  "user_id",
+  "profile_id"
+];
+const EMPLOYER_PAYMENT_COMPANY_MATCH_COLUMNS = [
+  "company_name",
+  "company",
+  "business_name",
+  "employer_name"
+];
+const EMPLOYER_PAYMENT_DAYS_REMAINING_COLUMNS = [
+  "days_remaining",
+  "remaining_days",
+  "days_left",
+  "subscription_days_remaining",
+  "subscription_days_left",
+  "remaining_access_days",
+  "access_days_remaining"
+];
+
+const EMPLOYER_PAYMENT_LAST_DEDUCTED_COLUMNS = [
+  "last_days_remaining_deducted_date",
+  "last_daily_deduction_date",
+  "days_remaining_last_deducted_date",
+  "last_access_deducted_date",
+  "last_deducted_date",
+  "deducted_date",
+  "daily_login_deducted_date"
+];
+const EMPLOYER_PAYMENT_TRANSACTION_ID_COLUMNS = [
+  "id",
+  "transaction_id",
+  "payment_transaction_id",
+  "employer_payment_transaction_id",
+  "payment_id",
+  "subscription_id"
+];
+const EMPLOYER_LAST_LOGIN_SESSION_KEY_PREFIX = "jobspacelink_employer_daily_login_recorded_v3";
+
 const EMPLOYER_APPLICANT_FAVORITES_TABLE = "employer_applicant_favorites";
 const EMPLOYER_APPLICANT_CONTACTS_TABLE = "employer_applicant_contacts";
 const CONTACT_EMAIL_EDGE_FUNCTION = "send-applicant-contact-email";
@@ -14552,6 +15273,7 @@ let employerContactMap = new Map();
 let favoriteActionPending = new Set();
 let contactActionPending = new Set();
 let contactTargetApplicant = null;
+let employerLastLoginUpdatePendingKeys = new Set();
 
 async function callApplicantDashboardApi(action, payload = {}){
   if (!window.supabase?.functions?.invoke){
@@ -15860,6 +16582,495 @@ function collectLogoCandidatesFromRows(rows){
   const ordered = [...rows].sort((a, b) => getEmployerRowRecencyValue(b) - getEmployerRowRecencyValue(a));
   return mergeUniqueLogoCandidates(...ordered.map((row) => createEmployerLogoCandidates(pickEmployerLogo(row))));
 }
+
+function formatLocalDateKey(value = new Date()){
+  const date = value instanceof Date ? value : new Date(value);
+  if (!Number.isFinite(date.getTime())) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getLocalDateKeyFromValue(value){
+  if (value === null || typeof value === "undefined" || value === "") return "";
+  if (value instanceof Date) return formatLocalDateKey(value);
+
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  // Date-only values should stay as-is. Timestamp values are parsed so the
+  // browser compares against the employer's local calendar day.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+
+  const parsed = new Date(raw);
+  if (Number.isFinite(parsed.getTime())) return formatLocalDateKey(parsed);
+
+  const match = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+  return match ? match[1] : "";
+}
+
+function isSameLocalCalendarDay(leftValue, rightDateKey){
+  const leftKey = getLocalDateKeyFromValue(leftValue);
+  return !!leftKey && !!rightDateKey && leftKey === rightDateKey;
+}
+
+function safeStorageGet(storage, key){
+  try{
+    return storage?.getItem?.(key) || "";
+  }catch(error){
+    return "";
+  }
+}
+
+function safeStorageSet(storage, key, value){
+  try{
+    storage?.setItem?.(key, value);
+    return true;
+  }catch(error){
+    return false;
+  }
+}
+
+function buildEmployerLastLoginSessionKey(identity = {}, dateKey = formatLocalDateKey()){
+  const userId = String(identity?.userId || identity?.employer_user_id || "").trim();
+  const email = String(identity?.email || identity?.employer_email || "").trim().toLowerCase();
+  const company = String(identity?.company || identity?.company_name || "").trim().toLowerCase();
+  const keyIdentity = userId || email || company;
+  return keyIdentity ? `${EMPLOYER_LAST_LOGIN_SESSION_KEY_PREFIX}:attempt:${dateKey}:${keyIdentity}` : "";
+}
+
+function buildEmployerDailyDeductionLocalKey(identity = {}, dateKey = formatLocalDateKey()){
+  const userId = String(identity?.userId || identity?.employer_user_id || "").trim();
+  const email = String(identity?.email || identity?.employer_email || "").trim().toLowerCase();
+  const company = String(identity?.company || identity?.company_name || "").trim().toLowerCase();
+  const keyIdentity = userId || email || company;
+  return keyIdentity ? `${EMPLOYER_LAST_LOGIN_SESSION_KEY_PREFIX}:deducted:${dateKey}:${keyIdentity}` : "";
+}
+
+function buildEmployerPaymentMatchers({ email = "", userId = "", company = "" } = {}){
+  const cleanEmail = String(email || "").trim();
+  const cleanUserId = String(userId || "").trim();
+  const cleanCompany = String(company || "").trim();
+  const matchers = [];
+  const seen = new Set();
+
+  const addMatcher = (column, value) => {
+    const cleanValue = String(value || "").trim();
+    if (!column || !cleanValue) return;
+    const key = `${column}:${cleanValue}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    matchers.push({ column, value: cleanValue });
+  };
+
+  if (cleanUserId){
+    EMPLOYER_PAYMENT_USER_ID_MATCH_COLUMNS.forEach((column) => addMatcher(column, cleanUserId));
+  }
+
+  if (cleanEmail){
+    EMPLOYER_PAYMENT_EMAIL_MATCH_COLUMNS.forEach((column) => addMatcher(column, cleanEmail));
+  }
+
+  if (cleanCompany){
+    EMPLOYER_PAYMENT_COMPANY_MATCH_COLUMNS.forEach((column) => addMatcher(column, cleanCompany));
+  }
+
+  return matchers;
+}
+
+function mergeUniqueEmployerPaymentRows(rows = []){
+  const seen = new Set();
+  const merged = [];
+
+  rows.forEach((row) => {
+    if (!row || typeof row !== "object") return;
+    const idValue = EMPLOYER_PAYMENT_TRANSACTION_ID_COLUMNS
+      .map((column) => row?.[column])
+      .find((value) => value !== null && typeof value !== "undefined" && String(value).trim() !== "");
+    const key = idValue
+      ? `id:${idValue}`
+      : JSON.stringify({
+          email: row.employer_email || row.company_email || row.email || "",
+          company: row.company_name || row.company || row.business_name || row.employer_name || "",
+          created_at: row.created_at || row.payment_date || row.transaction_date || "",
+          amount: row.amount || row.payment_amount || row.total_amount || "",
+          days: row.days_remaining || row.remaining_days || row.days_left || ""
+        });
+
+    if (seen.has(key)) return;
+    seen.add(key);
+    merged.push(row);
+  });
+
+  return merged;
+}
+
+async function collectEmployerPaymentTransactionRowsDirect(identity = {}){
+  if (!window.supabase) return [];
+
+  const matchers = buildEmployerPaymentMatchers(identity);
+  if (!matchers.length) return [];
+
+  const rows = [];
+
+  for (const matcher of matchers){
+    try{
+      const { data, error } = await supabase
+        .from(EMPLOYER_PAYMENT_TRANSACTIONS_TABLE)
+        .select("*")
+        .eq(matcher.column, matcher.value)
+        .limit(50);
+
+      if (!error && Array.isArray(data) && data.length){
+        data.forEach((row) => rows.push({
+          ...row,
+          __payment_match_column: matcher.column,
+          __payment_match_value: matcher.value
+        }));
+      }
+    }catch(error){
+      // Some projects use different column names. Continue until one matcher works.
+    }
+  }
+
+  return mergeUniqueEmployerPaymentRows(rows);
+}
+
+function findFirstExistingPaymentColumn(row, columns = []){
+  if (!row || typeof row !== "object") return "";
+  return columns.find((column) => Object.prototype.hasOwnProperty.call(row, column)) || "";
+}
+
+function getPaymentDaysRemainingInfo(row){
+  if (!row || typeof row !== "object") return null;
+
+  for (const column of EMPLOYER_PAYMENT_DAYS_REMAINING_COLUMNS){
+    if (!Object.prototype.hasOwnProperty.call(row, column)) continue;
+    const value = Number(row?.[column]);
+    if (Number.isFinite(value)) return { column, value };
+  }
+
+  return null;
+}
+
+function getPaymentDeductionDateInfo(row){
+  if (!row || typeof row !== "object") return null;
+
+  const column = findFirstExistingPaymentColumn(row, EMPLOYER_PAYMENT_LAST_DEDUCTED_COLUMNS);
+  if (!column) return null;
+
+  return { column, value: row?.[column] || "" };
+}
+
+function getEmployerPaymentRowRecency(row){
+  const candidates = [
+    row?.updated_at,
+    row?.modified_at,
+    row?.edited_at,
+    row?.last_updated,
+    row?.last_modified,
+    row?.payment_date,
+    row?.paid_at,
+    row?.transaction_date,
+    row?.subscription_start_date,
+    row?.created_at
+  ];
+
+  for (const value of candidates){
+    const time = new Date(value || 0).getTime();
+    if (Number.isFinite(time) && time > 0) return time;
+  }
+
+  const numericId = Number(row?.id ?? row?.transaction_id ?? row?.payment_transaction_id ?? 0);
+  return Number.isFinite(numericId) ? numericId : 0;
+}
+
+function getEmployerPaymentStatusScore(row){
+  const status = String(
+    row?.status ||
+    row?.payment_status ||
+    row?.subscription_status ||
+    row?.transaction_status ||
+    row?.access_status ||
+    ""
+  ).trim().toLowerCase();
+
+  if (!status) return 0;
+  if (/active|paid|success|successful|confirmed|approved|complete|completed/.test(status)) return 10;
+  if (/expired|inactive|cancel|cancelled|failed|declined|rejected|refunded|void/.test(status)) return -10;
+  return 0;
+}
+
+function selectBestEmployerPaymentTransactionRow(rows = []){
+  if (!Array.isArray(rows) || !rows.length) return null;
+
+  return [...rows].sort((a, b) => {
+    const aDays = getPaymentDaysRemainingInfo(a);
+    const bDays = getPaymentDaysRemainingInfo(b);
+    const aHasDays = aDays && aDays.value > 0 ? 1 : 0;
+    const bHasDays = bDays && bDays.value > 0 ? 1 : 0;
+
+    return (bHasDays - aHasDays) ||
+      (getEmployerPaymentStatusScore(b) - getEmployerPaymentStatusScore(a)) ||
+      (getEmployerPaymentRowRecency(b) - getEmployerPaymentRowRecency(a));
+  })[0] || null;
+}
+
+function buildEmployerPaymentUpdatePayload(row, {
+  loginDateIso = "",
+  todayKey = "",
+  localDeductKey = "",
+  forceDeductIfNoDbDeductionColumn = true
+} = {}){
+  const dateColumn = findFirstExistingPaymentColumn(row, EMPLOYER_PAYMENT_LAST_LOGIN_COLUMNS) || EMPLOYER_PAYMENT_LAST_LOGIN_COLUMNS[0];
+  const daysInfo = getPaymentDaysRemainingInfo(row);
+  const deductionDateInfo = getPaymentDeductionDateInfo(row);
+  const localAlreadyDeducted = !!safeStorageGet(window.localStorage, localDeductKey);
+
+  // IMPORTANT FIX:
+  // Do NOT use last_login_date alone to decide whether days_remaining was already deducted.
+  // The previous version could update last_login_date today but skip the actual deduction.
+  // If a dedicated deduction-date column exists, use it. Otherwise use localStorage after a real deduction.
+  const dbAlreadyDeducted = deductionDateInfo?.column
+    ? isSameLocalCalendarDay(deductionDateInfo.value, todayKey)
+    : false;
+  const alreadyDeductedToday = dbAlreadyDeducted || localAlreadyDeducted;
+
+  const payload = { [dateColumn]: loginDateIso };
+  let shouldDeduct = false;
+  let oldDaysRemaining = null;
+  let newDaysRemaining = null;
+
+  if (daysInfo && !alreadyDeductedToday && (forceDeductIfNoDbDeductionColumn || deductionDateInfo?.column)){
+    shouldDeduct = true;
+    oldDaysRemaining = Number(daysInfo.value);
+    newDaysRemaining = Math.max(0, oldDaysRemaining - 1);
+    payload[daysInfo.column] = newDaysRemaining;
+
+    if (deductionDateInfo?.column){
+      payload[deductionDateInfo.column] = todayKey;
+    }
+  }
+
+  return {
+    payload,
+    dateColumn,
+    daysColumn: daysInfo?.column || "",
+    oldDaysRemaining,
+    newDaysRemaining,
+    deductionDateColumn: deductionDateInfo?.column || "",
+    alreadyDeductedToday,
+    shouldDeduct
+  };
+}
+
+async function tryUpdateEmployerPaymentTransactionRow(row, payload){
+  if (!row || !payload || !Object.keys(payload).length || !window.supabase) return 0;
+
+  for (const idColumn of EMPLOYER_PAYMENT_TRANSACTION_ID_COLUMNS){
+    const idValue = row?.[idColumn];
+    if (idValue === null || typeof idValue === "undefined" || String(idValue).trim() === "") continue;
+
+    try{
+      const { error, count } = await supabase
+        .from(EMPLOYER_PAYMENT_TRANSACTIONS_TABLE)
+        .update(payload, { count: "exact" })
+        .eq(idColumn, idValue);
+
+      if (error) throw error;
+
+      // Some Supabase setups return count as null even when the update succeeded.
+      // Because this update is targeting a specific id, no error is treated as success.
+      return Number.isFinite(Number(count)) ? Number(count) : 1;
+    }catch(error){
+      // Try the next likely id column if this project uses a different primary key.
+    }
+  }
+
+  const matchColumn = row?.__payment_match_column;
+  const matchValue = row?.__payment_match_value;
+  if (!matchColumn || !matchValue) return 0;
+
+  const { error, count } = await supabase
+    .from(EMPLOYER_PAYMENT_TRANSACTIONS_TABLE)
+    .update(payload, { count: "exact" })
+    .eq(matchColumn, matchValue);
+
+  if (error) throw error;
+  return Number.isFinite(Number(count)) ? Number(count) : 1;
+}
+
+async function updateEmployerPaymentLoginAndDeductDayDirect({
+  email = "",
+  userId = "",
+  company = "",
+  loginDateIso = "",
+  todayKey = "",
+  localDeductKey = ""
+} = {}){
+  const result = {
+    updated: false,
+    deducted: false,
+    alreadyDeductedToday: false,
+    reason: "",
+    daysColumn: "",
+    oldDaysRemaining: null,
+    newDaysRemaining: null
+  };
+
+  const rows = await collectEmployerPaymentTransactionRowsDirect({ email, userId, company });
+  const targetRow = selectBestEmployerPaymentTransactionRow(rows);
+
+  if (!targetRow){
+    result.reason = "No matching employer_payment_transactions row found.";
+    console.warn(result.reason);
+    return result;
+  }
+
+  const build = buildEmployerPaymentUpdatePayload(targetRow, {
+    loginDateIso,
+    todayKey,
+    localDeductKey,
+    forceDeductIfNoDbDeductionColumn: true
+  });
+
+  let updatedCount = 0;
+
+  try{
+    updatedCount = await tryUpdateEmployerPaymentTransactionRow(targetRow, build.payload);
+  }catch(error){
+    console.warn("Employer payment transaction update failed:", error);
+    result.reason = error?.message || "Direct update failed.";
+    return result;
+  }
+
+  result.updated = updatedCount > 0;
+  result.deducted = result.updated && build.shouldDeduct;
+  result.alreadyDeductedToday = build.alreadyDeductedToday;
+  result.daysColumn = build.daysColumn;
+  result.oldDaysRemaining = build.oldDaysRemaining;
+  result.newDaysRemaining = build.newDaysRemaining;
+
+  if (result.updated && result.deducted){
+    console.info(`Employer daily login recorded. ${build.daysColumn} changed from ${build.oldDaysRemaining} to ${build.newDaysRemaining}.`);
+  }else if (result.updated && result.alreadyDeductedToday){
+    console.info("Employer daily login already deducted today. Last-login date refreshed without deducting another day.");
+  }else if (result.updated && !build.daysColumn){
+    console.info("Employer last-login date updated. No days_remaining style column was found to deduct.");
+  }else if (result.updated){
+    console.info("Employer last-login date updated. days_remaining was not deducted.");
+  }
+
+  return result;
+}
+
+function parseEmployerDailyLoginEdgeResult(data){
+  const payload = data && typeof data === "object" ? data : {};
+  const updatedCount = Number(
+    payload.updated_count ??
+    payload.updatedCount ??
+    payload.count ??
+    payload.row_count ??
+    payload.rowCount ??
+    0
+  );
+  const deductedAmount = Number(
+    payload.deducted_amount ??
+    payload.deductedAmount ??
+    payload.days_deducted ??
+    payload.daysDeducted ??
+    0
+  );
+
+  return {
+    updated: payload.updated === true ||
+      payload.success === true ||
+      payload.saved === true ||
+      payload.recorded === true ||
+      updatedCount > 0,
+    deducted: payload.deducted === true ||
+      payload.days_remaining_deducted === true ||
+      payload.daysRemainingDeducted === true ||
+      deductedAmount > 0,
+    raw: payload
+  };
+}
+
+async function recordEmployerPaymentLastLoginOnce(identity = {}){
+  const email = String(identity?.email || "").trim();
+  const userId = String(identity?.userId || "").trim();
+  const company = String(identity?.company || "").trim();
+
+  if (!email && !userId && !company) return false;
+
+  const loginDateIso = new Date().toISOString();
+  const todayKey = formatLocalDateKey(new Date());
+  const sessionKey = buildEmployerLastLoginSessionKey({ email, userId, company }, todayKey);
+  const localDeductKey = buildEmployerDailyDeductionLocalKey({ email, userId, company }, todayKey);
+
+  if (!sessionKey) return false;
+  if (safeStorageGet(window.sessionStorage, sessionKey)) return true;
+  if (employerLastLoginUpdatePendingKeys.has(sessionKey)) return true;
+
+  employerLastLoginUpdatePendingKeys.add(sessionKey);
+
+  let saved = false;
+  let deducted = false;
+
+  try{
+    // First try direct update so days_remaining is actually changed from this page.
+    // This fixes the case where the Edge Function returns success but does not deduct.
+    const directResult = await updateEmployerPaymentLoginAndDeductDayDirect({
+      email,
+      userId,
+      company,
+      loginDateIso,
+      todayKey,
+      localDeductKey
+    });
+
+    saved = !!directResult.updated;
+    deducted = !!directResult.deducted;
+
+    if (!saved){
+      try{
+        const edgeData = await callApplicantDashboardApi("record_employer_daily_login", {
+          employer_email: email,
+          employer_user_id: userId,
+          company_name: company,
+          last_login_date: loginDateIso,
+          login_date_key: todayKey,
+          deduct_days_remaining: true,
+          deduct_amount: 1,
+          days_remaining_column: "days_remaining"
+        });
+
+        const edgeResult = parseEmployerDailyLoginEdgeResult(edgeData);
+        saved = !!edgeResult.updated;
+        deducted = !!edgeResult.deducted;
+      }catch(edgeError){
+        console.warn("Employer daily login Edge Function update failed:", edgeError);
+      }
+    }
+
+    if (saved){
+      safeStorageSet(window.sessionStorage, sessionKey, loginDateIso);
+    }
+
+    if (deducted){
+      safeStorageSet(window.localStorage, localDeductKey, todayKey);
+    }
+
+    return saved;
+  }catch(error){
+    console.warn("Employer daily login update failed:", error);
+    return false;
+  }finally{
+    employerLastLoginUpdatePendingKeys.delete(sessionKey);
+  }
+}
+
 function renderEmployerSession(identity){
   const company = String(identity?.company || "").trim();
   const email = String(identity?.email || "").trim();
@@ -15947,6 +17158,11 @@ async function resolveEmployerIdentity(){
       logoCandidates: createEmployerLogoCandidates(fastLogo)
     });
     refreshRoleSensitiveUi();
+    recordEmployerPaymentLastLoginOnce({
+      email: fastEmail,
+      userId: authUserId,
+      company: fastCompany
+    });
   }
 
   try{
@@ -15975,6 +17191,11 @@ async function resolveEmployerIdentity(){
     else clearStoredValues(EMPLOYER_LOGO_STORAGE_KEYS);
 
     renderEmployerSession({ company, email, logo, logoCandidates });
+    recordEmployerPaymentLastLoginOnce({
+      email,
+      userId: authUserId,
+      company
+    });
     applyEmployerInteractionRows(data?.favorites || [], data?.contacts || []);
     refreshRoleSensitiveUi();
     return { company, email, logo };
@@ -15985,6 +17206,11 @@ async function resolveEmployerIdentity(){
       email: authEmail || storedEmail || "",
       logo: storedLogo || "",
       logoCandidates: createEmployerLogoCandidates(storedLogo || "")
+    });
+    recordEmployerPaymentLastLoginOnce({
+      email: authEmail || storedEmail || "",
+      userId: authUserId,
+      company: storedCompany || ""
     });
     refreshRoleSensitiveUi();
     return { company: storedCompany || "", email: authEmail || storedEmail || "", logo: storedLogo || "" };
@@ -17314,95 +18540,94 @@ function escapeHTML(str){
 }
 
 /* ============================================================
-   HEADER DROPDOWN + MOBILE MENU
-============================================================ */
+   ABOUT DROPDOWN (Desktop)
+=========================================================== */
 (function(){
   const dd = document.getElementById("aboutNavDropdown");
-  const trigger = dd ? dd.querySelector(".nav-dropdown-trigger") : null;
   const toggle = document.getElementById("aboutNavToggle");
-  const mainLink = document.getElementById("aboutNavLink");
   const menu = document.getElementById("aboutNavMenu");
-  if(!dd || !trigger || !toggle || !menu) return;
 
-  let closeTimer = null;
+  if(!dd || !toggle || !menu) return;
 
-  function isDesktopMenu(){
-    return window.innerWidth >= 769;
-  }
-
-  function clearCloseTimer(){
-    if(closeTimer){
-      clearTimeout(closeTimer);
-      closeTimer = null;
-    }
-  }
-
-  function setMenuState(open){
-    dd.classList.toggle("open", open);
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    menu.setAttribute("aria-hidden", open ? "false" : "true");
+  function closeAboutMenu(){
+    dd.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
   }
 
   function openAboutMenu(){
-    clearCloseTimer();
-    setMenuState(true);
+    dd.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
   }
-
-  function closeAboutMenu(){
-    clearCloseTimer();
-    setMenuState(false);
-  }
-
-  function queueClose(){
-    clearCloseTimer();
-    closeTimer = setTimeout(closeAboutMenu, 120);
-  }
-
-  setMenuState(false);
 
   toggle.addEventListener("click", function(e){
     e.preventDefault();
     e.stopPropagation();
-    setMenuState(!dd.classList.contains("open"));
-  });
 
-  if(mainLink){
-    mainLink.addEventListener("click", function(e){
-      if(isDesktopMenu() && !dd.classList.contains("open")){
-        e.preventDefault();
-        openAboutMenu();
-      }
-    });
-  }
-
-  dd.addEventListener("mouseenter", function(){
-    if(isDesktopMenu()) openAboutMenu();
-  });
-
-  dd.addEventListener("mouseleave", function(){
-    if(isDesktopMenu()) queueClose();
-  });
-
-  dd.addEventListener("focusin", openAboutMenu);
-  dd.addEventListener("focusout", function(){
-    setTimeout(function(){
-      if(!dd.contains(document.activeElement)) closeAboutMenu();
-    }, 0);
+    const isOpen = dd.classList.contains("open");
+    if(isOpen){
+      closeAboutMenu();
+    }else{
+      openAboutMenu();
+    }
   });
 
   document.addEventListener("click", function(e){
-    if(!dd.contains(e.target)) closeAboutMenu();
+    if(!dd.contains(e.target)){
+      closeAboutMenu();
+    }
   });
 
   document.addEventListener("keydown", function(e){
-    if(e.key === "Escape") closeAboutMenu();
+    if(e.key === "Escape"){
+      closeAboutMenu();
+    }
   });
 
+  const aboutLink = document.getElementById("aboutNavLink");
+
+  if(aboutLink){
+    aboutLink.addEventListener("click", function(){
+      closeAboutMenu();
+    });
+  }
+
   menu.querySelectorAll("a").forEach(function(a){
-    a.addEventListener("click", closeAboutMenu);
+    a.addEventListener("click", function(){
+      closeAboutMenu();
+    });
   });
 })();
 
+/* ============================================================
+   EMPLOYER DROPDOWN (Desktop)
+=========================================================== */
+(function(){
+  const wrap = document.getElementById("employerDropdown");
+  const toggle = document.getElementById("employerToggle");
+  const menu = document.getElementById("employerMenu");
+  if(!wrap || !toggle || !menu) return;
+
+  toggle.addEventListener("click", (e)=>{
+    e.preventDefault();
+    wrap.classList.toggle("open");
+  });
+
+  document.addEventListener("click", (e)=>{
+    if(!wrap.contains(e.target)) wrap.classList.remove("open");
+  });
+
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") wrap.classList.remove("open");
+  });
+
+  menu.querySelectorAll("a").forEach(a =>
+    a.addEventListener("click", ()=> wrap.classList.remove("open"))
+  );
+})();
+
+/* ============================================================
+   MOBILE MENU
+=========================================================== */
 (function(){
   const btn = document.getElementById("navToggle");
   const panel = document.getElementById("mobilePanel");
@@ -17422,14 +18647,14 @@ function escapeHTML(str){
     aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
   }
 
-  function closeMobileMenu(){
+  function close(){
     panel.classList.remove("open");
-    panel.setAttribute("aria-hidden", "true");
-    btn.setAttribute("aria-expanded", "false");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
     closeAbout();
   }
 
-  btn.addEventListener("click", function(){
+  btn.addEventListener("click", ()=>{
     const open = panel.classList.toggle("open");
     panel.setAttribute("aria-hidden", open ? "false" : "true");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
@@ -17437,33 +18662,90 @@ function escapeHTML(str){
   });
 
   if(aboutToggle){
-    aboutToggle.addEventListener("click", function(e){
+    aboutToggle.addEventListener("click", (e)=>{
       e.preventDefault();
       e.stopPropagation();
       toggleAbout();
     });
   }
 
-  panel.querySelectorAll("a").forEach(function(a){
-    a.addEventListener("click", closeMobileMenu);
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") close();
   });
 
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape") closeMobileMenu();
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
+      const header = document.querySelector("header");
+      if(header && header.contains(e.target)) return;
+      if(panel.contains(e.target)) return;
+      close();
+    }
   });
 
-  document.addEventListener("click", function(e){
-    if(!panel.classList.contains("open")) return;
-    const header = document.querySelector("header");
-    if(header && header.contains(e.target)) return;
-    if(panel.contains(e.target)) return;
-    closeMobileMenu();
-  });
-
-  window.addEventListener("resize", function(){
-    if(window.innerWidth >= 769) closeMobileMenu();
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth >= 769) close();
   }, { passive:true });
-})();</script>
+})();
+
+/* ============================================================
+   PARALLAX DEPTH (mouse + scroll)
+=========================================================== */
+(function(){
+  const items = Array.from(document.querySelectorAll(".worker-float"));
+  if(!items.length) return;
+
+  const reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduceMotion) return;
+
+  let mouseX = 0, mouseY = 0;
+  let tx = 0, ty = 0;
+  let raf = null;
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  function onMove(e){
+    const w = window.innerWidth || 1;
+    const h = window.innerHeight || 1;
+    const cx = w / 2;
+    const cy = h / 2;
+    mouseX = clamp((e.clientX - cx) / cx, -1, 1);
+    mouseY = clamp((e.clientY - cy) / cy, -1, 1);
+    if(!raf) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(){
+    raf = null;
+
+    tx += (mouseX - tx) * 0.07;
+    ty += (mouseY - ty) * 0.07;
+
+    const scrollInfluence = clamp((window.scrollY || 0) * 0.00035, 0, 0.35);
+
+    items.forEach(el=>{
+      const depth = parseFloat(el.dataset.depth || "0.2");
+      const baseX = 55 * depth;
+      const baseY = 42 * depth;
+
+      const moveX = tx * baseX;
+      const moveY = (ty * baseY) + (scrollInfluence * 40 * depth);
+
+      el.style.setProperty("--px", moveX.toFixed(2) + "px");
+      el.style.setProperty("--py", moveY.toFixed(2) + "px");
+    });
+
+    raf = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener("mousemove", onMove, { passive:true });
+  window.addEventListener("scroll", ()=>{
+    if(!raf) raf = requestAnimationFrame(tick);
+  }, { passive:true });
+
+  tick();
+})();
+</script>
 
 <script>
 /* ============================================================
@@ -19618,119 +20900,6 @@ startAutoRefresh();
   }
 }
 </style>
-
-
-<style id="final-mobile-header-height-right-hamburger-patch">
-/* ============================================================
-   FINAL MOBILE HEADER PATCH — APPLICANT DASHBOARD ONLY
-   - logo fixed on the left
-   - hamburger fixed on the right
-   - slightly shorter header to prevent hidden mobile nav links
-============================================================ */
-@media (max-width: 768px){
-  :root{
-    --header-h:66px !important;
-    --hdrH:66px !important;
-    --app-header-offset:66px !important;
-  }
-
-  html{
-    scroll-padding-top: calc(var(--header-h) + 12px) !important;
-  }
-
-  body{
-    padding-top:var(--header-h) !important;
-  }
-
-  body > header,
-  header{
-    position:fixed !important;
-    top:0 !important;
-    left:0 !important;
-    right:0 !important;
-    height:var(--header-h) !important;
-    min-height:var(--header-h) !important;
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) auto !important;
-    align-items:center !important;
-    justify-content:unset !important;
-    gap:8px !important;
-    padding:0 10px 0 8px !important;
-    z-index:2100 !important;
-  }
-
-  body > header .logo,
-  header .logo{
-    order:1 !important;
-    min-width:0 !important;
-    width:auto !important;
-    margin:0 !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    flex:0 1 auto !important;
-  }
-
-  body > header .logo img,
-  header .logo img{
-    height:44px !important;
-    max-height:44px !important;
-    width:auto !important;
-    object-fit:contain !important;
-    display:block !important;
-  }
-
-  body > header nav,
-  body > header .auth-buttons,
-  header nav,
-  header .auth-buttons{
-    display:none !important;
-  }
-
-  body > header .nav-toggle,
-  .nav-toggle{
-    order:2 !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    width:36px !important;
-    height:36px !important;
-    min-width:36px !important;
-    min-height:36px !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
-    border-radius:10px !important;
-    flex:0 0 36px !important;
-    align-self:center !important;
-  }
-
-  .nav-toggle i{
-    font-size:0.94rem !important;
-  }
-
-  .mobile-panel{
-    top:var(--header-h) !important;
-    max-height:calc(100vh - var(--header-h)) !important;
-    overflow:auto !important;
-    padding:10px 12px 12px !important;
-    z-index:2090 !important;
-  }
-
-  .mobile-panel .mnav{
-    gap:6px !important;
-  }
-
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link,
-  .mobile-panel .mnav-toggle{
-    min-height:40px !important;
-    padding:10px 11px !important;
-    border-radius:10px !important;
-    font-size:0.82rem !important;
-  }
-}
-</style>
-
 <script>
 /* ============================================================
    MOBILE-ONLY EMPLOYER DASHBOARD HEADER + FILE VIEWER SYNC
@@ -19779,6 +20948,943 @@ startAutoRefresh();
 })();
 </script>
 
+
+<!-- ==========================================================
+     FINAL UPDATE 2026-04-27:
+     FULL INDEX HEADER LOCK FOR APPLICANT DASHBOARD
+     Applies the uploaded index file header style, format, display,
+     dropdown behavior targets, mobile hamburger display, and
+     Employer/Jobseeker button hover/color behavior.
+=========================================================== -->
+<style id="applicant-dashboard-exact-index-header-full-lock">
+:root{
+  --header-h:78px !important;
+}
+
+html,
+body{
+  overflow-x:hidden !important;
+}
+
+body{
+  padding-top:var(--header-h) !important;
+}
+
+/* Remove older Applicant/Employer mobile header decoration so the header matches index */
+html body > header::before,
+html body > header::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* ============================================================
+   EXACT INDEX HEADER BASE
+============================================================ */
+html body > header{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  height:var(--header-h) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  padding:0 16px 0 8px !important;
+  background:rgba(15,23,42,0.92) !important;
+  border-bottom:1px solid rgba(59,130,246,0.28) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+  box-shadow:0 8px 24px rgba(0,0,0,0.18) !important;
+  z-index:1500 !important;
+  overflow:visible !important;
+}
+
+html body > header .logo{
+  flex:0 0 auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  margin-left:-4px !important;
+  margin-right:0 !important;
+  padding:0 !important;
+}
+
+html body > header .logo img{
+  height:80px !important;
+  width:auto !important;
+  max-width:none !important;
+  display:block !important;
+  object-fit:contain !important;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35)) !important;
+  margin:0 !important;
+}
+
+html body > header nav{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:12px !important;
+  margin-left:4px !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+}
+
+html body > header nav > a,
+html body > header nav .nav-main-link{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  height:36px !important;
+  padding:0 4px !important;
+  color:#e5e7eb !important;
+  text-decoration:none !important;
+  font-size:0.88rem !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+  min-width:0 !important;
+  position:relative !important;
+  border-radius:12px !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    text-shadow 0.25s ease !important;
+}
+
+html body > header nav > a::before,
+html body > header nav .nav-main-link::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  border-radius:inherit !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12)) !important;
+  opacity:0 !important;
+  transform:scaleX(0.72) !important;
+  transform-origin:center !important;
+  transition:opacity 0.25s ease, transform 0.25s ease !important;
+  z-index:-1 !important;
+}
+
+html body > header nav > a:hover,
+html body > header nav > a:focus-visible,
+html body > header nav .nav-main-link:hover,
+html body > header nav .nav-main-link:focus-visible,
+html body > header .nav-dropdown.open .nav-main-link{
+  color:#ffffff !important;
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
+  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
+  transform:translateY(-1px) !important;
+}
+
+html body > header nav > a:hover::before,
+html body > header nav > a:focus-visible::before,
+html body > header nav .nav-main-link:hover::before,
+html body > header nav .nav-main-link:focus-visible::before,
+html body > header .nav-dropdown.open .nav-main-link::before{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+html body > header nav > a i,
+html body > header nav .nav-main-link i{
+  width:16px !important;
+  min-width:16px !important;
+  text-align:center !important;
+  font-size:0.92em !important;
+  flex:0 0 auto !important;
+  color:#38bdf8 !important;
+  text-shadow:0 0 10px rgba(56,189,248,0.35) !important;
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+html body > header nav > a:hover i,
+html body > header nav > a:focus-visible i,
+html body > header nav .nav-main-link:hover i,
+html body > header nav .nav-main-link:focus-visible i,
+html body > header .nav-dropdown.open .nav-main-link i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
+  transform:scale(1.08) !important;
+}
+
+html body > header nav .nav-text,
+html body > .mobile-panel .nav-text{
+  display:inline-block !important;
+  min-width:0 !important;
+}
+
+/* ============================================================
+   EXACT INDEX AUTH BUTTONS
+============================================================ */
+html body > header .auth-buttons{
+  flex:0 0 auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  white-space:nowrap !important;
+  width:auto !important;
+  min-width:max-content !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+html body > header .auth-buttons a,
+html body > header .auth-buttons a.admin,
+html body > header .auth-buttons a.employer-auth,
+html body > header .auth-buttons a.jobseeker-auth{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  height:36px !important;
+  padding:0 11px !important;
+  border-radius:10px !important;
+  text-decoration:none !important;
+  font-size:0.82rem !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.10) !important;
+  white-space:nowrap !important;
+  transform:none !important;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease !important;
+}
+
+html body > header .auth-buttons a::before,
+html body > header .auth-buttons a.admin::before,
+html body > header .auth-buttons a.employer-auth::before,
+html body > header .auth-buttons a.jobseeker-auth::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  border-radius:inherit !important;
+  opacity:0 !important;
+  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02)) !important;
+  transition:opacity 0.25s ease !important;
+  z-index:-1 !important;
+  pointer-events:none !important;
+}
+
+html body > header .auth-buttons a:hover,
+html body > header .auth-buttons a:focus-visible,
+html body > header .auth-buttons a.admin:hover,
+html body > header .auth-buttons a.admin:focus-visible,
+html body > header .auth-buttons a.employer-auth:hover,
+html body > header .auth-buttons a.employer-auth:focus-visible,
+html body > header .auth-buttons a.jobseeker-auth:hover,
+html body > header .auth-buttons a.jobseeker-auth:focus-visible{
+  color:#ffffff !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  transform:translateY(-2px) !important;
+  box-shadow:0 0 20px rgba(0,198,255,0.22) !important;
+  border-color:rgba(0,198,255,0.35) !important;
+}
+
+html body > header .auth-buttons a:hover::before,
+html body > header .auth-buttons a:focus-visible::before{
+  opacity:1 !important;
+}
+
+html body > header .auth-buttons a i,
+html body > header .auth-buttons a.admin i,
+html body > header .auth-buttons a.employer-auth i,
+html body > header .auth-buttons a.jobseeker-auth i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  font-size:0.85rem !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.16) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
+  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+html body > header .auth-buttons a.employer-auth i{
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+}
+
+html body > header .auth-buttons a.jobseeker-auth i{
+  background:rgba(167,139,250,0.22) !important;
+  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
+}
+
+html body > header .auth-buttons a:hover i,
+html body > header .auth-buttons a:focus-visible i{
+  transform:scale(1.10) rotate(-3deg) !important;
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+html body > header .auth-buttons .auth-text{
+  display:inline-block !important;
+  min-width:0 !important;
+}
+
+/* ============================================================
+   EXACT INDEX ABOUT DROPDOWN
+============================================================ */
+html body > header .nav-dropdown{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  height:36px !important;
+  flex:0 0 auto !important;
+}
+
+html body > header .nav-dropdown-trigger{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:2px !important;
+  height:100% !important;
+}
+
+html body > header .nav-dropdown-toggle{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  border:none !important;
+  outline:none !important;
+  background:transparent !important;
+  color:#ffffff !important;
+  cursor:pointer !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:24px !important;
+  height:24px !important;
+  padding:0 !important;
+  margin:0 !important;
+  line-height:1 !important;
+  flex:0 0 auto !important;
+}
+
+html body > header .nav-dropdown-toggle i{
+  pointer-events:none !important;
+  color:#ffffff !important;
+  font-size:0.9rem !important;
+}
+
+html body > header .nav-dropdown-menu{
+  position:absolute !important;
+  top:calc(100% + 12px) !important;
+  left:0 !important;
+  min-width:238px !important;
+  display:none !important;
+  flex-direction:column !important;
+  gap:0 !important;
+  padding:10px 0 !important;
+  border-radius:14px !important;
+  background:rgba(15,23,42,0.96) !important;
+  border:1px solid rgba(59,130,246,0.35) !important;
+  box-shadow:0 12px 34px rgba(0,0,0,0.35) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+  z-index:1200 !important;
+}
+
+html body > header .nav-dropdown.open .nav-dropdown-menu{
+  display:flex !important;
+}
+
+html body > header .nav-dropdown-menu a{
+  display:flex !important;
+  align-items:center !important;
+  gap:11px !important;
+  padding:12px 12px !important;
+  color:#e5e7eb !important;
+  text-decoration:none !important;
+  white-space:nowrap !important;
+  border:1px solid transparent !important;
+  border-radius:10px !important;
+  margin:0 8px !important;
+  font-size:0.88rem !important;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+
+html body > header .nav-dropdown-menu a:hover,
+html body > header .nav-dropdown-menu a:focus-visible{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.24) !important;
+  color:#ffffff !important;
+  transform:translateX(3px) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.12) !important;
+}
+
+html body > header .nav-dropdown-menu a i{
+  width:20px !important;
+  min-width:20px !important;
+  text-align:center !important;
+  flex:0 0 auto !important;
+  color:#38bdf8 !important;
+  text-shadow:0 0 10px rgba(56,189,248,0.35) !important;
+}
+
+html body > header .nav-dropdown-menu a:hover i,
+html body > header .nav-dropdown-menu a:focus-visible i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+/* ============================================================
+   EXACT INDEX HAMBURGER + MOBILE PANEL
+============================================================ */
+html body > header .nav-toggle{
+  display:none !important;
+  width:40px !important;
+  height:40px !important;
+  border:none !important;
+  border-radius:10px !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  color:#fff !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  flex:0 0 auto !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.10) !important;
+}
+
+html body > header .nav-toggle i{
+  font-size:1rem !important;
+}
+
+html body > .mobile-panel{
+  position:fixed !important;
+  top:var(--header-h) !important;
+  left:0 !important;
+  right:0 !important;
+  background:rgba(15,23,42,0.97) !important;
+  border-top:1px solid rgba(59,130,246,0.25) !important;
+  border-bottom:1px solid rgba(59,130,246,0.25) !important;
+  box-shadow:0 10px 28px rgba(0,0,0,0.28) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+  padding:14px 16px 18px !important;
+  transform:translateY(-10px) !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  transition:opacity 0.25s ease, transform 0.25s ease !important;
+  z-index:1400 !important;
+}
+
+html body > .mobile-panel.open{
+  opacity:1 !important;
+  transform:translateY(0) !important;
+  pointer-events:auto !important;
+}
+
+html body > .mobile-panel .mnav{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+}
+
+html body > .mobile-panel .mnav a,
+html body > .mobile-panel .mnav-main-link{
+  flex:initial !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  padding:12px 14px !important;
+  border-radius:12px !important;
+  text-decoration:none !important;
+  color:#e5e7eb !important;
+  background:rgba(255,255,255,0.04) !important;
+  border:1px solid rgba(255,255,255,0.08) !important;
+  font-weight:600 !important;
+  font-size:0.96rem !important;
+  min-height:0 !important;
+  box-shadow:none !important;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease !important;
+}
+
+html body > .mobile-panel .mnav a:hover,
+html body > .mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12) !important;
+  color:#fff !important;
+  transform:translateX(3px) !important;
+}
+
+html body > .mobile-panel .mnav-group{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+}
+
+html body > .mobile-panel .mnav-row{
+  display:grid !important;
+  grid-template-columns:minmax(0, 1fr) 46px !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+html body > .mobile-panel .mnav-toggle{
+  width:46px !important;
+  min-width:46px !important;
+  max-width:46px !important;
+  height:auto !important;
+  align-self:stretch !important;
+  justify-content:center !important;
+  padding:0 !important;
+  flex:0 0 46px !important;
+  border-radius:12px !important;
+  border:1px solid rgba(255,255,255,0.08) !important;
+  background:rgba(255,255,255,0.04) !important;
+  color:#e5e7eb !important;
+  font-weight:600 !important;
+  font-size:0.96rem !important;
+  cursor:pointer !important;
+  display:flex !important;
+  align-items:center !important;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease !important;
+}
+
+html body > .mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12) !important;
+  color:#fff !important;
+  transform:translateX(3px) !important;
+}
+
+html body > .mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease !important;
+  color:#e5e7eb !important;
+}
+
+html body > .mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg) !important;
+}
+
+html body > .mobile-panel .mnav-submenu{
+  display:none !important;
+  flex-direction:column !important;
+  gap:8px !important;
+  padding-left:14px !important;
+  margin-top:0 !important;
+}
+
+html body > .mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex !important;
+}
+
+html body > .mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03) !important;
+}
+
+html body > .mobile-panel .mnav-left{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:11px !important;
+  min-width:0 !important;
+}
+
+html body > .mobile-panel .mnav-left i{
+  width:18px !important;
+  min-width:18px !important;
+  text-align:center !important;
+  flex:0 0 auto !important;
+  color:#38bdf8 !important;
+  text-shadow:0 0 10px rgba(56,189,248,0.35) !important;
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+html body > .mobile-panel .mnav a .fa-arrow-right,
+html body > .mobile-panel .mnav-main-link .fa-arrow-right{
+  flex:0 0 auto !important;
+  color:#93c5fd !important;
+}
+
+html body > .mobile-panel .mnav a:hover .mnav-left i,
+html body > .mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#ffffff !important;
+  transform:scale(1.08) !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+/* ============================================================
+   EXACT INDEX BREAKPOINTS
+============================================================ */
+@media (min-width:1800px){
+  :root{--header-h:84px !important;}
+  html body > header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
+  }
+  html body > header .logo{margin-left:-2px !important;}
+  html body > header .logo img{height:88px !important;}
+  html body > header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+  }
+  html body > header nav > a,
+  html body > header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
+    gap:8px !important;
+  }
+  html body > header nav > a i,
+  html body > header nav .nav-main-link i{
+    width:17px !important;
+    min-width:17px !important;
+  }
+  html body > header .nav-dropdown{height:38px !important;}
+  html body > header .nav-dropdown-toggle{width:24px !important;height:24px !important;}
+  html body > header .nav-dropdown-toggle i{font-size:0.92rem !important;}
+  html body > header .auth-buttons{display:flex !important;gap:10px !important;}
+  html body > header .auth-buttons a{height:38px !important;padding:0 14px !important;font-size:0.86rem !important;border-radius:10px !important;}
+  html body > header .nav-toggle{display:none !important;}
+  html body > .mobile-panel{display:none !important;}
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  :root{--header-h:78px !important;}
+  html body > header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+  html body > header .logo{margin-left:-3px !important;}
+  html body > header .logo img{height:80px !important;}
+  html body > header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:13px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+  }
+  html body > header nav > a,
+  html body > header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+    gap:6px !important;
+  }
+  html body > header nav > a i,
+  html body > header nav .nav-main-link i{
+    width:15px !important;
+    min-width:15px !important;
+  }
+  html body > header .nav-dropdown{height:36px !important;}
+  html body > header .nav-dropdown-toggle{width:24px !important;height:24px !important;}
+  html body > header .nav-dropdown-toggle i{font-size:0.88rem !important;}
+  html body > header .auth-buttons{display:flex !important;gap:7px !important;}
+  html body > header .auth-buttons a{height:36px !important;padding:0 11px !important;font-size:0.79rem !important;border-radius:10px !important;}
+  html body > header .nav-toggle{display:none !important;}
+  html body > .mobile-panel{display:none !important;}
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  :root{--header-h:76px !important;}
+  html body > header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 10px 0 6px !important;
+  }
+  html body > header .logo{margin-left:-2px !important;}
+  html body > header .logo img{height:66px !important;}
+  html body > header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:6px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+  }
+  html body > header nav > a,
+  html body > header nav .nav-main-link{
+    height:34px !important;
+    padding:0 1px !important;
+    font-size:0.69rem !important;
+    letter-spacing:-0.01em !important;
+    gap:4px !important;
+    border-radius:9px !important;
+  }
+  html body > header nav > a i,
+  html body > header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+  html body > header .nav-dropdown{height:34px !important;}
+  html body > header .nav-dropdown-trigger{gap:1px !important;}
+  html body > header .nav-dropdown-toggle{width:18px !important;height:18px !important;}
+  html body > header .nav-dropdown-toggle i{font-size:0.68rem !important;}
+  html body > header .auth-buttons{display:flex !important;gap:4px !important;}
+  html body > header .auth-buttons a{
+    height:32px !important;
+    padding:0 6px !important;
+    font-size:0.66rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+  html body > header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+  html body > header .nav-toggle{display:none !important;}
+  html body > .mobile-panel{display:none !important;}
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  :root{--header-h:74px !important;}
+  html body > header{
+    height:var(--header-h) !important;
+    gap:5px !important;
+    padding:0 6px 0 4px !important;
+  }
+  html body > header .logo{margin-left:-2px !important;}
+  html body > header .logo img{height:54px !important;}
+  html body > header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:4px !important;
+    margin-left:1px !important;
+    white-space:nowrap !important;
+  }
+  html body > header nav > a,
+  html body > header nav .nav-main-link{
+    height:31px !important;
+    padding:0 1px !important;
+    font-size:0.58rem !important;
+    letter-spacing:-0.03em !important;
+    gap:3px !important;
+    border-radius:8px !important;
+  }
+  html body > header nav > a i,
+  html body > header nav .nav-main-link i{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:0.78em !important;
+  }
+  html body > header .nav-dropdown{height:31px !important;}
+  html body > header .nav-dropdown-trigger{gap:1px !important;}
+  html body > header .nav-dropdown-toggle{width:15px !important;height:15px !important;}
+  html body > header .nav-dropdown-toggle i{font-size:0.58rem !important;}
+  html body > header .auth-buttons{display:flex !important;gap:3px !important;}
+  html body > header .auth-buttons a{
+    height:28px !important;
+    padding:0 4px !important;
+    font-size:0.56rem !important;
+    border-radius:8px !important;
+    gap:3px !important;
+  }
+  html body > header .auth-buttons a i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
+  }
+  html body > header .nav-toggle{display:none !important;}
+  html body > .mobile-panel{display:none !important;}
+}
+
+@media (min-width:481px) and (max-width:768px){
+  :root{--header-h:72px !important;}
+  html body > header{
+    height:var(--header-h) !important;
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    column-gap:10px !important;
+    justify-content:unset !important;
+    padding:0 10px 0 8px !important;
+    background:rgba(15,23,42,0.92) !important;
+    border-bottom:1px solid rgba(59,130,246,0.28) !important;
+    box-shadow:0 8px 24px rgba(0,0,0,0.18) !important;
+  }
+  html body > header .logo{
+    grid-column:1 !important;
+    order:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+  html body > header .logo img{
+    height:52px !important;
+    display:block !important;
+    margin:0 !important;
+  }
+  html body > header nav,
+  html body > header .auth-buttons{
+    display:none !important;
+  }
+  html body > header .nav-toggle{
+    grid-column:3 !important;
+    order:2 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin:0 !important;
+    flex:0 0 auto !important;
+  }
+  html body > .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+    display:block !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  html body > .mobile-panel .mnav{gap:8px !important;}
+  html body > .mobile-panel .mnav a,
+  html body > .mobile-panel .mnav-main-link,
+  html body > .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+  html body > .mobile-panel .mnav-row{
+    grid-template-columns:minmax(0, 1fr) 46px !important;
+    gap:8px !important;
+  }
+  html body > .mobile-panel .mnav-toggle{
+    width:46px !important;
+    min-width:46px !important;
+    max-width:46px !important;
+    padding:0 !important;
+  }
+  html body > .mobile-panel .mnav-submenu{padding-left:12px !important;}
+}
+
+@media (max-width:480px){
+  :root{--header-h:70px !important;}
+  html body > header{
+    height:var(--header-h) !important;
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    column-gap:10px !important;
+    justify-content:unset !important;
+    gap:8px !important;
+    padding:0 8px !important;
+    background:rgba(15,23,42,0.92) !important;
+    border-bottom:1px solid rgba(59,130,246,0.28) !important;
+    box-shadow:0 8px 24px rgba(0,0,0,0.18) !important;
+  }
+  html body > header .logo{
+    grid-column:1 !important;
+    order:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    min-width:0 !important;
+  }
+  html body > header .logo img{
+    height:48px !important;
+    display:block !important;
+    margin:0 !important;
+  }
+  html body > header nav,
+  html body > header .auth-buttons{
+    display:none !important;
+  }
+  html body > header .nav-toggle{
+    grid-column:3 !important;
+    order:2 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin:0 !important;
+    flex:0 0 auto !important;
+  }
+  html body > .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+    display:block !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  html body > .mobile-panel .mnav{gap:7px !important;}
+  html body > .mobile-panel .mnav a,
+  html body > .mobile-panel .mnav-main-link,
+  html body > .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+  html body > .mobile-panel .mnav-left{gap:9px !important;}
+  html body > .mobile-panel .mnav-left i{
+    width:16px !important;
+    min-width:16px !important;
+  }
+  html body > .mobile-panel .mnav-row{
+    grid-template-columns:minmax(0, 1fr) 42px !important;
+    gap:7px !important;
+  }
+  html body > .mobile-panel .mnav-toggle{
+    width:42px !important;
+    min-width:42px !important;
+    max-width:42px !important;
+    padding:0 !important;
+  }
+  html body > .mobile-panel .mnav-submenu{padding-left:10px !important;}
+}
+</style>
+
 </body>
 </html>
-
