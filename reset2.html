@@ -987,7 +987,7 @@ label{
 /* ============================================================
    EXACT LATEST INDEX HEADER OVERRIDE - APPLIED TO RESET PASSWORD
    Matches the latest Index header: nav icons, dropdown hover effects,
-   refined Employer/Jobseeker icons, desktop no-overlap sizing,
+   refined Login icon, desktop no-overlap sizing,
    and mobile logo-left / hamburger-right layout.
 ============================================================ */
 
@@ -1684,7 +1684,7 @@ header nav .nav-text,
 /* ============================================================
    FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
    Applies dropdown-style hover to desktop nav links and refines
-   Employer / Jobseeker button icons without causing overlap.
+   Login button icon without causing overlap.
 ============================================================ */
 header nav > a,
 header nav .nav-main-link{
@@ -1814,14 +1814,9 @@ header .auth-buttons a i{
   transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
 }
 
-header .auth-buttons a.employer-auth i{
+header .auth-buttons a.login-auth i{
   background:rgba(56,189,248,0.22) !important;
   box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
-}
-
-header .auth-buttons a.jobseeker-auth i{
-  background:rgba(167,139,250,0.22) !important;
-  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
 }
 
 header .auth-buttons a:hover i,
@@ -1908,16 +1903,14 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
     <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
     <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
-    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
+    <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
   <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
-    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
-  
+    <a href="index1.html" class="admin login-auth"><i class="fa-solid fa-user"></i><span class="auth-text">Login</span></a>
   </div>
 
   <button
@@ -1958,11 +1951,10 @@ header .auth-buttons .auth-text{
     </div>
 
     <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index1.html"><span class="mnav-left"><i class="fa-solid fa-user"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
@@ -1991,206 +1983,507 @@ header .auth-buttons .auth-text{
 </div>
 
 <script>
-function resolveSupabaseClient(){
-  const directCandidates = [
-    window.sb,
-    window.sbClient,
-    window.supabaseClient,
-    window._supabaseClient,
-    window.client
-  ];
+/*
+  RESET PASSWORD FIX
+  This script fixes the "Supabase client is not initialized" error by:
+  1. Reading a Supabase client from many common config names.
+  2. Reading Supabase URL/key from many common config variable names.
+  3. Creating the Supabase client if only URL/key are available.
+  4. Handling Supabase reset-password recovery tokens from the URL.
 
-  for (const c of directCandidates){
-    if (c && c.auth && typeof c.auth.updateUser === "function"){
-      return c;
-    }
+  If your supabase_config.js does not expose anything globally, paste your
+  project URL and anon key below as a last-resort fallback.
+*/
+(function(){
+  "use strict";
+
+  const PAGE_SUPABASE_URL = "";       // optional fallback: paste your Supabase Project URL here if needed
+  const PAGE_SUPABASE_ANON_KEY = "";  // optional fallback: paste your Supabase anon public key here if needed
+
+  let cachedSupabaseClient = null;
+  let recoverySessionPromise = null;
+
+  function isUsableSupabaseClient(client){
+    return !!(
+      client &&
+      client.auth &&
+      typeof client.auth.updateUser === "function" &&
+      typeof client.auth.getSession === "function"
+    );
   }
 
-  const ctor = window.supabase && typeof window.supabase.createClient === "function"
-    ? window.supabase.createClient
-    : null;
-
-  const url =
-    window.SUPABASE_URL ||
-    window.supabaseUrl ||
-    window.__SUPABASE_URL ||
-    (typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : "") ||
-    (typeof supabaseUrl !== "undefined" ? supabaseUrl : "");
-
-  const key =
-    window.SUPABASE_ANON_KEY ||
-    window.supabaseAnonKey ||
-    window.__SUPABASE_ANON_KEY ||
-    (typeof SUPABASE_ANON_KEY !== "undefined" ? SUPABASE_ANON_KEY : "") ||
-    (typeof supabaseAnonKey !== "undefined" ? supabaseAnonKey : "");
-
-  if (ctor && url && key){
-    const created = ctor(url, key);
-    window.supabaseClient = created;
-    return created;
+  function firstNonEmptyString(values){
+    for (const value of values){
+      if (typeof value === "string" && value.trim()){
+        return value.trim();
+      }
+    }
+    return "";
   }
 
-  return null;
-}
+  function readConfigUrl(config){
+    if (!config || typeof config !== "object") return "";
+    return firstNonEmptyString([
+      config.SUPABASE_URL,
+      config.supabaseUrl,
+      config.supabase_url,
+      config.url,
+      config.projectUrl,
+      config.projectURL,
+      config.NEXT_PUBLIC_SUPABASE_URL,
+      config.VITE_SUPABASE_URL
+    ]);
+  }
 
-const sb = resolveSupabaseClient();
+  function readConfigAnonKey(config){
+    if (!config || typeof config !== "object") return "";
+    return firstNonEmptyString([
+      config.SUPABASE_ANON_KEY,
+      config.SUPABASE_KEY,
+      config.supabaseAnonKey,
+      config.supabaseKey,
+      config.anonKey,
+      config.publicAnonKey,
+      config.key,
+      config.apiKey,
+      config.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      config.VITE_SUPABASE_ANON_KEY
+    ]);
+  }
 
-function initHeaderMenus(){
-  const dd = document.getElementById("aboutNavDropdown");
-  const toggle = document.getElementById("aboutNavToggle");
-  const menu = document.getElementById("aboutNavMenu");
+  function getMetaContent(name){
+    const el = document.querySelector('meta[name="' + name + '"]');
+    return el && el.content ? el.content.trim() : "";
+  }
 
-  if(dd && toggle && menu){
-    function closeAboutMenu(){
-      dd.classList.remove("open");
-      toggle.setAttribute("aria-expanded", "false");
+  function resolveSupabaseClient(){
+    if (isUsableSupabaseClient(cachedSupabaseClient)){
+      return cachedSupabaseClient;
     }
 
-    function openAboutMenu(){
-      dd.classList.add("open");
-      toggle.setAttribute("aria-expanded", "true");
+    /*
+      IMPORTANT:
+      Top-level const variables from supabase_config.js do NOT always appear
+      as window.variableName, so this checks both window properties and normal
+      global lexical variables using typeof.
+    */
+    const clientCandidates = [
+      window.sb,
+      window.sbClient,
+      window.supabaseClient,
+      window._supabaseClient,
+      window.client,
+      window.db,
+      (typeof sb !== "undefined" ? sb : null),
+      (typeof sbClient !== "undefined" ? sbClient : null),
+      (typeof supabaseClient !== "undefined" ? supabaseClient : null),
+      (typeof _supabaseClient !== "undefined" ? _supabaseClient : null),
+      (typeof client !== "undefined" ? client : null),
+      (typeof db !== "undefined" ? db : null),
+      (typeof supabase !== "undefined" ? supabase : null)
+    ];
+
+    for (const candidate of clientCandidates){
+      if (isUsableSupabaseClient(candidate)){
+        cachedSupabaseClient = candidate;
+        window.supabaseClient = candidate;
+        return cachedSupabaseClient;
+      }
     }
 
-    toggle.addEventListener("click", function(e){
-      e.preventDefault();
-      e.stopPropagation();
+    const configCandidates = [
+      window.SUPABASE_CONFIG,
+      window.supabaseConfig,
+      window.supabase_config,
+      window.appConfig,
+      window.CONFIG,
+      (typeof SUPABASE_CONFIG !== "undefined" ? SUPABASE_CONFIG : null),
+      (typeof supabaseConfig !== "undefined" ? supabaseConfig : null),
+      (typeof supabase_config !== "undefined" ? supabase_config : null),
+      (typeof appConfig !== "undefined" ? appConfig : null),
+      (typeof CONFIG !== "undefined" ? CONFIG : null)
+    ];
 
-      const isOpen = dd.classList.contains("open");
-      if(isOpen){
-        closeAboutMenu();
-      }else{
-        openAboutMenu();
-      }
-    });
+    const configUrl = firstNonEmptyString(configCandidates.map(readConfigUrl));
+    const configAnonKey = firstNonEmptyString(configCandidates.map(readConfigAnonKey));
 
-    document.addEventListener("click", function(e){
-      if(!dd.contains(e.target)){
-        closeAboutMenu();
-      }
-    });
+    const supabaseUrl = firstNonEmptyString([
+      window.SUPABASE_URL,
+      window.supabaseUrl,
+      window.supabase_url,
+      window.NEXT_PUBLIC_SUPABASE_URL,
+      window.VITE_SUPABASE_URL,
+      (typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : ""),
+      (typeof supabaseUrl !== "undefined" ? supabaseUrl : ""),
+      (typeof supabase_url !== "undefined" ? supabase_url : ""),
+      (typeof NEXT_PUBLIC_SUPABASE_URL !== "undefined" ? NEXT_PUBLIC_SUPABASE_URL : ""),
+      (typeof VITE_SUPABASE_URL !== "undefined" ? VITE_SUPABASE_URL : ""),
+      configUrl,
+      getMetaContent("supabase-url"),
+      PAGE_SUPABASE_URL
+    ]);
 
-    document.addEventListener("keydown", function(e){
-      if(e.key === "Escape"){
-        closeAboutMenu();
-      }
-    });
+    const supabaseAnonKey = firstNonEmptyString([
+      window.SUPABASE_ANON_KEY,
+      window.SUPABASE_KEY,
+      window.supabaseAnonKey,
+      window.supabaseKey,
+      window.anonKey,
+      window.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      window.VITE_SUPABASE_ANON_KEY,
+      (typeof SUPABASE_ANON_KEY !== "undefined" ? SUPABASE_ANON_KEY : ""),
+      (typeof SUPABASE_KEY !== "undefined" ? SUPABASE_KEY : ""),
+      (typeof supabaseAnonKey !== "undefined" ? supabaseAnonKey : ""),
+      (typeof supabaseKey !== "undefined" ? supabaseKey : ""),
+      (typeof anonKey !== "undefined" ? anonKey : ""),
+      (typeof NEXT_PUBLIC_SUPABASE_ANON_KEY !== "undefined" ? NEXT_PUBLIC_SUPABASE_ANON_KEY : ""),
+      (typeof VITE_SUPABASE_ANON_KEY !== "undefined" ? VITE_SUPABASE_ANON_KEY : ""),
+      configAnonKey,
+      getMetaContent("supabase-anon-key"),
+      PAGE_SUPABASE_ANON_KEY
+    ]);
 
-    menu.querySelectorAll("a").forEach(function(a){
-      a.addEventListener("click", function(){
-        closeAboutMenu();
+    const supabaseLibrary =
+      window.supabase && typeof window.supabase.createClient === "function"
+        ? window.supabase
+        : (
+            typeof supabase !== "undefined" &&
+            supabase &&
+            typeof supabase.createClient === "function"
+              ? supabase
+              : null
+          );
+
+    if (supabaseLibrary && supabaseUrl && supabaseAnonKey){
+      cachedSupabaseClient = supabaseLibrary.createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          detectSessionInUrl: true,
+          persistSession: true,
+          autoRefreshToken: true
+        }
       });
-    });
+
+      window.supabaseClient = cachedSupabaseClient;
+      window.sbClient = cachedSupabaseClient;
+      return cachedSupabaseClient;
+    }
+
+    return null;
   }
 
-  const btn = document.getElementById("navToggle");
-  const panel = document.getElementById("mobilePanel");
-  const aboutGroup = document.getElementById("mobileAboutGroup");
-  const aboutToggle = document.getElementById("mobileAboutToggle");
+  function getHashParams(){
+    const hash = (window.location.hash || "").replace(/^#/, "");
+    return new URLSearchParams(hash);
+  }
 
-  if(btn && panel){
-    function closeAbout(){
-      if(!aboutGroup || !aboutToggle) return;
-      aboutGroup.classList.remove("open");
-      aboutToggle.setAttribute("aria-expanded","false");
+  function cleanRecoveryUrl(){
+    try{
+      const url = new URL(window.location.href);
+      url.hash = "";
+      url.searchParams.delete("code");
+      window.history.replaceState({}, document.title, url.pathname + url.search);
+    }catch(_err){
+      // URL cleanup is optional. Ignore browser/history errors.
+    }
+  }
+
+  async function initializeRecoverySession(){
+    const client = resolveSupabaseClient();
+
+    if (!client){
+      throw new Error(
+        "Supabase client is not initialized. Make sure supabase_config.js is loaded and exposes SUPABASE_URL + SUPABASE_ANON_KEY, or window.supabaseClient."
+      );
     }
 
-    function toggleAbout(){
-      if(!aboutGroup || !aboutToggle) return;
-      const open = aboutGroup.classList.toggle("open");
-      aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    const hashParams = getHashParams();
+    const accessToken = hashParams.get("access_token");
+    const refreshToken = hashParams.get("refresh_token");
+
+    if (accessToken && refreshToken){
+      const { error } = await client.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken
+      });
+
+      if (error) throw error;
+
+      cleanRecoveryUrl();
+      return true;
     }
 
-    function closeMobilePanel(){
-      panel.classList.remove("open");
-      panel.setAttribute("aria-hidden","true");
-      btn.setAttribute("aria-expanded","false");
-      closeAbout();
+    const currentUrl = new URL(window.location.href);
+    const code = currentUrl.searchParams.get("code");
+
+    if (code && typeof client.auth.exchangeCodeForSession === "function"){
+      const { error } = await client.auth.exchangeCodeForSession(code);
+
+      if (error) throw error;
+
+      cleanRecoveryUrl();
+      return true;
     }
 
-    btn.addEventListener("click", ()=>{
-      const open = panel.classList.toggle("open");
-      panel.setAttribute("aria-hidden", open ? "false" : "true");
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
-      if(!open) closeAbout();
-    });
+    return false;
+  }
 
-    if(aboutToggle){
-      aboutToggle.addEventListener("click", (e)=>{
+  function ensureRecoverySessionInitialized(){
+    if (!recoverySessionPromise){
+      recoverySessionPromise = initializeRecoverySession().catch((err) => {
+        recoverySessionPromise = null;
+        throw err;
+      });
+    }
+
+    return recoverySessionPromise;
+  }
+
+  function setMessage(element, text, display){
+    if (!element) return;
+    element.textContent = text || "";
+    element.style.display = display ? "block" : "none";
+  }
+
+  function setSubmitState(isBusy){
+    const btn = document.querySelector("#resetForm button[type='submit']");
+    if (!btn) return;
+
+    btn.disabled = isBusy;
+    btn.style.opacity = isBusy ? "0.7" : "1";
+    btn.style.cursor = isBusy ? "not-allowed" : "pointer";
+    btn.innerHTML = isBusy
+      ? '<i class="fa-solid fa-spinner fa-spin"></i> Updating...'
+      : '<i class="fa-solid fa-key"></i> Update Password';
+  }
+
+  function initHeaderMenus(){
+    const dd = document.getElementById("aboutNavDropdown");
+    const toggle = document.getElementById("aboutNavToggle");
+    const menu = document.getElementById("aboutNavMenu");
+
+    if(dd && toggle && menu){
+      function closeAboutMenu(){
+        dd.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
+      }
+
+      function openAboutMenu(){
+        dd.classList.add("open");
+        toggle.setAttribute("aria-expanded", "true");
+      }
+
+      toggle.addEventListener("click", function(e){
         e.preventDefault();
         e.stopPropagation();
-        toggleAbout();
+
+        const isOpen = dd.classList.contains("open");
+        if(isOpen){
+          closeAboutMenu();
+        }else{
+          openAboutMenu();
+        }
+      });
+
+      document.addEventListener("click", function(e){
+        if(!dd.contains(e.target)){
+          closeAboutMenu();
+        }
+      });
+
+      document.addEventListener("keydown", function(e){
+        if(e.key === "Escape"){
+          closeAboutMenu();
+        }
+      });
+
+      menu.querySelectorAll("a").forEach(function(a){
+        a.addEventListener("click", function(){
+          closeAboutMenu();
+        });
       });
     }
 
-    panel.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMobilePanel));
+    const btn = document.getElementById("navToggle");
+    const panel = document.getElementById("mobilePanel");
+    const aboutGroup = document.getElementById("mobileAboutGroup");
+    const aboutToggle = document.getElementById("mobileAboutToggle");
 
-    document.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape") closeMobilePanel();
-    });
-
-    document.addEventListener("click", (e)=>{
-      if(panel.classList.contains("open")){
-        const header = document.querySelector("header");
-        if(header && header.contains(e.target)) return;
-        if(panel.contains(e.target)) return;
-        closeMobilePanel();
+    if(btn && panel){
+      function closeAbout(){
+        if(!aboutGroup || !aboutToggle) return;
+        aboutGroup.classList.remove("open");
+        aboutToggle.setAttribute("aria-expanded","false");
       }
-    });
 
-    window.addEventListener("resize", ()=>{
-      if(window.innerWidth >= 769) closeMobilePanel();
-    }, { passive:true });
+      function toggleAbout(){
+        if(!aboutGroup || !aboutToggle) return;
+        const open = aboutGroup.classList.toggle("open");
+        aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+
+      function closeMobilePanel(){
+        panel.classList.remove("open");
+        panel.setAttribute("aria-hidden","true");
+        btn.setAttribute("aria-expanded","false");
+        closeAbout();
+      }
+
+      btn.addEventListener("click", ()=>{
+        const open = panel.classList.toggle("open");
+        panel.setAttribute("aria-hidden", open ? "false" : "true");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        if(!open) closeAbout();
+      });
+
+      if(aboutToggle){
+        aboutToggle.addEventListener("click", (e)=>{
+          e.preventDefault();
+          e.stopPropagation();
+          toggleAbout();
+        });
+      }
+
+      panel.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMobilePanel));
+
+      document.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape") closeMobilePanel();
+      });
+
+      document.addEventListener("click", (e)=>{
+        if(panel.classList.contains("open")){
+          const header = document.querySelector("header");
+          if(header && header.contains(e.target)) return;
+          if(panel.contains(e.target)) return;
+          closeMobilePanel();
+        }
+      });
+
+      window.addEventListener("resize", ()=>{
+        if(window.innerWidth >= 769) closeMobilePanel();
+      }, { passive:true });
+    }
   }
-}
 
-function togglePassword(id, icon){
-  const input = document.getElementById(id);
-  const show = input.type === "password";
-  input.type = show ? "text" : "password";
-  icon.classList.toggle("fa-eye");
-  icon.classList.toggle("fa-eye-slash");
-}
+  window.togglePassword = function(id, icon){
+    const input = document.getElementById(id);
+    if (!input) return;
 
-document.getElementById("resetForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
 
-  const pw = document.getElementById("newPassword").value.trim();
-  const cpw = document.getElementById("confirmPassword").value.trim();
-  const error = document.getElementById("errorMsg");
-  const success = document.getElementById("successMsg");
+    if (icon){
+      icon.classList.toggle("fa-eye", !show);
+      icon.classList.toggle("fa-eye-slash", show);
+    }
+  };
 
-  error.textContent = "";
-  success.style.display = "none";
+  async function handleResetSubmit(e){
+    e.preventDefault();
 
-  if(!sb){
-    error.textContent = "Supabase client is not initialized. Check supabase_config.js.";
-    return;
+    const client = resolveSupabaseClient();
+    const newPasswordInput = document.getElementById("newPassword");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const error = document.getElementById("errorMsg");
+    const success = document.getElementById("successMsg");
+
+    setMessage(error, "", false);
+    setMessage(success, "", false);
+
+    if(!client){
+      setMessage(
+        error,
+        "Supabase client is not initialized. Check supabase_config.js. It must expose SUPABASE_URL and SUPABASE_ANON_KEY, or create window.supabaseClient.",
+        true
+      );
+      return;
+    }
+
+    const pw = (newPasswordInput && newPasswordInput.value ? newPasswordInput.value : "").trim();
+    const cpw = (confirmPasswordInput && confirmPasswordInput.value ? confirmPasswordInput.value : "").trim();
+
+    if(pw !== cpw){
+      setMessage(error, "Passwords do not match.", true);
+      return;
+    }
+
+    if(pw.length < 6){
+      setMessage(error, "Password must be at least 6 characters.", true);
+      return;
+    }
+
+    try{
+      setSubmitState(true);
+
+      try{
+        await ensureRecoverySessionInitialized();
+      }catch(sessionErr){
+        setMessage(
+          error,
+          "Reset session is not ready. Open this page from the password reset email link, or check your Supabase redirect URL. Details: " + sessionErr.message,
+          true
+        );
+        return;
+      }
+
+      const { data: sessionData, error: sessionError } = await client.auth.getSession();
+
+      if(sessionError){
+        setMessage(error, "Session error: " + sessionError.message, true);
+        return;
+      }
+
+      if(!sessionData || !sessionData.session){
+        setMessage(
+          error,
+          "No reset session found. Please open this page from the Supabase password reset email link.",
+          true
+        );
+        return;
+      }
+
+      const { error: updateErr } = await client.auth.updateUser({ password: pw });
+
+      if(updateErr){
+        setMessage(error, "Error: " + updateErr.message, true);
+        return;
+      }
+
+      setMessage(success, "Password updated! Redirecting...", true);
+
+      setTimeout(() => {
+        window.location.href = "index1.html";
+      }, 1800);
+
+    }finally{
+      setSubmitState(false);
+    }
   }
 
-  if(pw !== cpw){
-    error.textContent = "Passwords do not match.";
-    return;
-  }
+  document.addEventListener("DOMContentLoaded", () => {
+    initHeaderMenus();
 
-  if(pw.length < 6){
-    error.textContent = "Password must be at least 6 characters.";
-    return;
-  }
+    const form = document.getElementById("resetForm");
+    if (form){
+      form.addEventListener("submit", handleResetSubmit);
+    }
 
-  const { error: updateErr } = await sb.auth.updateUser({ password: pw });
+    /*
+      Initialize immediately when the reset email link contains Supabase tokens.
+      Do not show an error on normal page load, because the user may still be
+      testing the page manually.
+    */
+    const hashParams = getHashParams();
+    const hasRecoveryTokens = !!(hashParams.get("access_token") && hashParams.get("refresh_token"));
+    const hasPkceCode = new URL(window.location.href).searchParams.has("code");
 
-  if(updateErr){
-    error.textContent = "Error: " + updateErr.message;
-    return;
-  }
-
-  success.style.display = "block";
-  setTimeout(() => window.location.href = "login.html", 2000);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  initHeaderMenus();
-});
+    if (hasRecoveryTokens || hasPkceCode){
+      ensureRecoverySessionInitialized().catch((err) => {
+        const error = document.getElementById("errorMsg");
+        setMessage(error, "Could not prepare reset session: " + err.message, true);
+      });
+    }
+  });
+})();
 </script>
 
 </body>

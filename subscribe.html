@@ -468,13 +468,14 @@ input[readonly]{
 .action-row{
   grid-column: 1 / -1;
   display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:10px;
   margin-top:6px;
 }
 
+#statusBtn,
 #payBtn,
-#logoutBtn{
+#exitBtn{
   width:100%;
   padding:10px 16px;
   border-radius:14px;
@@ -483,6 +484,19 @@ input[readonly]{
   font-weight:700;
   font-size:0.98rem;
   transition:0.3s;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  white-space:nowrap;
+  min-width:0;
+  line-height:1.1;
+}
+
+#statusBtn i,
+#payBtn i,
+#exitBtn i{
+  flex:0 0 auto;
 }
 
 #payBtn{
@@ -503,18 +517,36 @@ input[readonly]{
   cursor:not-allowed;
 }
 
-#logoutBtn{
+#statusBtn{
+  background:linear-gradient(90deg,#0ea5e9,#2563eb,#0ea5e9);
+  background-size:200%;
+  color:#fff;
+  box-shadow:0 0 16px rgba(14,165,233,0.35);
+}
+
+#statusBtn:hover:not(:disabled){
+  background-position:100% 0;
+  transform:translateY(-1px);
+  box-shadow:0 0 20px rgba(14,165,233,0.65);
+}
+
+#statusBtn:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+#exitBtn{
   background:linear-gradient(90deg,#6b7280,#9ca3af);
   border:none;
   color:#fff;
 }
 
-#logoutBtn:hover{
+#exitBtn:hover{
 
   box-shadow:0 0 18px grey;
 }
 
-#logoutBtn:disabled{
+#exitBtn:disabled{
   opacity:0.6;
   cursor:not-allowed;
 }
@@ -535,7 +567,7 @@ input[readonly]{
   .sub{font-size:1rem;}
   .card{padding:22px 24px 26px;}
   input{padding:11px 12px;font-size:0.98rem;}
-  #payBtn,#logoutBtn{padding:12px 18px;font-size:1.05rem;}
+  #statusBtn,#payBtn,#exitBtn{padding:12px 18px;font-size:1.05rem;}
 }
 
 @media (min-width: 1440px){
@@ -588,7 +620,7 @@ input[readonly]{
   input{padding:7px 8px;font-size:0.86rem;border-radius:9px;}
   #subForm{ gap: 6px 8px; }
   .action-row{ gap:8px; }
-  #payBtn,#logoutBtn{ padding: 9px 12px; border-radius: 12px; font-size: 0.92rem; }
+  #statusBtn,#payBtn,#exitBtn{ padding: 9px 12px; border-radius: 12px; font-size: 0.92rem; }
 }
 
 @media (max-width: 920px){
@@ -620,7 +652,7 @@ input[readonly]{
   .sub{font-size:0.88rem;margin-bottom:12px;}
   .card{padding:14px 14px 16px;}
   input{padding:9px 10px;font-size:0.92rem;}
-  #payBtn,#logoutBtn{padding:10px 14px;border-radius:12px;}
+  #statusBtn,#payBtn,#exitBtn{padding:10px 14px;border-radius:12px;}
 }
 
 @media (max-width: 480px){
@@ -654,7 +686,7 @@ input[readonly]{
 
   #subForm{ grid-template-columns: 1fr; gap: 10px; }
   .action-row{ grid-template-columns: 1fr; gap:10px; }
-  #payBtn,#logoutBtn{font-size:0.95rem;}
+  #statusBtn,#payBtn,#exitBtn{font-size:0.95rem;}
 }
 
 /* ============================================================
@@ -729,7 +761,7 @@ input[readonly]{
     margin-top:4px !important;
   }
   #payBtn,
-  #logoutBtn{
+  #exitBtn{
     padding:9px 12px !important;
     border-radius:11px !important;
     font-size:0.86rem !important;
@@ -803,7 +835,7 @@ input[readonly]{
     margin-top:4px !important;
   }
   #payBtn,
-  #logoutBtn{
+  #exitBtn{
     padding:8px 11px !important;
     border-radius:10px !important;
     font-size:0.82rem !important;
@@ -894,12 +926,12 @@ input[readonly]{
   }
   .action-row{
     grid-column:1 / -1 !important;
-    grid-template-columns:1fr 1fr !important;
-    gap:7px !important;
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    gap:6px !important;
     margin-top:3px !important;
   }
   #payBtn,
-  #logoutBtn{
+  #exitBtn{
     padding:8px 9px !important;
     border-radius:9px !important;
     font-size:0.76rem !important;
@@ -991,12 +1023,12 @@ input[readonly]{
   }
   .action-row{
     grid-column:1 / -1 !important;
-    grid-template-columns:1fr 1fr !important;
-    gap:6px !important;
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    gap:5px !important;
     margin-top:3px !important;
   }
   #payBtn,
-  #logoutBtn{
+  #exitBtn{
     padding:7px 8px !important;
     border-radius:9px !important;
     font-size:0.70rem !important;
@@ -1099,12 +1131,12 @@ input[readonly]{
   }
   .action-row{
     grid-column:1 / -1 !important;
-    grid-template-columns:1fr 1fr !important;
-    gap:6px !important;
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    gap:5px !important;
     margin-top:3px !important;
   }
   #payBtn,
-  #logoutBtn{
+  #exitBtn{
     padding:7px 8px !important;
     border-radius:9px !important;
     font-size:0.72rem !important;
@@ -1209,12 +1241,12 @@ input[readonly]{
     font-size:0.62rem !important;
   }
   .action-row{
-    grid-template-columns:1fr !important;
-    gap:5px !important;
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    gap:4px !important;
     margin-top:3px !important;
   }
   #payBtn,
-  #logoutBtn{
+  #exitBtn{
     padding:7px 8px !important;
     border-radius:8px !important;
     font-size:0.66rem !important;
@@ -2282,6 +2314,565 @@ header .auth-buttons .auth-text{
   }
 }
 
+
+/* ============================================================
+   FINAL SUBSCRIBE ACTION BUTTONS PATCH
+   Three buttons stay aligned in one row on every screen size.
+============================================================ */
+.action-row{
+  grid-column:1 / -1 !important;
+  display:grid !important;
+  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+  gap:10px !important;
+  align-items:stretch !important;
+}
+
+#statusBtn,
+#payBtn,
+#exitBtn{
+  width:100% !important;
+  min-width:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  white-space:nowrap !important;
+}
+
+@media (max-width: 768px){
+  .action-row{ gap:6px !important; }
+  #statusBtn,
+  #payBtn,
+  #exitBtn{
+    padding:7px 6px !important;
+    font-size:0.68rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+}
+
+@media (max-width: 480px){
+  .action-row{ gap:4px !important; }
+  #statusBtn,
+  #payBtn,
+  #exitBtn{
+    padding:7px 4px !important;
+    font-size:0.56rem !important;
+    border-radius:8px !important;
+    gap:3px !important;
+    letter-spacing:-0.02em !important;
+  }
+
+  #statusBtn i,
+  #payBtn i,
+  #exitBtn i{
+    font-size:0.9em !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL PATCH: Employer icon account dropdown on Subscribe page
+   - Removes only Jobseeker Login button
+   - Employer Login becomes icon-only
+   - Dropdown shows logged-in company logo, company name, email, Company Profile, Subscribe, Posted Jobs, and Log out
+============================================================ */
+header .auth-buttons.subscribe-employer-auth-shell{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  overflow:visible !important;
+  z-index:1900 !important;
+}
+
+.subscribe-employer-account-wrap{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:visible !important;
+}
+
+header .auth-buttons .subscribe-employer-icon-btn,
+.subscribe-employer-icon-btn{
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  padding:0 !important;
+  border-radius:14px !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  color:#ffffff !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.10) !important;
+  font-size:0 !important;
+  line-height:1 !important;
+  text-decoration:none !important;
+  overflow:hidden !important;
+  transition:none !important;
+  animation:none !important;
+}
+
+header .auth-buttons .subscribe-employer-icon-btn:hover,
+header .auth-buttons .subscribe-employer-icon-btn:focus,
+header .auth-buttons .subscribe-employer-icon-btn:active,
+.subscribe-employer-icon-btn:hover,
+.subscribe-employer-icon-btn:focus,
+.subscribe-employer-icon-btn:active{
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  border-color:rgba(0,198,255,0.36) !important;
+  box-shadow:0 0 18px rgba(0,198,255,0.20) !important;
+  outline:none !important;
+}
+
+.subscribe-employer-icon-btn .auth-text{
+  display:none !important;
+}
+
+header .auth-buttons .subscribe-employer-icon-btn i,
+.subscribe-employer-icon-btn i{
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  display:block !important;
+  place-items:unset !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:#ffffff !important;
+  font-size:1.14rem !important;
+  line-height:1 !important;
+  margin:0 !important;
+  transform:none !important;
+  transition:none !important;
+}
+
+.subscribe-employer-account-logo-img{
+  width:100% !important;
+  height:100% !important;
+  display:none !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  padding:4px !important;
+  margin:0 !important;
+  border-radius:inherit !important;
+  background:#071325 !important;
+  box-shadow:none !important;
+  transform:none !important;
+  transition:none !important;
+}
+
+.subscribe-employer-icon-btn.has-account-logo .subscribe-employer-account-logo-img{
+  display:block !important;
+}
+
+.subscribe-employer-icon-btn.has-account-logo > i{
+  display:none !important;
+}
+
+.subscribe-employer-icon-btn.is-logged-out .subscribe-employer-account-logo-img,
+.subscribe-employer-icon-btn:not(.has-account-logo) .subscribe-employer-account-logo-img{
+  display:none !important;
+}
+
+.subscribe-employer-icon-btn.is-logged-out > i,
+.subscribe-employer-icon-btn:not(.has-account-logo) > i{
+  display:block !important;
+}
+
+.subscribe-employer-account-dropdown{
+  position:absolute !important;
+  top:calc(100% + 12px) !important;
+  right:0 !important;
+  width:min(360px, calc(100vw - 24px)) !important;
+  display:none !important;
+  flex-direction:column !important;
+  gap:12px !important;
+  padding:14px !important;
+  border-radius:22px !important;
+  background:linear-gradient(180deg, rgba(15,23,42,0.99), rgba(2,6,23,0.99)) !important;
+  border:1px solid rgba(0,198,255,0.36) !important;
+  box-shadow:0 18px 42px rgba(2,6,23,0.58), 0 0 18px rgba(0,198,255,0.16) !important;
+  backdrop-filter:blur(12px) !important;
+  z-index:2600 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+}
+
+.subscribe-employer-account-dropdown.open{
+  display:flex !important;
+}
+
+.subscribe-employer-dropdown-profile{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+  padding:12px !important;
+  border-radius:18px !important;
+  background:rgba(15,23,42,0.78) !important;
+  border:1px solid rgba(0,198,255,0.22) !important;
+}
+
+.subscribe-employer-dropdown-logo-wrap{
+  width:70px !important;
+  height:70px !important;
+  min-width:70px !important;
+  border-radius:18px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  background:rgba(2,6,23,0.85) !important;
+  border:1px solid rgba(0,198,255,0.32) !important;
+  box-shadow:none !important;
+}
+
+.subscribe-employer-dropdown-logo-wrap img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  display:block !important;
+  padding:4px !important;
+  background:#071325 !important;
+}
+
+.subscribe-employer-dropdown-logo-wrap.has-logo .subscribe-employer-dropdown-logo-fallback{
+  display:none !important;
+}
+
+.subscribe-employer-dropdown-logo-wrap:not(.has-logo) img{
+  display:none !important;
+}
+
+.subscribe-employer-dropdown-logo-fallback{
+  color:#7dd3fc !important;
+  font-size:1.5rem !important;
+}
+
+.subscribe-employer-dropdown-identity{
+  min-width:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:4px !important;
+}
+
+.subscribe-employer-dropdown-label{
+  color:#8ed3ff !important;
+  font-size:0.72rem !important;
+  letter-spacing:0.08em !important;
+  text-transform:uppercase !important;
+  white-space:nowrap !important;
+}
+
+.subscribe-employer-dropdown-company{
+  color:#ffffff !important;
+  font-size:0.96rem !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+
+.subscribe-employer-dropdown-email{
+  color:#dbeafe !important;
+  font-size:0.83rem !important;
+  line-height:1.2 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+
+.subscribe-employer-dropdown-menu{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+}
+
+.subscribe-employer-dropdown-item{
+  width:100% !important;
+  min-height:42px !important;
+  padding:0 12px !important;
+  border-radius:14px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:10px !important;
+  border:1px solid rgba(0,198,255,0.20) !important;
+  background:rgba(2,6,23,0.62) !important;
+  color:#e8f9ff !important;
+  font-size:0.86rem !important;
+  font-weight:700 !important;
+  text-decoration:none !important;
+  cursor:pointer !important;
+  box-shadow:none !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  font-family:inherit !important;
+}
+
+.subscribe-employer-dropdown-item:hover,
+.subscribe-employer-dropdown-item:focus,
+.subscribe-employer-dropdown-item:active{
+  color:#ffffff !important;
+  background:rgba(0,198,255,0.14) !important;
+  border-color:rgba(0,198,255,0.34) !important;
+  outline:none !important;
+  transform:none !important;
+}
+
+.subscribe-employer-dropdown-item i{
+  width:18px !important;
+  min-width:18px !important;
+  text-align:center !important;
+  color:#38bdf8 !important;
+}
+
+.subscribe-employer-dropdown-logout{
+  text-align:left !important;
+  background:linear-gradient(135deg, #7b8798, #596678) !important;
+  border-color:rgba(194,205,220,0.28) !important;
+  color:#f8fafc !important;
+}
+
+.subscribe-employer-dropdown-logout i{
+  color:#f8fafc !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-in .subscribe-employer-dropdown-login{
+  display:none !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-logout{
+  display:none !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login{
+  display:flex !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out #subscribeEmployerCompanyProfileLink{
+  display:flex !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out #subscribeEmployerSubscribeLink{
+  display:flex !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out #subscribeEmployerPostedJobsLink{
+  display:flex !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-label{
+  color:#fbbf24 !important;
+}
+
+/* Logged-out employer dropdown keeps Company Profile, Subscribe, and Posted Jobs visible */
+.subscribe-employer-account-dropdown.is-logged-out #subscribeEmployerCompanyProfileLink,
+.subscribe-employer-account-dropdown.is-logged-out #subscribeEmployerSubscribeLink,
+.subscribe-employer-account-dropdown.is-logged-out #subscribeEmployerPostedJobsLink{
+  display:flex !important;
+}
+
+@media (min-width:1800px){
+  header .auth-buttons .subscribe-employer-icon-btn,
+  .subscribe-employer-icon-btn{ width:46px !important; height:46px !important; min-width:46px !important; border-radius:16px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header .auth-buttons .subscribe-employer-icon-btn,
+  .subscribe-employer-icon-btn{ width:38px !important; height:38px !important; min-width:38px !important; border-radius:13px !important; }
+  .subscribe-employer-icon-btn i{ font-size:1rem !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header .auth-buttons .subscribe-employer-icon-btn,
+  .subscribe-employer-icon-btn{ width:34px !important; height:34px !important; min-width:34px !important; border-radius:12px !important; }
+  .subscribe-employer-icon-btn i{ font-size:0.9rem !important; }
+}
+
+@media (max-width:920px){
+  header .auth-buttons.subscribe-employer-auth-shell{
+    display:none !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL EXACT MARKUP STYLE: logged-out Subscribe account menu
+   Matches the marked screenshot: logo + No login account,
+   Subscribe / Posted Jobs / green Employer Login only.
+============================================================ */
+.subscribe-employer-account-dropdown.is-logged-out{
+  width:min(410px, calc(100vw - 28px)) !important;
+  padding:14px !important;
+  gap:14px !important;
+  border-radius:24px !important;
+  background:linear-gradient(180deg, rgba(7,18,42,0.99), rgba(2,8,24,0.99)) !important;
+  border:1px solid rgba(0,198,255,0.38) !important;
+  box-shadow:0 22px 52px rgba(0,0,0,0.54), 0 0 20px rgba(0,198,255,0.18) !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-profile{
+  min-height:92px !important;
+  padding:13px 16px !important;
+  gap:18px !important;
+  border-radius:18px !important;
+  background:linear-gradient(180deg, rgba(8,24,55,0.98), rgba(5,17,39,0.98)) !important;
+  border:1px solid rgba(0,198,255,0.28) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.025) !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-logo-wrap{
+  width:70px !important;
+  height:70px !important;
+  min-width:70px !important;
+  border-radius:18px !important;
+  background:#071325 !important;
+  border:1px solid rgba(0,198,255,0.42) !important;
+  box-shadow:0 10px 22px rgba(0,0,0,0.28) !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-logo-wrap img{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  padding:6px !important;
+  border-radius:inherit !important;
+  background:#071325 !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-logo-wrap.has-logo .subscribe-employer-dropdown-logo-fallback{
+  display:none !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-identity{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:center !important;
+  gap:0 !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-label,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-email{
+  display:none !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-company{
+  display:block !important;
+  color:#ffffff !important;
+  font-size:1.05rem !important;
+  font-weight:800 !important;
+  line-height:1.15 !important;
+  letter-spacing:0 !important;
+  text-align:left !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  max-width:100% !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-menu{
+  gap:10px !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item{
+  min-height:52px !important;
+  padding:0 16px !important;
+  border-radius:14px !important;
+  border:1px solid rgba(0,198,255,0.22) !important;
+  background:rgba(2,8,24,0.74) !important;
+  color:#ffffff !important;
+  font-size:0.94rem !important;
+  font-weight:800 !important;
+  gap:12px !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item:hover,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item:focus{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(0,198,255,0.36) !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item i{
+  width:20px !important;
+  min-width:20px !important;
+  color:#16c8ff !important;
+  text-align:center !important;
+  filter:drop-shadow(0 0 8px rgba(22,200,255,0.42)) !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login{
+  display:flex !important;
+  background:linear-gradient(180deg, #087a37, #06602c) !important;
+  border-color:rgba(29,220,122,0.44) !important;
+  color:#ffffff !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06) !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login:hover,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login:focus{
+  background:linear-gradient(180deg, #0b8840, #076832) !important;
+  border-color:rgba(29,220,122,0.62) !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login i{
+  color:#dfffea !important;
+  filter:none !important;
+}
+
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-logout{
+  display:none !important;
+}
+
+@media (max-width:480px){
+  .subscribe-employer-account-dropdown.is-logged-out{
+    right:-4px !important;
+    width:min(360px, calc(100vw - 18px)) !important;
+    padding:12px !important;
+    border-radius:20px !important;
+  }
+
+  .subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-profile{
+    min-height:82px !important;
+    padding:10px 12px !important;
+    gap:12px !important;
+  }
+
+  .subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-logo-wrap{
+    width:58px !important;
+    height:58px !important;
+    min-width:58px !important;
+    border-radius:16px !important;
+  }
+
+  .subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-company{
+    font-size:0.96rem !important;
+  }
+
+  .subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item{
+    min-height:48px !important;
+    font-size:0.88rem !important;
+    padding:0 13px !important;
+  }
+}
+
 </style>
 </head>
 
@@ -2295,7 +2886,7 @@ header .auth-buttons .auth-text{
   </div>
 
   <nav>
-    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
+    <a href="home.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
@@ -2318,16 +2909,50 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
-    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
-    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
-    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard1.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
-  <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
-    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
-  
+  <div class="auth-buttons subscribe-employer-auth-shell" id="subscribeEmployerAuthShell">
+    <div class="subscribe-employer-account-wrap" id="subscribeEmployerAccountWrap">
+      <button
+        type="button"
+        class="admin employer-auth subscribe-employer-icon-btn is-logged-out"
+        id="subscribeEmployerAccountBtn"
+        aria-label="Employer account menu"
+        aria-expanded="false"
+        aria-controls="subscribeEmployerAccountDropdown"
+        title="Employer account"
+      >
+        <img id="subscribeEmployerAccountLogo" class="subscribe-employer-account-logo-img" src="" alt="Company logo" />
+        <i class="fa-solid fa-building-user" aria-hidden="true"></i>
+        <span class="auth-text">Employer Account</span>
+      </button>
+
+      <div class="subscribe-employer-account-dropdown is-logged-out" id="subscribeEmployerAccountDropdown" aria-hidden="true">
+        <div class="subscribe-employer-dropdown-profile">
+          <div class="subscribe-employer-dropdown-logo-wrap has-logo" id="subscribeEmployerDropdownLogoWrap">
+            <img id="subscribeEmployerDropdownLogo" src="JOBSPACELINK.png" alt="Job Space Link logo" />
+            <i class="fa-solid fa-building-user subscribe-employer-dropdown-logo-fallback" id="subscribeEmployerDropdownLogoFallback" aria-hidden="true"></i>
+          </div>
+          <div class="subscribe-employer-dropdown-identity">
+            <div class="subscribe-employer-dropdown-label" id="subscribeEmployerDropdownLabel"></div>
+            <div class="subscribe-employer-dropdown-company" id="subscribeEmployerDropdownCompany">No login account</div>
+            <div class="subscribe-employer-dropdown-email" id="subscribeEmployerDropdownEmail"></div>
+          </div>
+        </div>
+
+        <div class="subscribe-employer-dropdown-menu" aria-label="Employer account menu">
+          <a href="companyprofile.html" class="subscribe-employer-dropdown-item" id="subscribeEmployerCompanyProfileLink"><i class="fa-solid fa-id-card"></i><span>Company Profile</span></a>
+          <a href="subscribe.html" class="subscribe-employer-dropdown-item" id="subscribeEmployerSubscribeLink"><i class="fa-solid fa-credit-card"></i><span>Subscribe</span></a>
+          <a href="employer_dashboard.html" class="subscribe-employer-dropdown-item" id="subscribeEmployerPostedJobsLink"><i class="fa-solid fa-briefcase"></i><span>Posted Jobs</span></a>
+          <a href="loginemployer.html" class="subscribe-employer-dropdown-item subscribe-employer-dropdown-login" id="subscribeEmployerLoginLink"><i class="fa-solid fa-right-to-bracket"></i><span>Employer Login</span></a>
+          <button type="button" class="subscribe-employer-dropdown-item subscribe-employer-dropdown-logout" id="subscribeEmployerLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <button
@@ -2344,7 +2969,7 @@ header .auth-buttons .auth-text{
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
@@ -2367,12 +2992,11 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
@@ -2417,8 +3041,9 @@ header .auth-buttons .auth-text{
       </div>
 
       <div class="action-row">
+        <button id="statusBtn" type="button"><i class="fa-solid fa-clipboard-check"></i> Subscription Status</button>
         <button id="payBtn" type="submit"><i class="fa-solid fa-shield"></i> Pay $10 Now</button>
-        <button id="logoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+        <button id="exitBtn" type="button"><i class="fa-solid fa-right-from-bracket"></i> Exit</button>
       </div>
     </form>
 
@@ -2577,7 +3202,8 @@ let supabaseClient = resolveSupabaseClient();
 const form = document.getElementById("subForm");
 const msg = document.getElementById("msg");
 const payBtn = document.getElementById("payBtn");
-const logoutBtn = document.getElementById("logoutBtn");
+const statusBtn = document.getElementById("statusBtn");
+const exitBtn = document.getElementById("exitBtn");
 
 const companyNameInput = document.getElementById("companyName");
 const companyEmailInput = document.getElementById("companyEmail");
@@ -2594,6 +3220,9 @@ const cardCvvInput = document.getElementById("cardCvv");
 const SUBSCRIPTION_DATE_TIME_ZONE = "America/New_York";
 const INACTIVE_SUBSCRIPTION_STATUS = "not active";
 const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "paid", "approved", "current"];
+const EMPLOYER_LOGIN_DAY_FUNCTION = "employer-login-day-subscription";
+// IMPORTANT: this Subscribe page only expires end-date rows. It does NOT deduct days_remaining.
+// Deduct days_remaining only after a verified employer login by calling EMPLOYER_LOGIN_DAY_FUNCTION.
 
 /* ============================================================
    HELPERS
@@ -2809,20 +3438,24 @@ function clearFormPreserveIdentity(){
   cardCvvInput.value = "";
   clearMessage();
   payBtn.disabled = false;
-  logoutBtn.disabled = false;
+  statusBtn.disabled = false;
+  exitBtn.disabled = false;
+  statusBtn.innerHTML = `<i class="fa-solid fa-clipboard-check"></i> Subscription Status`;
   payBtn.innerHTML = `<i class="fa-solid fa-shield"></i> Pay $10 Now`;
-  logoutBtn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout`;
+  exitBtn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Exit`;
 }
 
 function setLoadingState(isLoading, text = "Processing..."){
   payBtn.disabled = isLoading;
-  logoutBtn.disabled = isLoading;
+  statusBtn.disabled = isLoading;
+  exitBtn.disabled = isLoading;
 
   if(isLoading){
     payBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${escapeHtml(text)}`;
   }else{
+    statusBtn.innerHTML = `<i class="fa-solid fa-clipboard-check"></i> Subscription Status`;
     payBtn.innerHTML = `<i class="fa-solid fa-shield"></i> Pay $10 Now`;
-    logoutBtn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout`;
+    exitBtn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Exit`;
   }
 }
 
@@ -3083,6 +3716,59 @@ async function runServerSubscriptionMaintenance(companyName = "", companyEmail =
   }
 }
 
+
+async function registerEmployerLoginDayForSubscription(companyName = "", companyEmail = "", employerId = ""){
+  const supabaseUrl = getSafeSupabaseUrl();
+  const supabaseAnonKey = getSafeSupabaseAnonKey();
+
+  if(!supabaseUrl || !supabaseAnonKey){
+    return { ok:false, login_allowed:false, error:"Supabase config is missing." };
+  }
+
+  try{
+    const res = await fetch(`${supabaseUrl}/functions/v1/${EMPLOYER_LOGIN_DAY_FUNCTION}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": supabaseAnonKey,
+        "Authorization": `Bearer ${supabaseAnonKey}`
+      },
+      body: JSON.stringify({
+        company_name: companyName || "",
+        company_email: companyEmail || "",
+        employer_id: employerId || "",
+        subscription_time_zone: SUBSCRIPTION_DATE_TIME_ZONE,
+        client_subscription_date: getTodaySubscriptionDateKey()
+      })
+    });
+
+    const json = await res.json().catch(() => ({}));
+
+    if(!res.ok || !json.ok){
+      console.warn("employer-login-day-subscription function did not complete:", json);
+      return {
+        ok:false,
+        login_allowed:false,
+        status:res.status,
+        error:json.error || "Login-day subscription function failed."
+      };
+    }
+
+    return json;
+  }catch(err){
+    console.warn("employer-login-day-subscription function is unavailable:", err);
+    return { ok:false, login_allowed:false, error:String(err?.message || err) };
+  }
+}
+
+// Expose helpers for loginemployer.html or dashboard scripts that load this file/script.
+// Call registerEmployerLoginDayForSubscription ONLY after a verified employer login.
+window.JobSpaceSubscription = Object.assign(window.JobSpaceSubscription || {}, {
+  expireEmployerSubscriptions: runServerSubscriptionMaintenance,
+  registerEmployerLoginDayForSubscription
+});
+
+
 async function autoExpireAllSubscriptionsOnPageOpen(){
   const serverResult = await runServerSubscriptionMaintenance("", "", { updateAll:true });
 
@@ -3175,51 +3861,23 @@ async function getEmployerSubscriptionAccess(companyName, companyEmail){
 }
 
 /* ============================================================
-   LOGOUT
+   ACTION BUTTONS
 ============================================================ */
-async function logoutAndRedirect(){
-  clearMessage();
-
-  try{
-    supabaseClient = resolveSupabaseClient();
-
-    payBtn.disabled = true;
-    logoutBtn.disabled = true;
-    logoutBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Logging out...`;
-
-    if(supabaseClient && supabaseClient.auth && typeof supabaseClient.auth.signOut === "function"){
-      await supabaseClient.auth.signOut();
-    }
-  } catch(err){
-    console.warn("Logout signOut skipped:", err);
-  }
-
-  [
-    "lastSubscribedEmail",
-    "lastSubscribedCompanyName",
-    "employerEmail",
-    "employerCompanyName",
-    "loggedInEmployerEmail",
-    "loggedInEmployerCompanyName",
-    "companyEmail",
-    "companyName",
-    "userEmail",
-    "userCompanyName",
-    "lastEmployerEmail",
-    "lastEmployerCompanyName"
-  ].forEach(key => localStorage.removeItem(key));
-
-  companyNameInput.value = "";
-  companyEmailInput.value = "";
-  cardNameInput.value = "";
-  cardNumberInput.value = "";
-  cardExpiryInput.value = "";
-  cardCvvInput.value = "";
-
-  window.location.href = "loginemployer.html";
+function getStatusUrl(){
+  const email = (companyEmailInput.value || localStorage.getItem("employerEmail") || localStorage.getItem("lastSubscribedEmail") || "").trim().toLowerCase();
+  return email ? `subscriptionstatus.html?email=${encodeURIComponent(email)}` : "subscriptionstatus.html";
 }
 
-logoutBtn.addEventListener("click", logoutAndRedirect);
+function goToSubscriptionStatus(){
+  window.location.href = getStatusUrl();
+}
+
+function exitToDashboard(){
+  window.location.href = "dashboard1.html";
+}
+
+statusBtn.addEventListener("click", goToSubscriptionStatus);
+exitBtn.addEventListener("click", exitToDashboard);
 
 /* ============================================================
    SUBMIT
@@ -3303,6 +3961,999 @@ form.addEventListener("submit", async (e) => {
 });
 </script>
 
+
+
+
+<script id="finalSubscribeEmployerIconDropdownScript">
+(function(){
+  "use strict";
+
+  const EMAIL_KEYS = ["loggedInEmployerEmail", "employerEmail", "companyEmail", "loginEmployerEmail", "employer_email", "jobspacelinkEmployerEmail"];
+  const COMPANY_KEYS = ["loggedInCompanyName", "companyName", "employerCompanyName", "company_name", "jobspacelinkEmployerCompanyName"];
+  const LOGO_KEYS = ["loggedInEmployerLogo", "employerLogo", "companyLogo", "company_logo", "jobspacelinkEmployerLogo"];
+  const LOGO_COLUMNS = [
+    "company_logo", "logo", "logo_url", "company_logo_url", "business_logo", "image_url", "picture",
+    "profile_picture", "company_picture", "company_image", "company_profile_url", "company_profile_image",
+    "company_profile", "profile_url", "profile_image_url", "profile_image", "photo_url", "photo", "image",
+    "company_logo_path", "logo_path", "company_profile_path", "profile_path", "image_path",
+    "company_logo_file", "logo_file", "company_profile_file", "profile_file",
+    "company_logo_filename", "logo_filename", "company_profile_filename", "profile_filename",
+    "company_logo_name", "logo_name", "company_profile_name", "profile_name",
+    "company_logo_storage_path", "logo_storage_path", "company_profile_storage_path", "profile_storage_path",
+    "company_logo_public_url", "logo_public_url", "company_profile_public_url", "profile_public_url",
+    "company_logo_signed_url", "logo_signed_url", "company_profile_signed_url", "profile_signed_url"
+  ];
+
+  const byId = (id) => document.getElementById(id);
+  const clean = (value) => String(value || "").trim();
+  const isGood = (value) => {
+    const v = clean(value);
+    return !!v && v !== "—" && v.toLowerCase() !== "null" && v.toLowerCase() !== "undefined";
+  };
+
+  function readStorage(keys){
+    for(const key of keys){
+      try{
+        const local = clean(localStorage.getItem(key));
+        if(local) return local;
+      }catch(_err){}
+      try{
+        const session = clean(sessionStorage.getItem(key));
+        if(session) return session;
+      }catch(_err){}
+    }
+    return "";
+  }
+
+  function writeStorage(key, value){
+    try{
+      if(isGood(value)) localStorage.setItem(key, clean(value));
+    }catch(_err){}
+  }
+
+  function clearStorage(keys){
+    keys.forEach((key) => {
+      try{ localStorage.removeItem(key); }catch(_err){}
+      try{ sessionStorage.removeItem(key); }catch(_err){}
+    });
+  }
+
+  function getField(row, columns, fallback = ""){
+    for(const column of columns){
+      if(row && Object.prototype.hasOwnProperty.call(row, column) && isGood(row[column])) return row[column];
+    }
+    return fallback;
+  }
+
+  function getSupabaseClient(){
+    try{
+      if(typeof resolveSupabaseClient === "function") return resolveSupabaseClient();
+    }catch(_err){}
+    try{
+      if(window.supabase && typeof window.supabase.from === "function") return window.supabase;
+    }catch(_err){}
+    try{
+      if(window.supabaseClient && typeof window.supabaseClient.from === "function") return window.supabaseClient;
+    }catch(_err){}
+    return null;
+  }
+
+  async function getSessionEmail(){
+    const client = getSupabaseClient();
+    if(!client || !client.auth || typeof client.auth.getSession !== "function") return "";
+    try{
+      const { data } = await client.auth.getSession();
+      return clean(data?.session?.user?.email).toLowerCase();
+    }catch(error){
+      console.warn("Employer account session check failed:", error);
+      return "";
+    }
+  }
+
+  async function findEmployerRecord(email){
+    if(!email) return null;
+    try{
+      if(typeof getEmployerRecordByEmail === "function"){
+        const row = await getEmployerRecordByEmail(email);
+        if(row) return row;
+      }
+    }catch(error){
+      console.warn("Employer profile lookup failed:", error);
+    }
+
+    const client = getSupabaseClient();
+    if(!client || typeof client.from !== "function") return null;
+    const emailColumns = ["email", "company_email", "contact_email", "employer_email"];
+
+    for(const column of emailColumns){
+      try{
+        const { data, error } = await client.from("employers").select("*").eq(column, email).limit(1);
+        if(error) continue;
+        if(Array.isArray(data) && data.length) return data[0];
+      }catch(_err){}
+    }
+    return null;
+  }
+
+  function directLogoValue(row){
+    const fromRow = clean(getField(row, LOGO_COLUMNS, ""));
+    if(fromRow) return fromRow;
+    return readStorage(LOGO_KEYS);
+  }
+
+  function isAbsoluteUrl(value){
+    return /^(https?:|data:|blob:)/i.test(clean(value));
+  }
+
+  async function resolveLogoUrl(rawLogo){
+    const raw = clean(rawLogo);
+    if(!raw) return "";
+    if(isAbsoluteUrl(raw) || raw.startsWith("/") || raw.startsWith("./") || raw.startsWith("../")) return raw;
+    if(/\.(png|jpe?g|gif|webp|svg|bmp|avif)$/i.test(raw) && !raw.includes("/")) return raw;
+
+    const client = getSupabaseClient();
+    const storage = client && client.storage;
+    if(storage && typeof storage.from === "function"){
+      const candidates = [raw, `company_logos/${raw}`, `company-logos/${raw}`, `employer_logos/${raw}`, `employer-logos/${raw}`, `logos/${raw}`];
+      const buckets = ["company_logos", "company-logos", "employer_logos", "employer-logos", "logos", "public", "images", "avatars"];
+
+      for(const candidate of candidates){
+        const match = candidate.match(/^([^/]+)\/(.+)$/);
+        if(match){
+          try{
+            const result = storage.from(match[1]).getPublicUrl(match[2]);
+            const publicUrl = clean(result?.data?.publicUrl || result?.publicUrl || "");
+            if(publicUrl) return publicUrl;
+          }catch(_err){}
+        }
+      }
+
+      for(const bucket of buckets){
+        for(const candidate of candidates){
+          try{
+            const result = storage.from(bucket).getPublicUrl(candidate.replace(/^\/+/, ""));
+            const publicUrl = clean(result?.data?.publicUrl || result?.publicUrl || "");
+            if(publicUrl) return publicUrl;
+          }catch(_err){}
+        }
+      }
+    }
+
+    return raw;
+  }
+
+  function setLogo(src, altText){
+    const wrap = byId("subscribeEmployerDropdownLogoWrap");
+    const img = byId("subscribeEmployerDropdownLogo");
+    if(!wrap || !img) return;
+
+    const logo = clean(src);
+    img.onerror = function(){
+      wrap.classList.remove("has-logo");
+      img.removeAttribute("src");
+    };
+
+    if(logo){
+      img.referrerPolicy = "no-referrer";
+      img.alt = altText || "Company logo";
+      if(clean(img.getAttribute("src")) !== logo) img.src = logo;
+      wrap.classList.add("has-logo");
+    }else{
+      wrap.classList.remove("has-logo");
+      img.removeAttribute("src");
+    }
+  }
+
+  function setAccountButtonLogo(src, altText){
+    const btn = byId("subscribeEmployerAccountBtn");
+    const img = byId("subscribeEmployerAccountLogo");
+    if(!btn || !img) return;
+
+    const logo = clean(src);
+    img.onerror = function(){
+      btn.classList.remove("has-account-logo");
+      btn.classList.add("is-logged-out");
+      img.removeAttribute("src");
+    };
+
+    if(logo){
+      img.referrerPolicy = "no-referrer";
+      img.alt = altText || "Company logo";
+      if(clean(img.getAttribute("src")) !== logo) img.src = logo;
+      btn.classList.add("has-account-logo");
+      btn.classList.remove("is-logged-out");
+      btn.title = altText || "Employer account";
+      btn.setAttribute("aria-label", altText || "Employer account menu");
+    }else{
+      btn.classList.remove("has-account-logo");
+      btn.classList.add("is-logged-out");
+      img.removeAttribute("src");
+      btn.title = "Employer account";
+      btn.setAttribute("aria-label", "Employer account menu");
+    }
+  }
+
+  function setDropdownOpen(open){
+    const btn = byId("subscribeEmployerAccountBtn");
+    const dropdown = byId("subscribeEmployerAccountDropdown");
+    if(!btn || !dropdown) return;
+    dropdown.classList.toggle("open", !!open);
+    dropdown.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function renderDropdown(identity){
+    const dropdown = byId("subscribeEmployerAccountDropdown");
+    const label = byId("subscribeEmployerDropdownLabel");
+    const companyEl = byId("subscribeEmployerDropdownCompany");
+    const emailEl = byId("subscribeEmployerDropdownEmail");
+    if(!dropdown) return;
+
+    const logged = !!(identity && identity.loggedIn && isGood(identity.email));
+    dropdown.classList.toggle("is-logged-in", logged);
+    dropdown.classList.toggle("is-logged-out", !logged);
+    document.body.classList.toggle("employer-logged-in", logged);
+
+    if(!logged){
+      if(label) label.textContent = "";
+      if(companyEl) companyEl.textContent = "No login account";
+      if(emailEl) emailEl.textContent = "";
+      setLogo("JOBSPACELINK.png", "Job Space Link logo");
+      setAccountButtonLogo("", "Employer account menu");
+      return;
+    }
+
+    const company = clean(identity.company) || "Company / Employer";
+    const email = clean(identity.email) || "Logged in employer";
+    if(label) label.textContent = "Logged in account";
+    if(companyEl) companyEl.textContent = company;
+    if(emailEl) emailEl.textContent = email;
+    setLogo(identity.logo || "", `${company} logo`);
+    setAccountButtonLogo(identity.logo || "", `${company} logo`);
+  }
+
+  async function loadEmployerIdentity(){
+    const sessionEmail = await getSessionEmail();
+    const email = sessionEmail;
+
+    if(!email){
+      renderDropdown({ loggedIn:false });
+      return { loggedIn:false };
+    }
+
+    const row = await findEmployerRecord(email);
+    const company = clean(getField(row, ["company_name", "company", "business_name", "employer_name"], readStorage(COMPANY_KEYS))) || "Company / Employer";
+    const companyEmail = clean(getField(row, ["email", "company_email", "contact_email", "employer_email"], email)).toLowerCase();
+    const logoRaw = directLogoValue(row);
+    const logo = await resolveLogoUrl(logoRaw);
+
+    writeStorage("employerEmail", companyEmail);
+    writeStorage("employerCompanyName", company);
+    writeStorage("companyName", company);
+    writeStorage("companyEmail", companyEmail);
+    if(logo) writeStorage("employerLogo", logo);
+
+    try{ if(companyNameInput && company) companyNameInput.value = company; }catch(_err){}
+    try{ if(companyEmailInput && companyEmail) companyEmailInput.value = companyEmail; }catch(_err){}
+
+    const identity = { loggedIn:true, company, email:companyEmail, logo };
+    renderDropdown(identity);
+    return identity;
+  }
+
+  async function logoutEmployer(){
+    const logoutBtn = byId("subscribeEmployerLogoutBtn");
+    if(logoutBtn){
+      logoutBtn.disabled = true;
+      logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i><span>Logging out</span>';
+    }
+
+    const EXTRA_LOGOUT_KEYS = [
+      "lastSubscribedEmail",
+      "lastSubscribedCompanyName",
+      "loggedInEmployerEmail",
+      "employerEmail",
+      "companyEmail",
+      "loginEmployerEmail",
+      "employer_email",
+      "jobspacelinkEmployerEmail",
+      "JSL_EMPLOYER_EMAIL",
+      "JSL_LOGGED_IN_EMPLOYER_EMAIL",
+      "loggedInCompanyName",
+      "companyName",
+      "employerCompanyName",
+      "company_name",
+      "jobspacelinkEmployerCompanyName",
+      "JSL_EMPLOYER_COMPANY",
+      "JSL_LOGGED_IN_COMPANY_NAME",
+      "loggedInEmployerLogo",
+      "employerLogo",
+      "companyLogo",
+      "company_logo",
+      "jobspacelinkEmployerLogo",
+      "companyLogoUrl",
+      "company_logo_url",
+      "logo_url",
+      "JSL_EMPLOYER_LOGO",
+      "JSL_LOGGED_IN_COMPANY_LOGO",
+      "JSL_EMPLOYER_SESSION",
+      "JSL_EMPLOYER_ACCOUNT",
+      "JSL_LOGGED_IN_EMPLOYER",
+      "jobSpaceLink_employer_session",
+      "jobSpaceLink_employer_account",
+      "jobspacelink_employer_session",
+      "employerSession",
+      "employer_account",
+      "loggedInEmployer",
+      "currentEmployer",
+      "companySession",
+      "employer",
+      "loggedInEmployerId",
+      "employerId",
+      "employerUserId",
+      "JSL_EMPLOYER_ID",
+      "JSL_LOGGED_IN_EMPLOYER_ID"
+    ];
+
+    function clearKeyEverywhere(key){
+      try{ localStorage.removeItem(key); }catch(_err){}
+      try{ sessionStorage.removeItem(key); }catch(_err){}
+    }
+
+    try{
+      const client = getSupabaseClient();
+      if(client && client.auth && typeof client.auth.signOut === "function"){
+        await client.auth.signOut();
+      }
+    }catch(error){
+      console.warn("Employer logout warning:", error);
+    }
+
+    clearStorage(EMAIL_KEYS);
+    clearStorage(COMPANY_KEYS);
+    clearStorage(LOGO_KEYS);
+    EXTRA_LOGOUT_KEYS.forEach(clearKeyEverywhere);
+
+    try{ localStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
+    try{ sessionStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
+
+    try{ if(companyNameInput) companyNameInput.value = ""; }catch(_err){}
+    try{ if(companyEmailInput) companyEmailInput.value = ""; }catch(_err){}
+    try{ if(cardNameInput) cardNameInput.value = ""; }catch(_err){}
+    try{ if(cardNumberInput) cardNumberInput.value = ""; }catch(_err){}
+    try{ if(expiryInput) expiryInput.value = ""; }catch(_err){}
+    try{ if(cvcInput) cvcInput.value = ""; }catch(_err){}
+
+    renderDropdown({ loggedIn:false });
+    setDropdownOpen(false);
+
+    try{
+      window.dispatchEvent(new CustomEvent("jsl-employer-logout", {
+        detail: { source:"subscribe-dropdown", redirect:"index.html" }
+      }));
+    }catch(_err){}
+
+    window.location.replace("index.html");
+  }
+
+  function bindEmployerDropdown(){
+    const btn = byId("subscribeEmployerAccountBtn");
+    const dropdown = byId("subscribeEmployerAccountDropdown");
+    const logoutBtn = byId("subscribeEmployerLogoutBtn");
+    if(!btn || !dropdown || btn.__subscribeEmployerDropdownBound) return;
+    btn.__subscribeEmployerDropdownBound = true;
+
+    btn.addEventListener("click", async function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      await loadEmployerIdentity();
+      setDropdownOpen(!dropdown.classList.contains("open"));
+    });
+
+    dropdown.addEventListener("click", function(event){
+      event.stopPropagation();
+    });
+
+    if(logoutBtn && !logoutBtn.__subscribeEmployerLogoutBound){
+      logoutBtn.__subscribeEmployerLogoutBound = true;
+      logoutBtn.addEventListener("click", function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        logoutEmployer();
+      });
+    }
+
+    document.addEventListener("click", function(){ setDropdownOpen(false); });
+    document.addEventListener("keydown", function(event){ if(event.key === "Escape") setDropdownOpen(false); });
+  }
+
+  async function boot(){
+    bindEmployerDropdown();
+    await loadEmployerIdentity();
+
+  }
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once:true });
+  else boot();
+
+  window.addEventListener("load", function(){
+    setTimeout(boot, 200);
+    setTimeout(boot, 1000);
+  }, { once:true });
+
+  try{
+    const client = getSupabaseClient();
+    if(client && client.auth && typeof client.auth.onAuthStateChange === "function"){
+      client.auth.onAuthStateChange(function(){
+        setTimeout(boot, 80);
+      });
+    }
+  }catch(_err){}
+
+  window.refreshSubscribeEmployerDropdown = boot;
+})();
+</script>
+
+
+<!-- ============================================================
+   FINAL PATCH: Subscribe dropdown logged-in company logo
+   - Uses the logged-in employer/company email or user id.
+   - Loads logo first from employer_company_profiles, then employers, then saved session storage.
+   - Replaces the employer icon with the company logo in the header account button and dropdown profile card.
+============================================================ -->
+<style id="final-subscribe-loggedin-company-logo-css">
+  #subscribeEmployerAccountBtn.has-account-logo #subscribeEmployerAccountLogo{
+    display:block !important;
+  }
+
+  #subscribeEmployerAccountBtn.has-account-logo > i{
+    display:none !important;
+  }
+
+  #subscribeEmployerAccountBtn.has-account-logo{
+    background:linear-gradient(135deg,#020617,#111827) !important;
+    border-color:rgba(0,198,255,0.55) !important;
+    box-shadow:0 0 18px rgba(0,198,255,0.22) !important;
+  }
+
+  #subscribeEmployerAccountLogo{
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    padding:3px !important;
+    border-radius:12px !important;
+    background:transparent !important;
+  }
+
+  #subscribeEmployerDropdownLogoWrap.has-logo #subscribeEmployerDropdownLogo{
+    display:block !important;
+  }
+
+  #subscribeEmployerDropdownLogoWrap.has-logo #subscribeEmployerDropdownLogoFallback{
+    display:none !important;
+  }
+
+  #subscribeEmployerDropdownLogoWrap.has-logo{
+    background:linear-gradient(135deg,#020617,#111827) !important;
+    border-color:rgba(0,198,255,0.50) !important;
+    box-shadow:0 0 22px rgba(0,198,255,0.18) !important;
+  }
+
+  #subscribeEmployerDropdownLogo{
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    padding:4px !important;
+    border-radius:14px !important;
+    background:transparent !important;
+  }
+</style>
+
+<script id="final-subscribe-loggedin-company-logo-script">
+(function(){
+  "use strict";
+
+  var PROFILE_TABLE = "employer_company_profiles";
+  var EMPLOYERS_TABLE = "employers";
+  var EMAIL_KEYS = [
+    "loggedInEmployerEmail", "employerEmail", "companyEmail", "loginEmployerEmail", "employer_email",
+    "jobspacelinkEmployerEmail", "JSL_EMPLOYER_EMAIL", "JSL_LOGGED_IN_EMPLOYER_EMAIL"
+  ];
+  var COMPANY_KEYS = [
+    "loggedInCompanyName", "companyName", "employerCompanyName", "company_name", "jobspacelinkEmployerCompanyName",
+    "JSL_EMPLOYER_COMPANY", "JSL_LOGGED_IN_COMPANY_NAME"
+  ];
+  var LOGO_KEYS = [
+    "loggedInEmployerLogo", "employerLogo", "companyLogo", "company_logo", "jobspacelinkEmployerLogo",
+    "companyLogoUrl", "company_logo_url", "logo_url", "JSL_EMPLOYER_LOGO", "JSL_LOGGED_IN_COMPANY_LOGO"
+  ];
+  var SESSION_OBJECT_KEYS = [
+    "JSL_EMPLOYER_SESSION", "JSL_EMPLOYER_ACCOUNT", "JSL_LOGGED_IN_EMPLOYER",
+    "jobSpaceLink_employer_session", "jobSpaceLink_employer_account", "jobspacelink_employer_session",
+    "employerSession", "employer_account", "loggedInEmployer", "currentEmployer", "companySession", "employer"
+  ];
+  var EMAIL_COLUMNS = ["employer_email", "company_email", "email", "contact_email"];
+  var USER_ID_COLUMNS = ["employer_user_id", "user_id", "auth_user_id", "uid"];
+  var COMPANY_COLUMNS = ["company_name", "company", "business_name", "legal_name", "employer_company_name", "name"];
+  var LOGO_COLUMNS = [
+    "logo_url", "company_logo", "company_logo_url", "logo", "business_logo", "image_url", "picture",
+    "profile_picture", "company_picture", "company_image", "company_profile_url", "company_profile_image",
+    "company_profile", "profile_url", "profile_image_url", "profile_image", "photo_url", "photo", "image",
+    "company_logo_path", "logo_path", "company_profile_path", "profile_path", "image_path",
+    "company_logo_file", "logo_file", "company_profile_file", "profile_file",
+    "company_logo_filename", "logo_filename", "company_profile_filename", "profile_filename",
+    "company_logo_name", "logo_name", "company_profile_name", "profile_name",
+    "company_logo_storage_path", "logo_storage_path", "company_profile_storage_path", "profile_storage_path",
+    "company_logo_public_url", "logo_public_url", "company_profile_public_url", "profile_public_url",
+    "company_logo_signed_url", "logo_signed_url", "company_profile_signed_url", "profile_signed_url"
+  ];
+  var STORAGE_BUCKETS = [
+    "job_pdfs", "company_logos", "company-logos", "employer_logos", "employer-logos",
+    "logos", "public", "images", "avatars", "applicantfile"
+  ];
+
+  function byId(id){ return document.getElementById(id); }
+  function clean(value){ return String(value == null ? "" : value).trim(); }
+  function lowerEmail(value){
+    var v = clean(value).toLowerCase();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? v : "";
+  }
+  function good(value){
+    var v = clean(value);
+    return !!v && v !== "—" && v.toLowerCase() !== "null" && v.toLowerCase() !== "undefined";
+  }
+  function safeJson(value){
+    if (!value) return null;
+    if (typeof value === "object") return value;
+    try{ return JSON.parse(value); }catch(_err){ return null; }
+  }
+  function getNested(obj, path){
+    try{
+      return path.split(".").reduce(function(acc, key){ return acc && acc[key]; }, obj);
+    }catch(_err){ return ""; }
+  }
+  function pick(obj, keys){
+    obj = obj || {};
+    for (var i = 0; i < keys.length; i++){
+      var key = keys[i];
+      if (Object.prototype.hasOwnProperty.call(obj, key) && good(obj[key])) return obj[key];
+      var nested = getNested(obj, key);
+      if (good(nested)) return nested;
+    }
+    return "";
+  }
+  function readStorageKey(key){
+    var value = "";
+    try{ value = clean(localStorage.getItem(key)); if (value) return value; }catch(_err){}
+    try{ value = clean(sessionStorage.getItem(key)); if (value) return value; }catch(_err){}
+    return "";
+  }
+  function readStorage(keys){
+    for (var i = 0; i < keys.length; i++){
+      var value = readStorageKey(keys[i]);
+      if (good(value)) return value;
+    }
+    return "";
+  }
+  function writeStorage(key, value){
+    try{ if (good(value)) localStorage.setItem(key, clean(value)); }catch(_err){}
+  }
+  function readStoredEmployerObject(){
+    var extraEmailKeys = ["email", "company_email", "contact_email", "employer_email", "user.email", "account.email", "profile.email"];
+    var extraCompanyKeys = ["company", "company_name", "companyName", "business_name", "employer_company_name", "name", "user.company", "account.company"];
+    var extraLogoKeys = LOGO_COLUMNS.concat(["logoUrl", "companyLogo", "companyLogoUrl", "avatar", "avatar_url"]);
+
+    for (var i = 0; i < SESSION_OBJECT_KEYS.length; i++){
+      var raw = readStorageKey(SESSION_OBJECT_KEYS[i]);
+      var obj = safeJson(raw);
+      if (!obj) continue;
+      var email = lowerEmail(pick(obj, extraEmailKeys));
+      var company = clean(pick(obj, extraCompanyKeys));
+      var logo = clean(pick(obj, extraLogoKeys));
+      var userId = clean(pick(obj, ["id", "user_id", "employer_user_id", "auth_user_id", "user.id", "account.id"]));
+      if (email || company || logo || userId) return { email:email, company:company, logo:logo, userId:userId };
+    }
+    return { email:"", company:"", logo:"", userId:"" };
+  }
+  function getClient(){
+    try{ if (typeof resolveSupabaseClient === "function") return resolveSupabaseClient(); }catch(_err){}
+    try{ if (window.supabase && typeof window.supabase.from === "function") return window.supabase; }catch(_err){}
+    try{ if (window.supabaseClient && typeof window.supabaseClient.from === "function") return window.supabaseClient; }catch(_err){}
+    return null;
+  }
+  async function getAuthIdentity(){
+    var client = getClient();
+    if (!client || !client.auth || typeof client.auth.getSession !== "function") return { email:"", userId:"" };
+    try{
+      var result = await client.auth.getSession();
+      var user = result && result.data && result.data.session && result.data.session.user;
+      return {
+        email: lowerEmail(user && user.email),
+        userId: clean(user && user.id)
+      };
+    }catch(_err){ return { email:"", userId:"" }; }
+  }
+  async function queryOne(table, column, value){
+    var client = getClient();
+    if (!client || !table || !column || !good(value)) return null;
+    try{
+      var ordered = await client.from(table).select("*").eq(column, value).order("updated_at", { ascending:false }).limit(1);
+      if (!ordered.error && Array.isArray(ordered.data) && ordered.data.length) return ordered.data[0];
+    }catch(_err){}
+    try{
+      var created = await client.from(table).select("*").eq(column, value).order("created_at", { ascending:false }).limit(1);
+      if (!created.error && Array.isArray(created.data) && created.data.length) return created.data[0];
+    }catch(_err){}
+    try{
+      var plain = await client.from(table).select("*").eq(column, value).limit(1);
+      if (!plain.error && Array.isArray(plain.data) && plain.data.length) return plain.data[0];
+    }catch(_err){}
+    return null;
+  }
+  async function findCompanyProfile(identity){
+    identity = identity || {};
+    if (good(identity.userId)){
+      for (var i = 0; i < USER_ID_COLUMNS.length; i++){
+        var rowById = await queryOne(PROFILE_TABLE, USER_ID_COLUMNS[i], identity.userId);
+        if (rowById) return rowById;
+      }
+    }
+    var emails = [];
+    if (identity.email) emails.push(identity.email);
+    var storedEmail = lowerEmail(readStorage(EMAIL_KEYS));
+    if (storedEmail && emails.indexOf(storedEmail) === -1) emails.push(storedEmail);
+
+    for (var e = 0; e < emails.length; e++){
+      for (var c = 0; c < EMAIL_COLUMNS.length; c++){
+        var row = await queryOne(PROFILE_TABLE, EMAIL_COLUMNS[c], emails[e]);
+        if (row) return row;
+      }
+    }
+    return null;
+  }
+  async function findEmployerRow(email){
+    if (!email) return null;
+    for (var i = 0; i < EMAIL_COLUMNS.length; i++){
+      var row = await queryOne(EMPLOYERS_TABLE, EMAIL_COLUMNS[i], email);
+      if (row) return row;
+    }
+    return null;
+  }
+  function isUrl(value){ return /^(https?:|data:|blob:)/i.test(clean(value)); }
+  function isRelativeUrl(value){ return /^(\.\/|\.\.\/|\/)/.test(clean(value)); }
+  async function resolveLogo(rawLogo){
+    var raw = clean(rawLogo);
+    if (!raw) return "";
+    if (isUrl(raw) || isRelativeUrl(raw)) return raw;
+    if (/\.(png|jpe?g|gif|webp|svg|bmp|avif)(\?.*)?$/i.test(raw) && raw.indexOf("/") === -1) return raw;
+
+    var client = getClient();
+    if (!client || !client.storage || typeof client.storage.from !== "function") return raw;
+
+    var candidates = [raw];
+    ["company_logos", "company-logos", "employer_logos", "employer-logos", "logos", "company", "companies"].forEach(function(prefix){
+      candidates.push(prefix + "/" + raw.replace(/^\/+/, ""));
+    });
+
+    for (var i = 0; i < candidates.length; i++){
+      var match = candidates[i].match(/^([^/]+)\/(.+)$/);
+      if (match){
+        try{
+          var direct = client.storage.from(match[1]).getPublicUrl(match[2]);
+          var directUrl = clean(direct && direct.data && direct.data.publicUrl || direct && direct.publicUrl || "");
+          if (directUrl) return directUrl;
+        }catch(_err){}
+      }
+    }
+    for (var b = 0; b < STORAGE_BUCKETS.length; b++){
+      for (var j = 0; j < candidates.length; j++){
+        try{
+          var result = client.storage.from(STORAGE_BUCKETS[b]).getPublicUrl(candidates[j].replace(/^\/+/, ""));
+          var publicUrl = clean(result && result.data && result.data.publicUrl || result && result.publicUrl || "");
+          if (publicUrl) return publicUrl;
+        }catch(_err){}
+      }
+    }
+    return raw;
+  }
+  function applyButtonLogo(logo, company){
+    var btn = byId("subscribeEmployerAccountBtn");
+    var img = byId("subscribeEmployerAccountLogo");
+    var icon = btn ? btn.querySelector("i.fa-building-user") : null;
+    if (!btn || !img) return;
+    if (good(logo)){
+      img.onerror = function(){
+        btn.classList.remove("has-account-logo");
+        if (icon) icon.style.display = "block";
+      };
+      img.referrerPolicy = "no-referrer";
+      img.alt = (company || "Company") + " logo";
+      if (clean(img.getAttribute("src")) !== logo) img.src = logo;
+      btn.classList.add("has-account-logo");
+      btn.classList.remove("is-logged-out");
+      btn.classList.add("is-logged-in");
+      if (icon) icon.style.display = "none";
+      btn.title = company || "Employer account";
+      btn.setAttribute("aria-label", (company || "Employer") + " account menu");
+    }else{
+      btn.classList.remove("has-account-logo");
+      if (icon) icon.style.display = "block";
+    }
+  }
+  function applyDropdownLogo(logo, company){
+    var wrap = byId("subscribeEmployerDropdownLogoWrap");
+    var img = byId("subscribeEmployerDropdownLogo");
+    var icon = byId("subscribeEmployerDropdownLogoFallback");
+    if (!wrap || !img) return;
+    if (good(logo)){
+      img.onerror = function(){
+        wrap.classList.remove("has-logo");
+        if (icon) icon.style.display = "block";
+      };
+      img.referrerPolicy = "no-referrer";
+      img.alt = (company || "Company") + " logo";
+      if (clean(img.getAttribute("src")) !== logo) img.src = logo;
+      wrap.classList.add("has-logo");
+      if (icon) icon.style.display = "none";
+    }else{
+      wrap.classList.remove("has-logo");
+      if (icon) icon.style.display = "block";
+    }
+  }
+  function applyIdentity(identity){
+    identity = identity || {};
+    var dropdown = byId("subscribeEmployerAccountDropdown");
+    var label = byId("subscribeEmployerDropdownLabel");
+    var companyEl = byId("subscribeEmployerDropdownCompany");
+    var emailEl = byId("subscribeEmployerDropdownEmail");
+    var logged = !!lowerEmail(identity.email);
+    var company = clean(identity.company) || "Company / Employer";
+    var email = lowerEmail(identity.email);
+    var logo = clean(identity.logo);
+
+    if (dropdown){
+      dropdown.classList.toggle("is-logged-in", logged);
+      dropdown.classList.toggle("is-logged-out", !logged);
+    }
+    if (logged){
+      if (label) label.textContent = "Logged in account";
+      if (companyEl) companyEl.textContent = company;
+      if (emailEl) emailEl.textContent = email;
+      applyButtonLogo(logo, company);
+      applyDropdownLogo(logo, company);
+    }
+  }
+  async function refreshLoggedInCompanyLogo(){
+    var stored = readStoredEmployerObject();
+    var auth = await getAuthIdentity();
+    var email = lowerEmail(auth.email || stored.email || readStorage(EMAIL_KEYS));
+    var userId = clean(auth.userId || stored.userId);
+    if (!email && !userId) return;
+
+    var profileRow = await findCompanyProfile({ email:email, userId:userId });
+    var employerRow = null;
+    if (email) employerRow = await findEmployerRow(email);
+
+    var company = clean(pick(profileRow, COMPANY_COLUMNS)) || clean(pick(employerRow, COMPANY_COLUMNS)) || clean(stored.company) || clean(readStorage(COMPANY_KEYS)) || "Company / Employer";
+    var identityEmail = lowerEmail(pick(profileRow, EMAIL_COLUMNS)) || lowerEmail(pick(employerRow, EMAIL_COLUMNS)) || email;
+    var rawLogo = clean(pick(profileRow, LOGO_COLUMNS)) || clean(pick(employerRow, LOGO_COLUMNS)) || clean(stored.logo) || clean(readStorage(LOGO_KEYS));
+    var logo = await resolveLogo(rawLogo);
+
+    if (identityEmail) writeStorage("employerEmail", identityEmail);
+    if (company) writeStorage("employerCompanyName", company);
+    if (logo) writeStorage("employerLogo", logo);
+
+    applyIdentity({ email:identityEmail, company:company, logo:logo });
+  }
+  function scheduleRefresh(){
+    clearTimeout(window.__JSLSubscribeCompanyLogoTimer);
+    window.__JSLSubscribeCompanyLogoTimer = setTimeout(refreshLoggedInCompanyLogo, 80);
+    [220, 600, 1200, 2200].forEach(function(delay){ setTimeout(refreshLoggedInCompanyLogo, delay); });
+  }
+  function boot(){ scheduleRefresh(); }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once:true });
+  else boot();
+  window.addEventListener("load", boot, { passive:true });
+  window.addEventListener("focus", boot, { passive:true });
+  window.addEventListener("storage", boot, { passive:true });
+  document.addEventListener("click", function(event){
+    if (event.target && event.target.closest && event.target.closest("#subscribeEmployerAccountBtn, #subscribeEmployerAccountDropdown")){
+      scheduleRefresh();
+    }
+  }, true);
+  try{
+    var client = getClient();
+    if (client && client.auth && typeof client.auth.onAuthStateChange === "function"){
+      client.auth.onAuthStateChange(function(){ scheduleRefresh(); });
+    }
+  }catch(_err){}
+  try{
+    var observer = new MutationObserver(function(){ scheduleRefresh(); });
+    observer.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:["class", "src", "style"] });
+  }catch(_err){}
+
+  window.refreshSubscribeLoggedInCompanyLogo = refreshLoggedInCompanyLogo;
+})();
+</script>
+
+
+<!-- ============================================================
+   FINAL LOGOUT REDIRECT SAFETY PATCH
+   Ensures the employer account dropdown Log out clears the logged-in
+   account/session data first, then redirects to index.html.
+============================================================ -->
+<script id="final-subscribe-logout-clear-and-redirect-patch">
+(function(){
+  "use strict";
+
+  var LOGOUT_KEYS = [
+    "lastSubscribedEmail",
+    "lastSubscribedCompanyName",
+    "loggedInEmployerEmail",
+    "employerEmail",
+    "companyEmail",
+    "loginEmployerEmail",
+    "employer_email",
+    "jobspacelinkEmployerEmail",
+    "JSL_EMPLOYER_EMAIL",
+    "JSL_LOGGED_IN_EMPLOYER_EMAIL",
+    "loggedInCompanyName",
+    "companyName",
+    "employerCompanyName",
+    "company_name",
+    "jobspacelinkEmployerCompanyName",
+    "JSL_EMPLOYER_COMPANY",
+    "JSL_LOGGED_IN_COMPANY_NAME",
+    "loggedInEmployerLogo",
+    "employerLogo",
+    "companyLogo",
+    "company_logo",
+    "jobspacelinkEmployerLogo",
+    "companyLogoUrl",
+    "company_logo_url",
+    "logo_url",
+    "JSL_EMPLOYER_LOGO",
+    "JSL_LOGGED_IN_COMPANY_LOGO",
+    "JSL_EMPLOYER_SESSION",
+    "JSL_EMPLOYER_ACCOUNT",
+    "JSL_LOGGED_IN_EMPLOYER",
+    "jobSpaceLink_employer_session",
+    "jobSpaceLink_employer_account",
+    "jobspacelink_employer_session",
+    "employerSession",
+    "employer_account",
+    "loggedInEmployer",
+    "currentEmployer",
+    "companySession",
+    "employer",
+    "loggedInEmployerId",
+    "employerId",
+    "employerUserId",
+    "JSL_EMPLOYER_ID",
+    "JSL_LOGGED_IN_EMPLOYER_ID"
+  ];
+
+  function clearKey(key){
+    try{ localStorage.removeItem(key); }catch(_err){}
+    try{ sessionStorage.removeItem(key); }catch(_err){}
+  }
+
+  function setTextOrValue(id, value){
+    var el = document.getElementById(id);
+    if(!el) return;
+    if("value" in el) el.value = value || "";
+    else el.textContent = value || "";
+  }
+
+  function resetAccountDisplay(){
+    var dropdown = document.getElementById("subscribeEmployerAccountDropdown");
+    var btn = document.getElementById("subscribeEmployerAccountBtn");
+    var headerLogo = document.getElementById("subscribeEmployerAccountLogo");
+    var dropdownLogo = document.getElementById("subscribeEmployerDropdownLogo");
+    var logoWrap = document.getElementById("subscribeEmployerDropdownLogoWrap");
+
+    if(dropdown){
+      dropdown.classList.remove("open", "is-logged-in");
+      dropdown.classList.add("is-logged-out");
+      dropdown.setAttribute("aria-hidden", "true");
+    }
+
+    if(btn){
+      btn.classList.remove("has-account-logo", "is-logged-in");
+      btn.classList.add("is-logged-out");
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-label", "Employer account menu");
+      btn.title = "Employer account";
+    }
+
+    if(headerLogo){
+      headerLogo.removeAttribute("src");
+      headerLogo.setAttribute("hidden", "hidden");
+    }
+
+    if(dropdownLogo){
+      dropdownLogo.src = "JOBSPACELINK.png";
+      dropdownLogo.alt = "Job Space Link logo";
+    }
+
+    if(logoWrap){
+      logoWrap.classList.add("has-logo");
+    }
+
+    setTextOrValue("subscribeEmployerDropdownLabel", "");
+    setTextOrValue("subscribeEmployerDropdownCompany", "No login account");
+    setTextOrValue("subscribeEmployerDropdownEmail", "");
+    setTextOrValue("companyName", "");
+    setTextOrValue("companyEmail", "");
+    setTextOrValue("cardName", "");
+    setTextOrValue("cardNumber", "");
+    setTextOrValue("expiry", "");
+    setTextOrValue("cvc", "");
+  }
+
+  async function signOutSupabase(){
+    try{
+      var client = null;
+      if(typeof resolveSupabaseClient === "function") client = resolveSupabaseClient();
+      else if(window.supabaseClient && window.supabaseClient.auth) client = window.supabaseClient;
+      else if(window.supabase && window.supabase.auth) client = window.supabase;
+      if(client && client.auth && typeof client.auth.signOut === "function"){
+        await client.auth.signOut();
+      }
+    }catch(error){
+      console.warn("Employer logout warning:", error);
+    }
+  }
+
+  async function clearEmployerLoginAndRedirect(){
+    var logoutBtn = document.getElementById("subscribeEmployerLogoutBtn");
+    if(logoutBtn){
+      logoutBtn.disabled = true;
+      logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i><span>Logging out</span>';
+    }
+
+    await signOutSupabase();
+
+    LOGOUT_KEYS.forEach(clearKey);
+    try{ localStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
+    try{ sessionStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
+
+    resetAccountDisplay();
+
+    try{
+      window.dispatchEvent(new CustomEvent("jsl-employer-logout", {
+        detail: { source:"subscribe-dropdown", redirect:"index.html" }
+      }));
+    }catch(_err){}
+
+    window.location.replace("index.html");
+  }
+
+  function bindLogoutRedirect(){
+    var logoutBtn = document.getElementById("subscribeEmployerLogoutBtn");
+    if(!logoutBtn || logoutBtn.__finalSubscribeLogoutRedirectBound) return;
+    logoutBtn.__finalSubscribeLogoutRedirectBound = true;
+
+    logoutBtn.addEventListener("click", function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      if(typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
+      clearEmployerLoginAndRedirect();
+    }, true);
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", bindLogoutRedirect, { once:true });
+  }else{
+    bindLogoutRedirect();
+  }
+
+  window.addEventListener("load", bindLogoutRedirect, { once:true });
+})();
+</script>
 
 </body>
 </html>

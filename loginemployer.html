@@ -1837,7 +1837,6 @@
 }
 
 
-
 /* ============================================================
    EXACT LATEST INDEX HEADER OVERRIDE - APPLIED TO EMPLOYER LOGIN
    Matches the latest index header: nav icons, dropdown hover effects,
@@ -2730,7 +2729,7 @@ header .auth-buttons .auth-text{
   </div>
 
   <nav>
-    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
+    <a href="home.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
@@ -2753,33 +2752,21 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
-    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
-    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
-    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard1.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
-  <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
-    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
+ 
+   
   
-  </div>
-
-  <button
-    type="button"
-    class="nav-toggle"
-    id="navToggle"
-    aria-label="Open mobile menu"
-    aria-expanded="false"
-  >
-    <i class="fa-solid fa-bars"></i>
-  </button>
 </header>
 
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
@@ -2802,12 +2789,12 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
@@ -3495,33 +3482,35 @@ header .auth-buttons .auth-text{
     }
 
     const status = getStatusText(sub);
-    const remaining = Number(sub.days_remaining ?? 0);
+    const hasRemaining = hasOwnField(sub, "days_remaining");
+    const parsedRemaining = Number(sub.days_remaining ?? 0);
+    const remaining = hasRemaining && Number.isFinite(parsedRemaining)
+      ? Math.max(0, parsedRemaining)
+      : 1;
     const endDateKey = getSubscriptionEndDateKey(sub);
 
-    if(isExpiredByEndDate(sub)){
+    /* LOGIN-DAY SUBSCRIPTION MODE:
+       Do NOT expire or deduct because a calendar day passed.
+       Remaining days go down only after a successful employer login,
+       and only once per subscription date.
+    */
+    if(hasRemaining && remaining <= 0){
       return {
         active: false,
         reason: "expired",
         record: sub,
-        remaining
+        remaining: 0,
+        endDate: endDateKey
       };
     }
 
-    if(!ACTIVE_SUBSCRIPTION_STATUSES.includes(status)){
+    if(status && !ACTIVE_SUBSCRIPTION_STATUSES.includes(status)){
       return {
         active: false,
         reason: "inactive",
         record: sub,
-        remaining
-      };
-    }
-
-    if(hasOwnField(sub, "days_remaining") && remaining <= 0){
-      return {
-        active: false,
-        reason: "expired",
-        record: sub,
-        remaining
+        remaining,
+        endDate: endDateKey
       };
     }
 
@@ -3529,7 +3518,7 @@ header .auth-buttons .auth-text{
       active: true,
       reason: "active",
       record: sub,
-      remaining: hasOwnField(sub, "days_remaining") ? remaining : 1,
+      remaining,
       endDate: endDateKey
     };
   }
@@ -3746,20 +3735,23 @@ header .auth-buttons .auth-text{
   }
 
   async function refreshSubscriptionStatusFromServer(user){
-    /* 1. First call the Edge Function so expired rows are changed to not active. */
-    const edgeResult = await callExpireEmployerSubscriptionsEdge(user);
-
-    /* 2. Browser fallback tries to expire rows too, in case RLS allows it. */
-    await localFallbackExpireRows(user?.id || currentEmployerUserId, user?.email || currentEmployerEmail);
-
-    /* 3. Re-read table after expiration update, then check active/inactive status. */
+    /* LOGIN-DAY SUBSCRIPTION MODE:
+       Do not call the expiry Edge Function here because that can expire
+       or reduce access based on calendar dates even when the employer
+       did not login. We only re-read the latest payment transaction and
+       deduct inside deductSubscriptionDayIfNeeded() after login success.
+    */
     const latestSub = await getLatestSubscriptionByEmployer(
       user?.id || currentEmployerUserId,
       user?.email || currentEmployerEmail
     );
 
     const snapshot = analyzeSubscriptionRecord(latestSub);
-    snapshot.edgeResult = edgeResult;
+    snapshot.edgeResult = {
+      ok: true,
+      reason: "login_day_subscription_mode",
+      message: "Calendar-day expiration skipped; days_remaining changes only on employer login."
+    };
 
     return snapshot;
   }
@@ -3770,20 +3762,88 @@ header .auth-buttons .auth-text{
   }
 
   /* ============================================================
-     DEDUCT DAYS ON EMPLOYER DASHBOARD OPEN
+     DAILY SUBSCRIPTION DEDUCTION ON SUCCESSFUL EMPLOYER LOGIN
+     - If employer does NOT login today, days_remaining is NOT changed.
+     - First successful employer login per subscription date deducts 1 day.
+     - More logins on the same subscription date DO NOT deduct again.
+     - The Supabase marker column is last_login_date when available.
   ============================================================ */
+  const DAILY_LOGIN_MARKER_COLUMNS = [
+    "last_login_date",
+    "last_deduction_date",
+    "last_login_deduction_date"
+  ];
+
+  function getDailyLoginMarkerColumn(record){
+    for(const column of DAILY_LOGIN_MARKER_COLUMNS){
+      if(hasOwnField(record, column)) return column;
+    }
+
+    /* Preferred column. Add this DATE column in Supabase for exact once-per-day tracking:
+       last_login_date
+    */
+    return "last_login_date";
+  }
+
+  function getDailyLoginMarkerDate(record){
+    return normalizeDateKey(getRecordField(record, DAILY_LOGIN_MARKER_COLUMNS, ""));
+  }
+
+  function buildDailyLoginDeductionKey(userId, email, subscriptionId, todayStr){
+    const cleanUserId = String(userId || "no-user").trim().toLowerCase();
+    const cleanEmail = String(email || "no-email").trim().toLowerCase();
+    const cleanSubId = String(subscriptionId || "no-subscription").trim().toLowerCase();
+    return `jobspace_daily_login_deducted:${cleanUserId}:${cleanEmail}:${cleanSubId}:${todayStr}`;
+  }
+
+  function wasDailyLoginDeductedLocally(deductionKey, todayStr){
+    try{
+      return localStorage.getItem(deductionKey) === todayStr || sessionStorage.getItem(deductionKey) === todayStr;
+    }catch(_err){
+      return false;
+    }
+  }
+
+  function rememberDailyLoginDeductionLocally(deductionKey, todayStr){
+    try{ localStorage.setItem(deductionKey, todayStr); }catch(_err){}
+    try{ sessionStorage.setItem(deductionKey, todayStr); }catch(_err){}
+  }
+
+  async function updateSubscriptionAfterLoginDeduction(client, sub, payload, markerColumn, todayStr){
+    let query = client
+      .from("employer_payment_transactions")
+      .update(payload)
+      .eq("id", sub.id);
+
+    /* Race guard: when the marker column exists, Supabase only updates if the
+       row is not already marked for today. This prevents double deduction
+       from repeated clicks, duplicate tabs, or fast same-day logins.
+    */
+    if(hasOwnField(sub, markerColumn)){
+      query = query.or(`${markerColumn}.is.null,${markerColumn}.neq.${todayStr}`);
+    }
+
+    return await query.select("*").maybeSingle();
+  }
+
   async function deductSubscriptionDayIfNeeded(userId, email){
     const client = getSupabaseClient();
     if(!client) return { ok:false, reason:"missing_client" };
 
-    /* Always call Edge Function again before deduction. */
+    const normalizedEmail = String(email || currentEmployerEmail || "").trim().toLowerCase();
+    const todayStr = todaySubscriptionDateKey();
+
+    /* Re-check latest subscription before any deduction. This does NOT deduct
+       by missed calendar days; it only reads the active/latest row. */
     const latestSnapshot = await refreshSubscriptionStatusFromServer({
       id: userId,
-      email: email || currentEmployerEmail
+      email: normalizedEmail
     });
 
     if(!latestSnapshot.active){
-      return { ok:false, reason:latestSnapshot.reason };
+      currentSubscriptionInfo = latestSnapshot;
+      setPortalStatusUI(currentSubscriptionInfo);
+      return { ok:false, reason:latestSnapshot.reason || "inactive" };
     }
 
     const sub = latestSnapshot.record;
@@ -3791,48 +3851,113 @@ header .auth-buttons .auth-text{
       return { ok:false, reason:"no_subscription" };
     }
 
-    const todayStr = todaySubscriptionDateKey();
-    const lastLogin = sub.last_login_date ? normalizeDateKey(sub.last_login_date) : null;
+    const deductionKey = buildDailyLoginDeductionKey(userId, normalizedEmail, sub.id, todayStr);
+    const markerColumn = getDailyLoginMarkerColumn(sub);
+    const lastLogin = getDailyLoginMarkerDate(sub);
 
-    if(lastLogin === todayStr){
-      return { ok:true, skipped:true, reason:"already_deducted_today" };
+    /* If the subscription row is already marked for today, never deduct again. */
+    if(lastLogin === todayStr || wasDailyLoginDeductedLocally(deductionKey, todayStr)){
+      currentSubscriptionInfo = latestSnapshot;
+      setPortalStatusUI(currentSubscriptionInfo);
+      rememberDailyLoginDeductionLocally(deductionKey, todayStr);
+      return {
+        ok:true,
+        skipped:true,
+        reason:"already_deducted_today",
+        remaining: latestSnapshot.remaining
+      };
     }
 
-    const currentRemaining = Number(sub.days_remaining || 0);
+    /* If no persistent marker column exists, do NOT deduct because that would
+       risk deducting on every login. Add a DATE column named last_login_date
+       to employer_payment_transactions for exact once-per-day deduction. */
+    if(!hasOwnField(sub, markerColumn)){
+      console.warn(
+        "No daily login marker column found on employer_payment_transactions. " +
+        "Skipping deduction to avoid charging every login. Add last_login_date DATE."
+      );
+      currentSubscriptionInfo = latestSnapshot;
+      setPortalStatusUI(currentSubscriptionInfo);
+      rememberDailyLoginDeductionLocally(deductionKey, todayStr);
+      return {
+        ok:true,
+        skipped:true,
+        reason:"missing_daily_marker_column_no_deduction",
+        remaining: latestSnapshot.remaining
+      };
+    }
+
+    const currentRemaining = Math.max(0, Number(sub.days_remaining ?? latestSnapshot.remaining ?? 0));
+    if(currentRemaining <= 0){
+      return { ok:false, reason:"expired" };
+    }
+
     const newRemaining = Math.max(0, currentRemaining - 1);
     const newStatus = newRemaining > 0 ? "active" : INACTIVE_SUBSCRIPTION_STATUS;
+    const statusColumn = hasOwnField(sub, "status")
+      ? "status"
+      : hasOwnField(sub, "subscription_status")
+        ? "subscription_status"
+        : hasOwnField(sub, "payment_status")
+          ? "payment_status"
+          : "";
 
     const payload = {
       days_remaining: newRemaining,
-      last_login_date: todayStr
+      [markerColumn]: todayStr
     };
-    payload[getWritableStatusColumn(sub)] = newStatus;
 
-    const { error: updErr } = await client
-      .from("employer_payment_transactions")
-      .update(payload)
-      .eq("id", sub.id);
+    if(statusColumn){
+      payload[statusColumn] = newStatus;
+    }
+
+    const { data: updatedRow, error: updErr } = await updateSubscriptionAfterLoginDeduction(
+      client,
+      sub,
+      payload,
+      markerColumn,
+      todayStr
+    );
 
     if(updErr){
-      console.error("Deduction update failed:", updErr);
+      console.error("Daily login deduction update failed:", updErr);
       return { ok:false, reason:"update_failed" };
     }
+
+    /* If no row was returned, another same-day login already marked the row.
+       Re-read and continue without another deduction. */
+    if(!updatedRow){
+      const afterSnapshot = await getSubscriptionSnapshot(userId, normalizedEmail);
+      currentSubscriptionInfo = afterSnapshot;
+      setPortalStatusUI(currentSubscriptionInfo);
+      rememberDailyLoginDeductionLocally(deductionKey, todayStr);
+      return {
+        ok:true,
+        skipped:true,
+        reason:"already_deducted_today",
+        remaining: afterSnapshot.remaining
+      };
+    }
+
+    rememberDailyLoginDeductionLocally(deductionKey, todayStr);
 
     currentSubscriptionInfo = {
       active: newRemaining > 0,
       reason: newRemaining > 0 ? "active" : "expired",
-      record: {
-        ...sub,
-        days_remaining: newRemaining,
-        status: newStatus,
-        last_login_date: todayStr
-      },
-      remaining: newRemaining
+      record: updatedRow,
+      remaining: newRemaining,
+      edgeResult: latestSnapshot.edgeResult || null
     };
 
     setPortalStatusUI(currentSubscriptionInfo);
 
-    return { ok:true };
+    return {
+      ok:true,
+      skipped:false,
+      reason:"deducted_today",
+      previousRemaining: currentRemaining,
+      remaining: newRemaining
+    };
   }
 
   /* ============================================================
@@ -3867,9 +3992,35 @@ header .auth-buttons .auth-text{
     currentSubscriptionInfo = await refreshSubscriptionStatusFromServer(user);
     setPortalStatusUI(currentSubscriptionInfo);
 
-    /* Popup appears only after successful login.
-       Dashboard buttons still re-check the Edge Function before redirecting. */
-    openPortalModal();
+    /* UPDATED: Do not show the Employer Portal popup after login.
+       After a valid employer login, redirect directly to dashboard.html.
+       If subscription is inactive/expired, show the Access Restricted warning instead. */
+    if(portalModal){
+      portalModal.style.display = "none";
+    }
+
+    if(!currentSubscriptionInfo?.active){
+      openModal(getInactivePortalCloseMessage(currentSubscriptionInfo), {
+        redirectToClearedLogin: true
+      });
+      return;
+    }
+
+    setLoginButtonLoading(true, "Updating subscription day...");
+
+    const deductResult = await deductSubscriptionDayIfNeeded(currentEmployerUserId, currentEmployerEmail);
+    if(!deductResult.ok){
+      if(deductResult.reason === "update_failed"){
+        openModal("Subscription found but remaining days could not be updated. Please contact admin.");
+      }else{
+        openModal(getInactivePortalCloseMessage(currentSubscriptionInfo), {
+          redirectToClearedLogin: true
+        });
+      }
+      return;
+    }
+
+    window.location.href = "dashboard1.html";
   }
 
   async function requireActiveSubscriptionBeforeRedirect(targetUrl, dashboardName, shouldDeductDay){

@@ -1943,6 +1943,976 @@ header .auth-buttons .auth-text{
   }
 }
 
+
+/* ============================================================
+   LOGGED-OUT ACCOUNT DROPDOWN PATCH
+   Removes separate Employer Login button and converts the former
+   Jobseeker/Login slot into one employer account icon dropdown.
+============================================================ */
+.account-dropdown{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  flex:0 0 auto !important;
+}
+
+.account-trigger{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  outline:none !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  height:36px !important;
+  padding:0 11px !important;
+  border-radius:10px !important;
+  cursor:pointer !important;
+  color:#ffffff !important;
+  font-size:0.82rem !important;
+  font-weight:700 !important;
+  text-decoration:none !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.10) !important;
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease !important;
+  white-space:nowrap !important;
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+}
+
+.account-trigger::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  opacity:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+  transition:opacity 0.25s ease;
+  z-index:-1;
+}
+
+.account-trigger:hover,
+.account-trigger:focus-visible,
+.account-dropdown.open .account-trigger{
+  transform:translateY(-2px) !important;
+  box-shadow:0 0 20px rgba(0,198,255,0.22) !important;
+  border-color:rgba(0,198,255,0.35) !important;
+}
+
+.account-trigger:hover::before,
+.account-trigger:focus-visible::before,
+.account-dropdown.open .account-trigger::before{
+  opacity:1;
+}
+
+.account-trigger .account-icon{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  font-size:0.85rem !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.account-trigger:hover .account-icon,
+.account-trigger:focus-visible .account-icon,
+.account-dropdown.open .account-trigger .account-icon{
+  transform:scale(1.10) rotate(-3deg) !important;
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+.account-trigger .account-caret{
+  font-size:0.78rem !important;
+  color:#e5e7eb !important;
+  transition:transform 0.25s ease !important;
+}
+
+.account-dropdown.open .account-trigger .account-caret{
+  transform:rotate(180deg) !important;
+}
+
+.account-text{
+  display:inline-block !important;
+  min-width:0 !important;
+}
+
+.account-menu{
+  position:absolute !important;
+  top:calc(100% + 12px) !important;
+  right:0 !important;
+  width:270px !important;
+  display:none !important;
+  flex-direction:column !important;
+  gap:0 !important;
+  padding:12px !important;
+  border-radius:18px !important;
+  background:rgba(15,23,42,0.97) !important;
+  border:1px solid rgba(59,130,246,0.38) !important;
+  box-shadow:0 16px 38px rgba(0,0,0,0.42) !important;
+  backdrop-filter:blur(14px) !important;
+  z-index:1600 !important;
+}
+
+.account-dropdown.open .account-menu{
+  display:flex !important;
+}
+
+.account-card-head{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:8px 8px 12px !important;
+  margin-bottom:6px !important;
+  border-bottom:1px solid rgba(148,163,184,0.24) !important;
+}
+
+.account-card-logo{
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  object-fit:contain !important;
+  border-radius:12px !important;
+  background:rgba(255,255,255,0.06) !important;
+  border:1px solid rgba(255,255,255,0.10) !important;
+  padding:3px !important;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35)) !important;
+}
+
+.account-card-title{
+  color:#ffffff !important;
+  font-weight:800 !important;
+  font-size:0.90rem !important;
+  line-height:1.15 !important;
+}
+
+.account-card-subtitle{
+  color:#cbd5e1 !important;
+  font-size:0.72rem !important;
+  line-height:1.2 !important;
+  margin-top:3px !important;
+  word-break:break-word !important;
+}
+
+.account-menu a,
+.account-menu button.account-menu-item{
+  width:100% !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  padding:11px 10px !important;
+  border-radius:12px !important;
+  color:#e5e7eb !important;
+  text-decoration:none !important;
+  font-size:0.84rem !important;
+  font-weight:650 !important;
+  cursor:pointer !important;
+  transition:background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
+  text-align:left !important;
+}
+
+.account-menu a:hover,
+.account-menu a:focus-visible,
+.account-menu button.account-menu-item:hover,
+.account-menu button.account-menu-item:focus-visible{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.24) !important;
+  color:#ffffff !important;
+  transform:translateX(3px) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.12) !important;
+}
+
+.account-menu-left{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+
+.account-menu-left i{
+  width:18px !important;
+  min-width:18px !important;
+  text-align:center !important;
+  color:#38bdf8 !important;
+  text-shadow:0 0 10px rgba(56,189,248,0.35) !important;
+}
+
+.account-menu a:hover .account-menu-left i,
+.account-menu button.account-menu-item:hover .account-menu-left i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+.account-logged-in-only{ display:none !important; }
+.account-dropdown.is-logged-in .account-logged-in-only{ display:flex !important; }
+.account-dropdown.is-logged-in .account-logged-out-only{ display:none !important; }
+
+.mobile-account-logo{
+  width:24px !important;
+  height:24px !important;
+  object-fit:contain !important;
+  border-radius:8px !important;
+  background:rgba(255,255,255,0.06) !important;
+  border:1px solid rgba(255,255,255,0.10) !important;
+  padding:2px !important;
+  filter:drop-shadow(0 0 6px rgba(0,198,255,0.32)) !important;
+}
+
+.mobile-account-main{
+  cursor:pointer !important;
+  width:100% !important;
+  border:none !important;
+}
+
+.mobile-account-subtitle{
+  display:block !important;
+  color:#cbd5e1 !important;
+  font-size:0.70rem !important;
+  font-weight:500 !important;
+  margin-top:2px !important;
+}
+
+@media (min-width:1800px){
+  .account-trigger{ height:38px !important; padding:0 14px !important; font-size:0.86rem !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  .account-trigger{ height:36px !important; padding:0 11px !important; font-size:0.79rem !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  .account-trigger{ height:32px !important; padding:0 7px !important; font-size:0.66rem !important; border-radius:8px !important; gap:5px !important; }
+  .account-trigger .account-icon{ width:15px !important; height:15px !important; min-width:15px !important; font-size:0.68rem !important; }
+  .account-trigger .account-caret{ font-size:0.66rem !important; }
+  .account-menu{ width:250px !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  .account-trigger{ height:28px !important; padding:0 5px !important; font-size:0.56rem !important; border-radius:8px !important; gap:3px !important; }
+  .account-trigger .account-icon{ width:13px !important; height:13px !important; min-width:13px !important; font-size:0.58rem !important; }
+  .account-trigger .account-caret{ font-size:0.56rem !important; }
+  .account-menu{ width:235px !important; padding:10px !important; }
+  .account-card-logo{ width:36px !important; height:36px !important; min-width:36px !important; }
+  .account-card-title{ font-size:0.82rem !important; }
+  .account-card-subtitle{ font-size:0.66rem !important; }
+  .account-menu a,
+  .account-menu button.account-menu-item{ font-size:0.76rem !important; padding:9px 8px !important; }
+}
+
+
+/* Mobile account logged-in/logged-out menu item visibility */
+.mobile-account-logged-in-only{ display:none !important; }
+.account-mobile-group.is-logged-in .mobile-account-logged-in-only{ display:flex !important; }
+.account-mobile-group.is-logged-in .mobile-account-logged-out-only{ display:none !important; }
+
+
+/* ============================================================
+   REFINED EMPLOYER ICON ACCOUNT DROPDOWN
+   Icon-only trigger, no visible account text, no dropdown caret,
+   no dropdown title block, and no logout item.
+============================================================ */
+.account-trigger.icon-only{
+  width:36px !important;
+  min-width:36px !important;
+  padding:0 !important;
+  gap:0 !important;
+  border-radius:12px !important;
+}
+
+.account-trigger.icon-only .account-icon{
+  margin:0 !important;
+}
+
+.account-trigger .account-text,
+.account-trigger .account-caret,
+.account-card-head{
+  display:none !important;
+}
+
+.account-menu{
+  width:220px !important;
+  padding:10px !important;
+}
+
+.mobile-account-icon-only{
+  justify-content:center !important;
+  width:100% !important;
+  min-height:42px !important;
+  padding:10px 12px !important;
+}
+
+.mobile-account-icon-only .mnav-left{
+  width:100% !important;
+  justify-content:center !important;
+  gap:0 !important;
+}
+
+.mobile-account-icon{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  color:#ffffff !important;
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+}
+
+.account-mobile-group.open .mobile-account-icon{
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+@media (min-width:1800px){
+  .account-trigger.icon-only{ width:38px !important; min-width:38px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  .account-trigger.icon-only{ width:36px !important; min-width:36px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  .account-trigger.icon-only{ width:32px !important; min-width:32px !important; padding:0 !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  .account-trigger.icon-only{ width:28px !important; min-width:28px !important; padding:0 !important; }
+}
+
+
+
+/* ============================================================
+   LOGGED-IN EMPLOYER COMPANY LOGO ACCOUNT PATCH
+   Logged out: icon-only employer dropdown.
+   Logged in: company logo trigger + logo/name/email dropdown only.
+============================================================ */
+.account-trigger-logo{
+  width:26px !important;
+  height:26px !important;
+  min-width:26px !important;
+  display:block !important;
+  object-fit:cover !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.08) !important;
+  border:1px solid rgba(255,255,255,0.18) !important;
+  padding:2px !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.22) !important;
+}
+
+.account-dropdown.is-logged-in .account-trigger.icon-only{
+  width:40px !important;
+  min-width:40px !important;
+  height:40px !important;
+  border-radius:999px !important;
+  padding:0 !important;
+}
+
+.account-dropdown.is-logged-in .account-trigger .account-icon{
+  display:none !important;
+}
+
+.account-dropdown.is-logged-in .account-trigger-logo:not([hidden]){
+  display:block !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-trigger-logo{
+  display:none !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-trigger .account-icon{
+  display:inline-grid !important;
+}
+
+.account-dropdown.is-logged-in .account-card-head{
+  display:flex !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-card-head{
+  display:none !important;
+}
+
+.account-card-info{
+  min-width:0 !important;
+  flex:1 1 auto !important;
+}
+
+.account-card-title,
+.account-card-subtitle{
+  max-width:100% !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+
+.account-menu button.account-menu-item.account-logged-in-only{
+  font-family:"Poppins","Segoe UI",sans-serif !important;
+}
+
+.account-dropdown.is-logged-in .account-menu{
+  width:280px !important;
+  padding:12px !important;
+}
+
+.account-dropdown.is-logged-in .account-card-logo{
+  display:block !important;
+}
+
+.account-dropdown.is-logged-in .account-logged-in-only{
+  display:flex !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-logged-in-only{
+  display:none !important;
+}
+
+.mobile-account-logo-trigger{
+  width:30px !important;
+  height:30px !important;
+  min-width:30px !important;
+  display:block !important;
+  object-fit:cover !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.08) !important;
+  border:1px solid rgba(255,255,255,0.18) !important;
+  padding:2px !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.22) !important;
+}
+
+.account-mobile-group.is-logged-in .mobile-account-icon{
+  display:none !important;
+}
+
+.account-mobile-group.is-logged-in .mobile-account-logo-trigger:not([hidden]){
+  display:block !important;
+}
+
+.account-mobile-group:not(.is-logged-in) .mobile-account-logo-trigger{
+  display:none !important;
+}
+
+.account-mobile-group:not(.is-logged-in) .mobile-account-icon{
+  display:inline-grid !important;
+}
+
+.mobile-account-card{
+  align-items:center !important;
+  gap:10px !important;
+  padding:10px 11px 12px !important;
+  border-radius:12px !important;
+  background:rgba(255,255,255,0.04) !important;
+  border:1px solid rgba(255,255,255,0.08) !important;
+  margin-bottom:3px !important;
+}
+
+.mobile-account-card-logo{
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  object-fit:cover !important;
+  border-radius:12px !important;
+  background:rgba(255,255,255,0.06) !important;
+  border:1px solid rgba(255,255,255,0.10) !important;
+  padding:3px !important;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35)) !important;
+}
+
+.mobile-account-card-info{
+  min-width:0 !important;
+  flex:1 1 auto !important;
+}
+
+.mobile-account-card-title{
+  color:#ffffff !important;
+  font-weight:700 !important;
+  font-size:0.88rem !important;
+  line-height:1.15 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+
+.mobile-account-card-email{
+  color:#cbd5e1 !important;
+  font-size:0.70rem !important;
+  font-weight:500 !important;
+  line-height:1.2 !important;
+  margin-top:3px !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+
+.account-mobile-group.is-logged-in .mobile-account-logged-in-only{
+  display:flex !important;
+}
+
+.account-mobile-group:not(.is-logged-in) .mobile-account-logged-in-only{
+  display:none !important;
+}
+
+
+@media (min-width:1024px) and (max-width:1439px){
+  .account-dropdown.is-logged-in .account-trigger.icon-only{
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+  }
+  .account-trigger-logo{
+    width:24px !important;
+    height:24px !important;
+    min-width:24px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  .account-dropdown.is-logged-in .account-trigger.icon-only{
+    width:30px !important;
+    min-width:30px !important;
+    height:30px !important;
+  }
+  .account-trigger-logo{
+    width:22px !important;
+    height:22px !important;
+    min-width:22px !important;
+  }
+  .account-dropdown.is-logged-in .account-menu{
+    width:250px !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL ACCOUNT DROPDOWN STATE PATCH
+   Logged out: employer icon opens Job Space Link logo + No login account.
+   Logged in: company logo opens company details; Posted Jobs goes to dashboard; no logout item is shown.
+============================================================ */
+.account-trigger .account-text,
+.account-trigger .account-caret{
+  display:none !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only{
+  display:flex !important;
+}
+
+.account-dropdown.is-logged-in .account-card-head.account-logged-out-only{
+  display:none !important;
+}
+
+.account-dropdown.is-logged-in .account-card-head.account-logged-in-only{
+  display:flex !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-card-head.account-logged-in-only{
+  display:none !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu{
+  width:245px !important;
+  padding:12px !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only .account-card-logo{
+  object-fit:contain !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only .account-card-title{
+  font-size:0.88rem !important;
+  font-weight:700 !important;
+}
+
+.account-mobile-group:not(.is-logged-in) .mobile-account-card.mobile-account-logged-out-only{
+  display:flex !important;
+}
+
+.account-mobile-group.is-logged-in .mobile-account-card.mobile-account-logged-out-only{
+  display:none !important;
+}
+
+.account-mobile-group.is-logged-in .mobile-account-card.mobile-account-logged-in-only{
+  display:flex !important;
+}
+
+.account-mobile-group:not(.is-logged-in) .mobile-account-card.mobile-account-logged-in-only{
+  display:none !important;
+}
+
+.account-mobile-group:not(.is-logged-in) .mobile-account-card.mobile-account-logged-out-only .mobile-account-card-logo{
+  object-fit:contain !important;
+}
+
+.account-mobile-group:not(.is-logged-in) .mobile-account-card.mobile-account-logged-out-only .mobile-account-card-title{
+  font-weight:700 !important;
+}
+
+
+
+/* ============================================================
+   COMPACT LOGGED-OUT ACCOUNT DROPDOWN OVERRIDE
+   Desktop logged-out dropdown uses a smaller dark panel:
+   compact logo/name card, boxed Subscribe/Posted Jobs,
+   and green Employer Login action.
+============================================================ */
+.account-dropdown:not(.is-logged-in){
+  z-index:1700 !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-trigger.icon-only{
+  width:42px !important;
+  min-width:42px !important;
+  height:42px !important;
+  padding:0 !important;
+  border-radius:13px !important;
+  background:linear-gradient(135deg, rgba(15,64,128,0.82), rgba(30,41,95,0.92)) !important;
+  border:1px solid rgba(125,211,252,0.56) !important;
+  box-shadow:0 0 0 1px rgba(2,132,199,0.12), 0 0 16px rgba(14,165,233,0.20) !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-trigger.icon-only .account-icon{
+  width:24px !important;
+  height:24px !important;
+  min-width:24px !important;
+  border-radius:9px !important;
+  font-size:0.94rem !important;
+  color:#ffffff !important;
+  background:rgba(56,189,248,0.18) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.22) !important;
+}
+
+.account-dropdown:not(.is-logged-in).open .account-trigger.icon-only,
+.account-dropdown:not(.is-logged-in) .account-trigger.icon-only:hover,
+.account-dropdown:not(.is-logged-in) .account-trigger.icon-only:focus-visible{
+  transform:translateY(-1px) !important;
+  border-color:rgba(125,211,252,0.78) !important;
+  box-shadow:0 0 0 1px rgba(2,132,199,0.18), 0 0 20px rgba(14,165,233,0.28) !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu{
+  width:min(360px, calc(100vw - 24px)) !important;
+  right:0 !important;
+  top:calc(100% + 10px) !important;
+  display:none !important;
+  flex-direction:column !important;
+  gap:8px !important;
+  padding:11px !important;
+  border-radius:18px !important;
+  background:linear-gradient(180deg, rgba(15,23,42,0.98), rgba(2,6,23,0.985)) !important;
+  border:1px solid rgba(14,165,233,0.42) !important;
+  box-shadow:0 16px 34px rgba(0,0,0,0.46), 0 0 24px rgba(14,165,233,0.14) !important;
+  backdrop-filter:blur(16px) !important;
+  overflow:hidden !important;
+}
+
+.account-dropdown:not(.is-logged-in).open .account-menu{
+  display:flex !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+  min-height:66px !important;
+  padding:10px 12px !important;
+  margin:0 0 2px 0 !important;
+  border-radius:15px !important;
+  background:rgba(2,6,23,0.52) !important;
+  border:1px solid rgba(14,165,233,0.30) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 14px rgba(14,165,233,0.07) !important;
+  border-bottom:1px solid rgba(14,165,233,0.30) !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only .account-card-logo{
+  width:50px !important;
+  height:50px !important;
+  min-width:50px !important;
+  object-fit:contain !important;
+  border-radius:14px !important;
+  padding:4px !important;
+  background:rgba(15,23,42,0.86) !important;
+  border:1px solid rgba(14,165,233,0.40) !important;
+  filter:drop-shadow(0 0 8px rgba(56,189,248,0.30)) !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only .account-card-title{
+  color:#ffffff !important;
+  font-size:0.94rem !important;
+  font-weight:800 !important;
+  letter-spacing:-0.01em !important;
+  line-height:1.12 !important;
+  text-shadow:0 0 9px rgba(255,255,255,0.10) !important;
+  white-space:normal !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu a,
+.account-dropdown:not(.is-logged-in) .account-menu button.account-menu-item{
+  width:100% !important;
+  min-height:46px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:11px !important;
+  padding:0 14px !important;
+  margin:0 !important;
+  border-radius:13px !important;
+  background:rgba(2,6,23,0.70) !important;
+  border:1px solid rgba(30,96,145,0.56) !important;
+  color:#ffffff !important;
+  font-size:0.86rem !important;
+  font-weight:800 !important;
+  text-decoration:none !important;
+  box-shadow:0 7px 18px rgba(0,0,0,0.18) !important;
+  transform:none !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu a > i.fa-arrow-right,
+.account-dropdown:not(.is-logged-in) .account-menu button.account-menu-item > i.fa-arrow-right{
+  display:none !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu-left{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:11px !important;
+  width:100% !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu-left i{
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:8px !important;
+  color:#dff8ff !important;
+  background:rgba(8,145,178,0.32) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.28) !important;
+  text-align:center !important;
+  font-size:0.82rem !important;
+  text-shadow:none !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu a:hover,
+.account-dropdown:not(.is-logged-in) .account-menu a:focus-visible,
+.account-dropdown:not(.is-logged-in) .account-menu button.account-menu-item:hover,
+.account-dropdown:not(.is-logged-in) .account-menu button.account-menu-item:focus-visible{
+  background:rgba(8,47,73,0.78) !important;
+  border-color:rgba(56,189,248,0.52) !important;
+  color:#ffffff !important;
+  transform:translateY(-1px) !important;
+  box-shadow:0 9px 22px rgba(0,0,0,0.24), 0 0 15px rgba(14,165,233,0.12) !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu a:hover .account-menu-left i,
+.account-dropdown:not(.is-logged-in) .account-menu button.account-menu-item:hover .account-menu-left i{
+  color:#ffffff !important;
+  background:rgba(56,189,248,0.40) !important;
+  box-shadow:0 0 16px rgba(56,189,248,0.42) !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu a.account-login-action{
+  background:linear-gradient(180deg, #118c3b, #08752f) !important;
+  border-color:rgba(34,197,94,0.72) !important;
+  box-shadow:0 8px 20px rgba(22,163,74,0.20), inset 0 0 0 1px rgba(255,255,255,0.05) !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu a.account-login-action .account-menu-left i{
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.16) !important;
+  box-shadow:0 0 11px rgba(255,255,255,0.14) !important;
+}
+
+.account-dropdown:not(.is-logged-in) .account-menu a.account-login-action:hover,
+.account-dropdown:not(.is-logged-in) .account-menu a.account-login-action:focus-visible{
+  background:linear-gradient(180deg, #16a34a, #078032) !important;
+  border-color:rgba(134,239,172,0.86) !important;
+  box-shadow:0 10px 24px rgba(22,163,74,0.26), 0 0 17px rgba(34,197,94,0.16) !important;
+}
+
+/* Keep any logout dropdown item removed/hidden if older markup is cached. */
+#accountLogoutBtn,
+#mobileAccountLogoutBtn,
+.mobile-logout-btn{
+  display:none !important;
+}
+
+@media (min-width:1440px){
+  .account-dropdown:not(.is-logged-in) .account-menu{
+    width:368px !important;
+    padding:12px !important;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  .account-dropdown:not(.is-logged-in) .account-trigger.icon-only{
+    width:40px !important;
+    min-width:40px !important;
+    height:40px !important;
+    border-radius:13px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-menu{
+    width:min(340px, calc(100vw - 22px)) !important;
+    padding:10px !important;
+    border-radius:17px !important;
+    gap:8px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only{
+    min-height:60px !important;
+    padding:9px 11px !important;
+    border-radius:14px !important;
+    gap:10px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only .account-card-logo{
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-menu a,
+  .account-dropdown:not(.is-logged-in) .account-menu button.account-menu-item{
+    min-height:44px !important;
+    font-size:0.82rem !important;
+    border-radius:12px !important;
+    padding:0 12px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  .account-dropdown:not(.is-logged-in) .account-trigger.icon-only{
+    width:36px !important;
+    min-width:36px !important;
+    height:36px !important;
+    border-radius:12px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-menu{
+    width:min(315px, calc(100vw - 18px)) !important;
+    right:0 !important;
+    padding:9px !important;
+    gap:7px !important;
+    border-radius:16px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only{
+    min-height:56px !important;
+    padding:8px 10px !important;
+    gap:10px !important;
+    border-radius:13px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only .account-card-logo{
+    width:42px !important;
+    height:42px !important;
+    min-width:42px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-card-head.account-logged-out-only .account-card-title{
+    font-size:0.84rem !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-menu a,
+  .account-dropdown:not(.is-logged-in) .account-menu button.account-menu-item{
+    min-height:40px !important;
+    padding:0 11px !important;
+    font-size:0.76rem !important;
+    border-radius:11px !important;
+  }
+  .account-dropdown:not(.is-logged-in) .account-menu-left i{
+    width:20px !important;
+    height:20px !important;
+    min-width:20px !important;
+    font-size:0.76rem !important;
+  }
+}
+
+/* Mobile logged-out account submenu uses the same compact card/action style inside the hamburger panel. */
+@media (max-width:768px){
+  .account-mobile-group:not(.is-logged-in) .mobile-account-card.mobile-account-logged-out-only{
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    padding:10px !important;
+    border-radius:14px !important;
+    background:rgba(2,6,23,0.56) !important;
+    border:1px solid rgba(14,165,233,0.30) !important;
+    margin-bottom:4px !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) .mobile-account-card.mobile-account-logged-out-only .mobile-account-card-logo{
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+    object-fit:contain !important;
+    border-radius:13px !important;
+    padding:4px !important;
+    background:rgba(15,23,42,0.88) !important;
+    border:1px solid rgba(14,165,233,0.38) !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) .mobile-account-card.mobile-account-logged-out-only .mobile-account-card-title{
+    color:#ffffff !important;
+    font-size:0.88rem !important;
+    font-weight:800 !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu{
+    gap:8px !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu a,
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu button{
+    min-height:44px !important;
+    border-radius:12px !important;
+    background:rgba(2,6,23,0.70) !important;
+    border:1px solid rgba(30,96,145,0.56) !important;
+    color:#ffffff !important;
+    font-weight:800 !important;
+    font-size:0.82rem !important;
+    padding:0 12px !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu a > i.fa-arrow-right,
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu button > i.fa-arrow-right{
+    display:none !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu .mnav-left{
+    gap:10px !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu .mnav-left i{
+    width:21px !important;
+    height:21px !important;
+    min-width:21px !important;
+    display:inline-grid !important;
+    place-items:center !important;
+    border-radius:8px !important;
+    color:#dff8ff !important;
+    background:rgba(8,145,178,0.32) !important;
+    box-shadow:0 0 11px rgba(56,189,248,0.28) !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu a.mobile-account-login-action{
+    background:linear-gradient(180deg, #118c3b, #08752f) !important;
+    border-color:rgba(34,197,94,0.72) !important;
+    box-shadow:0 8px 18px rgba(22,163,74,0.18) !important;
+  }
+
+  .account-mobile-group:not(.is-logged-in) #mobileAccountMenu a.mobile-account-login-action .mnav-left i{
+    color:#ffffff !important;
+    background:rgba(255,255,255,0.16) !important;
+  }
+}
+
+
 </style>
 </head>
 
@@ -1955,7 +2925,7 @@ header .auth-buttons .auth-text{
   </div>
 
   <nav>
-    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
+    <a href="home.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
@@ -1978,16 +2948,81 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
-    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
-    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
-    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard1.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform1.html"><i class="fa-solid fa-file-lines"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
   <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
-    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
-  
+    <div class="account-dropdown" id="accountDropdown">
+      <button
+        type="button"
+        class="account-trigger jobseeker-auth icon-only"
+        id="accountTrigger"
+        aria-expanded="false"
+        aria-controls="accountMenu"
+        aria-label="Open employer account menu"
+      >
+        <img
+          src=""
+          alt="Employer Company Logo"
+          class="account-trigger-logo"
+          id="accountTriggerLogo"
+          hidden
+        />
+        <i class="fa-solid fa-building-user account-icon" id="accountTriggerIcon"></i>
+      </button>
+
+      <div class="account-menu" id="accountMenu">
+        <div class="account-card-head account-logged-out-only" id="accountLoggedOutCardHead">
+          <img
+            src="JOBSPACELINK.png"
+            alt="Job Space Link Logo"
+            class="account-card-logo"
+            id="accountLoggedOutLogo"
+          />
+          <div class="account-card-info">
+            <div class="account-card-title">No login account</div>
+          </div>
+        </div>
+
+        <div class="account-card-head account-logged-in-only" id="accountCardHead">
+          <img
+            src="JOBSPACELINK.png"
+            alt="Employer Company Logo"
+            class="account-card-logo"
+            id="accountCardLogo"
+          />
+          <div class="account-card-info">
+            <div class="account-card-label" id="accountCardLabel">LOGGED IN ACCOUNT</div>
+            <div class="account-card-title" id="accountCardCompany">Company</div>
+            <div class="account-card-subtitle" id="accountCardEmail">email@example.com</div>
+          </div>
+        </div>
+
+        <a href="companyprofile.html" id="accountCompanyProfileLink" class="account-company-profile-link">
+          <span class="account-menu-left"><i class="fa-solid fa-id-card"></i><span>Company Profile</span></span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="subscribe.html">
+          <span class="account-menu-left"><i class="fa-solid fa-credit-card"></i><span>Subscribe</span></span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="postjob1.html" id="accountPostedJobsLink">
+          <span class="account-menu-left"><i class="fa-solid fa-briefcase"></i><span>Posted Jobs</span></span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <button type="button" class="account-menu-item account-logged-in-only account-logout-action" id="accountLogoutBtn">
+          <span class="account-menu-left"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <a href="loginemployer.html" class="account-logged-out-only account-login-action">
+          <span class="account-menu-left"><i class="fa-solid fa-building-user"></i><span>Employer Login</span></span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
   </div>
 
   <button
@@ -2004,7 +3039,7 @@ header .auth-buttons .auth-text{
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
@@ -2027,19 +3062,73 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform1.html"><span class="mnav-left"><i class="fa-solid fa-file-lines"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <div class="mnav-group account-mobile-group" id="mobileAccountGroup">
+      <button
+        type="button"
+        class="mnav-main-link mobile-account-main mobile-account-icon-only"
+        id="mobileAccountMain"
+        aria-expanded="false"
+        aria-controls="mobileAccountMenu"
+        aria-label="Open employer account menu"
+      >
+        <span class="mnav-left">
+          <img
+            src=""
+            alt="Employer Company Logo"
+            class="mobile-account-logo-trigger"
+            id="mobileAccountTriggerLogo"
+            hidden
+          />
+          <i class="fa-solid fa-building-user mobile-account-icon" id="mobileAccountTriggerIcon"></i>
+        </span>
+      </button>
+
+      <div class="mnav-submenu" id="mobileAccountMenu">
+        <div class="mobile-account-card mobile-account-logged-out-only" id="mobileAccountLoggedOutCard">
+          <img
+            src="JOBSPACELINK.png"
+            alt="Job Space Link Logo"
+            class="mobile-account-card-logo"
+            id="mobileAccountLoggedOutLogo"
+          />
+          <div class="mobile-account-card-info">
+            <div class="mobile-account-card-title">No login account</div>
+          </div>
+        </div>
+
+        <div class="mobile-account-card mobile-account-logged-in-only" id="mobileAccountCard">
+          <img
+            src="JOBSPACELINK.png"
+            alt="Employer Company Logo"
+            class="mobile-account-card-logo"
+            id="mobileAccountCardLogo"
+          />
+          <div class="mobile-account-card-info">
+            <div class="mobile-account-card-label" id="mobileAccountLabel">LOGGED IN ACCOUNT</div>
+            <div class="mobile-account-card-title" id="mobileAccountCompany">Company</div>
+            <div class="mobile-account-card-email" id="mobileAccountEmail">email@example.com</div>
+          </div>
+        </div>
+
+        <a href="companyprofile.html" id="mobileAccountCompanyProfileLink" class="mobile-account-company-profile-link"><span class="mnav-left"><i class="fa-solid fa-id-card"></i><span class="nav-text">Company Profile</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="subscribe.html"><span class="mnav-left"><i class="fa-solid fa-credit-card"></i><span class="nav-text">Subscribe</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="postjob1.html" id="mobileAccountPostedJobsLink"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Posted Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <button type="button" class="mobile-account-logged-in-only mobile-logout-btn" id="mobileAccountLogoutBtn"><span class="mnav-left"><i class="fa-solid fa-right-from-bracket"></i><span class="nav-text">Log out</span></span><i class="fa-solid fa-arrow-right"></i></button>
+        <a href="loginemployer.html" class="mobile-account-logged-out-only mobile-account-login-action"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <div class="wrap">
   <div class="title"><i class="fa-solid fa-clipboard-check"></i> Subscription Status</div>
   <div class="sub">
-    This page auto-loads the payment record for the logged-in employer account.
+    This page auto-loads the logged-in employer account directly from employer_payment_transactions.
   </div>
 
   <div class="grid">
@@ -2088,8 +3177,8 @@ header .auth-buttons .auth-text{
         <input id="emailInput" type="email" placeholder="Auto-loaded company email" readonly />
       </div>
 
-      <button class="btn danger" id="logoutBtn">
-        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+      <button class="btn danger" id="exitBtn" type="button">
+        <i class="fa-solid fa-door-open"></i> Exit
       </button>
 
       <div id="msg"></div>
@@ -2194,6 +3283,75 @@ header .auth-buttons .auth-text{
   window.addEventListener("resize", ()=>{
     if(window.innerWidth >= 769) close();
   }, { passive:true });
+})();
+
+
+
+(function(){
+  const accountDropdown = document.getElementById("accountDropdown");
+  const accountTrigger = document.getElementById("accountTrigger");
+  const accountMenu = document.getElementById("accountMenu");
+
+  if(!accountDropdown || !accountTrigger || !accountMenu) return;
+
+  function closeAccountMenu(){
+    accountDropdown.classList.remove("open");
+    accountTrigger.setAttribute("aria-expanded", "false");
+  }
+
+  function openAccountMenu(){
+    accountDropdown.classList.add("open");
+    accountTrigger.setAttribute("aria-expanded", "true");
+  }
+
+  accountTrigger.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    if(accountDropdown.classList.contains("open")) closeAccountMenu();
+    else openAccountMenu();
+  });
+
+  accountMenu.querySelectorAll("a, button.account-menu-item").forEach(function(item){
+    item.addEventListener("click", function(){
+      closeAccountMenu();
+    });
+  });
+
+  document.addEventListener("click", function(e){
+    if(!accountDropdown.contains(e.target)) closeAccountMenu();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeAccountMenu();
+  });
+})();
+
+(function(){
+  const group = document.getElementById("mobileAccountGroup");
+  const main = document.getElementById("mobileAccountMain");
+  const toggle = document.getElementById("mobileAccountToggle");
+  if(!group || !main) return;
+
+  function setOpen(open){
+    group.classList.toggle("open", !!open);
+    main.setAttribute("aria-expanded", open ? "true" : "false");
+    if(toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function toggleMenu(e){
+    if(e){
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setOpen(!group.classList.contains("open"));
+  }
+
+  main.addEventListener("click", toggleMenu);
+  if(toggle) toggle.addEventListener("click", toggleMenu);
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") setOpen(false);
+  });
 })();
 
 const companyInput = document.getElementById("companyInput");
@@ -2544,6 +3702,269 @@ function render(history, currentRecord, companyName, email){
   });
 }
 
+
+function safeJsonParse(value){
+  if(value == null) return null;
+  const text = String(value).trim();
+  if(!text || (!text.startsWith("{") && !text.startsWith("["))) return null;
+  try{ return JSON.parse(text); }catch(_err){ return null; }
+}
+
+function recursivePick(source, names, depth = 0){
+  if(!source || depth > 4) return "";
+
+  if(Array.isArray(source)){
+    for(const item of source){
+      const found = recursivePick(item, names, depth + 1);
+      if(found) return found;
+    }
+    return "";
+  }
+
+  if(typeof source !== "object") return "";
+
+  const wanted = names.map(name => String(name).toLowerCase());
+
+  for(const [key, value] of Object.entries(source)){
+    const cleanKey = String(key).toLowerCase().replace(/[^a-z0-9]/g, "");
+    if(wanted.some(name => cleanKey === String(name).toLowerCase().replace(/[^a-z0-9]/g, ""))){
+      if(value != null && String(value).trim() !== "") return value;
+    }
+  }
+
+  for(const value of Object.values(source)){
+    if(value && typeof value === "object"){
+      const found = recursivePick(value, names, depth + 1);
+      if(found) return found;
+    }
+  }
+
+  return "";
+}
+
+function readStorageItem(storage, key){
+  try{
+    if(!storage) return "";
+    const value = storage.getItem(key);
+    return value == null ? "" : String(value).trim();
+  }catch(_err){
+    return "";
+  }
+}
+
+function getStorageAreas(){
+  const stores = [];
+  try{ if(window.sessionStorage) stores.push(window.sessionStorage); }catch(_err){}
+  try{ if(window.localStorage) stores.push(window.localStorage); }catch(_err){}
+  return stores;
+}
+
+function getStoredEmployerIdentity(){
+  const identity = { email:"", companyName:"", logoUrl:"" };
+
+  const emailKeys = [
+    "loggedInEmployerEmail",
+    "currentEmployerEmail",
+    "employerEmail",
+    "employer_email",
+    "companyEmail",
+    "company_email",
+    "logged_in_employer_email",
+    "loginEmployerEmail",
+    "loggedInCompanyEmail",
+    "jobspacelinkEmployerEmail"
+  ];
+
+  const companyKeys = [
+    "loggedInCompanyName",
+    "currentEmployerCompany",
+    "currentCompanyName",
+    "employerCompanyName",
+    "companyName",
+    "company_name",
+    "employer_company_name",
+    "businessName",
+    "business_name",
+    "jobspacelinkEmployerCompany"
+  ];
+
+  const logoKeys = [
+    "loggedInEmployerLogo",
+    "employerLogo",
+    "companyLogo",
+    "company_logo",
+    "loggedInCompanyLogo",
+    "jobspacelinkEmployerLogo",
+    "company_logo_url",
+    "companyLogoUrl",
+    "logo_url",
+    "logoUrl",
+    "logo",
+    "image_url",
+    "imageUrl",
+    "avatar_url",
+    "avatarUrl",
+    "photo_url",
+    "photoUrl",
+    "business_logo_url",
+    "employer_logo_url",
+    "company_profile_url",
+    "company_profile_urls"
+  ];
+
+  const objectKeys = [
+    "loggedInEmployer",
+    "loggedInEmployerData",
+    "currentEmployer",
+    "employerProfile",
+    "employerData",
+    "employerSession",
+    "jobspacelinkEmployer",
+    "jobspacelink_employer",
+    "dashboardEmployer",
+    "employerAccount",
+    "currentEmployerAccount"
+  ];
+
+  const stores = getStorageAreas();
+
+  for(const storage of stores){
+    if(!identity.email){
+      for(const key of emailKeys){
+        const value = readStorageItem(storage, key);
+        if(value && value.includes("@")){
+          identity.email = value.toLowerCase();
+          break;
+        }
+      }
+    }
+
+    if(!identity.companyName){
+      for(const key of companyKeys){
+        const value = readStorageItem(storage, key);
+        if(value){
+          identity.companyName = value;
+          break;
+        }
+      }
+    }
+
+    if(!identity.logoUrl){
+      for(const key of logoKeys){
+        const value = readStorageItem(storage, key);
+        if(value){
+          identity.logoUrl = value;
+          break;
+        }
+      }
+    }
+
+    for(const key of objectKeys){
+      const parsed = safeJsonParse(readStorageItem(storage, key));
+      if(!parsed) continue;
+
+      if(!identity.email){
+        const email = recursivePick(parsed, emailKeys.concat(["email", "contact_email", "company_email", "employer_email"]));
+        if(email && String(email).includes("@")) identity.email = String(email).trim().toLowerCase();
+      }
+
+      if(!identity.companyName){
+        const company = recursivePick(parsed, companyKeys.concat(["company", "business_name", "businessName", "name"]));
+        if(company) identity.companyName = String(company).trim();
+      }
+
+      if(!identity.logoUrl){
+        const logo = recursivePick(parsed, logoKeys);
+        if(logo) identity.logoUrl = String(logo).trim();
+      }
+    }
+
+    /* Last fallback: scan employer-related saved JSON objects without relying on exact key names. */
+    try{
+      for(let i = 0; i < storage.length; i++){
+        const key = storage.key(i) || "";
+        if(!/employer|company|business|jobspacelink/i.test(key)) continue;
+        const raw = storage.getItem(key);
+        const parsed = safeJsonParse(raw);
+
+        if(parsed){
+          if(!identity.email){
+            const email = recursivePick(parsed, emailKeys.concat(["email", "contact_email", "company_email", "employer_email"]));
+            if(email && String(email).includes("@")) identity.email = String(email).trim().toLowerCase();
+          }
+
+          if(!identity.companyName){
+            const company = recursivePick(parsed, companyKeys.concat(["company", "business_name", "businessName", "name"]));
+            if(company) identity.companyName = String(company).trim();
+          }
+
+          if(!identity.logoUrl){
+            const logo = recursivePick(parsed, logoKeys);
+            if(logo) identity.logoUrl = String(logo).trim();
+          }
+        } else {
+          const rawText = String(raw || "").trim();
+          if(!identity.email && rawText.includes("@")) identity.email = rawText.toLowerCase();
+          if(!identity.logoUrl && /logo|photo|avatar|image/i.test(key) && rawText) identity.logoUrl = rawText;
+        }
+      }
+    }catch(_err){}
+  }
+
+  identity.email = String(identity.email || "").trim().toLowerCase();
+  identity.companyName = String(identity.companyName || "").trim();
+  identity.logoUrl = String(identity.logoUrl || "").trim();
+
+  return identity;
+}
+
+function getPaymentRecordCompany(record){
+  return getRecordField(record, [
+    "company_name",
+    "company",
+    "business_name",
+    "businessName",
+    "employer_company_name",
+    "employerCompanyName"
+  ], "");
+}
+
+function getPaymentRecordEmail(record){
+  return String(getRecordField(record, [
+    "company_email",
+    "email",
+    "contact_email",
+    "employer_email",
+    "employerEmail"
+  ], "") || "").trim().toLowerCase();
+}
+
+function getPaymentRecordLogoUrl(record){
+  return String(getRecordField(record, [
+    "company_logo_url",
+    "company_logo",
+    "companyLogoUrl",
+    "companyLogo",
+    "logo_url",
+    "logoUrl",
+    "logo",
+    "business_logo",
+    "business_logo_url",
+    "employer_logo",
+    "employer_logo_url",
+    "company_profile_url",
+    "company_profile_urls",
+    "profile_picture",
+    "profile_picture_url",
+    "avatar_url",
+    "avatarUrl",
+    "image_url",
+    "imageUrl",
+    "photo_url",
+    "photoUrl"
+  ], "") || "").trim();
+}
+
 async function getLoggedInSessionEmail(){
   if(!supabaseClient) return "";
 
@@ -2582,6 +4003,9 @@ async function getEmployerRecordByEmail(email){
 }
 
 async function queryPaymentRowsByEmail(email){
+  email = String(email || "").trim().toLowerCase();
+  if(!email) return [];
+
   const emailColumns = ["company_email", "email", "contact_email", "employer_email"];
 
   for(const emailColumn of emailColumns){
@@ -2612,6 +4036,7 @@ async function queryPaymentRowsByEmail(email){
 }
 
 async function queryPaymentRowsByCompany(companyName){
+  companyName = String(companyName || "").trim();
   const companyKey = normalizeCompanyKey(companyName);
   if (!companyKey) return [];
 
@@ -2631,16 +4056,28 @@ async function queryPaymentRowsByCompany(companyName){
         .eq(companyColumn, companyName);
     }
 
-    if(result.error){
-      console.warn(`Company lookup failed in ${PAYMENT_TABLE} on ${companyColumn}:`, result.error.message || result.error);
+    if(!result.error && Array.isArray(result.data) && result.data.length){
+      return sortTransactionsNewestFirst(result.data.filter(row => {
+        const rowCompany = normalizeCompanyKey(getPaymentRecordCompany(row));
+        return rowCompany === companyKey;
+      }));
+    }
+
+    let fuzzyResult = await supabaseClient
+      .from(PAYMENT_TABLE)
+      .select("*")
+      .ilike(companyColumn, `%${companyName.replace(/[%_]/g, "")}%`);
+
+    if(fuzzyResult.error){
+      console.warn(`Company lookup failed in ${PAYMENT_TABLE} on ${companyColumn}:`, fuzzyResult.error.message || fuzzyResult.error);
       continue;
     }
 
-    if(Array.isArray(result.data) && result.data.length){
-      return result.data.filter(row => {
-        const rowCompany = normalizeCompanyKey(getRecordField(row, ["company_name", "company", "business_name", "employer_company_name"], ""));
+    if(Array.isArray(fuzzyResult.data) && fuzzyResult.data.length){
+      return sortTransactionsNewestFirst(fuzzyResult.data.filter(row => {
+        const rowCompany = normalizeCompanyKey(getPaymentRecordCompany(row));
         return rowCompany === companyKey;
-      });
+      }));
     }
   }
 
@@ -2661,6 +4098,369 @@ async function getPaymentTransactions(companyName, email){
   }
 
   return sortTransactionsNewestFirst(rows);
+}
+
+
+/* ============================================================
+   DAILY LOGIN CREDIT DEDUCTION
+   Deducts exactly 1 remaining-day credit per logged-in employer per Manila day.
+   Multiple page opens, refreshes, or repeated logins on the same day will not
+   deduct again when a last-deduction date column exists. If that column is not
+   present in the table yet, localStorage prevents duplicate deductions in the
+   same browser for the same day.
+============================================================ */
+const REMAINING_DAYS_COLUMNS = [
+  "days_remaining",
+  "remaining_days",
+  "days_left",
+  "subscription_days_remaining"
+];
+
+const DAILY_DEDUCTION_DATE_COLUMNS = [
+  "last_daily_login_deduction_date",
+  "last_login_deduction_date",
+  "last_credit_deduction_date",
+  "last_remaining_days_deducted_date",
+  "last_subscription_credit_deduct_date",
+  "last_deducted_date",
+  "last_deduction_date",
+  "daily_deduction_date",
+  "last_login_date"
+];
+
+const DAILY_DEDUCTION_AT_COLUMNS = [
+  "last_daily_login_deduction_at",
+  "last_login_deduction_at",
+  "last_credit_deduction_at",
+  "last_deducted_at",
+  "last_login_at"
+];
+
+function getTodayManilaYMD(){
+  try{
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone:"Asia/Manila",
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit"
+    }).formatToParts(new Date());
+
+    const y = parts.find(p => p.type === "year")?.value;
+    const m = parts.find(p => p.type === "month")?.value;
+    const d = parts.find(p => p.type === "day")?.value;
+
+    if(y && m && d) return `${y}-${m}-${d}`;
+  }catch(_err){}
+
+  const now = new Date();
+  return now.toISOString().slice(0, 10);
+}
+
+function getExistingColumnName(record, columns){
+  for(const col of columns){
+    if(record && Object.prototype.hasOwnProperty.call(record, col)){
+      return col;
+    }
+  }
+  return "";
+}
+
+function getExistingColumns(record, columns){
+  return columns.filter(col => record && Object.prototype.hasOwnProperty.call(record, col));
+}
+
+function getRemainingDaysColumn(record){
+  return getExistingColumnName(record, REMAINING_DAYS_COLUMNS);
+}
+
+function getDailyDeductionDateColumn(record){
+  return getExistingColumnName(record, DAILY_DEDUCTION_DATE_COLUMNS);
+}
+
+function getDailyDeductionDateValue(record){
+  const value = getRecordField(record, DAILY_DEDUCTION_DATE_COLUMNS.concat(DAILY_DEDUCTION_AT_COLUMNS), "");
+  return extractYMD(value) || String(value || "").trim().slice(0, 10);
+}
+
+function getPaymentRecordIdColumn(record){
+  return getExistingColumnName(record, ["id", "payment_id", "transaction_id"]);
+}
+
+function getPaymentRecordId(record){
+  const idColumn = getPaymentRecordIdColumn(record);
+  if(!idColumn) return "";
+  const idValue = record[idColumn];
+  return idValue === null || idValue === undefined || String(idValue).trim() === "" ? "" : idValue;
+}
+
+function makeDailyDeductionAccountKey(record, employerEmail, companyName){
+  const id = getPaymentRecordId(record);
+  const email = normalizeText(employerEmail || getPaymentRecordEmail(record));
+  const company = normalizeCompanyKey(companyName || getPaymentRecordCompany(record));
+  return [id ? `id:${id}` : "", email ? `email:${email}` : "", company ? `company:${company}` : ""]
+    .filter(Boolean)
+    .join("|") || "unknown";
+}
+
+function getLocalDailyDeductionKey(record, employerEmail, companyName, todayYmd){
+  return `jsl_subscription_daily_login_credit_deducted::${makeDailyDeductionAccountKey(record, employerEmail, companyName)}::${todayYmd}`;
+}
+
+function getLocalDailyDeductionLockKey(record, employerEmail, companyName, todayYmd){
+  return `jsl_subscription_daily_login_credit_lock::${makeDailyDeductionAccountKey(record, employerEmail, companyName)}::${todayYmd}`;
+}
+
+function safeLocalGet(key){
+  try{ return window.localStorage ? window.localStorage.getItem(key) : ""; }catch(_err){ return ""; }
+}
+
+function safeLocalSet(key, value){
+  try{ if(window.localStorage) window.localStorage.setItem(key, value); }catch(_err){}
+}
+
+function safeLocalRemove(key){
+  try{ if(window.localStorage) window.localStorage.removeItem(key); }catch(_err){}
+}
+
+function acquireDailyDeductionLock(lockKey){
+  const now = Date.now();
+  const existing = Number(safeLocalGet(lockKey) || 0);
+
+  /* Prevent simultaneous duplicate deductions from two tabs opened at once. */
+  if(existing && Number.isFinite(existing) && (now - existing) < 30000){
+    return false;
+  }
+
+  safeLocalSet(lockKey, String(now));
+  return true;
+}
+
+async function runPaymentUpdateByRecord(record, payload, extraFilter){
+  if(!supabaseClient || !record || !payload || !Object.keys(payload).length){
+    return { data:[], error:null };
+  }
+
+  const idColumn = getPaymentRecordIdColumn(record);
+  const id = getPaymentRecordId(record);
+  const email = getPaymentRecordEmail(record);
+  const company = getPaymentRecordCompany(record);
+
+  let query = supabaseClient
+    .from(PAYMENT_TABLE)
+    .update(payload);
+
+  if(idColumn && id !== ""){
+    query = query.eq(idColumn, id);
+  } else if(email){
+    query = query.eq("company_email", email);
+  } else if(company){
+    query = query.eq("company_name", company);
+  } else {
+    return { data:[], error:new Error("No stable payment record identity was found for update.") };
+  }
+
+  if(typeof extraFilter === "function"){
+    query = extraFilter(query);
+  }
+
+  return await query.select("*").limit(1);
+}
+
+async function deductDailyLoginCreditIfNeeded(currentRecord, employerEmail, companyName, options = {}){
+  const loggedInEmail = String(employerEmail || "").trim().toLowerCase();
+  const loggedInCompany = String(companyName || "").trim();
+
+  if(!loggedInEmail && !loggedInCompany){
+    return { deducted:false, reason:"not_logged_in" };
+  }
+
+  if(!currentRecord){
+    return { deducted:false, reason:"no_subscription_record" };
+  }
+
+  if(!isRecordActive(currentRecord)){
+    return { deducted:false, reason:"inactive_subscription" };
+  }
+
+  const remainingColumn = getRemainingDaysColumn(currentRecord);
+  if(!remainingColumn){
+    return { deducted:false, reason:"no_remaining_days_column" };
+  }
+
+  const currentRemain = Number(currentRecord[remainingColumn]);
+  if(!Number.isFinite(currentRemain) || currentRemain <= 0){
+    return { deducted:false, reason:"no_credit_left" };
+  }
+
+  const todayYmd = getTodayManilaYMD();
+  const existingDeductionDate = getDailyDeductionDateValue(currentRecord);
+
+  if(existingDeductionDate === todayYmd){
+    return { deducted:false, reason:"already_deducted_today" };
+  }
+
+  const localKey = getLocalDailyDeductionKey(currentRecord, loggedInEmail, loggedInCompany, todayYmd);
+  if(safeLocalGet(localKey) === "1"){
+    return { deducted:false, reason:"already_deducted_today_local" };
+  }
+
+  const lockKey = getLocalDailyDeductionLockKey(currentRecord, loggedInEmail, loggedInCompany, todayYmd);
+  if(!acquireDailyDeductionLock(lockKey)){
+    return { deducted:false, reason:"deduction_in_progress" };
+  }
+
+  try{
+    const newRemain = Math.max(currentRemain - 1, 0);
+    const payload = {};
+    payload[remainingColumn] = newRemain;
+
+    const dateColumn = getDailyDeductionDateColumn(currentRecord);
+    if(dateColumn){
+      payload[dateColumn] = todayYmd;
+    }
+
+    for(const atColumn of getExistingColumns(currentRecord, DAILY_DEDUCTION_AT_COLUMNS)){
+      payload[atColumn] = new Date().toISOString();
+    }
+
+    if(Object.prototype.hasOwnProperty.call(currentRecord, "updated_at")){
+      payload.updated_at = new Date().toISOString();
+    }
+
+    const statusColumn = getExistingColumnName(currentRecord, ["status", "payment_status", "subscription_status"]);
+    if(statusColumn && newRemain <= 0){
+      payload[statusColumn] = "expired";
+    }
+
+    const result = await runPaymentUpdateByRecord(currentRecord, payload, query => {
+      let q = query;
+
+      /* Server-side guard when the date column exists:
+         this prevents duplicate deductions across tabs/devices for the same day. */
+      if(dateColumn){
+        q = q.or(`${dateColumn}.is.null,${dateColumn}.neq.${todayYmd}`);
+      }
+
+      return q;
+    });
+
+    if(result.error){
+      console.warn("Daily login credit deduction update failed:", result.error.message || result.error);
+      return { deducted:false, reason:"update_failed", error:result.error };
+    }
+
+    if(Array.isArray(result.data) && result.data.length){
+      safeLocalSet(localKey, "1");
+      return {
+        deducted:true,
+        reason:"deducted",
+        updatedRecord:result.data[0],
+        newRemaining:newRemain
+      };
+    }
+
+    /* No returned row normally means the server-side date guard already found
+       today's deduction. Save local marker so refreshes do not try repeatedly. */
+    safeLocalSet(localKey, "1");
+    return { deducted:false, reason:"already_deducted_today_server" };
+  }finally{
+    safeLocalRemove(lockKey);
+  }
+}
+
+
+async function loadLoggedInEmployerSubscription(options = {}){
+  if(isLoadingSubscription) return;
+  isLoadingSubscription = true;
+
+  try{
+    supabaseClient = resolveSupabaseClient();
+
+    if(!supabaseClient){
+      setLoggedOutSubscriptionState("Supabase is not ready. Please check supabase_config.js.");
+      return;
+    }
+
+    if(!options.silent){
+      clearUI();
+      msg.innerHTML = '<span style="color:#bfdbfe"><i class="fa-solid fa-spinner fa-spin"></i> Loading logged-in account from employer_payment_transactions...</span>';
+    }
+
+    const storedIdentity = getStoredEmployerIdentity();
+    const sessionEmail = await getLoggedInSessionEmail();
+
+    let employerEmail = String(sessionEmail || storedIdentity.email || "").trim().toLowerCase();
+    let companyName = String(storedIdentity.companyName || "").trim();
+    let logoUrl = String(storedIdentity.logoUrl || "").trim();
+
+    if(!employerEmail && !companyName){
+      setLoggedOutSubscriptionState("No employer account is logged in. Please use Employer Login first.");
+      return;
+    }
+
+    let transactions = await getPaymentTransactions(companyName, employerEmail);
+    let currentRecord = selectCurrentSubscription(transactions);
+    let dailyDeductionResult = { deducted:false, reason:"not_checked" };
+
+    /* The logged-in dropdown and status card now take the account identity from
+       employer_payment_transactions first. Stored/session values are only fallback
+       when a matching payment row has not been created yet. */
+    if(currentRecord){
+      companyName = String(getPaymentRecordCompany(currentRecord) || companyName || "").trim();
+      employerEmail = String(getPaymentRecordEmail(currentRecord) || employerEmail || "").trim().toLowerCase();
+      logoUrl = String(getPaymentRecordLogoUrl(currentRecord) || logoUrl || "").trim();
+    }
+
+    /* Deduct only 1 remaining-day credit for a logged-in employer for today.
+       No logged-in employer identity means no deduction happens at all. */
+    dailyDeductionResult = await deductDailyLoginCreditIfNeeded(currentRecord, employerEmail, companyName, options);
+
+    if(dailyDeductionResult.deducted){
+      transactions = await getPaymentTransactions(companyName, employerEmail);
+      currentRecord = selectCurrentSubscription(transactions);
+
+      if(currentRecord){
+        companyName = String(getPaymentRecordCompany(currentRecord) || companyName || "").trim();
+        employerEmail = String(getPaymentRecordEmail(currentRecord) || employerEmail || "").trim().toLowerCase();
+        logoUrl = String(getPaymentRecordLogoUrl(currentRecord) || logoUrl || "").trim();
+      }
+    }
+
+    currentCompanyName = companyName;
+    currentEmployerEmail = employerEmail;
+
+    companyInput.value = companyName ? formatCompanyName(companyName) : "";
+    emailInput.value = employerEmail || "";
+
+    updateHeaderLoggedInAccount(companyName || "Company", employerEmail || "", logoUrl);
+    render(transactions, currentRecord, companyName, employerEmail);
+
+    if(!transactions.length){
+      msg.innerHTML = '<span style="color:#facc15"><i class="fa-solid fa-circle-info"></i> Logged-in employer found, but no matching employer_payment_transactions record was found yet. No remaining-days credit was deducted.</span>';
+    } else if(!options.silent){
+      if(dailyDeductionResult.deducted){
+        showOk("Logged-in account loaded. One remaining-day credit was deducted for today.");
+      } else if(dailyDeductionResult.reason === "already_deducted_today" || dailyDeductionResult.reason === "already_deducted_today_local" || dailyDeductionResult.reason === "already_deducted_today_server"){
+        showOk("Logged-in account loaded. Today's remaining-day credit was already deducted, so no extra deduction was made.");
+      } else if(dailyDeductionResult.reason === "update_failed"){
+        msg.innerHTML = '<span style="color:#facc15"><i class="fa-solid fa-triangle-exclamation"></i> Logged-in account loaded, but the daily remaining-days credit could not be updated. Please check RLS and daily-deduction/date columns.</span>';
+      } else if(dailyDeductionResult.reason === "no_remaining_days_column"){
+        msg.innerHTML = '<span style="color:#facc15"><i class="fa-solid fa-circle-info"></i> Logged-in account loaded, but no remaining-days column was found to deduct from.</span>';
+      } else {
+        showOk("Logged-in account data loaded from employer_payment_transactions. No extra same-day deduction was made.");
+      }
+    }
+
+    setupRealtimeRefresh();
+    setupFallbackRefresh();
+  }catch(err){
+    console.error(err);
+    if(!options.silent){
+      showErr("Unable to load logged-in account data from employer_payment_transactions. Please verify the table columns and RLS policies.");
+    }
+  }finally{
+    isLoadingSubscription = false;
+  }
 }
 
 function setupRealtimeRefresh(){
@@ -2700,132 +4500,168 @@ function setupFallbackRefresh(){
   }, 15000);
 }
 
-async function loadLoggedInEmployerSubscription(options = {}){
-  if (isLoadingSubscription) return;
-  isLoadingSubscription = true;
 
-  try{
-    if (!options.silent) clearUI();
+function getEmployerLogoUrl(employerRow){
+  const logoValue = getRecordField(employerRow, [
+    "company_logo_url",
+    "company_logo",
+    "companyLogoUrl",
+    "companyLogo",
+    "logo_url",
+    "logoUrl",
+    "logo",
+    "business_logo",
+    "business_logo_url",
+    "employer_logo",
+    "employer_logo_url",
+    "company_profile_url",
+    "company_profile_urls",
+    "profile_picture",
+    "profile_picture_url",
+    "avatar_url",
+    "avatarUrl",
+    "image_url",
+    "imageUrl",
+    "photo_url",
+    "photoUrl"
+  ], "");
 
-    supabaseClient = resolveSupabaseClient();
+  return String(logoValue || "").trim();
+}
 
-    if(!supabaseClient){
-      showErr("Supabase client was not detected. Please reload this page.");
-      return;
+function setImageOrFallback(imgEl, fallbackSrc, logoUrl){
+  if(!imgEl) return;
+
+  const src = String(logoUrl || "").trim() || fallbackSrc;
+  imgEl.src = src;
+  imgEl.hidden = false;
+  imgEl.onerror = function(){
+    if(imgEl.src.indexOf(fallbackSrc) === -1){
+      imgEl.src = fallbackSrc;
     }
+  };
+}
 
-    if (!options.silent){
-      msg.innerHTML = `<span style="color:#cbd5f5"><i class="fa-solid fa-spinner fa-spin"></i> Loading employer account...</span>`;
+function setTriggerLogoState(isLoggedIn, logoUrl){
+  const triggerLogo = document.getElementById("accountTriggerLogo");
+  const triggerIcon = document.getElementById("accountTriggerIcon");
+  const mobileTriggerLogo = document.getElementById("mobileAccountTriggerLogo");
+  const mobileTriggerIcon = document.getElementById("mobileAccountTriggerIcon");
+
+  if(isLoggedIn){
+    setImageOrFallback(triggerLogo, "JOBSPACELINK.png", logoUrl);
+    setImageOrFallback(mobileTriggerLogo, "JOBSPACELINK.png", logoUrl);
+    if(triggerIcon) triggerIcon.style.display = "none";
+    if(mobileTriggerIcon) mobileTriggerIcon.style.display = "none";
+  } else {
+    if(triggerLogo){
+      triggerLogo.hidden = true;
+      triggerLogo.removeAttribute("src");
     }
-
-    const sessionEmail = await getLoggedInSessionEmail();
-
-    if(!sessionEmail){
-      window.location.href = "loginemployer.html";
-      return;
+    if(mobileTriggerLogo){
+      mobileTriggerLogo.hidden = true;
+      mobileTriggerLogo.removeAttribute("src");
     }
-
-    const employerRow = await getEmployerRecordByEmail(sessionEmail);
-
-    if(!employerRow){
-      window.location.href = "loginemployer.html";
-      return;
-    }
-
-    const companyName = String(getRecordField(
-      employerRow,
-      ["company_name", "company", "business_name", "employer_name"],
-      ""
-    )).trim();
-
-    const employerEmail = String(getRecordField(
-      employerRow,
-      ["email", "company_email", "contact_email", "employer_email"],
-      sessionEmail
-    )).trim().toLowerCase();
-
-    if(!companyName || !employerEmail){
-      window.location.href = "loginemployer.html";
-      return;
-    }
-
-    currentCompanyName = companyName;
-    currentEmployerEmail = employerEmail;
-
-    companyInput.value = formatCompanyName(companyName);
-    emailInput.value = employerEmail;
-
-    localStorage.setItem("employerCompanyName", companyName);
-    localStorage.setItem("employerEmail", employerEmail);
-    localStorage.setItem("loggedInEmployerCompanyName", companyName);
-    localStorage.setItem("loggedInEmployerEmail", employerEmail);
-
-    if (!options.silent){
-      msg.innerHTML = `<span style="color:#cbd5f5"><i class="fa-solid fa-spinner fa-spin"></i> Loading payment history...</span>`;
-    }
-
-    const transactions = await getPaymentTransactions(companyName, employerEmail);
-
-    if(!transactions.length){
-      render([], null, companyName, employerEmail);
-      showErr(`No payment record found in ${PAYMENT_TABLE} for this logged-in employer.`);
-      return;
-    }
-
-    const currentRecord = selectCurrentSubscription(transactions);
-    render(transactions, currentRecord, companyName, employerEmail);
-
-    if(currentRecord && isRecordActive(currentRecord)){
-      showOk("Subscription loaded from employer_payment_transactions.");
-    } else {
-      showErr("Subscription record loaded, but its status/days_remaining is not active in employer_payment_transactions.");
-    }
-
-    setupRealtimeRefresh();
-    setupFallbackRefresh();
-  } finally {
-    isLoadingSubscription = false;
+    if(triggerIcon) triggerIcon.style.display = "";
+    if(mobileTriggerIcon) mobileTriggerIcon.style.display = "";
   }
 }
 
-async function logoutAndRedirect(){
-  try{
-    supabaseClient = resolveSupabaseClient();
-    if (supabaseClient){
-      await supabaseClient.auth.signOut();
-    }
-  } catch(err){
-    console.warn("Supabase sign out skipped:", err);
-  }
 
+function setPostedJobsDropdownLinks(isLoggedIn){
+  const targetHref = isLoggedIn ? "employer_dashboard.html" : "postedhiring.html";
+  const desktopPostedJobs = document.getElementById("accountPostedJobsLink");
+  const mobilePostedJobs = document.getElementById("mobileAccountPostedJobsLink");
+
+  if(desktopPostedJobs) desktopPostedJobs.href = targetHref;
+  if(mobilePostedJobs) mobilePostedJobs.href = targetHref;
+}
+
+function updateAccountCardDetails(companyName, employerEmail, logoUrl){
+  const displayCompany = formatCompanyName(companyName || "Company");
+  const displayEmail = String(employerEmail || "").trim().toLowerCase();
+
+  const companyEl = document.getElementById("accountCardCompany");
+  const emailEl = document.getElementById("accountCardEmail");
+  const logoEl = document.getElementById("accountCardLogo");
+  const mobileCompanyEl = document.getElementById("mobileAccountCompany");
+  const mobileEmailEl = document.getElementById("mobileAccountEmail");
+  const mobileLogoEl = document.getElementById("mobileAccountCardLogo");
+
+  if(companyEl) companyEl.textContent = displayCompany;
+  if(emailEl) emailEl.textContent = displayEmail;
+  if(mobileCompanyEl) mobileCompanyEl.textContent = displayCompany;
+  if(mobileEmailEl) mobileEmailEl.textContent = displayEmail;
+
+  setImageOrFallback(logoEl, "JOBSPACELINK.png", logoUrl);
+  setImageOrFallback(mobileLogoEl, "JOBSPACELINK.png", logoUrl);
+}
+
+function updateHeaderLoggedOutAccount(){
+  const accountDropdown = document.getElementById("accountDropdown");
+  const mobileGroup = document.getElementById("mobileAccountGroup");
+
+  if(accountDropdown) accountDropdown.classList.remove("is-logged-in");
+  if(mobileGroup) mobileGroup.classList.remove("is-logged-in");
+  setTriggerLogoState(false, "");
+  setPostedJobsDropdownLinks(false);
+}
+
+function updateHeaderLoggedInAccount(companyName, employerEmail, companyLogoUrl){
+  const accountDropdown = document.getElementById("accountDropdown");
+  const mobileGroup = document.getElementById("mobileAccountGroup");
+
+  if(accountDropdown) accountDropdown.classList.add("is-logged-in");
+  if(mobileGroup) mobileGroup.classList.add("is-logged-in");
+
+  updateAccountCardDetails(companyName, employerEmail, companyLogoUrl);
+  setTriggerLogoState(true, companyLogoUrl);
+  setPostedJobsDropdownLinks(true);
+}
+
+function setLoggedOutSubscriptionState(message){
   if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = null;
+
   if (realtimeChannel && supabaseClient){
-    try{ await supabaseClient.removeChannel(realtimeChannel); }catch(_err){}
+    try{ supabaseClient.removeChannel(realtimeChannel); }catch(_err){}
+    realtimeChannel = null;
   }
 
-  [
-    "lastSubscribedEmail",
-    "lastSubscribedCompanyName",
-    "employerEmail",
-    "employerCompanyName",
-    "loggedInEmployerEmail",
-    "loggedInEmployerCompanyName",
-    "companyEmail",
-    "companyName",
-    "userEmail",
-    "userCompanyName",
-    "lastEmployerEmail",
-    "lastEmployerCompanyName"
-  ].forEach(key => localStorage.removeItem(key));
+  currentCompanyName = "";
+  currentEmployerEmail = "";
+
+  updateHeaderLoggedOutAccount();
+
+  statusBadge.className = "badge";
+  statusBadge.innerHTML = '<i class="fa-solid fa-circle-user"></i> Logged Out';
+
+  vCompany.textContent = "—";
+  vEmail.textContent   = "—";
+  vStart.textContent   = "—";
+  vEnd.textContent     = "—";
+  vAmount.textContent  = "—";
+  vRemain.textContent  = "—";
 
   companyInput.value = "";
-  emailInput.value   = "";
-  clearUI();
+  emailInput.value = "";
+  historyBody.innerHTML = '<tr><td colspan="5">No data. Please log in to view subscription history.</td></tr>';
 
-  window.location.href = "loginemployer.html";
+  msg.innerHTML = `<span style="color:#facc15"><i class="fa-solid fa-circle-info"></i> ${escapeHtml(message || "No employer account is logged in. Use the account dropdown to subscribe, view posted jobs, or log in as an employer.")}</span>`;
 }
 
-document.getElementById("logoutBtn").addEventListener("click", logoutAndRedirect);
+
+function exitToDashboard(){
+  if (refreshTimer) clearInterval(refreshTimer);
+
+  if (realtimeChannel && supabaseClient){
+    try{ supabaseClient.removeChannel(realtimeChannel); }catch(_err){}
+  }
+
+  window.location.href = "subscribe.html";
+}
+
+document.getElementById("exitBtn").addEventListener("click", exitToDashboard);
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && currentEmployerEmail){
@@ -2841,6 +4677,7 @@ window.addEventListener("focus", () => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try{
+    updateHeaderLoggedOutAccount();
     await loadLoggedInEmployerSubscription();
   }catch(err){
     console.error(err);
@@ -2848,6 +4685,1212 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+</script>
+
+
+<!-- ============================================================
+   FINAL PATCH: MARKUP-STYLE LOGGED-IN ACCOUNT DROPDOWN
+   - Shows LOGGED IN ACCOUNT above company name.
+   - Uses the attached dark rounded account card style.
+   - Adds Company Profile before Subscribe.
+   - Adds gray Log out after Posted Jobs.
+   - Keeps logged-out dropdown unchanged.
+============================================================ -->
+<style id="final-markup-logged-in-account-dropdown-style">
+  body .account-dropdown{
+    z-index:2600 !important;
+    overflow:visible !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-trigger.icon-only{
+    width:50px !important;
+    min-width:50px !important;
+    height:50px !important;
+    min-height:50px !important;
+    padding:0 !important;
+    border-radius:16px !important;
+    background:linear-gradient(135deg, rgba(15,64,128,0.82), rgba(30,41,95,0.92)) !important;
+    border:1px solid rgba(125,211,252,0.56) !important;
+    box-shadow:0 0 0 1px rgba(2,132,199,0.12), 0 0 18px rgba(14,165,233,0.22) !important;
+    overflow:hidden !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-trigger-logo:not([hidden]){
+    display:block !important;
+    width:42px !important;
+    height:42px !important;
+    min-width:42px !important;
+    min-height:42px !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    padding:3px !important;
+    border-radius:14px !important;
+    background:#071325 !important;
+    border:1px solid rgba(125,211,252,0.38) !important;
+    box-shadow:0 0 12px rgba(56,189,248,0.22) !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-menu{
+    width:min(390px, calc(100vw - 24px)) !important;
+    right:0 !important;
+    top:calc(100% + 10px) !important;
+    flex-direction:column !important;
+    gap:10px !important;
+    padding:14px !important;
+    border-radius:22px !important;
+    background:linear-gradient(180deg, rgba(15,23,42,0.99), rgba(2,6,23,0.99)) !important;
+    border:1px solid rgba(0,198,255,0.36) !important;
+    box-shadow:0 18px 42px rgba(2,6,23,0.58), 0 0 18px rgba(0,198,255,0.16) !important;
+    backdrop-filter:blur(12px) !important;
+    overflow:hidden !important;
+  }
+
+  body .account-dropdown.is-logged-in.open .account-menu,
+  body .account-dropdown.is-logged-in .account-menu[aria-hidden="false"]{
+    display:flex !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-card-head.account-logged-in-only{
+    display:flex !important;
+    align-items:center !important;
+    gap:14px !important;
+    min-height:102px !important;
+    padding:14px !important;
+    margin:0 0 4px !important;
+    border-radius:20px !important;
+    background:linear-gradient(180deg, rgba(15,23,42,0.90), rgba(7,18,42,0.92)) !important;
+    border:1px solid rgba(14,165,233,0.32) !important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.03) !important;
+    border-bottom:1px solid rgba(14,165,233,0.32) !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-card-logo{
+    width:64px !important;
+    height:64px !important;
+    min-width:64px !important;
+    border-radius:16px !important;
+    display:block !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    padding:4px !important;
+    background:#071325 !important;
+    border:1px solid rgba(125,211,252,0.42) !important;
+    filter:drop-shadow(0 0 8px rgba(0,198,255,0.32)) !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-card-info{
+    min-width:0 !important;
+    flex:1 1 auto !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-card-label,
+  body .account-mobile-group.is-logged-in .mobile-account-card-label{
+    display:block !important;
+    color:#8fdfff !important;
+    font-size:0.74rem !important;
+    font-weight:700 !important;
+    letter-spacing:0.12em !important;
+    text-transform:uppercase !important;
+    line-height:1.1 !important;
+    margin:0 0 7px !important;
+    white-space:nowrap !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-card-title{
+    color:#ffffff !important;
+    font-size:1.04rem !important;
+    font-weight:800 !important;
+    line-height:1.14 !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+    text-transform:none !important;
+    margin:0 !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-card-subtitle{
+    margin:6px 0 0 !important;
+    color:#dbeafe !important;
+    font-size:0.84rem !important;
+    font-weight:500 !important;
+    line-height:1.18 !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+    text-transform:none !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-menu a,
+  body .account-dropdown.is-logged-in .account-menu button.account-menu-item{
+    width:100% !important;
+    min-height:54px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:12px !important;
+    padding:0 14px !important;
+    margin:0 !important;
+    border-radius:15px !important;
+    border:1px solid rgba(30,96,145,0.58) !important;
+    background:rgba(2,6,23,0.72) !important;
+    color:#ffffff !important;
+    font-size:0.90rem !important;
+    font-weight:800 !important;
+    text-decoration:none !important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02) !important;
+    cursor:pointer !important;
+    transform:none !important;
+    transition:background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-menu a > i.fa-arrow-right,
+  body .account-dropdown.is-logged-in .account-menu button.account-menu-item > i.fa-arrow-right{
+    display:none !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-menu-left{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:12px !important;
+    width:100% !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-menu-left i{
+    width:23px !important;
+    height:23px !important;
+    min-width:23px !important;
+    display:inline-grid !important;
+    place-items:center !important;
+    border-radius:8px !important;
+    color:#dff8ff !important;
+    background:rgba(8,145,178,0.32) !important;
+    box-shadow:0 0 12px rgba(56,189,248,0.28) !important;
+    text-align:center !important;
+    font-size:0.86rem !important;
+    text-shadow:none !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-menu a:hover,
+  body .account-dropdown.is-logged-in .account-menu a:focus-visible,
+  body .account-dropdown.is-logged-in .account-menu button.account-menu-item:hover,
+  body .account-dropdown.is-logged-in .account-menu button.account-menu-item:focus-visible{
+    background:rgba(8,47,73,0.82) !important;
+    border-color:rgba(56,189,248,0.54) !important;
+    transform:translateY(-1px) !important;
+    box-shadow:0 9px 22px rgba(0,0,0,0.24), 0 0 15px rgba(14,165,233,0.12) !important;
+    outline:none !important;
+  }
+
+  body .account-dropdown.is-logged-in #accountLogoutBtn.account-logout-action,
+  body .account-dropdown.is-logged-in .account-logout-action{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    background:linear-gradient(180deg, rgba(116,124,139,0.98), rgba(82,91,108,0.98)) !important;
+    border-color:rgba(203,213,225,0.28) !important;
+    color:#ffffff !important;
+    box-shadow:0 8px 20px rgba(51,65,85,0.22), inset 0 0 0 1px rgba(255,255,255,0.05) !important;
+  }
+
+  body .account-dropdown.is-logged-in #accountLogoutBtn.account-logout-action:hover,
+  body .account-dropdown.is-logged-in .account-logout-action:hover,
+  body .account-dropdown.is-logged-in #accountLogoutBtn.account-logout-action:focus-visible,
+  body .account-dropdown.is-logged-in .account-logout-action:focus-visible{
+    background:linear-gradient(180deg, rgba(132,140,154,1), rgba(93,103,122,1)) !important;
+    border-color:rgba(226,232,240,0.40) !important;
+    box-shadow:0 10px 24px rgba(51,65,85,0.26), 0 0 15px rgba(148,163,184,0.12) !important;
+  }
+
+  body .account-dropdown.is-logged-in .account-logout-action .account-menu-left i{
+    color:#ffffff !important;
+    background:rgba(255,255,255,0.16) !important;
+    box-shadow:0 0 11px rgba(255,255,255,0.14) !important;
+  }
+
+  body .account-dropdown.is-logged-in #accountLogoutBtn,
+  body .account-mobile-group.is-logged-in #mobileAccountLogoutBtn,
+  body .account-mobile-group.is-logged-in .mobile-logout-btn{
+    display:flex !important;
+  }
+
+  body .account-mobile-group.is-logged-in .mobile-account-card.mobile-account-logged-in-only{
+    display:flex !important;
+    align-items:center !important;
+    gap:11px !important;
+    padding:12px !important;
+    border-radius:16px !important;
+    background:linear-gradient(180deg, rgba(15,23,42,0.90), rgba(7,18,42,0.92)) !important;
+    border:1px solid rgba(14,165,233,0.32) !important;
+  }
+
+  body .account-mobile-group.is-logged-in .mobile-account-card-logo{
+    width:56px !important;
+    height:56px !important;
+    min-width:56px !important;
+    border-radius:15px !important;
+    object-fit:contain !important;
+    padding:4px !important;
+    background:#071325 !important;
+    border:1px solid rgba(125,211,252,0.42) !important;
+  }
+
+  body .account-mobile-group.is-logged-in .mobile-account-card-title{
+    color:#ffffff !important;
+    font-size:0.92rem !important;
+    font-weight:800 !important;
+    line-height:1.12 !important;
+  }
+
+  body .account-mobile-group.is-logged-in .mobile-account-card-email{
+    margin-top:5px !important;
+    color:#dbeafe !important;
+    font-size:0.72rem !important;
+  }
+
+  body .account-mobile-group.is-logged-in #mobileAccountMenu a,
+  body .account-mobile-group.is-logged-in #mobileAccountMenu button{
+    width:100% !important;
+    min-height:46px !important;
+    border-radius:13px !important;
+    border:1px solid rgba(30,96,145,0.58) !important;
+    background:rgba(2,6,23,0.72) !important;
+    color:#ffffff !important;
+    font-weight:800 !important;
+  }
+
+  body .account-mobile-group.is-logged-in #mobileAccountLogoutBtn{
+    background:linear-gradient(180deg, rgba(116,124,139,0.98), rgba(82,91,108,0.98)) !important;
+    border-color:rgba(203,213,225,0.28) !important;
+    color:#ffffff !important;
+  }
+
+  @media (min-width:1024px) and (max-width:1439px){
+    body .account-dropdown.is-logged-in .account-trigger.icon-only{ width:44px !important; min-width:44px !important; height:44px !important; min-height:44px !important; border-radius:14px !important; }
+    body .account-dropdown.is-logged-in .account-trigger-logo:not([hidden]){ width:36px !important; height:36px !important; min-width:36px !important; min-height:36px !important; border-radius:12px !important; }
+    body .account-dropdown.is-logged-in .account-menu{ width:min(360px, calc(100vw - 20px)) !important; padding:12px !important; border-radius:20px !important; }
+    body .account-dropdown.is-logged-in .account-card-head.account-logged-in-only{ min-height:88px !important; padding:12px !important; }
+    body .account-dropdown.is-logged-in .account-card-logo{ width:56px !important; height:56px !important; min-width:56px !important; }
+    body .account-dropdown.is-logged-in .account-card-label{ font-size:0.68rem !important; margin-bottom:6px !important; }
+    body .account-dropdown.is-logged-in .account-card-title{ font-size:0.96rem !important; }
+    body .account-dropdown.is-logged-in .account-card-subtitle{ font-size:0.78rem !important; }
+    body .account-dropdown.is-logged-in .account-menu a,
+    body .account-dropdown.is-logged-in .account-menu button.account-menu-item{ min-height:48px !important; font-size:0.82rem !important; border-radius:13px !important; padding:0 12px !important; }
+  }
+
+  @media (max-width:768px){
+    body .account-dropdown.is-logged-in .account-menu{
+      right:8px !important;
+      top:calc(var(--header-h, 70px) + 8px) !important;
+      width:min(360px, calc(100vw - 16px)) !important;
+      position:fixed !important;
+      padding:12px !important;
+      border-radius:20px !important;
+    }
+  }
+
+  @media (max-width:480px){
+    body .account-dropdown.is-logged-in .account-trigger.icon-only{ width:42px !important; min-width:42px !important; height:42px !important; min-height:42px !important; border-radius:14px !important; }
+    body .account-dropdown.is-logged-in .account-trigger-logo:not([hidden]){ width:34px !important; height:34px !important; min-width:34px !important; min-height:34px !important; border-radius:12px !important; }
+    body .account-dropdown.is-logged-in .account-menu{ width:calc(100vw - 16px) !important; }
+  }
+</style>
+
+<script id="final-markup-logged-in-account-dropdown-script">
+(function(){
+  "use strict";
+
+  function byId(id){ return document.getElementById(id); }
+  function clean(value){ return String(value == null ? "" : value).trim(); }
+
+  var EMPLOYER_KEYS = [
+    "loggedInEmployerEmail", "employerEmail", "companyEmail", "loginEmployerEmail", "employer_email", "jobspacelinkEmployerEmail",
+    "loggedInCompanyName", "companyName", "employerCompanyName", "company_name", "jobspacelinkEmployerCompanyName",
+    "loggedInEmployerLogo", "employerLogo", "companyLogo", "company_logo", "jobspacelinkEmployerLogo", "loggedInCompanyLogo",
+    "loggedInEmployer", "loggedInEmployerData", "employerData", "employerProfile",
+    "selectedEmployerEmail", "selectedCompanyEmail", "employerSession", "employerAccount", "currentEmployer"
+  ];
+
+  function isLoggedIn(){
+    var accountDropdown = byId("accountDropdown");
+    if (accountDropdown && accountDropdown.classList.contains("is-logged-in")) return true;
+    try{
+      for (var i = 0; i < EMPLOYER_KEYS.length; i++){
+        var key = EMPLOYER_KEYS[i];
+        if (clean(localStorage.getItem(key)) || clean(sessionStorage.getItem(key))) return true;
+      }
+    }catch(_err){}
+    return false;
+  }
+
+  function ensureLoggedInLabel(){
+    var desktopInfo = byId("accountCardCompany") && byId("accountCardCompany").parentElement;
+    if (desktopInfo && !byId("accountCardLabel")){
+      var label = document.createElement("div");
+      label.className = "account-card-label";
+      label.id = "accountCardLabel";
+      label.textContent = "LOGGED IN ACCOUNT";
+      desktopInfo.insertBefore(label, byId("accountCardCompany"));
+    }
+
+    var mobileInfo = byId("mobileAccountCompany") && byId("mobileAccountCompany").parentElement;
+    if (mobileInfo && !byId("mobileAccountLabel")){
+      var mobileLabel = document.createElement("div");
+      mobileLabel.className = "mobile-account-card-label";
+      mobileLabel.id = "mobileAccountLabel";
+      mobileLabel.textContent = "LOGGED IN ACCOUNT";
+      mobileInfo.insertBefore(mobileLabel, byId("mobileAccountCompany"));
+    }
+
+    var desktopLabel = byId("accountCardLabel");
+    var mobileLabelEl = byId("mobileAccountLabel");
+    if (desktopLabel) desktopLabel.textContent = "LOGGED IN ACCOUNT";
+    if (mobileLabelEl) mobileLabelEl.textContent = "LOGGED IN ACCOUNT";
+  }
+
+  function ensureLogoutButtons(){
+    var posted = byId("accountPostedJobsLink");
+    var login = document.querySelector("#accountMenu .account-login-action");
+    var logout = byId("accountLogoutBtn");
+    if (posted && !logout){
+      logout = document.createElement("button");
+      logout.type = "button";
+      logout.className = "account-menu-item account-logged-in-only account-logout-action";
+      logout.id = "accountLogoutBtn";
+      logout.innerHTML = '<span class="account-menu-left"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></span><i class="fa-solid fa-arrow-right"></i>';
+      posted.parentNode.insertBefore(logout, login || posted.nextSibling);
+    }else if (posted && logout && logout.previousElementSibling !== posted){
+      posted.parentNode.insertBefore(logout, posted.nextSibling);
+    }
+
+    var mobilePosted = byId("mobileAccountPostedJobsLink");
+    var mobileLogin = document.querySelector("#mobileAccountMenu .mobile-account-login-action");
+    var mobileLogout = byId("mobileAccountLogoutBtn");
+    if (mobilePosted && !mobileLogout){
+      mobileLogout = document.createElement("button");
+      mobileLogout.type = "button";
+      mobileLogout.className = "mobile-account-logged-in-only mobile-logout-btn";
+      mobileLogout.id = "mobileAccountLogoutBtn";
+      mobileLogout.innerHTML = '<span class="mnav-left"><i class="fa-solid fa-right-from-bracket"></i><span class="nav-text">Log out</span></span><i class="fa-solid fa-arrow-right"></i>';
+      mobilePosted.parentNode.insertBefore(mobileLogout, mobileLogin || mobilePosted.nextSibling);
+    }else if (mobilePosted && mobileLogout && mobileLogout.previousElementSibling !== mobilePosted){
+      mobilePosted.parentNode.insertBefore(mobileLogout, mobilePosted.nextSibling);
+    }
+  }
+
+  function setLogoutVisibility(){
+    var loggedIn = isLoggedIn();
+    var dropdown = byId("accountDropdown");
+    var mobileGroup = byId("mobileAccountGroup");
+    var logout = byId("accountLogoutBtn");
+    var mobileLogout = byId("mobileAccountLogoutBtn");
+    var login = document.querySelector("#accountMenu .account-login-action");
+    var mobileLogin = document.querySelector("#mobileAccountMenu .mobile-account-login-action");
+
+    if (dropdown){
+      dropdown.classList.toggle("is-logged-in", loggedIn);
+    }
+    if (mobileGroup){
+      mobileGroup.classList.toggle("is-logged-in", loggedIn);
+    }
+    if (logout){
+      logout.style.display = loggedIn ? "flex" : "none";
+      logout.disabled = !loggedIn;
+    }
+    if (mobileLogout){
+      mobileLogout.style.display = loggedIn ? "flex" : "none";
+      mobileLogout.disabled = !loggedIn;
+    }
+    if (login) login.style.display = loggedIn ? "none" : "flex";
+    if (mobileLogin) mobileLogin.style.display = loggedIn ? "none" : "flex";
+  }
+
+  function clearEmployerSession(){
+    try{
+      [localStorage, sessionStorage].forEach(function(store){
+        EMPLOYER_KEYS.forEach(function(key){
+          try{ store.removeItem(key); }catch(_err){}
+        });
+        try{ store.setItem("forcePublicDirectory", "1"); }catch(_err){}
+        try{ store.setItem("jobspacelinkForceLoggedOut", "1"); }catch(_err){}
+      });
+    }catch(_err){}
+  }
+
+  function bindLogout(){
+    [byId("accountLogoutBtn"), byId("mobileAccountLogoutBtn")].forEach(function(btn){
+      if (!btn || btn.__markupLogoutBound) return;
+      btn.__markupLogoutBound = true;
+      btn.addEventListener("click", function(event){
+        event.preventDefault();
+        clearEmployerSession();
+        try{
+          if (window.supabase && window.supabase.auth && window.supabase.auth.signOut){
+            window.supabase.auth.signOut().catch(function(){});
+          }
+        }catch(_err){}
+        try{
+          if (typeof updateHeaderLoggedOutAccount === "function") updateHeaderLoggedOutAccount();
+          if (typeof setLoggedOutSubscriptionState === "function") setLoggedOutSubscriptionState("Logged out successfully. Please use Employer Login to access your subscription account again.");
+        }catch(_err){}
+        setTimeout(function(){ window.location.replace("index.html"); }, 80);
+      });
+    });
+  }
+
+  function boot(){
+    ensureLoggedInLabel();
+    ensureLogoutButtons();
+    setLogoutVisibility();
+    bindLogout();
+  }
+
+  if (document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", boot, { once:true });
+  }else{
+    boot();
+  }
+
+  window.addEventListener("load", boot, { passive:true });
+  window.addEventListener("focus", boot, { passive:true });
+  window.addEventListener("storage", boot, { passive:true });
+  setTimeout(boot, 80);
+  setTimeout(boot, 250);
+  setTimeout(boot, 700);
+  setTimeout(boot, 1500);
+
+  try{
+    var observer = new MutationObserver(function(){
+      clearTimeout(window.__finalMarkupLoggedInDropdownTimer);
+      window.__finalMarkupLoggedInDropdownTimer = setTimeout(boot, 60);
+    });
+    observer.observe(document.body, { childList:true, subtree:true, attributes:true, characterData:true, attributeFilter:["class", "style", "src", "hidden"] });
+  }catch(_err){}
+})();
+</script>
+
+
+
+<!-- ============================================================
+   FINAL REMOVE EMPLOYER LOGIN WHEN LOGGED-IN PATCH
+   - Desktop logged-in dropdown shows only: account card, Company Profile,
+     Subscribe, Posted Jobs, gray Log out.
+   - Employer Login stays available only in logged-out state.
+   - Mobile account menu follows the same rule.
+============================================================ -->
+<style id="final-remove-employer-login-logged-in-patch">
+  /* Desktop: hide Employer Login only while logged in */
+  #accountDropdown.is-logged-in #accountMenu .account-login-action,
+  #accountDropdown.is-logged-in #accountMenu .account-logged-out-only.account-login-action,
+  #accountDropdown.is-logged-in #accountMenu a[href*="loginemployer"]{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    overflow:hidden !important;
+  }
+
+  /* Desktop: keep Log out gray and placed after Posted Jobs */
+  #accountDropdown.is-logged-in #accountMenu #accountLogoutBtn,
+  #accountDropdown.is-logged-in #accountMenu .account-logout-action{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    width:100% !important;
+    min-height:48px !important;
+    height:auto !important;
+    margin:0 !important;
+    padding:12px 14px !important;
+    border-radius:13px !important;
+    border:1px solid rgba(203,213,225,0.20) !important;
+    background:linear-gradient(135deg, rgba(107,114,128,0.96), rgba(75,85,99,0.98)) !important;
+    color:#ffffff !important;
+    font-weight:800 !important;
+    box-shadow:0 10px 20px rgba(15,23,42,0.20), inset 0 0 0 1px rgba(255,255,255,0.05) !important;
+  }
+
+  #accountDropdown.is-logged-in #accountMenu #accountLogoutBtn:hover,
+  #accountDropdown.is-logged-in #accountMenu .account-logout-action:hover,
+  #accountDropdown.is-logged-in #accountMenu #accountLogoutBtn:focus-visible,
+  #accountDropdown.is-logged-in #accountMenu .account-logout-action:focus-visible{
+    background:linear-gradient(135deg, rgba(148,163,184,0.98), rgba(75,85,99,0.98)) !important;
+    border-color:rgba(226,232,240,0.30) !important;
+    color:#ffffff !important;
+    transform:translateX(2px) !important;
+    outline:none !important;
+  }
+
+  #accountDropdown.is-logged-in #accountMenu #accountLogoutBtn i,
+  #accountDropdown.is-logged-in #accountMenu .account-logout-action i{
+    color:#ffffff !important;
+    text-shadow:none !important;
+  }
+
+  /* Logged-out state: Employer Login remains visible */
+  #accountDropdown:not(.is-logged-in) #accountMenu .account-login-action{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    height:auto !important;
+    min-height:48px !important;
+  }
+
+  /* Mobile: same rule */
+  #mobileAccountGroup.is-logged-in #mobileAccountMenu .mobile-account-login-action,
+  #mobileAccountGroup.is-logged-in #mobileAccountMenu a[href*="loginemployer"]{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    overflow:hidden !important;
+  }
+
+  #mobileAccountGroup.is-logged-in #mobileAccountMenu #mobileAccountLogoutBtn,
+  #mobileAccountGroup.is-logged-in #mobileAccountMenu .mobile-logout-btn{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    width:100% !important;
+    min-height:46px !important;
+    padding:12px 14px !important;
+    border-radius:12px !important;
+    border:1px solid rgba(203,213,225,0.20) !important;
+    background:linear-gradient(135deg, rgba(107,114,128,0.96), rgba(75,85,99,0.98)) !important;
+    color:#ffffff !important;
+    font-weight:800 !important;
+  }
+
+  #mobileAccountGroup:not(.is-logged-in) #mobileAccountMenu .mobile-account-login-action{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    height:auto !important;
+    min-height:46px !important;
+  }
+</style>
+
+<script id="final-remove-employer-login-logged-in-script">
+(function(){
+  'use strict';
+
+  function byId(id){ return document.getElementById(id); }
+
+  function isLoggedIn(){
+    var desktop = byId('accountDropdown');
+    var mobile = byId('mobileAccountGroup');
+    if (desktop && desktop.classList.contains('is-logged-in')) return true;
+    if (mobile && mobile.classList.contains('is-logged-in')) return true;
+    if (document.body && (
+      document.body.classList.contains('employer-logged-in') ||
+      document.body.classList.contains('logged-in-directory-mode') ||
+      document.body.classList.contains('logged-in-subscription-mode')
+    )) return true;
+
+    var keys = [
+      'loggedInEmployer','employerLoggedIn','jobSpaceEmployerLoggedIn',
+      'currentEmployerEmail','employerEmail','companyEmail',
+      'employer_company_email','jobspacelinkEmployerEmail'
+    ];
+    try{
+      for (var i = 0; i < keys.length; i++){
+        if ((localStorage.getItem(keys[i]) || sessionStorage.getItem(keys[i]) || '').trim()) return true;
+      }
+    }catch(_err){}
+    return false;
+  }
+
+  function setHiddenLogin(link, hidden){
+    if (!link) return;
+    if (hidden){
+      link.setAttribute('aria-hidden','true');
+      link.setAttribute('tabindex','-1');
+      link.style.setProperty('display','none','important');
+      link.style.setProperty('visibility','hidden','important');
+      link.style.setProperty('opacity','0','important');
+      link.style.setProperty('pointer-events','none','important');
+      link.style.setProperty('height','0','important');
+      link.style.setProperty('min-height','0','important');
+      link.style.setProperty('padding','0','important');
+      link.style.setProperty('margin','0','important');
+      link.style.setProperty('border','0','important');
+      link.style.setProperty('overflow','hidden','important');
+    }else{
+      link.removeAttribute('aria-hidden');
+      link.removeAttribute('tabindex');
+      link.style.setProperty('display','flex','important');
+      link.style.setProperty('visibility','visible','important');
+      link.style.setProperty('opacity','1','important');
+      link.style.setProperty('pointer-events','auto','important');
+      link.style.removeProperty('height');
+      link.style.removeProperty('min-height');
+      link.style.removeProperty('padding');
+      link.style.removeProperty('margin');
+      link.style.removeProperty('border');
+      link.style.removeProperty('overflow');
+    }
+  }
+
+  function styleLogout(btn){
+    if (!btn) return;
+    btn.type = 'button';
+    btn.disabled = false;
+    btn.removeAttribute('aria-hidden');
+    btn.removeAttribute('tabindex');
+    btn.classList.add('account-logged-in-only');
+    btn.style.setProperty('display','flex','important');
+    btn.style.setProperty('visibility','visible','important');
+    btn.style.setProperty('opacity','1','important');
+    btn.style.setProperty('pointer-events','auto','important');
+  }
+
+  function enforce(){
+    var logged = isLoggedIn();
+    var desktop = byId('accountDropdown');
+    var mobile = byId('mobileAccountGroup');
+    var desktopMenu = byId('accountMenu');
+    var mobileMenu = byId('mobileAccountMenu');
+    var posted = byId('accountPostedJobsLink');
+    var logout = byId('accountLogoutBtn');
+    var login = desktopMenu ? desktopMenu.querySelector('.account-login-action, a[href*="loginemployer"]') : null;
+    var mobilePosted = byId('mobileAccountPostedJobsLink');
+    var mobileLogout = byId('mobileAccountLogoutBtn');
+    var mobileLogin = mobileMenu ? mobileMenu.querySelector('.mobile-account-login-action, a[href*="loginemployer"]') : null;
+
+    if (desktop){
+      desktop.classList.toggle('is-logged-in', logged);
+      desktop.classList.toggle('is-logged-out', !logged);
+    }
+    if (mobile){
+      mobile.classList.toggle('is-logged-in', logged);
+      mobile.classList.toggle('is-logged-out', !logged);
+    }
+
+    setHiddenLogin(login, logged);
+    setHiddenLogin(mobileLogin, logged);
+
+    if (logged){
+      if (posted && logout && posted.parentNode && logout.previousElementSibling !== posted){
+        posted.parentNode.insertBefore(logout, posted.nextSibling);
+      }
+      if (mobilePosted && mobileLogout && mobilePosted.parentNode && mobileLogout.previousElementSibling !== mobilePosted){
+        mobilePosted.parentNode.insertBefore(mobileLogout, mobilePosted.nextSibling);
+      }
+      styleLogout(logout);
+      if (mobileLogout){
+        mobileLogout.disabled = false;
+        mobileLogout.removeAttribute('aria-hidden');
+        mobileLogout.removeAttribute('tabindex');
+        mobileLogout.style.setProperty('display','flex','important');
+        mobileLogout.style.setProperty('visibility','visible','important');
+        mobileLogout.style.setProperty('opacity','1','important');
+        mobileLogout.style.setProperty('pointer-events','auto','important');
+      }
+    }else{
+      if (logout){
+        logout.style.setProperty('display','none','important');
+        logout.disabled = true;
+      }
+      if (mobileLogout){
+        mobileLogout.style.setProperty('display','none','important');
+        mobileLogout.disabled = true;
+      }
+    }
+  }
+
+  function boot(){
+    enforce();
+    setTimeout(enforce, 80);
+    setTimeout(enforce, 250);
+    setTimeout(enforce, 700);
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', boot, { once:true });
+  }else{
+    boot();
+  }
+
+  window.addEventListener('load', boot, { passive:true });
+  window.addEventListener('focus', boot, { passive:true });
+  window.addEventListener('storage', boot, { passive:true });
+  window.addEventListener('pageshow', boot, { passive:true });
+
+  try{
+    var observer = new MutationObserver(function(){
+      clearTimeout(window.__removeEmployerLoginLoggedInFinalTimer);
+      window.__removeEmployerLoginLoggedInFinalTimer = setTimeout(enforce, 60);
+    });
+    observer.observe(document.body, { attributes:true, childList:true, subtree:true, attributeFilter:['class','style','hidden'] });
+  }catch(_err){}
+
+  window.removeEmployerLoginFromLoggedInDropdownFinal = enforce;
+})();
+</script>
+
+
+
+
+
+<!-- ============================================================
+   FINAL PATCH: COMPANY PROFILE IN ACCOUNT DROPDOWN
+   - Adds Company Profile before Subscribe on desktop and mobile.
+   - Redirects to companyprofile.html.
+   - Shows for both logged-in and logged-out employer account menus.
+============================================================ -->
+<style id="final-company-profile-account-dropdown-style">
+  #accountDropdown #accountCompanyProfileLink,
+  #mobileAccountGroup #mobileAccountCompanyProfileLink{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    height:auto !important;
+  }
+
+  #accountCompanyProfileLink.account-company-profile-link,
+  #mobileAccountCompanyProfileLink.mobile-account-company-profile-link{
+    color:#e5e7eb !important;
+    text-decoration:none !important;
+  }
+</style>
+
+<script id="final-company-profile-account-dropdown-script">
+(function(){
+  'use strict';
+
+  function byId(id){ return document.getElementById(id); }
+
+  function isLoggedIn(){
+    var desktop = byId('accountDropdown');
+    var mobile = byId('mobileAccountGroup');
+    if (desktop && desktop.classList.contains('is-logged-in')) return true;
+    if (mobile && mobile.classList.contains('is-logged-in')) return true;
+    if (document.body && (
+      document.body.classList.contains('employer-logged-in') ||
+      document.body.classList.contains('logged-in-directory-mode') ||
+      document.body.classList.contains('logged-in-subscription-mode')
+    )) return true;
+    try{
+      var keys = ['loggedInEmployerEmail','currentEmployerEmail','employerEmail','companyEmail','jobspacelinkEmployerEmail','loggedInEmployer','loggedInEmployerData','employerSession','employerAccount'];
+      for (var i = 0; i < keys.length; i++){
+        if ((localStorage.getItem(keys[i]) || sessionStorage.getItem(keys[i]) || '').trim()) return true;
+      }
+    }catch(_err){}
+    return false;
+  }
+
+  function makeDesktopProfileLink(){
+    var link = document.createElement('a');
+    link.href = 'companyprofile.html';
+    link.id = 'accountCompanyProfileLink';
+    link.className = 'account-company-profile-link';
+    link.innerHTML = '<span class="account-menu-left"><i class="fa-solid fa-id-card"></i><span>Company Profile</span></span><i class="fa-solid fa-arrow-right"></i>';
+    return link;
+  }
+
+  function makeMobileProfileLink(){
+    var link = document.createElement('a');
+    link.href = 'companyprofile.html';
+    link.id = 'mobileAccountCompanyProfileLink';
+    link.className = 'mobile-account-company-profile-link';
+    link.innerHTML = '<span class="mnav-left"><i class="fa-solid fa-id-card"></i><span class="nav-text">Company Profile</span></span><i class="fa-solid fa-arrow-right"></i>';
+    return link;
+  }
+
+  function setProfileVisibility(link){
+    if (!link) return;
+    link.href = 'companyprofile.html';
+    link.classList.remove('account-logged-in-only', 'mobile-account-logged-in-only', 'account-logged-out-only', 'mobile-account-logged-out-only');
+    link.removeAttribute('aria-hidden');
+    link.removeAttribute('tabindex');
+    link.style.setProperty('display','flex','important');
+    link.style.setProperty('visibility','visible','important');
+    link.style.setProperty('opacity','1','important');
+    link.style.setProperty('pointer-events','auto','important');
+    link.style.removeProperty('height');
+    link.style.removeProperty('min-height');
+    link.style.removeProperty('padding');
+    link.style.removeProperty('margin');
+    link.style.removeProperty('border');
+    link.style.removeProperty('overflow');
+  }
+
+  function enforce(){
+    var menu = byId('accountMenu');
+    if (menu){
+      var profile = byId('accountCompanyProfileLink');
+      var subscribe = menu.querySelector('a[href="subscribe.html"]');
+      if (!profile){
+        profile = makeDesktopProfileLink();
+      }
+      if (subscribe && profile.parentNode !== menu){
+        menu.insertBefore(profile, subscribe);
+      }else if (subscribe && profile.nextElementSibling !== subscribe){
+        menu.insertBefore(profile, subscribe);
+      }
+      setProfileVisibility(profile);
+    }
+
+    var mobileMenu = byId('mobileAccountMenu');
+    if (mobileMenu){
+      var mobileProfile = byId('mobileAccountCompanyProfileLink');
+      var mobileSubscribe = mobileMenu.querySelector('a[href="subscribe.html"]');
+      if (!mobileProfile){
+        mobileProfile = makeMobileProfileLink();
+      }
+      if (mobileSubscribe && mobileProfile.parentNode !== mobileMenu){
+        mobileMenu.insertBefore(mobileProfile, mobileSubscribe);
+      }else if (mobileSubscribe && mobileProfile.nextElementSibling !== mobileSubscribe){
+        mobileMenu.insertBefore(mobileProfile, mobileSubscribe);
+      }
+      setProfileVisibility(mobileProfile);
+    }
+  }
+
+  function boot(){
+    enforce();
+    setTimeout(enforce, 80);
+    setTimeout(enforce, 250);
+    setTimeout(enforce, 700);
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', boot, { once:true });
+  }else{
+    boot();
+  }
+
+  window.addEventListener('load', boot, { passive:true });
+  window.addEventListener('focus', boot, { passive:true });
+  window.addEventListener('storage', boot, { passive:true });
+  window.addEventListener('pageshow', boot, { passive:true });
+
+  try{
+    var observer = new MutationObserver(function(){
+      clearTimeout(window.__companyProfileAccountDropdownTimer);
+      window.__companyProfileAccountDropdownTimer = setTimeout(enforce, 60);
+    });
+    observer.observe(document.body, { attributes:true, childList:true, subtree:true, attributeFilter:['class','style','hidden'] });
+  }catch(_err){}
+})();
+</script>
+
+
+<!-- ============================================================
+   FINAL PATCH: LOG OUT CLEARS LOGGED-IN ACCOUNT + REDIRECTS HOME
+   - Intercepts desktop/mobile Log out before older redirect handlers.
+   - Clears employer session keys from localStorage/sessionStorage.
+   - Signs out Supabase auth when available.
+   - Clears subscription status, inputs, payment history, account logo/name/email.
+   - Redirects to index.html after logout cleanup.
+============================================================ -->
+<script id="final-logout-clears-account-and-loaded-data-patch">
+(function(){
+  'use strict';
+
+  var LOGOUT_MESSAGE = 'Logged out successfully. Logged-in account and loaded subscription data were cleared.';
+  var FALLBACK_LOGO = 'JOBSPACELINK.png';
+  var CLEAR_KEYS = [
+    'loggedInEmployerEmail','currentEmployerEmail','employerEmail','employer_email','companyEmail','employer_company_email','company_email','selectedEmployerEmail','selectedCompanyEmail','loginEmployerEmail','jobspacelinkEmployerEmail',
+    'loggedInCompanyName','currentEmployerCompany','companyName','company_name','employerCompanyName','employer_company_name','jobspacelinkEmployerCompany','jobspacelinkEmployerCompanyName',
+    'loggedInEmployerLogo','loggedInCompanyLogo','employerLogo','companyLogo','company_logo','company_logo_url','employer_logo','employer_logo_url','jobspacelinkEmployerLogo',
+    'loggedInEmployer','loggedInEmployerData','currentEmployer','employerProfile','employerData','employerSession','jobspacelinkEmployer','jobspacelink_employer','dashboardEmployer','employerAccount','currentEmployerAccount',
+    'employerLoggedIn','jobSpaceEmployerLoggedIn','logged-in-employer','logged_in_employer','loggedInAccount','loggedInUser',
+    'subscriptionAccount','subscriptionData','subscriptionStatus','paymentTransactions','employerPaymentTransactions'
+  ];
+
+  function byId(id){ return document.getElementById(id); }
+  function hasStorage(){ try{ return !!window.localStorage && !!window.sessionStorage; }catch(_err){ return false; } }
+  function stores(){
+    var list = [];
+    try{ if (window.localStorage) list.push(window.localStorage); }catch(_err){}
+    try{ if (window.sessionStorage) list.push(window.sessionStorage); }catch(_err){}
+    return list;
+  }
+
+  function forceRemoveStorageKey(storage, key){
+    try{ storage.removeItem(key); }catch(_err){}
+  }
+
+  function clearEmployerStorage(){
+    stores().forEach(function(storage){
+      CLEAR_KEYS.forEach(function(key){ forceRemoveStorageKey(storage, key); });
+
+      /* Clear old/new employer login keys even if another page used a slightly
+         different key name. Keep this scoped to employer/company/subscription/payment
+         login state so normal browser settings are not touched. */
+      try{
+        for (var i = storage.length - 1; i >= 0; i--){
+          var key = storage.key(i) || '';
+          if (/(employer|company|business|subscription|payment|loggedin|logged_in|jobspace.*account|account.*employer)/i.test(key)){
+            storage.removeItem(key);
+          }
+        }
+      }catch(_err){}
+
+      try{ storage.setItem('forcePublicDirectory', '1'); }catch(_err){}
+      try{ storage.setItem('jobspacelinkForceLoggedOut', '1'); }catch(_err){}
+      try{ storage.setItem('subscriptionStatusLoggedOut', '1'); }catch(_err){}
+    });
+  }
+
+  function clearTimersAndRealtime(){
+    try{
+      if (typeof refreshTimer !== 'undefined' && refreshTimer){
+        clearInterval(refreshTimer);
+        refreshTimer = null;
+      }
+    }catch(_err){}
+    try{
+      var client = null;
+      if (typeof supabaseClient !== 'undefined' && supabaseClient) client = supabaseClient;
+      else if (window.supabaseClient) client = window.supabaseClient;
+      else if (window.supabase && window.supabase.from) client = window.supabase;
+      if (typeof realtimeChannel !== 'undefined' && realtimeChannel && client && typeof client.removeChannel === 'function'){
+        client.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+      }
+    }catch(_err){}
+  }
+
+  async function signOutSupabase(){
+    var clients = [];
+    try{ if (typeof supabaseClient !== 'undefined' && supabaseClient) clients.push(supabaseClient); }catch(_err){}
+    try{ if (window.supabaseClient) clients.push(window.supabaseClient); }catch(_err){}
+    try{ if (window.supabase && window.supabase.auth) clients.push(window.supabase); }catch(_err){}
+    try{ if (window._supabase && window._supabase.auth) clients.push(window._supabase); }catch(_err){}
+
+    var seen = [];
+    for (var i = 0; i < clients.length; i++){
+      var client = clients[i];
+      if (!client || !client.auth || typeof client.auth.signOut !== 'function' || seen.indexOf(client) !== -1) continue;
+      seen.push(client);
+      try{ await client.auth.signOut({ scope:'global' }); }catch(_err){}
+      try{ await client.auth.signOut({ scope:'local' }); }catch(_err){}
+      try{ await client.auth.signOut(); }catch(_err){}
+    }
+  }
+
+  function setText(id, value){
+    var el = byId(id);
+    if (el) el.textContent = value;
+  }
+
+  function clearImage(img){
+    if (!img) return;
+    try{ img.onerror = null; }catch(_err){}
+    try{ img.removeAttribute('src'); }catch(_err){}
+    try{ img.hidden = true; }catch(_err){}
+    img.style.display = 'none';
+  }
+
+  function setLoggedOutHeaderVisuals(){
+    var dropdown = byId('accountDropdown');
+    var mobileGroup = byId('mobileAccountGroup');
+    if (dropdown){
+      dropdown.classList.remove('open','is-logged-in');
+      dropdown.classList.add('is-logged-out');
+    }
+    if (mobileGroup){
+      mobileGroup.classList.remove('open','is-logged-in');
+      mobileGroup.classList.add('is-logged-out');
+    }
+
+    var trigger = byId('accountTrigger');
+    var mobileMain = byId('mobileAccountMain');
+    if (trigger) trigger.setAttribute('aria-expanded','false');
+    if (mobileMain) mobileMain.setAttribute('aria-expanded','false');
+
+    clearImage(byId('accountTriggerLogo'));
+    clearImage(byId('mobileAccountTriggerLogo'));
+
+    var icon = byId('accountTriggerIcon');
+    var mobileIcon = byId('mobileAccountTriggerIcon');
+    if (icon) icon.style.display = 'inline-grid';
+    if (mobileIcon) mobileIcon.style.display = 'inline-grid';
+
+    setText('accountCardCompany', 'Company');
+    setText('accountCardEmail', '');
+    setText('mobileAccountCompany', 'Company');
+    setText('mobileAccountEmail', '');
+    setText('accountCardLabel', 'LOGGED IN ACCOUNT');
+    setText('mobileAccountLabel', 'LOGGED IN ACCOUNT');
+
+    var cardLogo = byId('accountCardLogo');
+    var mobileCardLogo = byId('mobileAccountCardLogo');
+    if (cardLogo){ cardLogo.src = FALLBACK_LOGO; cardLogo.hidden = false; cardLogo.style.display = ''; }
+    if (mobileCardLogo){ mobileCardLogo.src = FALLBACK_LOGO; mobileCardLogo.hidden = false; mobileCardLogo.style.display = ''; }
+
+    var loggedOutTitle = document.querySelector('#accountLoggedOutCardHead .account-card-title');
+    if (loggedOutTitle) loggedOutTitle.textContent = 'No login account';
+    var mobileLoggedOutTitle = document.querySelector('#mobileAccountLoggedOutCard .mobile-account-card-title');
+    if (mobileLoggedOutTitle) mobileLoggedOutTitle.textContent = 'No login account';
+
+    var posted = byId('accountPostedJobsLink');
+    var mobilePosted = byId('mobileAccountPostedJobsLink');
+    if (posted) posted.href = 'postedhiring.html';
+    if (mobilePosted) mobilePosted.href = 'postedhiring.html';
+
+    var login = document.querySelector('#accountMenu .account-login-action, #accountMenu a[href*="loginemployer"]');
+    var mobileLogin = document.querySelector('#mobileAccountMenu .mobile-account-login-action, #mobileAccountMenu a[href*="loginemployer"]');
+    [login, mobileLogin].forEach(function(link){
+      if (!link) return;
+      link.removeAttribute('aria-hidden');
+      link.removeAttribute('tabindex');
+      link.style.setProperty('display','flex','important');
+      link.style.setProperty('visibility','visible','important');
+      link.style.setProperty('opacity','1','important');
+      link.style.setProperty('pointer-events','auto','important');
+      link.style.removeProperty('height');
+      link.style.removeProperty('min-height');
+      link.style.removeProperty('padding');
+      link.style.removeProperty('margin');
+      link.style.removeProperty('border');
+      link.style.removeProperty('overflow');
+    });
+
+    [byId('accountLogoutBtn'), byId('mobileAccountLogoutBtn')].forEach(function(btn){
+      if (!btn) return;
+      btn.disabled = true;
+      btn.style.setProperty('display','none','important');
+      btn.setAttribute('aria-hidden','true');
+      btn.setAttribute('tabindex','-1');
+    });
+  }
+
+  function clearLoadedSubscriptionData(message){
+    try{ if (typeof currentCompanyName !== 'undefined') currentCompanyName = ''; }catch(_err){}
+    try{ if (typeof currentEmployerEmail !== 'undefined') currentEmployerEmail = ''; }catch(_err){}
+    try{ if (typeof isLoadingSubscription !== 'undefined') isLoadingSubscription = false; }catch(_err){}
+
+    try{
+      if (typeof setLoggedOutSubscriptionState === 'function'){
+        setLoggedOutSubscriptionState(message || LOGOUT_MESSAGE);
+      }
+    }catch(_err){}
+
+    var status = byId('statusBadge');
+    if (status){
+      status.className = 'badge';
+      status.innerHTML = '<i class="fa-solid fa-circle-user"></i> Logged Out';
+    }
+
+    setText('vCompany', '—');
+    setText('vEmail', '—');
+    setText('vStart', '—');
+    setText('vEnd', '—');
+    setText('vAmount', '—');
+    setText('vRemain', '—');
+
+    var companyInput = byId('companyInput');
+    var emailInput = byId('emailInput');
+    if (companyInput) companyInput.value = '';
+    if (emailInput) emailInput.value = '';
+
+    var history = byId('historyBody');
+    if (history) history.innerHTML = '<tr><td colspan="5">No data. Please log in to view subscription history.</td></tr>';
+
+    var msg = byId('msg');
+    if (msg){
+      msg.innerHTML = '<span style="color:#facc15"><i class="fa-solid fa-circle-info"></i> ' + (message || LOGOUT_MESSAGE) + '</span>';
+    }
+  }
+
+  function forceLoggedOutBodyState(){
+    try{
+      document.body.classList.remove('employer-logged-in','logged-in-directory-mode','logged-in-subscription-mode','dashboard-auth-loading');
+      document.body.classList.add('public-directory-mode','logged-out-subscription-mode');
+    }catch(_err){}
+  }
+
+  async function performFullLogout(){
+    clearTimersAndRealtime();
+    clearEmployerStorage();
+    forceLoggedOutBodyState();
+    setLoggedOutHeaderVisuals();
+    clearLoadedSubscriptionData(LOGOUT_MESSAGE);
+    await signOutSupabase();
+    clearEmployerStorage();
+    forceLoggedOutBodyState();
+    setLoggedOutHeaderVisuals();
+    clearLoadedSubscriptionData(LOGOUT_MESSAGE);
+    try{
+      if (window.removeEmployerLoginFromLoggedInDropdownFinal) window.removeEmployerLoginFromLoggedInDropdownFinal();
+    }catch(_err){}
+  }
+
+  function redirectToIndex(){
+    if (window.__subscriptionLogoutRedirecting) return;
+    window.__subscriptionLogoutRedirecting = true;
+    try{ window.location.replace('index.html'); }
+    catch(_err){ window.location.href = 'index.html'; }
+  }
+
+  document.addEventListener('click', function(event){
+    var target = event.target && event.target.closest ? event.target.closest('#accountLogoutBtn, #mobileAccountLogoutBtn, .account-logout-action, .mobile-logout-btn') : null;
+    if (!target) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+
+    target.disabled = true;
+    target.setAttribute('aria-busy', 'true');
+    performFullLogout()
+      .then(function(){ redirectToIndex(); })
+      .catch(function(err){
+        console.error('Logout cleanup failed before redirect:', err);
+        clearEmployerStorage();
+        forceLoggedOutBodyState();
+        setLoggedOutHeaderVisuals();
+        clearLoadedSubscriptionData(LOGOUT_MESSAGE);
+        redirectToIndex();
+      });
+  }, true);
+
+  function bootLoggedOutParam(){
+    var loggedOutParam = false;
+    try{ loggedOutParam = new URLSearchParams(window.location.search).has('logged_out'); }catch(_err){}
+    if (loggedOutParam || (hasStorage() && (localStorage.getItem('subscriptionStatusLoggedOut') || sessionStorage.getItem('subscriptionStatusLoggedOut')))){
+      clearTimersAndRealtime();
+      clearEmployerStorage();
+      forceLoggedOutBodyState();
+      setLoggedOutHeaderVisuals();
+      clearLoadedSubscriptionData('Logged out. Please use Employer Login to access your subscription account again.');
+      try{
+        if (window.history && window.history.replaceState && loggedOutParam){
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }catch(_err){}
+    }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', bootLoggedOutParam, { once:true });
+  }else{
+    bootLoggedOutParam();
+  }
+  window.addEventListener('pageshow', bootLoggedOutParam, { passive:true });
+})();
 </script>
 
 </body>

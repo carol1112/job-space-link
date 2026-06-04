@@ -1,39 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Job Space Link | Remote Work Opportunities</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Choose Portal | Job Space Link</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
-  <link rel="stylesheet" href="jobspacelink.css" />
-  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+<link rel="stylesheet" href="jobspacelink.css" />
 
-  <style>
-/* ============================================================
-   PAGE RESET + FIXED FOOTER SPACING + SCROLL OFFSET
-=========================================================== */
-:root{ --header-h: 78px; }
-
-html, body {
+<style>
+*{
   margin:0;
   padding:0;
-  overflow-x:hidden;
-  height:100%;
+  box-sizing:border-box;
+  font-family:"Poppins","Segoe UI",sans-serif;
 }
 
-html{
-  scroll-behavior:smooth;
-  scroll-padding-top: calc(var(--header-h) + 16px);
+html,body{
+  width:100%;
+  min-height:100%;
+  overflow-x:hidden;
 }
 
 body{
-  padding-top: var(--header-h);
-  padding-bottom:100px;
-  background:#0f172a;
-  color:white;
-  font-family:"Poppins",sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(14,165,233,0.75), transparent 32%),
+    radial-gradient(circle at 80% 25%, rgba(139,92,246,0.55), transparent 34%),
+    radial-gradient(circle at 50% 90%, rgba(0,198,255,0.28), transparent 35%),
+    linear-gradient(135deg,#020617,#0f172a 45%,#1e1b4b);
+  color:#e5e7eb;
+  position:relative;
 }
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,0.85), transparent);
+  pointer-events:none;
+}
+
+/* ============================================================
+   HEADER - SAME FORMAT AS INDEX
+============================================================ */
+:root{ --header-h:78px; }
 
 /* ============================================================
    HEADER - COMPRESSED
@@ -57,21 +72,22 @@ header{
 }
 
 header .logo{
-  flex:0 0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  margin-left:-4px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-left: -4px;
+  min-width: 140px;
 }
 
 header .logo img{
-  height:80px;
-  width:auto;
-  display:block;
-  object-fit:contain;
-  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+  height: 100px;
+  width: auto;
+  max-width: 180px;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(0,198,255,0.45));
 }
-
 header nav{
   flex:1 1 auto;
   min-width:0;
@@ -388,548 +404,565 @@ header .auth-buttons a:hover{
 }
 
 /* ============================================================
-   FLOATING WORKERS ONLY ON SECTIONS (NOT HEADER)
-=========================================================== */
-.bg-workers{
-  position:fixed;
-  left:0;
-  right:0;
-  top:var(--header-h);
-  height:calc(100vh - var(--header-h));
-  z-index:0;
+   PAGE CONTENT
+============================================================ */
+.page-shell{
+  width:min(1180px, 100%);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  z-index:2;
+  margin:0 auto;
+  padding:132px 24px 44px;
+}
+
+.portal-card{
+  width:100%;
+  border-radius:30px;
+  border:1.5px solid rgba(59,130,246,0.38);
+  background:
+    radial-gradient(circle at 20% 15%, rgba(0,198,255,0.14), transparent 35%),
+    radial-gradient(circle at 80% 20%, rgba(139,92,246,0.16), transparent 38%),
+    rgba(15,23,42,0.84);
+  backdrop-filter:blur(18px);
+  box-shadow:
+    0 0 38px rgba(59,130,246,0.22),
+    0 28px 70px rgba(2,6,23,0.58);
+  padding:52px 34px;
+  overflow:hidden;
+  position:relative;
+}
+
+.portal-card::before{
+  content:"";
+  position:absolute;
+  width:360px;
+  height:360px;
+  border-radius:999px;
+  background:rgba(0,198,255,0.10);
+  filter:blur(10px);
+  top:-190px;
+  left:-130px;
   pointer-events:none;
+}
+
+.portal-card::after{
+  content:"";
+  position:absolute;
+  width:390px;
+  height:390px;
+  border-radius:999px;
+  background:rgba(139,92,246,0.12);
+  filter:blur(10px);
+  bottom:-210px;
+  right:-130px;
+  pointer-events:none;
+}
+
+.portal-content{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  justify-content:center;
+  gap:34px;
+}
+
+.portal-button{
+  min-height:118px;
+  width:100%;
+  max-width:330px;
+  justify-self:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  padding:24px 28px;
+  border-radius:24px;
+  border:1.5px solid rgba(255,255,255,0.16);
+  color:#ffffff;
+  text-decoration:none;
+  font-size:1.25rem;
+  font-weight:900;
+  letter-spacing:.02em;
+  background:
+    linear-gradient(135deg, rgba(0,198,255,0.92), rgba(139,92,246,0.92));
+  box-shadow:
+    0 0 26px rgba(0,198,255,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.20);
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease,
+    filter .25s ease;
+  position:relative;
   overflow:hidden;
 }
 
-.bg-workers::before{
+.portal-button::before{
   content:"";
   position:absolute;
-  inset:-25%;
-  background:
-    radial-gradient(circle at 20% 15%, rgba(0,198,255,0.14), transparent 56%),
-    radial-gradient(circle at 78% 25%, rgba(139,92,246,0.12), transparent 58%),
-    radial-gradient(circle at 50% 92%, rgba(14,165,233,0.10), transparent 62%),
-    radial-gradient(circle at 50% 50%, rgba(15,23,42,0.18), rgba(15,23,42,0.66));
+  inset:0;
+  background:linear-gradient(120deg, transparent, rgba(255,255,255,0.20), transparent);
+  transform:translateX(-120%);
+  transition:transform .65s ease;
 }
 
-.worker-float{
-  position:absolute;
-  opacity:0.20;
-  transform: translate3d(0,0,0);
-  will-change: transform, filter, opacity;
-  user-select:none;
-  -webkit-user-drag:none;
-  pointer-events:none;
-  animation: workerFloat 12s ease-in-out infinite;
-  filter: drop-shadow(0 0 20px rgba(0,198,255,0.18));
+.portal-button:hover::before{
+  transform:translateX(120%);
 }
 
-.worker-float.depth-far{
-  opacity:0.14;
-  filter: blur(0.4px) drop-shadow(0 0 14px rgba(0,198,255,0.14));
+.portal-button:hover{
+  transform:translateY(-6px) scale(1.02);
+  border-color:rgba(0,198,255,0.46);
+  box-shadow:
+    0 0 34px rgba(0,198,255,0.36),
+    0 22px 36px rgba(2,6,23,0.42);
+  filter:saturate(1.08);
 }
 
-.worker-float.depth-mid{
-  opacity:0.18;
-  filter: blur(0.15px) drop-shadow(0 0 18px rgba(0,198,255,0.16));
-}
-
-.worker-float.depth-near{
-  opacity:0.22;
-  filter: blur(0px) drop-shadow(0 0 22px rgba(0,198,255,0.18));
-}
-
-.worker-float.w1{ animation-duration: 18s; animation-delay:-3s; }
-.worker-float.w2{ animation-duration: 22s; animation-delay:-9s; }
-.worker-float.w3{ animation-duration: 20s; animation-delay:-6s; }
-.worker-float.w4{ animation-duration: 26s; animation-delay:-12s; }
-.worker-float.w5{ animation-duration: 24s; animation-delay:-10s; }
-.worker-float.w6{ animation-duration: 21s; animation-delay:-8s; }
-
-@keyframes workerFloat{
-  0%,100%{ transform: translate3d(var(--px, 0px), calc(var(--py, 0px) + 0px), 0) scale(var(--s, 1)); }
-  50%{ transform: translate3d(calc(var(--px, 0px) + 10px), calc(var(--py, 0px) - 18px), 0) scale(var(--s, 1)); }
-}
-
-section, footer, .slanted-divider{
+.portal-button i,
+.portal-button span{
   position:relative;
   z-index:2;
 }
 
-/* ============================================================
-   HERO / SECTIONS
-=========================================================== */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
+.portal-button i{
+  font-size:1.65rem;
 }
 
-@keyframes fadeInText{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-@keyframes rotateGlow{
-  from{transform:rotate(0deg);}
-  to{transform:rotate(360deg);}
-}
-
-.hero{
-  flex-grow:1;
+.logo-center{
+  width:280px;
+  min-height:280px;
+  border-radius:999px;
   display:flex;
-  flex-direction:column;
   align-items:center;
   justify-content:center;
-  text-align:center;
-  padding:60px 20px 80px;
+  flex-direction:column;
+  gap:14px;
+  padding:28px;
+  background:
+    radial-gradient(circle at 35% 25%, rgba(0,198,255,0.22), transparent 42%),
+    rgba(2,6,23,0.58);
+  border:1.5px solid rgba(96,165,250,0.42);
+  box-shadow:
+    0 0 0 10px rgba(0,198,255,0.045),
+    0 0 34px rgba(0,198,255,0.22),
+    inset 0 0 24px rgba(255,255,255,0.04);
   position:relative;
 }
 
-.hero::before{
+.logo-center::before{
   content:"";
   position:absolute;
-  width:170%;
-  height:170%;
-  top:-35%;
-  left:-35%;
-  background:radial-gradient(circle,#00c6ff20,#8b5cf620,#0ea5e930);
-  animation:rotateGlow 20s linear infinite;
-  z-index:-1;
+  inset:-12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.10);
+  pointer-events:none;
 }
 
-.hero h1{
-  font-size:3.2rem;
-  font-weight:800;
-  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 30px rgba(0,198,255,0.4);
-  animation:fadeInText 1s ease;
+.logo-img{
+  width:190px;
+  max-width:100%;
+  height:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 16px rgba(0,198,255,0.42));
 }
 
-.hero p{
-  max-width:720px;
-  margin-top:25px;
-  font-size:1.3rem;
-  opacity:0;
-  animation:fadeUp 1.4s 0.3s forwards;
-}
-
-.slanted-divider{
-  width:100%;
-  height:70px;
-  background:linear-gradient(135deg,#00c6ff40,#8b5cf640);
-  clip-path:polygon(0 0,100% 20%,100% 100%,0 80%);
-  backdrop-filter:blur(10px);
-  border-top:1px solid rgba(147,51,234,0.45);
-  border-bottom:1px solid rgba(0,198,255,0.35);
-  box-shadow:0 0 25px rgba(147,51,234,0.35);
-}
-
-.about-section{
-  max-width:1200px;
-  margin:0 auto;
-  padding:100px 25px 60px;
+.logo-fallback{
+  display:none;
   text-align:center;
-  animation:fadeUp 1s ease;
 }
 
-.about-section h2{
-  font-size:2.7rem;
-  margin-bottom:40px;
-  text-shadow:0 0 18px #00c6ff;
+.logo-fallback .brand-main{
+  display:block;
+  font-size:2rem;
+  font-weight:950;
+  color:#ffffff;
+  line-height:1;
+  text-shadow:0 0 16px rgba(0,198,255,0.55);
 }
 
-.about-section p{
-  max-width:900px;
-  margin:0 auto;
-  font-size:1.15rem;
-  color:#e5e7eb;
-  line-height:1.7;
+.logo-fallback .brand-sub{
+  display:block;
+  margin-top:8px;
+  font-size:1.05rem;
+  font-weight:800;
+  color:#7dd3fc;
+  letter-spacing:.08em;
+  text-transform:uppercase;
 }
 
-.about-cards{
-  margin-top:50px;
+.page-title{
+  position:absolute;
+  top:30px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  width:100%;
+  padding:0 18px;
+}
+
+.page-title h1{
+  font-size:clamp(1.35rem, 3vw, 2.1rem);
+  color:#ffffff;
+  font-weight:950;
+  text-shadow:0 0 20px rgba(0,198,255,0.32);
+}
+
+.page-title p{
+  margin-top:8px;
+  font-size:.95rem;
+  color:#cbd5e1;
+  line-height:1.5;
+}
+
+
+/* SKIP LINK BELOW PORTAL CHOICES */
+.skip-now-wrap{
+  position:relative;
+  z-index:2;
   display:flex;
   justify-content:center;
-  gap:25px;
-  flex-wrap:wrap;
-}
-
-.about-card{
-  width:320px;
-  background:rgba(15,23,42,0.7);
-  border:1px solid rgba(59,130,246,0.35);
-  border-radius:15px;
-  padding:25px 20px;
-  text-align:center;
-  box-shadow:0 0 25px rgba(0,198,255,0.2);
-  transition:0.35s ease;
-  backdrop-filter:blur(10px);
-}
-
-.about-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 0 35px rgba(0,198,255,0.45);
-  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
-}
-
-.about-card i{
-  font-size:2.5rem;
-  color:#00c6ff;
-  margin-bottom:15px;
-}
-
-.about-card h3{
-  font-size:1.3rem;
-  margin-bottom:10px;
-  color:#fff;
-}
-
-.about-card p{
-  font-size:0.95rem;
-  color:#d4d7dc;
-  line-height:1.6;
-}
-
-#why-choose{
-  padding:120px 20px;
-  text-align:center;
-}
-
-#why-choose h2{
-  font-size:2.4rem;
-  margin-bottom:40px;
-  text-shadow:0 0 18px #00c6ff;
-}
-
-.why-grid{
-  max-width:1200px;
-  margin:auto;
-  display:grid;
-  gap:28px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.why-card{
-  padding:28px;
-  border-radius:16px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.15);
-  backdrop-filter:blur(10px);
-  box-shadow:0 0 20px rgba(0,198,255,0.25);
-  transition:0.3s;
-}
-
-.why-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 0 35px rgba(0,198,255,0.45);
-  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
-}
-
-.why-card i{
-  font-size:2.2rem;
-  margin-bottom:12px;
-  color:#00c6ff;
-}
-
-.employer-cta{
+  align-items:center;
+  margin-top:30px;
   width:100%;
-  padding:100px 20px;
-  text-align:center;
-  background:linear-gradient(135deg,#0ea5e955,#8b5cf655);
-  border-top:1px solid rgba(0,198,255,0.4);
-  border-bottom:1px solid rgba(147,51,234,0.35);
-  backdrop-filter:blur(10px);
-  box-shadow:0 0 30px rgba(0,198,255,0.25);
-  margin-top:80px;
-  animation:fadeUp 0.8s ease;
 }
 
-.employer-cta .cta-content{
-  max-width:900px;
-  margin:auto;
-}
-
-.employer-cta h2{
-  font-size:2.4rem;
-  font-weight:700;
-  margin-bottom:18px;
-  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 18px rgba(0,198,255,0.5);
-}
-
-.employer-cta p{
-  font-size:1.15rem;
-  color:#dbeafe;
-  max-width:700px;
-  margin:0 auto 28px;
-  line-height:1.6;
-}
-
-.cta-button{
-  display:inline-block;
-  padding:14px 40px;
-  font-size:1.1rem;
-  font-weight:600;
-  border-radius:12px;
-  text-decoration:none;
-  color:white;
-  background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
-  background-size:200%;
-  transition:0.35s ease;
-  box-shadow:0 0 30px rgba(147,51,234,0.45);
-}
-
-.cta-button:hover{
-  background-position:100% 0;
-  transform:translateY(-4px);
-  box-shadow:0 0 40px rgba(147,51,234,0.6);
-}
-
-#how-it-works{
-  padding:120px 20px;
-  text-align:center;
-}
-
-#how-it-works h2{
-  font-size:2.4rem;
-  margin-bottom:40px;
-  text-shadow:0 0 18px #00c6ff;
-}
-
-.steps{
-  max-width:1100px;
-  margin:auto;
-  display:grid;
-  gap:35px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.step{
-  padding:30px;
-  border-radius:16px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.12);
-  backdrop-filter:blur(10px);
-  transition:0.3s;
-}
-
-.step:hover{
-  transform:translateY(-6px);
-  box-shadow:0 0 35px rgba(0,198,255,0.45);
-  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
-}
-
-.step span{
-  display:inline-block;
-  font-size:2rem;
-  padding:10px 18px;
-  background:#00c6ff;
-  color:#000;
-  border-radius:10px;
-  margin-bottom:10px;
-}
-
-.applicant-cta{
-  width:100%;
-  padding:100px 20px;
-  text-align:center;
-  background:linear-gradient(135deg,#8b5cf655,#00c6ff55);
-  border-top:1px solid rgba(147,51,234,0.45);
-  border-bottom:1px solid rgba(0,198,255,0.45);
-  backdrop-filter:blur(10px);
-  box-shadow:0 0 35px rgba(0,198,255,0.22);
-  margin-top:80px;
-  animation:fadeUp 0.9s ease;
-}
-
-.applicant-cta .cta-content{
-  max-width:900px;
-  margin:auto;
-}
-
-.applicant-cta h2{
-  font-size:2.4rem;
-  font-weight:700;
-  margin-bottom:18px;
-  background:linear-gradient(90deg,#8b5cf6,#00c6ff);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 18px rgba(147,51,234,0.55);
-}
-
-.applicant-cta p{
-  font-size:1.15rem;
-  color:#dce3ff;
-  max-width:700px;
-  margin:0 auto 28px;
-  line-height:1.6;
-}
-
-.cta-button.applicant{
-  display:inline-block;
-  padding:14px 40px;
-  font-size:1.1rem;
-  font-weight:600;
-  border-radius:12px;
-  text-decoration:none;
-  color:white;
-  background:linear-gradient(90deg,#8b5cf6,#00c6ff,#8b5cf6);
-  background-size:200%;
-  transition:0.35s ease;
-  box-shadow:0 0 30px rgba(0,198,255,0.45);
-}
-
-.cta-button.applicant:hover{
-  background-position:100% 0;
-  transform:translateY(-4px);
-  box-shadow:0 0 40px rgba(0,198,255,0.8);
-}
-
-/* Footer */
-.footer-simple{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  background:rgba(15,23,42,0.9);
-  border-top:1px solid rgba(59,130,246,0.4);
-  height:70px;
-  display:flex;
+.skip-now-link{
+  display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:40px;
-  padding:0 20px;
+  gap:8px;
+  color:#dbeafe;
+  text-decoration:none;
+  font-size:0.98rem;
+  font-weight:800;
+  padding:10px 18px;
+  border-radius:999px;
+  border:1px solid rgba(96,165,250,0.32);
+  background:rgba(15,23,42,0.48);
+  box-shadow:0 0 16px rgba(0,198,255,0.10);
+  transition:
+    transform 0.22s ease,
+    color 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.skip-now-link:hover,
+.skip-now-link:focus-visible{
+  color:#ffffff;
+  background:rgba(0,198,255,0.12);
+  border-color:rgba(56,189,248,0.52);
+  box-shadow:0 0 22px rgba(0,198,255,0.20);
+  transform:translateY(-2px);
+  outline:none;
+}
+
+.skip-now-link i{
+  color:#38bdf8;
+  font-size:0.9rem;
+}
+
+
+/* ============================================================
+   VIDEO INTRO FRAME
+   Replaces the marked portal area with a clean video player frame.
+============================================================ */
+.video-card{
+  padding:126px 34px 42px !important;
+}
+
+.video-showcase{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  align-items:center;
+  gap:30px;
+}
+
+.video-frame-wrap{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.video-frame{
+  position:relative;
+  width:100%;
+  aspect-ratio:16 / 9;
+  border-radius:26px;
+  overflow:hidden;
+  border:1.5px solid rgba(96,165,250,0.55);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(0,198,255,0.18), transparent 36%),
+    linear-gradient(135deg, rgba(2,6,23,0.94), rgba(30,27,75,0.92));
+  box-shadow:
+    0 0 0 8px rgba(0,198,255,0.05),
+    0 0 40px rgba(0,198,255,0.22),
+    0 26px 58px rgba(2,6,23,0.46),
+    inset 0 1px 0 rgba(255,255,255,0.10);
+}
+
+.video-frame::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.10), transparent 28%),
+    radial-gradient(circle at 80% 10%, rgba(139,92,246,0.25), transparent 34%);
+  pointer-events:none;
+  z-index:1;
+}
+
+.intro-video{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  background:#020617;
+  position:relative;
+  z-index:0;
+}
+
+
+
+.video-frame-wrap{
+  gap:0;
+}
+
+.video-frame video::-webkit-media-controls-panel{
+  background-image:linear-gradient(transparent, rgba(0,0,0,0.62));
+}
+
+.video-info-panel{
+  min-width:0;
+  border-radius:24px;
+  border:1px solid rgba(96,165,250,0.28);
+  background:rgba(15,23,42,0.54);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), 0 18px 44px rgba(2,6,23,0.22);
+  padding:28px 24px;
+}
+
+.video-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:30px;
+  padding:7px 12px;
+  border-radius:999px;
+  background:rgba(0,198,255,0.12);
+  border:1px solid rgba(56,189,248,0.24);
+  color:#7dd3fc;
+  font-size:0.78rem;
+  font-weight:900;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.video-info-panel h2{
+  margin:0 0 12px;
+  color:#ffffff;
+  font-size:clamp(1.45rem, 2vw, 2.15rem);
+  line-height:1.12;
+  font-weight:950;
+  letter-spacing:-0.03em;
+  text-shadow:0 0 20px rgba(0,198,255,0.25);
+}
+
+.video-info-panel p{
+  margin:0 0 18px;
   color:#cbd5e1;
-  backdrop-filter:blur(10px);
-  z-index:999;
+  font-size:0.96rem;
+  line-height:1.65;
 }
 
-.footer-simple .footer-logo img{
-  height:55px;
-  filter:drop-shadow(0 0 8px rgba(0,198,255,0.45));
-  transition:transform 0.3s ease, filter 0.3s ease;
+.video-benefits{
+  display:grid;
+  gap:10px;
+  margin:0;
+  padding:0;
+  list-style:none;
 }
 
-.footer-simple .footer-logo img:hover{
-  transform:scale(1.12);
-  filter:drop-shadow(0 0 14px rgba(0,198,255,0.9));
+.video-benefits li{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  color:#e5e7eb;
+  font-size:0.9rem;
+  line-height:1.45;
 }
 
-.footer-simple .footer-bottom{
-  font-size:0.85rem;
-  color:#94a3b8;
-  white-space:nowrap;
+.video-benefits i{
+  margin-top:2px;
+  width:18px;
+  min-width:18px;
+  color:#38bdf8;
+  text-align:center;
+  text-shadow:0 0 12px rgba(56,189,248,0.42);
 }
+
+
+@media (max-width:1023px){
+  .video-card{
+    padding:118px 20px 34px !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:1fr;
+    gap:20px;
+  }
+
+  .video-info-panel{
+    order:2;
+  }
+
+  .video-frame-wrap{
+    order:1;
+  }
+
+}
+
+@media (max-width:640px){
+  .video-card{
+    padding:112px 14px 28px !important;
+  }
+
+  .video-frame{
+    border-radius:18px;
+  }
+
+  .video-play-overlay{
+    min-width:146px;
+    min-height:48px;
+    font-size:0.88rem;
+  }
+
+  .video-caption{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .video-info-panel{
+    border-radius:18px;
+    padding:22px 18px;
+  }
+
+}
+
 
 /* ============================================================
    RESPONSIVE
-=========================================================== */
-@media (max-width: 1280px){
+============================================================ */
+@media (max-width:1023px){
   header{
-    gap:10px;
-    padding:0 12px 0 6px;
+    min-height:68px;
+    padding:8px 12px;
   }
 
   header .logo img{
-    height:46px;
+    height:62px;
   }
 
-  header nav{
-    gap:10px;
-    margin-left:2px;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    font-size:0.82rem;
-  }
-
-  header .auth-buttons{
-    gap:6px;
-  }
-
-  header .auth-buttons a{
-    padding:0 9px;
-    font-size:0.78rem;
-  }
-}
-
-@media (max-width: 920px){
-  header{
-    justify-content:space-between;
-    padding:0 12px 0 8px;
-  }
-
-  header nav{
-    display:none;
-  }
-
+  header nav,
   header .auth-buttons{
     display:none;
   }
 
   .nav-toggle{
-    display:inline-flex;
+    display:flex;
+  }
+
+  .mobile-panel{
+    top:68px;
+  }
+
+  .page-shell{
+    padding:108px 16px 34px;
+  }
+
+  .portal-card{
+    padding:118px 20px 34px;
+    border-radius:24px;
+  }
+
+  .portal-content{
+    grid-template-columns:1fr;
+    gap:22px;
+  }
+
+  .logo-center{
+    order:1;
+    width:220px;
+    min-height:220px;
+    justify-self:center;
+  }
+
+  .logo-img{
+    width:155px;
+  }
+
+  .jobseeker-btn{
+    order:2;
+  }
+
+  .employer-btn{
+    order:3;
+  }
+
+  .portal-button{
+    max-width:420px;
+    min-height:86px;
+    font-size:1.08rem;
+    border-radius:20px;
   }
 }
 
-@media (max-width: 480px){
-  :root{ --header-h: 72px; }
-
-  body{
-    padding-bottom:170px;
+@media (max-width:480px){
+  .portal-card{
+    padding:112px 14px 26px;
   }
 
-  header{
-    padding:0 10px 0 6px;
+  .page-title{
+    top:24px;
   }
 
-  header .logo{
-    margin-left:-2px;
+  .page-title p{
+    font-size:.82rem;
   }
 
-  header .logo img{
-    height:42px;
+  .logo-center{
+    width:190px;
+    min-height:190px;
+    padding:22px;
   }
 
-  .footer-simple{
-    flex-direction:column;
-    height:auto;
-    padding:10px 0 15px;
-    gap:10px;
+  .logo-img{
+    width:135px;
   }
 
-  .footer-simple .footer-logo img{
-    height:40px;
+  .portal-button{
+    min-height:76px;
+    padding:18px 20px;
+    font-size:.98rem;
   }
 
-  .worker-float.w3,
-  .worker-float.w4,
-  .worker-float.w5,
-  .worker-float.w6{
-    display:none;
+  .portal-button i{
+    font-size:1.35rem;
   }
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .worker-float{
-    animation:none !important;
-    transform:none !important;
-  }
 
-  .hero::before{
-    animation:none !important;
-  }
-}
-  
 /* ============================================================
    FINAL HEADER RESPONSIVE PATCH
    Exact requested breakpoints
@@ -1755,6 +1788,16 @@ header .auth-buttons a.jobseeker-auth i{
   box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
 }
 
+header .auth-buttons a.login-auth{
+  background:linear-gradient(135deg, rgba(0,198,255,0.30), rgba(139,92,246,0.30)) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+}
+
+header .auth-buttons a.login-auth i{
+  background:rgba(56,189,248,0.24) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.20) !important;
+}
+
 header .auth-buttons a:hover i,
 header .auth-buttons a:focus-visible i{
   transform:scale(1.10) rotate(-3deg);
@@ -1804,19 +1847,2551 @@ header .auth-buttons .auth-text{
   }
 }
 
+
+
+/* ============================================================
+   FINAL LOGIN BUTTON EXACT DISPLAY PATCH
+   Normal state matches the bright cyan / purple Login button.
+   Hover state matches the compact dark button with blue outline.
+   Link target and click behavior remain unchanged.
+============================================================ */
+header .auth-buttons a.login-auth{
+  color:#ffffff !important;
+  background:linear-gradient(135deg, #18caff 0%, #7c4dff 100%) !important;
+  border:1px solid rgba(56,189,248,0.74) !important;
+  box-shadow:
+    0 0 18px rgba(0,198,255,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.24) !important;
+  text-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth::before{
+  opacity:0 !important;
+}
+
+header .auth-buttons a.login-auth i{
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.18) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.12) !important;
+}
+
+header .auth-buttons a.login-auth .auth-text{
+  color:#ffffff !important;
+}
+
+header .auth-buttons a.login-auth:hover,
+header .auth-buttons a.login-auth:focus-visible{
+  transform:none !important;
+  color:#ffffff !important;
+  background:linear-gradient(180deg, rgba(31,41,55,0.98) 0%, rgba(15,23,42,0.98) 100%) !important;
+  border-color:rgba(59,130,246,0.92) !important;
+  box-shadow:
+    0 0 0 1px rgba(59,130,246,0.38),
+    0 0 14px rgba(59,130,246,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.12) !important;
+  text-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth:hover::before,
+header .auth-buttons a.login-auth:focus-visible::before{
+  opacity:0 !important;
+}
+
+header .auth-buttons a.login-auth:hover i,
+header .auth-buttons a.login-auth:focus-visible i{
+  transform:none !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.12) !important;
+  box-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth:hover .auth-text,
+header .auth-buttons a.login-auth:focus-visible .auth-text{
+  color:#ffffff !important;
+}
+
+header .auth-buttons a.login-auth:focus-visible{
+  outline:2px solid rgba(56,189,248,0.42) !important;
+  outline-offset:2px !important;
+}
+
+
+/* ============================================================
+   FINAL FULL RESPONSIVE LAYOUT PATCH
+   Requested breakpoints:
+   - 1800px+
+   - 1440px+
+   - 1024px+
+   - 769px to 1023px: desktop layout kept, compressed
+   - 481px to 768px
+   - 480px and below
+
+   This patch only adjusts layout/spacing/sizing. It does not change
+   links, IDs, dropdown JS, mobile menu JS, video behavior, or login behavior.
+============================================================ */
+
+img,
+video{
+  max-width:100%;
+}
+
+header,
+header *,
+.page-shell,
+.portal-card,
+.video-showcase,
+.video-frame-wrap,
+.video-info-panel,
+.page-title{
+  min-width:0;
+}
+
+.video-showcase{
+  width:100%;
+}
+
+.video-info-panel p,
+.video-benefits li,
+.page-title p{
+  overflow-wrap:anywhere;
+}
+
+.video-benefits li span{
+  min-width:0;
+}
+
+/* ===== 1024px and above: desktop layout, compact-safe default ===== */
+@media (min-width: 1024px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 12px 0 6px !important;
+    gap:8px !important;
+  }
+
+  header .logo{
+    min-width:86px !important;
+    flex:0 0 86px !important;
+    margin-left:0 !important;
+  }
+
+  header .logo img{
+    height:64px !important;
+    max-width:86px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:32px !important;
+    padding:0 3px !important;
+    gap:4px !important;
+    font-size:0.70rem !important;
+    line-height:1 !important;
+    letter-spacing:-0.015em !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+
+  .nav-dropdown{
+    height:32px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:31px !important;
+    padding:0 8px !important;
+    gap:5px !important;
+    border-radius:8px !important;
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    width:min(1120px, calc(100% - 24px)) !important;
+    min-height:100vh !important;
+    padding:112px 12px 34px !important;
+    align-items:center !important;
+  }
+
+  .portal-card{
+    border-radius:24px !important;
+  }
+
+  .video-card{
+    padding:96px 20px 28px !important;
+  }
+
+  .page-title{
+    top:22px !important;
+    padding:0 16px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.35rem, 2.05vw, 1.78rem) !important;
+    line-height:1.12 !important;
+  }
+
+  .page-title p{
+    margin-top:6px !important;
+    font-size:0.80rem !important;
+    line-height:1.35 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.20fr) minmax(270px, 0.80fr) !important;
+    gap:20px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    padding:20px 18px !important;
+    border-radius:20px !important;
+  }
+
+  .video-kicker{
+    min-height:26px !important;
+    padding:6px 10px !important;
+    font-size:0.64rem !important;
+    margin-bottom:10px !important;
+    letter-spacing:0.055em !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.18rem, 1.65vw, 1.55rem) !important;
+    line-height:1.12 !important;
+    margin-bottom:9px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.78rem !important;
+    line-height:1.50 !important;
+    margin-bottom:12px !important;
+  }
+
+  .video-benefits{
+    gap:8px !important;
+  }
+
+  .video-benefits li{
+    gap:8px !important;
+    font-size:0.74rem !important;
+    line-height:1.34 !important;
+  }
+
+  .video-benefits i{
+    width:15px !important;
+    min-width:15px !important;
+    font-size:0.82rem !important;
+  }
+
+  .video-frame{
+    border-radius:20px !important;
+  }
+}
+
+/* ===== 1440px and above: full desktop spacing ===== */
+@media (min-width: 1440px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 18px 0 10px !important;
+    gap:14px !important;
+  }
+
+  header .logo{
+    min-width:118px !important;
+    flex:0 0 118px !important;
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+    max-width:118px !important;
+  }
+
+  header nav{
+    gap:13px !important;
+    margin-left:7px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    gap:6px !important;
+    font-size:0.84rem !important;
+    letter-spacing:0 !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:15px !important;
+    min-width:15px !important;
+    font-size:0.92em !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    gap:7px !important;
+    border-radius:10px !important;
+    font-size:0.79rem !important;
+  }
+
+  header .auth-buttons a i{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+    font-size:0.85rem !important;
+  }
+
+  .page-shell{
+    width:min(1280px, calc(100% - 44px)) !important;
+    padding:124px 22px 42px !important;
+  }
+
+  .video-card{
+    padding:112px 30px 38px !important;
+    border-radius:28px !important;
+  }
+
+  .page-title{
+    top:28px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.72rem, 2.25vw, 2.05rem) !important;
+  }
+
+  .page-title p{
+    font-size:0.90rem !important;
+    line-height:1.45 !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:minmax(0, 1.25fr) minmax(300px, 0.75fr) !important;
+    gap:28px !important;
+  }
+
+  .video-info-panel{
+    padding:26px 22px !important;
+    border-radius:23px !important;
+  }
+
+  .video-kicker{
+    min-height:30px !important;
+    padding:7px 12px !important;
+    font-size:0.76rem !important;
+    margin-bottom:13px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.42rem, 1.85vw, 2rem) !important;
+    line-height:1.12 !important;
+    margin-bottom:12px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.92rem !important;
+    line-height:1.62 !important;
+    margin-bottom:16px !important;
+  }
+
+  .video-benefits{
+    gap:10px !important;
+  }
+
+  .video-benefits li{
+    gap:10px !important;
+    font-size:0.86rem !important;
+    line-height:1.42 !important;
+  }
+
+  .video-benefits i{
+    width:18px !important;
+    min-width:18px !important;
+    font-size:0.94rem !important;
+  }
+
+  .video-frame{
+    border-radius:24px !important;
+  }
+}
+
+/* ===== 1800px and above: wide desktop ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 24px 0 14px !important;
+    gap:18px !important;
+  }
+
+  header .logo{
+    min-width:132px !important;
+    flex:0 0 132px !important;
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+    max-width:132px !important;
+  }
+
+  header nav{
+    gap:20px !important;
+    margin-left:10px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    gap:8px !important;
+    font-size:0.94rem !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:17px !important;
+    min-width:17px !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .page-shell{
+    width:min(1500px, calc(100% - 72px)) !important;
+    padding:132px 36px 54px !important;
+  }
+
+  .video-card{
+    padding:126px 44px 46px !important;
+    border-radius:30px !important;
+  }
+
+  .page-title{
+    top:32px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.95rem, 2vw, 2.35rem) !important;
+  }
+
+  .page-title p{
+    font-size:0.98rem !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:minmax(0, 1.28fr) minmax(340px, 0.72fr) !important;
+    gap:34px !important;
+  }
+
+  .video-info-panel{
+    padding:30px 26px !important;
+    border-radius:24px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.62rem, 1.75vw, 2.15rem) !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.98rem !important;
+    line-height:1.65 !important;
+  }
+
+  .video-benefits li{
+    font-size:0.91rem !important;
+    line-height:1.46 !important;
+  }
+
+  .video-frame{
+    border-radius:26px !important;
+  }
+}
+
+/* ===== 769px to 1023px: keep desktop layout but compress everything ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    display:flex !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 6px 0 4px !important;
+    gap:4px !important;
+  }
+
+  header .logo{
+    min-width:70px !important;
+    flex:0 0 70px !important;
+    margin-left:0 !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+    max-width:70px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:3px !important;
+    margin-left:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:28px !important;
+    padding:0 1px !important;
+    gap:2px !important;
+    border-radius:7px !important;
+    font-size:clamp(0.50rem, 0.72vw, 0.58rem) !important;
+    letter-spacing:-0.04em !important;
+    line-height:1 !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:9px !important;
+    min-width:9px !important;
+    font-size:0.76em !important;
+  }
+
+  header nav .nav-text{
+    display:inline-block !important;
+    max-width:none !important;
+  }
+
+  .nav-dropdown{
+    height:28px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:0 !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:13px !important;
+    height:13px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.52rem !important;
+  }
+
+  .nav-dropdown-menu{
+    min-width:190px !important;
+  }
+
+  .nav-dropdown-menu a{
+    padding:10px 10px !important;
+    font-size:0.76rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:2px !important;
+  }
+
+  header .auth-buttons a{
+    height:26px !important;
+    padding:0 5px !important;
+    gap:3px !important;
+    border-radius:7px !important;
+    font-size:0.54rem !important;
+    letter-spacing:-0.02em !important;
+  }
+
+  header .auth-buttons a i{
+    width:12px !important;
+    height:12px !important;
+    min-width:12px !important;
+    font-size:0.52rem !important;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:100vh !important;
+    padding:calc(var(--header-h) + 12px) 8px 22px !important;
+    align-items:center !important;
+  }
+
+  .portal-card{
+    border-radius:18px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:78px 12px 18px !important;
+  }
+
+  .page-title{
+    top:14px !important;
+    padding:0 10px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.08rem, 2vw, 1.28rem) !important;
+    line-height:1.12 !important;
+    letter-spacing:-0.035em !important;
+  }
+
+  .page-title p{
+    margin-top:5px !important;
+    font-size:0.68rem !important;
+    line-height:1.25 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.08fr) minmax(220px, 0.72fr) !important;
+    gap:12px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    padding:13px 12px !important;
+    border-radius:16px !important;
+  }
+
+  .video-kicker{
+    min-height:22px !important;
+    padding:4px 8px !important;
+    font-size:0.55rem !important;
+    letter-spacing:0.035em !important;
+    margin-bottom:7px !important;
+    gap:5px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.92rem, 1.5vw, 1.08rem) !important;
+    line-height:1.08 !important;
+    letter-spacing:-0.035em !important;
+    margin-bottom:7px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.62rem !important;
+    line-height:1.35 !important;
+    margin-bottom:8px !important;
+  }
+
+  .video-benefits{
+    gap:6px !important;
+  }
+
+  .video-benefits li{
+    gap:6px !important;
+    font-size:0.58rem !important;
+    line-height:1.25 !important;
+  }
+
+  .video-benefits i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.66rem !important;
+    margin-top:1px !important;
+  }
+
+  .video-frame{
+    border-radius:14px !important;
+    box-shadow:
+      0 0 0 4px rgba(0,198,255,0.04),
+      0 0 22px rgba(0,198,255,0.16),
+      0 16px 32px rgba(2,6,23,0.34),
+      inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  }
+}
+
+/* ===== 481px to 768px: mobile/tablet stack, no hidden content ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 10px 0 8px !important;
+    gap:8px !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+    max-width:88px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    justify-self:end !important;
+    margin:0 !important;
+  }
+
+  .mobile-panel{
+    display:block !important;
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-row{
+    grid-template-columns:minmax(0,1fr) 46px !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    width:46px !important;
+    min-width:46px !important;
+    max-width:46px !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 16px) 12px 28px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:22px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:84px 14px 24px !important;
+  }
+
+  .page-title{
+    top:20px !important;
+    padding:0 12px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.18rem, 4vw, 1.55rem) !important;
+    line-height:1.15 !important;
+  }
+
+  .page-title p{
+    margin-top:6px !important;
+    font-size:0.78rem !important;
+    line-height:1.32 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:16px !important;
+    align-items:start !important;
+  }
+
+  .video-frame-wrap{
+    order:1 !important;
+  }
+
+  .video-info-panel{
+    order:2 !important;
+    padding:20px 18px !important;
+    border-radius:18px !important;
+  }
+
+  .video-kicker{
+    min-height:26px !important;
+    padding:6px 10px !important;
+    font-size:0.68rem !important;
+    margin-bottom:10px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.24rem, 4.3vw, 1.65rem) !important;
+    line-height:1.12 !important;
+    margin-bottom:10px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.88rem !important;
+    line-height:1.52 !important;
+    margin-bottom:14px !important;
+  }
+
+  .video-benefits{
+    gap:9px !important;
+  }
+
+  .video-benefits li{
+    gap:9px !important;
+    font-size:0.82rem !important;
+    line-height:1.38 !important;
+  }
+
+  .video-frame{
+    border-radius:18px !important;
+  }
+}
+
+/* ===== 480px and below: compact mobile ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 8px !important;
+    gap:8px !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+    max-width:78px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    justify-self:end !important;
+    margin:0 !important;
+  }
+
+  .mobile-panel{
+    display:block !important;
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-left{
+    gap:9px !important;
+  }
+
+  .mobile-panel .mnav-left i{
+    width:16px !important;
+    min-width:16px !important;
+  }
+
+  .mobile-panel .mnav-row{
+    grid-template-columns:minmax(0,1fr) 42px !important;
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    width:42px !important;
+    min-width:42px !important;
+    max-width:42px !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 12px) 8px 22px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:18px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:76px 10px 18px !important;
+  }
+
+  .page-title{
+    top:17px !important;
+    padding:0 9px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.02rem, 6vw, 1.26rem) !important;
+    line-height:1.12 !important;
+    letter-spacing:-0.035em !important;
+  }
+
+  .page-title p{
+    margin-top:5px !important;
+    font-size:0.68rem !important;
+    line-height:1.25 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+    align-items:start !important;
+  }
+
+  .video-frame-wrap{
+    order:1 !important;
+  }
+
+  .video-info-panel{
+    order:2 !important;
+    padding:16px 13px !important;
+    border-radius:16px !important;
+  }
+
+  .video-kicker{
+    min-height:24px !important;
+    padding:5px 9px !important;
+    font-size:0.60rem !important;
+    letter-spacing:0.04em !important;
+    margin-bottom:9px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.08rem, 5.3vw, 1.34rem) !important;
+    line-height:1.12 !important;
+    margin-bottom:9px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.78rem !important;
+    line-height:1.45 !important;
+    margin-bottom:12px !important;
+  }
+
+  .video-benefits{
+    gap:8px !important;
+  }
+
+  .video-benefits li{
+    gap:8px !important;
+    font-size:0.74rem !important;
+    line-height:1.35 !important;
+  }
+
+  .video-benefits i{
+    width:15px !important;
+    min-width:15px !important;
+    font-size:0.82rem !important;
+  }
+
+  .video-frame{
+    border-radius:14px !important;
+    box-shadow:
+      0 0 0 4px rgba(0,198,255,0.04),
+      0 0 22px rgba(0,198,255,0.16),
+      0 16px 32px rgba(2,6,23,0.34),
+      inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  }
+}
+
+
+/* Hide any old markup/caption/action strips if browser cache still has them. */
+.video-play-overlay,
+.video-caption,
+.video-status-pill,
+.portal-actions-row{
+  display:none !important;
+}
+
+
+
+/* ============================================================
+   EXTRA ULTRA-COMPACT TABLET DESKTOP PATCH
+   Breakpoint: 769px to 1023px
+   Keeps the desktop header/content layout visible.
+   No links, IDs, scripts, dropdown behavior, mobile behavior,
+   video behavior, or login behavior are changed.
+============================================================ */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{
+    --header-h:60px !important;
+  }
+
+  html,
+  body{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+  }
+
+  header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    max-height:var(--header-h) !important;
+    padding:0 3px 0 2px !important;
+    gap:2px !important;
+    overflow:visible !important;
+  }
+
+  header .logo{
+    flex:0 0 54px !important;
+    width:54px !important;
+    min-width:54px !important;
+    max-width:54px !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+
+  header .logo img{
+    height:44px !important;
+    width:auto !important;
+    max-width:54px !important;
+    object-fit:contain !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:1px !important;
+    margin:0 !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    flex:0 0 auto !important;
+    min-width:0 !important;
+    height:24px !important;
+    min-height:24px !important;
+    padding:0 1px !important;
+    gap:1px !important;
+    border-radius:6px !important;
+    font-size:clamp(0.43rem, 0.64vw, 0.50rem) !important;
+    line-height:1 !important;
+    letter-spacing:-0.055em !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:7px !important;
+    min-width:7px !important;
+    max-width:7px !important;
+    font-size:0.72em !important;
+  }
+
+  header nav .nav-text,
+  header .auth-buttons .auth-text{
+    display:inline-block !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+  }
+
+  .nav-dropdown{
+    height:24px !important;
+    flex:0 0 auto !important;
+    min-width:0 !important;
+  }
+
+  .nav-dropdown-trigger{
+    height:24px !important;
+    gap:0 !important;
+    min-width:0 !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:10px !important;
+    min-width:10px !important;
+    height:10px !important;
+    min-height:10px !important;
+    padding:0 !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.42rem !important;
+  }
+
+  .nav-dropdown-menu{
+    top:calc(100% + 8px) !important;
+    min-width:168px !important;
+    padding:7px 0 !important;
+    border-radius:10px !important;
+  }
+
+  .nav-dropdown-menu a{
+    height:auto !important;
+    padding:8px 8px !important;
+    gap:7px !important;
+    font-size:0.68rem !important;
+    letter-spacing:0 !important;
+  }
+
+  .nav-dropdown-menu a i{
+    width:13px !important;
+    min-width:13px !important;
+    font-size:0.82em !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:1px !important;
+    margin:0 !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    flex:0 0 auto !important;
+    height:24px !important;
+    min-height:24px !important;
+    padding:0 4px !important;
+    gap:2px !important;
+    border-radius:6px !important;
+    font-size:0.48rem !important;
+    line-height:1 !important;
+    letter-spacing:-0.03em !important;
+    white-space:nowrap !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:10px !important;
+    height:10px !important;
+    min-width:10px !important;
+    max-width:10px !important;
+    font-size:0.46rem !important;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:calc(100vh - var(--header-h)) !important;
+    padding:calc(var(--header-h) + 6px) 4px 12px !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+  }
+
+  .portal-card{
+    width:100% !important;
+    max-width:100% !important;
+    border-radius:14px !important;
+    overflow:hidden !important;
+  }
+
+  .video-card{
+    padding:50px 8px 10px !important;
+  }
+
+  .page-title{
+    top:8px !important;
+    padding:0 8px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(0.88rem, 1.72vw, 1.04rem) !important;
+    line-height:1.05 !important;
+    letter-spacing:-0.045em !important;
+  }
+
+  .page-title p{
+    margin-top:3px !important;
+    font-size:clamp(0.50rem, 0.92vw, 0.58rem) !important;
+    line-height:1.18 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1fr) minmax(174px, 0.56fr) !important;
+    align-items:center !important;
+    gap:7px !important;
+    width:100% !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  .video-frame{
+    border-radius:11px !important;
+    border-width:1px !important;
+    box-shadow:
+      0 0 0 3px rgba(0,198,255,0.035),
+      0 0 16px rgba(0,198,255,0.14),
+      0 10px 22px rgba(2,6,23,0.28),
+      inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    min-width:0 !important;
+    padding:8px 7px !important;
+    border-radius:11px !important;
+  }
+
+  .video-kicker{
+    min-height:18px !important;
+    padding:3px 6px !important;
+    gap:4px !important;
+    font-size:0.45rem !important;
+    line-height:1 !important;
+    letter-spacing:0.02em !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-kicker i{
+    font-size:0.58rem !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.72rem, 1.27vw, 0.88rem) !important;
+    line-height:1.04 !important;
+    letter-spacing:-0.05em !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.48rem, 0.78vw, 0.55rem) !important;
+    line-height:1.22 !important;
+    margin-bottom:6px !important;
+  }
+
+  .video-benefits{
+    gap:4px !important;
+  }
+
+  .video-benefits li{
+    gap:4px !important;
+    font-size:clamp(0.45rem, 0.72vw, 0.52rem) !important;
+    line-height:1.15 !important;
+  }
+
+  .video-benefits i{
+    width:9px !important;
+    min-width:9px !important;
+    max-width:9px !important;
+    margin-top:0 !important;
+    font-size:0.52rem !important;
+  }
+}
+
+/* Extra squeeze for the narrowest tablet widths while still keeping desktop layout */
+@media (min-width: 769px) and (max-width: 860px){
+  header{
+    padding-left:1px !important;
+    padding-right:2px !important;
+    gap:1px !important;
+  }
+
+  header .logo{
+    flex-basis:48px !important;
+    width:48px !important;
+    min-width:48px !important;
+    max-width:48px !important;
+  }
+
+  header .logo img{
+    height:40px !important;
+    max-width:48px !important;
+  }
+
+  header nav{
+    gap:0 !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:23px !important;
+    padding:0 1px !important;
+    gap:1px !important;
+    font-size:clamp(0.40rem, 0.60vw, 0.46rem) !important;
+    letter-spacing:-0.065em !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:6px !important;
+    min-width:6px !important;
+    max-width:6px !important;
+    font-size:0.68em !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:8px !important;
+    min-width:8px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.38rem !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:23px !important;
+    padding:0 3px !important;
+    gap:1px !important;
+    font-size:0.44rem !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:9px !important;
+    height:9px !important;
+    min-width:9px !important;
+    max-width:9px !important;
+    font-size:0.42rem !important;
+  }
+
+  .video-card{
+    padding:46px 6px 9px !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:minmax(0, 1fr) minmax(160px, 0.50fr) !important;
+    gap:6px !important;
+  }
+
+  .video-info-panel{
+    padding:7px 6px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.66rem, 1.18vw, 0.80rem) !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.44rem, 0.70vw, 0.50rem) !important;
+    line-height:1.16 !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-benefits li{
+    font-size:clamp(0.41rem, 0.66vw, 0.47rem) !important;
+    line-height:1.12 !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL REQUESTED RESPONSIVE OVERRIDE - DESKTOP SAME LAYOUT
+   769px to 1023px keeps the desktop header/page layout and
+   only compresses spacing/sizes so content stays visible.
+   No HTML, links, IDs, scripts, dropdown behavior, video behavior,
+   mobile menu behavior, or login behavior are changed.
+============================================================ */
+img,
+video{
+  max-width:100%;
+}
+
+header,
+header *,
+.page-shell,
+.portal-card,
+.video-showcase,
+.video-frame-wrap,
+.video-info-panel,
+.page-title{
+  min-width:0 !important;
+}
+
+.video-showcase{
+  width:100% !important;
+}
+
+.video-info-panel p,
+.video-benefits li,
+.page-title p{
+  overflow-wrap:anywhere !important;
+}
+
+.video-benefits li span{
+  min-width:0 !important;
+}
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    padding:0 24px 0 14px !important;
+    gap:18px !important;
+  }
+
+  header .logo{
+    flex:0 0 132px !important;
+    min-width:132px !important;
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+    max-width:132px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    gap:8px !important;
+    font-size:0.94rem !important;
+    letter-spacing:0 !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:17px !important;
+    min-width:17px !important;
+    font-size:0.92em !important;
+  }
+
+  .nav-dropdown{ height:38px !important; }
+  .nav-dropdown-trigger{ gap:2px !important; }
+  .nav-dropdown-toggle{ width:24px !important; height:24px !important; }
+  .nav-dropdown-toggle i{ font-size:0.92rem !important; }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:38px !important;
+    padding:0 14px !important;
+    gap:7px !important;
+    border-radius:10px !important;
+    font-size:0.86rem !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+    font-size:0.85rem !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .page-shell{
+    width:min(1500px, calc(100% - 72px)) !important;
+    min-height:100vh !important;
+    padding:132px 36px 54px !important;
+    align-items:center !important;
+  }
+
+  .video-card{
+    padding:126px 44px 46px !important;
+    border-radius:30px !important;
+  }
+
+  .page-title{ top:32px !important; }
+  .page-title h1{ font-size:clamp(1.95rem, 2vw, 2.35rem) !important; }
+  .page-title p{ font-size:0.98rem !important; line-height:1.5 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.28fr) minmax(340px, 0.72fr) !important;
+    gap:34px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{ order:initial !important; }
+  .video-info-panel{
+    order:initial !important;
+    padding:30px 26px !important;
+    border-radius:24px !important;
+  }
+  .video-info-panel h2{ font-size:clamp(1.62rem, 1.75vw, 2.15rem) !important; }
+  .video-info-panel p{ font-size:0.98rem !important; line-height:1.65 !important; }
+  .video-benefits li{ font-size:0.91rem !important; line-height:1.46 !important; }
+  .video-frame{ border-radius:26px !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    padding:0 18px 0 10px !important;
+    gap:14px !important;
+  }
+
+  header .logo{
+    flex:0 0 118px !important;
+    min-width:118px !important;
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+    max-width:118px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:13px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    gap:6px !important;
+    font-size:0.84rem !important;
+    letter-spacing:0 !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:15px !important;
+    min-width:15px !important;
+    font-size:0.92em !important;
+  }
+
+  .nav-dropdown{ height:36px !important; }
+  .nav-dropdown-trigger{ gap:2px !important; }
+  .nav-dropdown-toggle{ width:24px !important; height:24px !important; }
+  .nav-dropdown-toggle i{ font-size:0.88rem !important; }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:36px !important;
+    padding:0 11px !important;
+    gap:7px !important;
+    border-radius:10px !important;
+    font-size:0.79rem !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+    font-size:0.85rem !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .page-shell{
+    width:min(1280px, calc(100% - 44px)) !important;
+    min-height:100vh !important;
+    padding:124px 22px 42px !important;
+    align-items:center !important;
+  }
+
+  .video-card{
+    padding:112px 30px 38px !important;
+    border-radius:28px !important;
+  }
+
+  .page-title{ top:28px !important; }
+  .page-title h1{ font-size:clamp(1.72rem, 2.25vw, 2.05rem) !important; }
+  .page-title p{ font-size:0.90rem !important; line-height:1.45 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.25fr) minmax(300px, 0.75fr) !important;
+    gap:28px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{ order:initial !important; }
+  .video-info-panel{
+    order:initial !important;
+    padding:26px 22px !important;
+    border-radius:23px !important;
+  }
+  .video-info-panel h2{ font-size:clamp(1.42rem, 1.85vw, 2rem) !important; }
+  .video-info-panel p{ font-size:0.92rem !important; line-height:1.62 !important; }
+  .video-benefits li{ font-size:0.86rem !important; line-height:1.42 !important; }
+  .video-frame{ border-radius:24px !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    padding:0 12px 0 6px !important;
+    gap:8px !important;
+  }
+
+  header .logo{
+    flex:0 0 86px !important;
+    min-width:86px !important;
+    margin-left:0 !important;
+  }
+
+  header .logo img{
+    height:64px !important;
+    max-width:86px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:32px !important;
+    padding:0 3px !important;
+    gap:4px !important;
+    font-size:0.70rem !important;
+    line-height:1 !important;
+    letter-spacing:-0.015em !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+
+  .nav-dropdown{ height:32px !important; }
+  .nav-dropdown-trigger{ gap:1px !important; }
+  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
+  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:31px !important;
+    padding:0 8px !important;
+    gap:5px !important;
+    border-radius:8px !important;
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .page-shell{
+    width:min(1120px, calc(100% - 24px)) !important;
+    min-height:100vh !important;
+    padding:112px 12px 34px !important;
+    align-items:center !important;
+  }
+
+  .video-card{
+    padding:96px 20px 28px !important;
+    border-radius:24px !important;
+  }
+
+  .page-title{ top:22px !important; padding:0 16px !important; }
+  .page-title h1{ font-size:clamp(1.35rem, 2.05vw, 1.78rem) !important; line-height:1.12 !important; }
+  .page-title p{ margin-top:6px !important; font-size:0.80rem !important; line-height:1.35 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.20fr) minmax(270px, 0.80fr) !important;
+    gap:20px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{ order:initial !important; }
+  .video-info-panel{
+    order:initial !important;
+    padding:20px 18px !important;
+    border-radius:20px !important;
+  }
+  .video-kicker{ font-size:0.64rem !important; min-height:26px !important; padding:6px 10px !important; margin-bottom:10px !important; }
+  .video-info-panel h2{ font-size:clamp(1.18rem, 1.65vw, 1.55rem) !important; line-height:1.12 !important; margin-bottom:9px !important; }
+  .video-info-panel p{ font-size:0.78rem !important; line-height:1.50 !important; margin-bottom:12px !important; }
+  .video-benefits{ gap:8px !important; }
+  .video-benefits li{ font-size:0.74rem !important; line-height:1.34 !important; }
+  .video-frame{ border-radius:20px !important; }
+}
+
+/* ===== 769px to 1023px: desktop layout retained, compressed only ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  html,
+  body{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+  }
+
+  header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    max-height:var(--header-h) !important;
+    padding:0 6px 0 4px !important;
+    gap:4px !important;
+    overflow:visible !important;
+  }
+
+  header .logo{
+    flex:0 0 72px !important;
+    width:72px !important;
+    min-width:72px !important;
+    max-width:72px !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+    width:auto !important;
+    max-width:72px !important;
+    object-fit:contain !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:3px !important;
+    margin:0 !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    flex:0 0 auto !important;
+    min-width:0 !important;
+    height:28px !important;
+    min-height:28px !important;
+    padding:0 2px !important;
+    gap:2px !important;
+    border-radius:7px !important;
+    font-size:clamp(0.50rem, 0.80vw, 0.60rem) !important;
+    line-height:1 !important;
+    letter-spacing:-0.045em !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:9px !important;
+    min-width:9px !important;
+    max-width:9px !important;
+    font-size:0.74em !important;
+    margin:0 !important;
+  }
+
+  header nav .nav-text,
+  header .auth-buttons .auth-text{
+    display:inline-block !important;
+    min-width:0 !important;
+    max-width:none !important;
+    white-space:nowrap !important;
+  }
+
+  .nav-dropdown{
+    height:28px !important;
+    flex:0 0 auto !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:0 !important;
+    height:28px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:13px !important;
+    min-width:13px !important;
+    height:13px !important;
+    padding:0 !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.50rem !important;
+  }
+
+  .nav-dropdown-menu{
+    min-width:190px !important;
+    top:calc(100% + 8px) !important;
+  }
+
+  .nav-dropdown-menu a{
+    padding:10px 10px !important;
+    gap:8px !important;
+    font-size:0.76rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:2px !important;
+    margin:0 !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:27px !important;
+    min-height:27px !important;
+    padding:0 5px !important;
+    gap:3px !important;
+    border-radius:7px !important;
+    font-size:0.54rem !important;
+    letter-spacing:-0.02em !important;
+    white-space:nowrap !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:12px !important;
+    height:12px !important;
+    min-width:12px !important;
+    max-width:12px !important;
+    font-size:0.52rem !important;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 14px) 10px 24px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    width:100% !important;
+    border-radius:20px !important;
+  }
+
+  .video-card{
+    padding:78px 12px 18px !important;
+  }
+
+  .page-title{
+    top:15px !important;
+    padding:0 10px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.05rem, 2.2vw, 1.36rem) !important;
+    line-height:1.10 !important;
+    letter-spacing:-0.035em !important;
+  }
+
+  .page-title p{
+    margin-top:5px !important;
+    font-size:clamp(0.64rem, 1.2vw, 0.76rem) !important;
+    line-height:1.25 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.05fr) minmax(210px, 0.72fr) !important;
+    gap:12px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    padding:13px 12px !important;
+    border-radius:16px !important;
+  }
+
+  .video-kicker{
+    min-height:22px !important;
+    padding:4px 8px !important;
+    gap:5px !important;
+    font-size:0.55rem !important;
+    letter-spacing:0.035em !important;
+    margin-bottom:7px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.92rem, 1.65vw, 1.12rem) !important;
+    line-height:1.08 !important;
+    letter-spacing:-0.035em !important;
+    margin-bottom:7px !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.60rem, 1.05vw, 0.68rem) !important;
+    line-height:1.35 !important;
+    margin-bottom:8px !important;
+  }
+
+  .video-benefits{
+    gap:6px !important;
+  }
+
+  .video-benefits li{
+    gap:6px !important;
+    font-size:clamp(0.56rem, 1vw, 0.64rem) !important;
+    line-height:1.25 !important;
+  }
+
+  .video-benefits i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.66rem !important;
+    margin-top:1px !important;
+  }
+
+  .video-frame{
+    border-radius:14px !important;
+    box-shadow:
+      0 0 0 4px rgba(0,198,255,0.04),
+      0 0 22px rgba(0,198,255,0.16),
+      0 16px 32px rgba(2,6,23,0.34),
+      inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 10px 0 8px !important;
+    gap:8px !important;
+    align-items:center !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+    max-width:88px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    justify-self:end !important;
+    margin:0 !important;
+  }
+
+  .mobile-panel{
+    display:block !important;
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{ gap:8px !important; }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0,1fr) 46px !important; }
+  .mobile-panel .mnav-toggle{ width:46px !important; min-width:46px !important; max-width:46px !important; }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 16px) 12px 28px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:22px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:84px 14px 24px !important;
+  }
+
+  .page-title{ top:20px !important; padding:0 12px !important; }
+  .page-title h1{ font-size:clamp(1.18rem, 4vw, 1.55rem) !important; line-height:1.15 !important; }
+  .page-title p{ margin-top:6px !important; font-size:0.78rem !important; line-height:1.32 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:16px !important;
+    align-items:start !important;
+  }
+
+  .video-frame-wrap{ order:1 !important; }
+  .video-info-panel{
+    order:2 !important;
+    padding:20px 18px !important;
+    border-radius:18px !important;
+  }
+  .video-kicker{ min-height:26px !important; padding:6px 10px !important; font-size:0.68rem !important; margin-bottom:10px !important; }
+  .video-info-panel h2{ font-size:clamp(1.24rem, 4.3vw, 1.65rem) !important; line-height:1.12 !important; margin-bottom:10px !important; }
+  .video-info-panel p{ font-size:0.88rem !important; line-height:1.52 !important; margin-bottom:14px !important; }
+  .video-benefits{ gap:9px !important; }
+  .video-benefits li{ gap:9px !important; font-size:0.82rem !important; line-height:1.38 !important; }
+  .video-frame{ border-radius:18px !important; }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 8px !important;
+    gap:8px !important;
+    align-items:center !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+    max-width:78px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    justify-self:end !important;
+    margin:0 !important;
+  }
+
+  .mobile-panel{
+    display:block !important;
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{ gap:7px !important; }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+  .mobile-panel .mnav-left{ gap:9px !important; }
+  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0,1fr) 42px !important; gap:7px !important; }
+  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 12px) 8px 22px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:18px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:76px 10px 18px !important;
+  }
+
+  .page-title{ top:17px !important; padding:0 9px !important; }
+  .page-title h1{ font-size:clamp(1.02rem, 6vw, 1.26rem) !important; line-height:1.12 !important; letter-spacing:-0.035em !important; }
+  .page-title p{ margin-top:5px !important; font-size:0.68rem !important; line-height:1.25 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+    align-items:start !important;
+  }
+
+  .video-frame-wrap{ order:1 !important; }
+  .video-info-panel{
+    order:2 !important;
+    padding:16px 13px !important;
+    border-radius:16px !important;
+  }
+  .video-kicker{ min-height:24px !important; padding:5px 9px !important; font-size:0.60rem !important; letter-spacing:0.04em !important; margin-bottom:9px !important; }
+  .video-info-panel h2{ font-size:clamp(1.08rem, 5.3vw, 1.34rem) !important; line-height:1.12 !important; margin-bottom:9px !important; }
+  .video-info-panel p{ font-size:0.78rem !important; line-height:1.45 !important; margin-bottom:12px !important; }
+  .video-benefits{ gap:8px !important; }
+  .video-benefits li{ gap:8px !important; font-size:0.74rem !important; line-height:1.35 !important; }
+  .video-benefits i{ width:15px !important; min-width:15px !important; font-size:0.82rem !important; }
+  .video-frame{ border-radius:14px !important; }
+}
+
+
+/* ============================================================
+   FINAL 769px-1023px VIDEO EXTRA COMPRESSION PATCH
+   Compresses only the video/content area for tablet-width desktop layout.
+   Header, links, IDs, dropdown JS, login behavior, mobile menu behavior,
+   and video autoplay/controls behavior remain unchanged.
+============================================================ */
+@media (min-width: 769px) and (max-width: 1023px){
+  .page-shell{
+    padding-top:calc(var(--header-h) + 8px) !important;
+    padding-left:8px !important;
+    padding-right:8px !important;
+    padding-bottom:16px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:18px !important;
+  }
+
+  .video-card{
+    padding:62px 10px 14px !important;
+  }
+
+  .page-title{
+    top:10px !important;
+    padding:0 8px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(0.96rem, 2vw, 1.18rem) !important;
+    line-height:1.05 !important;
+    letter-spacing:-0.045em !important;
+    margin:0 !important;
+  }
+
+  .page-title p{
+    margin-top:4px !important;
+    font-size:clamp(0.56rem, 1.05vw, 0.66rem) !important;
+    line-height:1.18 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 0.98fr) minmax(190px, 0.62fr) !important;
+    gap:9px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+    justify-self:center !important;
+    width:100% !important;
+    max-width:clamp(360px, 54vw, 500px) !important;
+  }
+
+  .video-frame{
+    aspect-ratio:16 / 8.4 !important;
+    border-radius:12px !important;
+    border-width:1px !important;
+    box-shadow:
+      0 0 0 3px rgba(0,198,255,0.035),
+      0 0 16px rgba(0,198,255,0.13),
+      0 12px 24px rgba(2,6,23,0.30),
+      inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  }
+
+  .intro-video{
+    object-fit:cover !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    padding:10px 10px !important;
+    border-radius:14px !important;
+    align-self:center !important;
+  }
+
+  .video-kicker{
+    min-height:19px !important;
+    padding:3px 7px !important;
+    gap:4px !important;
+    font-size:0.50rem !important;
+    letter-spacing:0.025em !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.80rem, 1.45vw, 1.02rem) !important;
+    line-height:1.05 !important;
+    letter-spacing:-0.045em !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.54rem, 0.95vw, 0.62rem) !important;
+    line-height:1.25 !important;
+    margin-bottom:6px !important;
+  }
+
+  .video-benefits{
+    gap:4px !important;
+  }
+
+  .video-benefits li{
+    gap:5px !important;
+    font-size:clamp(0.50rem, 0.90vw, 0.58rem) !important;
+    line-height:1.16 !important;
+  }
+
+  .video-benefits i{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:0.56rem !important;
+    margin-top:1px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 860px){
+  .video-card{
+    padding:58px 8px 12px !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:minmax(0, 0.96fr) minmax(178px, 0.60fr) !important;
+    gap:7px !important;
+  }
+
+  .video-frame-wrap{
+    max-width:clamp(330px, 53vw, 420px) !important;
+  }
+
+  .video-frame{
+    aspect-ratio:16 / 8.2 !important;
+  }
+
+  .video-info-panel{
+    padding:9px 8px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.74rem, 1.42vw, 0.92rem) !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.50rem, 0.92vw, 0.57rem) !important;
+  }
+
+  .video-benefits li{
+    font-size:clamp(0.47rem, 0.86vw, 0.54rem) !important;
+  }
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">
     <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
   </div>
 
   <nav>
-    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
+    <a href="home.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
@@ -1839,16 +4414,17 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
-    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
-    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
-    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard1.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform1.html"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
   <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
-    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
-  
+    <a href="index1.html" class="login-auth">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      <span class="auth-text">Login</span>
+    </a>
   </div>
 
   <button
@@ -1862,20 +4438,11 @@ header .auth-buttons .auth-text{
   </button>
 </header>
 
-<!-- BACKGROUND WORKERS LAYER -->
-<div class="bg-workers" aria-hidden="true">
-  <img class="worker-float w1 depth-far" data-depth="0.14" src="w1.jpg" alt="" style="left:6%; top:18%; width:180px; --s:1;" />
-  <img class="worker-float w2 depth-far" data-depth="0.16" src="w2.jpg" alt="" style="left:74%; top:10%; width:210px; --s:1;" />
-  <img class="worker-float w3 depth-mid" data-depth="0.24" src="w7.jpg" alt="" style="left:12%; top:62%; width:240px; --s:1;" />
-  <img class="worker-float w4 depth-mid" data-depth="0.28" src="w4.jpg" alt="" style="left:80%; top:58%; width:260px; --s:1;" />
-  <img class="worker-float w5 depth-near" data-depth="0.38" src="w5.jpg" alt="" style="left:46%; top:26%; width:320px; --s:1;" />
-  <img class="worker-float w6 depth-near" data-depth="0.32" src="w6.jpg" alt="" style="left:36%; top:76%; width:260px; --s:1;" />
-</div>
-
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index1.html" class="mobile-login-link"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
@@ -1898,169 +4465,61 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform1.html"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
-<!-- HERO SECTION -->
-<section class="hero">
-  <h1>Job Space Link</h1>
-  <p>Connecting global employers with talented remote professionals — anytime, anywhere.</p>
+<main class="page-shell">
+  <section class="portal-card video-card">
+
+    <div class="page-title">
+      <h1>Watch Job Space Link in Action</h1>
+      <p>A quick introduction for jobseekers and employers before choosing your portal.</p>
+    </div>
+
+    <div class="video-showcase">
+      <div class="video-frame-wrap">
+        <div class="video-frame" aria-label="Job Space Link introduction video frame">
+          <!-- Put jobspacelink.mp4 in the same folder as this page. -->
+          <video
+            id="jobSpaceIntroVideo"
+            class="intro-video"
+            controls
+            autoplay
+            muted
+            playsinline
+            loop
+            preload="auto"
+            poster="JOBSPACELINK.png"
+          >
+            <source src="jobspacelink.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+
+      <aside class="video-info-panel">
+        <span class="video-kicker"><i class="fa-solid fa-link"></i> Job Space Link</span>
+        <h2>Connecting talent and employers in one smart platform</h2>
+        <p>
+          Job Space Link helps jobseekers create a profile, upload a resume, and find opportunities,
+          while employers can post jobs, review applicants, and connect with qualified candidates faster.
+        </p>
+        <ul class="video-benefits">
+          <li><i class="fa-solid fa-user-check"></i><span>Jobseekers can showcase skills, education, experience, and job preferences.</span></li>
+          <li><i class="fa-solid fa-briefcase"></i><span>Employers can post staffing needs and review applicant profiles in one place.</span></li>
+          <li><i class="fa-solid fa-handshake"></i><span>The platform helps both sides save time and connect with the right match.</span></li>
+        </ul>
+      </aside>
+    </div>
 </section>
-
-<div class="slanted-divider"></div>
-
-<!-- ABOUT SECTION -->
-<section class="about-section" id="about">
-  <h2>What is Job Space Link?</h2>
-  <p>
-    Job Space Link is a global platform designed to connect international employers
-    with talented remote professionals. Whether you're searching for flexible work-from-home
-    opportunities or seeking world-class remote staff, Job Space Link provides a smooth,
-    secure, and efficient hiring experience.
-  </p>
-
-  <div class="about-cards">
-    <div class="about-card">
-      <i class="fa-solid fa-laptop-code"></i>
-      <h3>Remote Talent Marketplace</h3>
-      <p>Find skilled remote workers for customer service, admin support, IT, marketing, and more.</p>
-    </div>
-
-    <div class="about-card">
-      <i class="fa-solid fa-briefcase"></i>
-      <h3>Fast Hiring Process</h3>
-      <p>Employers can post jobs instantly and receive qualified applicants in real time.</p>
-    </div>
-
-    <div class="about-card">
-      <i class="fa-solid fa-globe"></i>
-      <h3>Global Opportunities</h3>
-      <p>Discover remote career opportunities with companies worldwide — no boundaries.</p>
-    </div>
-  </div>
-</section>
-
-<!-- WHY CHOOSE -->
-<section class="hero">
-  <h1>Why Choose Job Space Link</h1>
-  <p>We make hiring and getting hired easier, safer, and faster — for global remote work.</p>
-</section>
-
-<section id="why-choose">
-  <h2>Our Advantages</h2>
-  <div class="why-grid">
-    <div class="why-card">
-      <i class="fa-solid fa-earth-americas"></i>
-      <h3>Global Talent Pool</h3>
-      <p>Hire or get hired by companies across the world.</p>
-    </div>
-    <div class="why-card">
-      <i class="fa-solid fa-bolt"></i>
-      <h3>Fast Hiring</h3>
-      <p>Streamlined posting and matching system for employers.</p>
-    </div>
-    <div class="why-card">
-      <i class="fa-solid fa-user-shield"></i>
-      <h3>Secure & Verified</h3>
-      <p>We ensure secure accounts and safe applicant verification.</p>
-    </div>
-    <div class="why-card">
-      <i class="fa-solid fa-filter-circle-dollar"></i>
-      <h3>Better Matching</h3>
-      <p>Smarter filtering to connect the right talent with the right job.</p>
-    </div>
-    <div class="why-card">
-      <i class="fa-solid fa-headset"></i>
-      <h3>Support Ready</h3>
-      <p>Clear guidance for both employers and applicants whenever needed.</p>
-    </div>
-    <div class="why-card">
-      <i class="fa-solid fa-clock"></i>
-      <h3>Time-Saving</h3>
-      <p>Less time searching — more time hiring and working.</p>
-    </div>
-  </div>
-</section>
-
-<!-- EMPLOYER CTA SECTION -->
-<section class="employer-cta">
-  <div class="cta-content">
-    <h2>Ready to Hire Top Remote Talent?</h2>
-    <p>Post your first job in minutes and start receiving qualified applicants instantly.</p>
-    <a href="postjob.html" class="cta-button">
-      <i class="fa-solid fa-briefcase"></i> Post a Job Now
-    </a>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="hero">
-  <h1>How It Works</h1>
-  <p>Simple steps for applicants and employers — from posting to getting matched.</p>
-</section>
-
-<section id="how-it-works">
-  <h2>Steps to Get Started</h2>
-  <div class="steps">
-    <div class="step">
-      <span>1</span>
-      <h3>Create an Account</h3>
-      <p>Sign up as an applicant or employer in seconds. Complete your profile to increase visibility.</p>
-    </div>
-    <div class="step">
-      <span>2</span>
-      <h3>Post or Apply</h3>
-      <p>Employers post job openings. Applicants apply instantly and upload resumes and supporting documents.</p>
-    </div>
-    <div class="step">
-      <span>3</span>
-      <h3>Get Matched</h3>
-      <p>Our system helps connect the right talent with the right jobs — faster and easier.</p>
-    </div>
-    <div class="step">
-      <span>4</span>
-      <h3>Interview & Hire</h3>
-      <p>Employers contact shortlisted applicants, schedule interviews, and hire remotely.</p>
-    </div>
-    <div class="step">
-      <span>5</span>
-      <h3>Start Working</h3>
-      <p>Applicants begin their remote work journey with flexible schedules and global opportunities.</p>
-    </div>
-    <div class="step">
-      <span>6</span>
-      <h3>Grow Together</h3>
-      <p>Build long-term remote teams and careers with tools designed for smooth hiring and matching.</p>
-    </div>
-  </div>
-</section>
-
-<!-- APPLICANT CTA SECTION -->
-<section class="applicant-cta">
-  <div class="cta-content">
-    <h2>Looking for a Remote Job?</h2>
-    <p>Join thousands of applicants finding flexible, high-paying remote opportunities worldwide.</p>
-    <a href="applicantform.html" class="cta-button applicant">
-      <i class="fa-solid fa-paper-plane"></i> Apply Now
-    </a>
-  </div>
-</section>
-
-<!-- FIXED-BOTTOM FOOTER -->
-<footer class="footer-simple">
-  <div class="footer-logo">
-    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
-  </div>
-  <p class="footer-bottom">© 2025 Job Space Link</p>
-</footer>
+</main>
 
 <script>
+
 /* ============================================================
    ABOUT DROPDOWN (Desktop)
 =========================================================== */
@@ -2210,63 +4669,45 @@ header .auth-buttons .auth-text{
   }, { passive:true });
 })();
 
+
 /* ============================================================
-   PARALLAX DEPTH (mouse + scroll)
-=========================================================== */
+   INTRO VIDEO AUTOPLAY
+   Browser autoplay usually requires the video to be muted, so this
+   page starts the video muted and lets users unmute with controls.
+============================================================ */
 (function(){
-  const items = Array.from(document.querySelectorAll(".worker-float"));
-  if(!items.length) return;
+  const video = document.getElementById("jobSpaceIntroVideo");
+  if(!video) return;
 
-  const reduceMotion = window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(reduceMotion) return;
-
-  let mouseX = 0, mouseY = 0;
-  let tx = 0, ty = 0;
-  let raf = null;
-
-  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
-  function onMove(e){
-    const w = window.innerWidth || 1;
-    const h = window.innerHeight || 1;
-    const cx = w / 2;
-    const cy = h / 2;
-    mouseX = clamp((e.clientX - cx) / cx, -1, 1);
-    mouseY = clamp((e.clientY - cy) / cy, -1, 1);
-    if(!raf) raf = requestAnimationFrame(tick);
+  async function startIntroVideo(){
+    try{
+      video.muted = true;
+      video.playsInline = true;
+      await video.play();
+    }catch(error){
+      console.warn("Autoplay was blocked or the video file is missing. Check that jobspacelink.mp4 is in the same folder as this page.", error);
+    }
   }
 
-  function tick(){
-    raf = null;
-
-    tx += (mouseX - tx) * 0.07;
-    ty += (mouseY - ty) * 0.07;
-
-    const scrollInfluence = clamp((window.scrollY || 0) * 0.00035, 0, 0.35);
-
-    items.forEach(el=>{
-      const depth = parseFloat(el.dataset.depth || "0.2");
-      const baseX = 55 * depth;
-      const baseY = 42 * depth;
-
-      const moveX = tx * baseX;
-      const moveY = (ty * baseY) + (scrollInfluence * 40 * depth);
-
-      el.style.setProperty("--px", moveX.toFixed(2) + "px");
-      el.style.setProperty("--py", moveY.toFixed(2) + "px");
-    });
-
-    raf = requestAnimationFrame(tick);
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", startIntroVideo, { once:true });
+  }else{
+    startIntroVideo();
   }
 
-  window.addEventListener("mousemove", onMove, { passive:true });
-  window.addEventListener("scroll", ()=>{
-    if(!raf) raf = requestAnimationFrame(tick);
-  }, { passive:true });
+  window.addEventListener("load", function(){
+    if(video.paused){
+      startIntroVideo();
+    }
+  }, { once:true });
 
-  tick();
+  video.addEventListener("ended", function(){
+    // Keeps the intro playing continuously. Users can still pause/stop using controls.
+    video.currentTime = 0;
+    startIntroVideo();
+  });
 })();
+
 </script>
 
 </body>

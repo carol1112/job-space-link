@@ -1998,7 +1998,7 @@ header .auth-buttons .auth-text{
   </div>
 
   <nav>
-    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
+    <a href="home.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
@@ -2021,17 +2021,12 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
-    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
-    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
-    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard1.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
-  <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
-    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
-  
-  </div>
 
   <button
     type="button"
@@ -2047,7 +2042,7 @@ header .auth-buttons .auth-text{
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
@@ -2070,12 +2065,10 @@ header .auth-buttons .auth-text{
       </div>
     </div>
 
-    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker </span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
@@ -2126,7 +2119,7 @@ header .auth-buttons .auth-text{
             <i class="fa-solid fa-right-to-bracket"></i> Login
           </button>
 
-          <a class="btn secondary" id="signUpBtn" href="applicantform.html">
+          <a class="btn secondary" id="signUpBtn" href="applicantform1.html">
             <i class="fa-solid fa-user-plus"></i> Sign Up
           </a>
         </div>
@@ -2166,7 +2159,7 @@ header .auth-buttons .auth-text{
           <i class="fa-solid fa-user"></i> Edit / View Profile
         </a>
 
-        <a class="choice-link jobs" id="goJobsLink" href="postedhiring.html">
+        <a class="choice-link jobs" id="goJobsLink" href="postedhiring1.html">
           <i class="fa-solid fa-briefcase"></i> View Job Hiring
         </a>
       </div>
@@ -2319,6 +2312,7 @@ const goProfileLink = document.getElementById("goProfileLink");
 const goJobsLink = document.getElementById("goJobsLink");
 
 let __postLoginProfileUrl = "";
+const POST_LOGIN_REDIRECT_URL = "postedhiring1.html";
 
 function showError(msg){
   errorBox.textContent = msg || "";
@@ -2403,7 +2397,7 @@ document.addEventListener("keydown", (e)=>{
 goJobsLink.addEventListener("click", (e)=>{
   e.preventDefault();
   closeChoiceModal();
-  window.location.replace("postedhiring.html");
+  window.location.replace(POST_LOGIN_REDIRECT_URL);
 });
 
 goProfileLink.addEventListener("click", (e)=>{
@@ -2723,11 +2717,13 @@ form.addEventListener("submit", async (e)=>{
     goProfileLink.href = __postLoginProfileUrl;
     goProfileLink.classList.remove("disabled");
 
-    showSuccess("Login successful. Choose where to go next...");
-
-    setTimeout(()=>{
-      openChoiceModal(email);
-    }, 200);
+    /*
+      UPDATED LOGIN FLOW:
+      After successful login, do not open the after-login choice modal.
+      Redirect straight to postedhiring1.html.
+    */
+    showSuccess("Login successful. Redirecting to Job Hiring...");
+    window.location.replace(POST_LOGIN_REDIRECT_URL);
 
   } catch(err){
     showError(err?.message || "Unexpected login error.");

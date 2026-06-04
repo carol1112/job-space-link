@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Job Space Link | About</title>
+  <title>Job Space Link | Remote Work Opportunities</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
   <link rel="stylesheet" href="jobspacelink.css" />
+  
 
   <style>
 /* ============================================================
-   PAGE RESET + FIXED HEADER/FOOTER SPACE
+   PAGE RESET + FIXED FOOTER SPACING + SCROLL OFFSET
 =========================================================== */
 :root{ --header-h: 78px; }
 
-html, body{
+html, body {
   margin:0;
   padding:0;
   overflow-x:hidden;
-  min-height:100%;
+  height:100%;
 }
 
 html{
@@ -27,20 +28,15 @@ html{
 }
 
 body{
-  padding-top:var(--header-h);
-  padding-bottom:150px;
-  background:
-    radial-gradient(circle at top left, rgba(14,165,233,0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(139,92,246,0.14), transparent 30%),
-    linear-gradient(180deg, #081120 0%, #0f172a 35%, #0b1220 100%);
-  color:#ffffff;
+  padding-top: var(--header-h);
+  padding-bottom:100px;
+  background:#0f172a;
+  color:white;
   font-family:"Poppins",sans-serif;
 }
 
-a{ color:inherit; }
-
 /* ============================================================
-   HEADER - SAME FORMAT AS INDEX
+   HEADER - COMPRESSED
 =========================================================== */
 header{
   position:fixed;
@@ -61,21 +57,22 @@ header{
 }
 
 header .logo{
-  flex:0 0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  margin-left:-4px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-left: -4px;
+  min-width: 140px;
 }
 
 header .logo img{
-  height:80px;
-  width:auto;
-  display:block;
-  object-fit:contain;
-  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+  height: 100px;
+  width: auto;
+  max-width: 180px;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(0,198,255,0.45));
 }
-
 header nav{
   flex:1 1 auto;
   min-width:0;
@@ -160,9 +157,7 @@ header .auth-buttons a:hover{
   font-size:1rem;
 }
 
-/* ============================================================
-   MOBILE PANEL
-=========================================================== */
+/* Mobile panel */
 .mobile-panel{
   position:fixed;
   top:var(--header-h);
@@ -252,9 +247,11 @@ header .auth-buttons a:hover{
   flex:0 0 48px;
   width:48px;
   min-width:48px;
+  width:100%;
   display:flex;
   align-items:center;
-  justify-content:center;
+  justify-content:space-between;
+  gap:12px;
   padding:12px 14px;
   border-radius:12px;
   border:1px solid rgba(255,255,255,0.08);
@@ -270,6 +267,12 @@ header .auth-buttons a:hover{
   background:rgba(0,198,255,0.12);
   color:#fff;
   transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-toggle-left{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
 }
 
 .mobile-panel .mnav-toggle .mnav-caret{
@@ -296,7 +299,7 @@ header .auth-buttons a:hover{
 }
 
 /* ============================================================
-   ABOUT NAV DROPDOWN
+   ABOUT NAV FIX
 =========================================================== */
 .nav-dropdown{
   position:relative;
@@ -386,7 +389,7 @@ header .auth-buttons a:hover{
 }
 
 /* ============================================================
-   FLOATING BACKGROUND WORKERS
+   FLOATING WORKERS ONLY ON SECTIONS (NOT HEADER)
 =========================================================== */
 .bg-workers{
   position:fixed;
@@ -449,649 +452,348 @@ header .auth-buttons a:hover{
   50%{ transform: translate3d(calc(var(--px, 0px) + 10px), calc(var(--py, 0px) - 18px), 0) scale(var(--s, 1)); }
 }
 
-/* ============================================================
-   PAGE CONTENT STYLES
-=========================================================== */
-main,
-section,
-footer{
+section, footer, .slanted-divider{
   position:relative;
   z-index:2;
 }
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 rgba(0,198,255,0);}50%{box-shadow:0 0 28px rgba(0,198,255,0.24);}}
-@keyframes floatSoft{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
-
-.section-wrap{
-  max-width:1250px;
-  margin:0 auto;
-  padding:0 22px;
+/* ============================================================
+   HERO / SECTIONS
+=========================================================== */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
-.section-heading{
-  text-align:center;
-  margin-bottom:20px;
+@keyframes fadeInText{
+  from{opacity:0;}
+  to{opacity:1;}
 }
 
-.section-heading .eyebrow{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:7px 14px;
-  border-radius:999px;
-  border:1px solid rgba(125,211,252,0.24);
-  background:rgba(15,23,42,0.58);
-  color:#bae6fd;
-  font-size:0.86rem;
-  letter-spacing:0.03em;
-  backdrop-filter:blur(10px);
+@keyframes rotateGlow{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
 }
 
-.section-heading h2{
-  margin:16px 0 12px;
-  font-size:clamp(2rem, 4vw, 2.9rem);
-  line-height:1.15;
-  text-shadow:0 0 20px rgba(0,198,255,0.18);
-}
-
-.section-heading p{
-  max-width:840px;
-  margin:0 auto;
-  color:#cbd5e1;
-  font-size:1.04rem;
-  line-height:1.75;
-}
-
-.glass-card{
-  background:linear-gradient(180deg, rgba(15,23,42,0.78), rgba(15,23,42,0.62));
-  border:1px solid rgba(59,130,246,0.26);
-  border-radius:22px;
-  box-shadow:0 18px 50px rgba(2,8,23,0.36), 0 0 26px rgba(0,198,255,0.08);
-  backdrop-filter:blur(14px);
-}
-
-/* HERO */
 .hero{
+  flex-grow:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:60px 20px 80px;
   position:relative;
-  padding:70px 20px 70px;
-  overflow:hidden;
-}
-
-.hero::before,
-.hero::after{
-  content:"";
-  position:absolute;
-  border-radius:50%;
-  filter:blur(18px);
-  z-index:0;
 }
 
 .hero::before{
-  width:420px;
-  height:420px;
-  top:-90px;
-  left:-120px;
-  background:radial-gradient(circle, rgba(0,198,255,0.18), rgba(0,198,255,0));
-}
-
-.hero::after{
-  width:480px;
-  height:480px;
-  right:-130px;
-  top:-50px;
-  background:radial-gradient(circle, rgba(139,92,246,0.22), rgba(139,92,246,0));
-}
-
-.hero-inner{
-  position:relative;
-  z-index:1;
-  max-width:1240px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:1.15fr 0.85fr;
-  gap:34px;
-  align-items:center;
-}
-
-.hero-copy,
-.hero-panel{
-  animation:fadeUp 0.9s ease both;
-}
-
-.hero-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:9px;
-  padding:8px 16px;
-  border-radius:999px;
-  background:rgba(15,23,42,0.6);
-  border:1px solid rgba(125,211,252,0.25);
-  color:#bae6fd;
-  font-size:0.9rem;
-  margin-bottom:20px;
+  content:"";
+  position:absolute;
+  width:170%;
+  height:170%;
+  top:-35%;
+  left:-35%;
+  background:radial-gradient(circle,#00c6ff20,#8b5cf620,#0ea5e930);
+  animation:rotateGlow 20s linear infinite;
+  z-index:-1;
 }
 
 .hero h1{
-  margin:0;
-  font-size:clamp(2.5rem, 5vw, 4.35rem);
-  line-height:1.06;
-  letter-spacing:-0.02em;
-}
-
-.hero h1 .gradient-text{
-  background:linear-gradient(90deg,#7dd3fc 0%,#00c6ff 38%,#8b5cf6 100%);
+  font-size:3.2rem;
+  font-weight:800;
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 30px rgba(0,198,255,0.16);
+  text-shadow:0 0 30px rgba(0,198,255,0.4);
+  animation:fadeInText 1s ease;
 }
 
 .hero p{
-  max-width:760px;
-  margin:20px 0 0;
-  font-size:1.08rem;
-  line-height:1.2;
-  color:#dbeafe;
+  max-width:720px;
+  margin-top:25px;
+  font-size:1.3rem;
+  opacity:0;
+  animation:fadeUp 1.4s 0.3s forwards;
 }
 
-.hero-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:14px;
-  margin-top:10px;
+.slanted-divider{
+  width:100%;
+  height:70px;
+  background:linear-gradient(135deg,#00c6ff40,#8b5cf640);
+  clip-path:polygon(0 0,100% 20%,100% 100%,0 80%);
+  backdrop-filter:blur(10px);
+  border-top:1px solid rgba(147,51,234,0.45);
+  border-bottom:1px solid rgba(0,198,255,0.35);
+  box-shadow:0 0 25px rgba(147,51,234,0.35);
 }
 
-.hero-btn,
-.cta-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:14px 20px;
-  border-radius:14px;
-  text-decoration:none;
-  font-weight:600;
-  transition:transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+.about-section{
+  max-width:1200px;
+  margin:0 auto;
+  padding:100px 25px 60px;
+  text-align:center;
+  animation:fadeUp 1s ease;
 }
 
-.hero-btn.primary,
-.cta-btn.primary{
-  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
-  color:#061022;
-  box-shadow:0 14px 28px rgba(0,198,255,0.24);
+.about-section h2{
+  font-size:2.7rem;
+  margin-bottom:40px;
+  text-shadow:0 0 18px #00c6ff;
 }
 
-.hero-btn.secondary,
-.cta-btn.secondary{
-  background:rgba(15,23,42,0.56);
-  border:1px solid rgba(125,211,252,0.25);
-  color:#e0f2fe;
-}
-
-.hero-btn:hover,
-.cta-btn:hover{
-  transform:translateY(-3px);
-}
-
-.hero-highlights{
-  display:grid;
-  grid-template-columns:repeat(3, minmax(0,1fr));
-  gap:14px;
-  margin-top:28px;
-}
-
-.highlight-pill{
-  padding:12px 14px;
-  border-radius:16px;
-  background:rgba(15,23,42,0.55);
-  border:1px solid rgba(59,130,246,0.2);
-  color:#dbeafe;
-  font-size:0.95rem;
-}
-
-.highlight-pill i{
-  color:#7dd3fc;
-  margin-right:8px;
-}
-
-.hero-panel{
-  padding:28px;
-  position:relative;
-  overflow:hidden;
-}
-
-.hero-panel::before{
-  content:"";
-  position:absolute;
-  inset:-30% auto auto -15%;
-  width:230px;
-  height:230px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(0,198,255,0.18), transparent 65%);
-}
-
-.hero-panel::after{
-  content:"";
-  position:absolute;
-  right:-60px;
-  bottom:-80px;
-  width:240px;
-  height:240px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(139,92,246,0.14), transparent 70%);
-}
-
-.panel-top,
-.panel-bottom,
-.mini-stat{
-  position:relative;
-  z-index:1;
-}
-
-.panel-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:16px;
-}
-
-.panel-top .icon-wrap{
-  width:62px;
-  height:62px;
-  display:grid;
-  place-items:center;
-  border-radius:18px;
-  background:linear-gradient(135deg, rgba(0,198,255,0.18), rgba(139,92,246,0.18));
-  border:1px solid rgba(125,211,252,0.26);
-  color:#7dd3fc;
-  font-size:1.5rem;
-  animation:floatSoft 4s ease-in-out infinite;
-}
-
-.panel-top .status-chip{
-  padding:8px 12px;
-  border-radius:999px;
-  font-size:0.84rem;
-  color:#dcfce7;
-  border:1px solid rgba(74,222,128,0.22);
-  background:rgba(20,83,45,0.24);
-}
-
-.hero-panel h3{
-  margin:18px 0 10px;
-  font-size:1.55rem;
-}
-
-.hero-panel p{
-  margin:0;
-  color:#cbd5e1;
-  line-height:1.75;
-  font-size:0.98rem;
-}
-
-.panel-points{
-  margin:22px 0 0;
-  padding:0;
-  list-style:none;
-  display:grid;
-  gap:12px;
-}
-
-.panel-points li{
-  display:flex;
-  align-items:flex-start;
-  gap:12px;
-  color:#e2e8f0;
-  line-height:1.6;
-}
-
-.panel-points li i{
-  margin-top:4px;
-  color:#7dd3fc;
-}
-
-.panel-bottom{
-  margin-top:24px;
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:14px;
-}
-
-.mini-stat{
-  padding:18px 16px;
-  border-radius:18px;
-  background:rgba(2,6,23,0.34);
-  border:1px solid rgba(59,130,246,0.18);
-}
-
-.mini-stat strong{
-  display:block;
-  font-size:1.6rem;
-  color:#ffffff;
-}
-
-.mini-stat span{
-  display:block;
-  margin-top:6px;
-  color:#bfdbfe;
-  font-size:0.92rem;
-}
-
-/* OVERVIEW */
-.about-overview{
-  padding:16px 0 24px;
+.about-section p{
+  max-width:900px;
+  margin:0 auto;
+  font-size:1.15rem;
+  color:#e5e7eb;
+  line-height:1.7;
 }
 
 .about-cards{
-  display:grid;
-  grid-template-columns:repeat(3, minmax(0,1fr));
-  gap:22px;
-  margin-top:34px;
+  margin-top:50px;
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  flex-wrap:wrap;
 }
 
 .about-card{
-  padding:28px 24px;
-  transition:transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  width:320px;
+  background:rgba(15,23,42,0.7);
+  border:1px solid rgba(59,130,246,0.35);
+  border-radius:15px;
+  padding:25px 20px;
+  text-align:center;
+  box-shadow:0 0 25px rgba(0,198,255,0.2);
+  transition:0.35s ease;
+  backdrop-filter:blur(10px);
 }
 
 .about-card:hover{
-  transform:translateY(-7px);
-  border-color:rgba(125,211,252,0.42);
-  box-shadow:0 22px 45px rgba(2,8,23,0.42), 0 0 28px rgba(0,198,255,0.18);
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(0,198,255,0.45);
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
 }
 
-.about-card .card-icon{
-  width:64px;
-  height:64px;
-  border-radius:18px;
-  display:grid;
-  place-items:center;
-  font-size:1.55rem;
-  color:#7dd3fc;
-  background:linear-gradient(135deg, rgba(0,198,255,0.16), rgba(139,92,246,0.14));
-  border:1px solid rgba(125,211,252,0.18);
-  margin-bottom:18px;
+.about-card i{
+  font-size:2.5rem;
+  color:#00c6ff;
+  margin-bottom:15px;
 }
 
 .about-card h3{
-  margin:0 0 12px;
   font-size:1.3rem;
+  margin-bottom:10px;
+  color:#fff;
 }
 
 .about-card p{
-  margin:0;
-  color:#cbd5e1;
-  line-height:1.75;
-  font-size:0.98rem;
-}
-
-/* STATS */
-.stats-strip{
-  padding:34px 0 14px;
-}
-
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(4, minmax(0,1fr));
-  gap:18px;
-}
-
-.stat-box{
-  padding:24px 20px;
-  text-align:center;
-}
-
-.stat-box strong{
-  display:block;
-  font-size:2rem;
-  margin-bottom:6px;
-  color:#ffffff;
-}
-
-.stat-box span{
-  color:#bfdbfe;
-  font-size:0.96rem;
-  line-height:1.5;
-  display:block;
-}
-
-/* STORY */
-.story-section{
-  padding:62px 0 10px;
-}
-
-.story-grid{
-  display:grid;
-  grid-template-columns:1.1fr 0.9fr;
-  gap:24px;
-  align-items:stretch;
-}
-
-.story-main,
-.story-side{
-  padding:30px;
-}
-
-.story-main p,
-.story-side p{
-  color:#d6e2f0;
-  line-height:1.85;
-  margin:0;
-}
-
-.story-main h3,
-.story-side h3{
-  margin:0 0 14px;
-  font-size:1.45rem;
-}
-
-.story-main .story-columns{
-  margin-top:22px;
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:18px;
-}
-
-.story-point{
-  padding:20px 18px;
-  border-radius:18px;
-  background:rgba(2,6,23,0.32);
-  border:1px solid rgba(59,130,246,0.18);
-}
-
-.story-point h4{
-  margin:0 0 10px;
-  font-size:1.02rem;
-}
-
-.story-point p{
-  font-size:0.94rem;
-}
-
-.side-list{
-  list-style:none;
-  padding:0;
-  margin:20px 0 0;
-  display:grid;
-  gap:14px;
-}
-
-.side-list li{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-  color:#dbeafe;
+  font-size:0.95rem;
+  color:#d4d7dc;
   line-height:1.6;
 }
 
-.side-list i{
-  color:#7dd3fc;
-  margin-top:4px;
+#why-choose{
+  padding:120px 20px;
+  text-align:center;
 }
 
-/* PROCESS */
-.process-section{
-  padding:66px 0 10px;
+#why-choose h2{
+  font-size:2.4rem;
+  margin-bottom:40px;
+  text-shadow:0 0 18px #00c6ff;
 }
 
-.process-grid{
+.why-grid{
+  max-width:1200px;
+  margin:auto;
   display:grid;
-  grid-template-columns:repeat(4, minmax(0,1fr));
-  gap:18px;
-  margin-top:34px;
+  gap:28px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.process-card{
-  padding:26px 22px;
-  position:relative;
-}
-
-.process-number{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  font-weight:700;
-  color:#061022;
-  background:linear-gradient(90deg,#7dd3fc,#8b5cf6);
-  margin-bottom:16px;
-}
-
-.process-card h3{
-  margin:0 0 12px;
-  font-size:1.18rem;
-}
-
-.process-card p{
-  margin:0;
-  color:#cbd5e1;
-  line-height:1.75;
-  font-size:0.97rem;
-}
-
-/* AUDIENCE */
-.audience-section{
-  padding:66px 0 12px;
-}
-
-.audience-grid{
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:24px;
-}
-
-.audience-card{
-  padding:30px;
-}
-
-.audience-card .audience-icon{
-  width:58px;
-  height:58px;
+.why-card{
+  padding:28px;
   border-radius:16px;
-  display:grid;
-  place-items:center;
-  font-size:1.35rem;
-  margin-bottom:16px;
-  color:#7dd3fc;
-  background:linear-gradient(135deg, rgba(0,198,255,0.16), rgba(139,92,246,0.14));
-  border:1px solid rgba(125,211,252,0.22);
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 20px rgba(0,198,255,0.25);
+  transition:0.3s;
 }
 
-.audience-card h3{
-  margin:0 0 12px;
-  font-size:1.45rem;
+.why-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(0,198,255,0.45);
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
 }
 
-.audience-card p{
+.why-card i{
+  font-size:2.2rem;
+  margin-bottom:12px;
+  color:#00c6ff;
+}
+
+.employer-cta{
+  width:100%;
+  padding:100px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,#0ea5e955,#8b5cf655);
+  border-top:1px solid rgba(0,198,255,0.4);
+  border-bottom:1px solid rgba(147,51,234,0.35);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 30px rgba(0,198,255,0.25);
+  margin-top:80px;
+  animation:fadeUp 0.8s ease;
+}
+
+.employer-cta .cta-content{
+  max-width:900px;
+  margin:auto;
+}
+
+.employer-cta h2{
+  font-size:2.4rem;
+  font-weight:700;
+  margin-bottom:18px;
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 18px rgba(0,198,255,0.5);
+}
+
+.employer-cta p{
+  font-size:1.15rem;
   color:#dbeafe;
-  line-height:1.8;
-  margin:0 0 16px;
-}
-
-.audience-card ul{
-  list-style:none;
-  padding:0;
-  margin:0;
-  display:grid;
-  gap:12px;
-}
-
-.audience-card li{
-  display:flex;
-  align-items:flex-start;
-  gap:11px;
-  color:#cbd5e1;
+  max-width:700px;
+  margin:0 auto 28px;
   line-height:1.6;
 }
 
-.audience-card li i{
-  color:#7dd3fc;
-  margin-top:4px;
+.cta-button{
+  display:inline-block;
+  padding:14px 40px;
+  font-size:1.1rem;
+  font-weight:600;
+  border-radius:12px;
+  text-decoration:none;
+  color:white;
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
+  background-size:200%;
+  transition:0.35s ease;
+  box-shadow:0 0 30px rgba(147,51,234,0.45);
 }
 
-/* CTA */
-.cta-section{
-  padding:72px 0 30px;
+.cta-button:hover{
+  background-position:100% 0;
+  transform:translateY(-4px);
+  box-shadow:0 0 40px rgba(147,51,234,0.6);
 }
 
-.cta-box{
-  padding:36px 30px;
+#how-it-works{
+  padding:120px 20px;
   text-align:center;
-  position:relative;
-  overflow:hidden;
-  animation:pulseGlow 6s ease-in-out infinite;
 }
 
-.cta-box::before{
-  content:"";
-  position:absolute;
-  inset:auto auto -120px -60px;
-  width:260px;
-  height:260px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(0,198,255,0.14), transparent 70%);
+#how-it-works h2{
+  font-size:2.4rem;
+  margin-bottom:40px;
+  text-shadow:0 0 18px #00c6ff;
 }
 
-.cta-box::after{
-  content:"";
-  position:absolute;
-  top:-110px;
-  right:-70px;
-  width:250px;
-  height:250px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(139,92,246,0.16), transparent 70%);
+.steps{
+  max-width:1100px;
+  margin:auto;
+  display:grid;
+  gap:35px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.cta-box > *{
-  position:relative;
-  z-index:1;
+.step{
+  padding:30px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);
+  transition:0.3s;
 }
 
-.cta-box h2{
-  margin:0 0 14px;
-  font-size:clamp(2rem, 4vw, 2.7rem);
+.step:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(0,198,255,0.45);
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
 }
 
-.cta-box p{
-  max-width:760px;
-  margin:0 auto;
-  color:#dbeafe;
-  line-height:1.8;
+.step span{
+  display:inline-block;
+  font-size:2rem;
+  padding:10px 18px;
+  background:#00c6ff;
+  color:#000;
+  border-radius:10px;
+  margin-bottom:10px;
 }
 
-.cta-actions{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:14px;
-  margin-top:26px;
+.applicant-cta{
+  width:100%;
+  padding:100px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,#8b5cf655,#00c6ff55);
+  border-top:1px solid rgba(147,51,234,0.45);
+  border-bottom:1px solid rgba(0,198,255,0.45);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 35px rgba(0,198,255,0.22);
+  margin-top:80px;
+  animation:fadeUp 0.9s ease;
 }
 
-/* FOOTER - SAME FORMAT AS INDEX */
+.applicant-cta .cta-content{
+  max-width:900px;
+  margin:auto;
+}
+
+.applicant-cta h2{
+  font-size:2.4rem;
+  font-weight:700;
+  margin-bottom:18px;
+  background:linear-gradient(90deg,#8b5cf6,#00c6ff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 18px rgba(147,51,234,0.55);
+}
+
+.applicant-cta p{
+  font-size:1.15rem;
+  color:#dce3ff;
+  max-width:700px;
+  margin:0 auto 28px;
+  line-height:1.6;
+}
+
+.cta-button.applicant{
+  display:inline-block;
+  padding:14px 40px;
+  font-size:1.1rem;
+  font-weight:600;
+  border-radius:12px;
+  text-decoration:none;
+  color:white;
+  background:linear-gradient(90deg,#8b5cf6,#00c6ff,#8b5cf6);
+  background-size:200%;
+  transition:0.35s ease;
+  box-shadow:0 0 30px rgba(0,198,255,0.45);
+}
+
+.cta-button.applicant:hover{
+  background-position:100% 0;
+  transform:translateY(-4px);
+  box-shadow:0 0 40px rgba(0,198,255,0.8);
+}
+
+/* Footer */
 .footer-simple{
   position:fixed;
   bottom:0;
@@ -1127,141 +829,6 @@ footer{
   white-space:nowrap;
 }
 
-
-/* ============================================================
-   DESKTOP HERO COMPRESSION PATCH
-   Compress marked hero content on desktop only
-============================================================ */
-@media (min-width: 1024px){
-  .hero{
-    padding:36px 18px 24px;
-    min-height:calc(100vh - var(--header-h) - 82px);
-    display:flex;
-    align-items:center;
-  }
-
-  .hero-inner{
-    max-width:1180px;
-    grid-template-columns:minmax(0, 1.08fr) minmax(400px, 0.92fr);
-    gap:20px;
-    align-items:stretch;
-  }
-
-  .hero-copy{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-  }
-
-  .hero-badge{
-    gap:8px;
-    padding:6px 12px;
-    margin-bottom:12px;
-    font-size:0.80rem;
-  }
-
-  .hero h1{
-    max-width:700px;
-    font-size:clamp(2.7rem, 4.25vw, 4rem);
-    line-height:1.01;
-  }
-
-  .hero p{
-    max-width:670px;
-    margin-top:14px;
-    font-size:1rem;
-    line-height:1.48;
-  }
-
-  .hero-actions{
-    gap:10px;
-    margin-top:18px;
-  }
-
-  .hero-btn,
-  .cta-btn{
-    gap:8px;
-    padding:12px 18px;
-    border-radius:13px;
-    font-size:0.96rem;
-  }
-
-  .hero-highlights{
-    gap:10px;
-    margin-top:18px;
-  }
-
-  .highlight-pill{
-    padding:10px 12px;
-    border-radius:14px;
-    font-size:0.88rem;
-    line-height:1.35;
-  }
-
-  .hero-panel{
-    padding:22px 22px 18px;
-    align-self:center;
-  }
-
-  .panel-top{
-    gap:12px;
-  }
-
-  .panel-top .icon-wrap{
-    width:54px;
-    height:54px;
-    border-radius:16px;
-    font-size:1.3rem;
-  }
-
-  .panel-top .status-chip{
-    padding:6px 10px;
-    font-size:0.76rem;
-  }
-
-  .hero-panel h3{
-    margin:14px 0 8px;
-    font-size:1.34rem;
-  }
-
-  .hero-panel p{
-    font-size:0.94rem;
-    line-height:1.58;
-  }
-
-  .panel-points{
-    margin-top:14px;
-    gap:10px;
-  }
-
-  .panel-points li{
-    gap:10px;
-    line-height:1.5;
-    font-size:0.94rem;
-  }
-
-  .panel-bottom{
-    margin-top:16px;
-    gap:10px;
-  }
-
-  .mini-stat{
-    padding:14px 14px 12px;
-    border-radius:16px;
-  }
-
-  .mini-stat strong{
-    font-size:1.28rem;
-    line-height:1.05;
-  }
-
-  .mini-stat span{
-    margin-top:4px;
-    font-size:0.84rem;
-    line-height:1.34;
-  }
-}
-
 /* ============================================================
    RESPONSIVE
 =========================================================== */
@@ -1295,20 +862,6 @@ footer{
   }
 }
 
-@media (max-width: 1080px){
-  .hero-inner,
-  .story-grid,
-  .audience-grid{
-    grid-template-columns:1fr;
-  }
-
-  .about-cards,
-  .process-grid,
-  .stats-grid{
-    grid-template-columns:repeat(2, minmax(0,1fr));
-  }
-}
-
 @media (max-width: 920px){
   header{
     justify-content:space-between;
@@ -1328,51 +881,11 @@ footer{
   }
 }
 
-@media (max-width: 768px){
-
-  
-  body{
-    padding-bottom:165px;
-  }
-
-  .hero{
-    padding:78px 18px 72px;
-  }
-
-  .hero-highlights,
-  .panel-bottom,
-  .story-main .story-columns,
-  .about-cards,
-  .process-grid,
-  .stats-grid,
-  .audience-grid{
-    grid-template-columns:1fr;
-  }
-
-  .hero-actions,
-  .cta-actions{
-    flex-direction:column;
-  }
-
-  .hero-btn,
-  .cta-btn{
-    width:100%;
-  }
-
-  .hero-panel,
-  .story-main,
-  .story-side,
-  .audience-card,
-  .cta-box{
-    padding:24px 20px;
-  }
-}
-
 @media (max-width: 480px){
   :root{ --header-h: 72px; }
 
   body{
-    padding-bottom:178px;
+    padding-bottom:170px;
   }
 
   header{
@@ -1385,10 +898,6 @@ footer{
 
   header .logo img{
     height:42px;
-  }
-
-  .section-wrap{
-    padding:0 16px;
   }
 
   .footer-simple{
@@ -1417,15 +926,14 @@ footer{
     transform:none !important;
   }
 
-  .hero-panel .icon-wrap,
-  .cta-box{
+  .hero::before{
     animation:none !important;
   }
 }
   
 /* ============================================================
    FINAL HEADER RESPONSIVE PATCH
-   Header refined across exact requested breakpoints
+   Exact requested breakpoints
 ============================================================ */
 
 /* ===== 1800px and above ===== */
@@ -1448,10 +956,12 @@ footer{
 
   header nav{
     display:flex !important;
-    gap:20px !important;
-    margin-left:10px !important;
     flex:1 1 auto !important;
     min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
     white-space:nowrap !important;
   }
 
@@ -1515,10 +1025,12 @@ footer{
 
   header nav{
     display:flex !important;
-    gap:15px !important;
-    margin-left:7px !important;
     flex:1 1 auto !important;
     min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:15px !important;
+    margin-left:7px !important;
     white-space:nowrap !important;
   }
 
@@ -1578,10 +1090,12 @@ footer{
 
   header nav{
     display:flex !important;
-    gap:9px !important;
-    margin-left:3px !important;
     flex:1 1 auto !important;
     min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:9px !important;
+    margin-left:3px !important;
     white-space:nowrap !important;
   }
 
@@ -1646,10 +1160,12 @@ footer{
 
   header nav{
     display:flex !important;
-    gap:7px !important;
-    margin-left:2px !important;
     flex:1 1 auto !important;
     min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
     white-space:nowrap !important;
   }
 
@@ -1700,9 +1216,9 @@ footer{
 
   header{
     height:var(--header-h) !important;
-    gap:2px !important;
+    gap:8px !important;
     padding:0 12px 0 8px !important;
-    justify-content:flex-start !important;
+    justify-content:space-between !important;
     align-items:center !important;
   }
 
@@ -1711,6 +1227,9 @@ footer{
     margin-left:0 !important;
     margin-right:0 !important;
     flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
   }
 
   header .logo img{
@@ -1726,8 +1245,8 @@ footer{
     width:40px !important;
     height:40px !important;
     border-radius:10px !important;
-    margin-left:1px !important;
-    margin-right:auto !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
     flex:0 0 auto !important;
     align-self:center !important;
   }
@@ -1749,16 +1268,13 @@ footer{
     font-size:0.88rem !important;
   }
 
-  .mobile-panel .mnav-toggle{
-    width:48px !important;
-    min-width:48px !important;
-    justify-content:center !important;
-    padding-left:0 !important;
-    padding-right:0 !important;
-  }
-
   .mobile-panel .mnav-submenu{
     padding-left:12px !important;
+  }
+
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
   }
 }
 
@@ -1768,9 +1284,9 @@ footer{
 
   header{
     height:var(--header-h) !important;
-    gap:1px !important;
+    gap:8px !important;
     padding:0 10px 0 8px !important;
-    justify-content:flex-start !important;
+    justify-content:space-between !important;
     align-items:center !important;
   }
 
@@ -1797,8 +1313,8 @@ footer{
     width:38px !important;
     height:38px !important;
     border-radius:9px !important;
-    margin-left:0 !important;
-    margin-right:auto !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
     flex:0 0 auto !important;
     align-self:center !important;
   }
@@ -1820,231 +1336,95 @@ footer{
     font-size:0.84rem !important;
   }
 
-  .mobile-panel .mnav-toggle{
-    width:46px !important;
-    min-width:46px !important;
-    justify-content:center !important;
-    padding-left:0 !important;
-    padding-right:0 !important;
-  }
-
   .mobile-panel .mnav-submenu{
     padding-left:10px !important;
   }
 
-  .footer-simple{
-    flex-direction:column;
-    height:auto;
-    padding:10px 0 15px;
-    gap:10px;
-  }
-
-  .footer-simple .footer-logo img{
-    height:40px;
-  }
-
-  .worker-float.w3,
-  .worker-float.w4,
-  .worker-float.w5,
-  .worker-float.w6{
-    display:none;
+  .why-grid,
+  .steps{
+    grid-template-columns:1fr !important;
   }
 }
 
 
 /* ============================================================
-   FINAL MOBILE HEADER IMAGE-MATCH PATCH
-   Hamburger left + logo right inside header
+   FINAL MOBILE HEADER LOCK
+   Force logo left + hamburger right inside header
 ============================================================ */
 @media (max-width: 768px){
   header{
-    display:flex !important;
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
     align-items:center !important;
-    justify-content:space-between !important;
-    gap:10px !important;
-    padding:0 12px !important;
+    column-gap:10px !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    min-width:0 !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    margin:0 !important;
   }
 
   header nav,
   header .auth-buttons{
     display:none !important;
   }
-
-  .nav-toggle{
-    order:1 !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    flex:0 0 auto !important;
-    margin-left:0 !important;
-    margin-right:auto !important;
-    position:relative !important;
-    left:0 !important;
-    right:auto !important;
-  }
-
-  header .logo{
-    order:2 !important;
-    flex:0 0 auto !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:flex-end !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
-    min-width:0 !important;
-  }
-
-  header .logo img{
-    display:block !important;
-    margin:0 !important;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px){
-  header{
-    padding:0 12px !important;
-  }
-
-  .nav-toggle{
-    width:40px !important;
-    height:40px !important;
-    border-radius:10px !important;
-    margin-left:0 !important;
-    margin-right:auto !important;
-  }
-
-  header .logo{
-    margin-left:auto !important;
-    margin-right:0 !important;
-  }
-
-  header .logo img{
-    height:54px !important;
-  }
 }
 
 @media (max-width: 480px){
   header{
-    padding:0 10px !important;
-    gap:8px !important;
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+
+  header .logo img{
+    height:48px !important;
   }
 
   .nav-toggle{
     width:38px !important;
     height:38px !important;
-    border-radius:9px !important;
-    margin-left:0 !important;
-    margin-right:auto !important;
   }
+}
 
-  header .logo{
-    margin-left:auto !important;
-    margin-right:0 !important;
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    padding-left:8px !important;
+    padding-right:10px !important;
   }
 
   header .logo img{
-    height:50px !important;
+    height:52px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
   }
 }
 
 
 
 /* ============================================================
-   FINAL MOBILE HEADER LOCK PATCH
-   Logo left + hamburger right inside header
-============================================================ */
-@media (max-width: 768px){
-  body > header{
-    display:grid !important;
-    grid-template-columns:auto 1fr auto !important;
-    align-items:center !important;
-    column-gap:10px !important;
-    row-gap:0 !important;
-    justify-content:initial !important;
-    padding:0 12px !important;
-  }
-
-  body > header nav,
-  body > header .auth-buttons{
-    display:none !important;
-  }
-
-  body > header .logo{
-    grid-column:1 !important;
-    justify-self:start !important;
-    align-self:center !important;
-    margin:0 !important;
-    order:unset !important;
-    width:max-content !important;
-    min-width:0 !important;
-    flex:none !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-  }
-
-  body > header .logo img{
-    display:block !important;
-    margin:0 !important;
-    width:auto !important;
-    max-width:none !important;
-  }
-
-  body > header .nav-toggle{
-    grid-column:3 !important;
-    justify-self:end !important;
-    align-self:center !important;
-    margin:0 !important;
-    order:unset !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    position:relative !important;
-    left:auto !important;
-    right:auto !important;
-    flex:none !important;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px){
-  body > header{
-    padding:0 12px !important;
-    column-gap:10px !important;
-  }
-
-  body > header .logo img{
-    height:54px !important;
-  }
-
-  body > header .nav-toggle{
-    width:40px !important;
-    height:40px !important;
-    border-radius:10px !important;
-  }
-}
-
-@media (max-width: 480px){
-  body > header{
-    padding:0 10px !important;
-    column-gap:8px !important;
-  }
-
-  body > header .logo img{
-    height:50px !important;
-  }
-
-  body > header .nav-toggle{
-    width:38px !important;
-    height:38px !important;
-    border-radius:9px !important;
-  }
-}
-
-
-/* ============================================================
-   INDEX HEADER ICON + NO-OVERLAP PATCH
-   Applied from the updated index header so this page matches the
-   same header style, functionality, dropdown behavior, and mobile layout.
+   NAV ICON + NO-OVERLAP HEADER PATCH
+   Adds icons to every nav item and compresses safely by screen size.
 ============================================================ */
 header nav > a,
 header nav .nav-main-link{
@@ -2214,107 +1594,24 @@ header nav .nav-text,
 }
 
 @media (max-width:768px){
-  body > header{
-    display:grid !important;
-    grid-template-columns:auto 1fr auto !important;
-    align-items:center !important;
-    column-gap:10px !important;
-    row-gap:0 !important;
-    justify-content:initial !important;
-    padding:0 12px !important;
-  }
-
-  body > header nav,
-  body > header .auth-buttons{
-    display:none !important;
-  }
-
-  body > header .logo{
-    grid-column:1 !important;
-    justify-self:start !important;
-    align-self:center !important;
-    margin:0 !important;
-    order:unset !important;
-    width:max-content !important;
-    min-width:0 !important;
-    flex:none !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-  }
-
-  body > header .logo img{
-    display:block !important;
-    margin:0 !important;
-    width:auto !important;
-    max-width:none !important;
-  }
-
-  body > header .nav-toggle{
-    grid-column:3 !important;
-    justify-self:end !important;
-    align-self:center !important;
-    margin:0 !important;
-    order:unset !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    position:relative !important;
-    left:auto !important;
-    right:auto !important;
-    flex:none !important;
-  }
-
   .mobile-panel{
     max-height:calc(100vh - var(--header-h)) !important;
     overflow-y:auto !important;
     overflow-x:hidden !important;
   }
-
   .mobile-panel .mnav a,
   .mobile-panel .mnav-main-link{
     justify-content:space-between !important;
   }
 }
 
-@media (min-width:481px) and (max-width:768px){
-  body > header{
-    padding:0 12px !important;
-    column-gap:10px !important;
-  }
-
-  body > header .logo img{
-    height:54px !important;
-  }
-
-  body > header .nav-toggle{
-    width:40px !important;
-    height:40px !important;
-    border-radius:10px !important;
-  }
-}
-
 @media (max-width:480px){
-  body > header{
-    padding:0 10px !important;
-    column-gap:8px !important;
-  }
-
-  body > header .logo img{
-    height:50px !important;
-  }
-
-  body > header .nav-toggle{
-    width:38px !important;
-    height:38px !important;
-    border-radius:9px !important;
-  }
-
   .mobile-panel .mnav-left{ gap:9px !important; }
   .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
   .mobile-panel .mnav-row{ grid-template-columns:minmax(0, 1fr) 42px !important; gap:7px !important; }
   .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
 }
+
 
 /* ============================================================
    FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
@@ -2509,6 +1806,131 @@ header .auth-buttons .auth-text{
 }
 
 
+/* ============================================================
+   FINAL LOGIN BUTTON IMAGE-MATCH PATCH
+   Default: bright blue/purple button.
+   Hover/focus: dark outlined button like the attached hover image.
+   Functionality/link behavior remains unchanged.
+============================================================ */
+header .auth-buttons a.admin,
+header .auth-buttons a.jobseeker-auth{
+  height:38px !important;
+  min-height:38px !important;
+  padding:0 13px !important;
+  gap:7px !important;
+  border-radius:10px !important;
+  color:#ffffff !important;
+  text-decoration:none !important;
+  font-size:0.84rem !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+  border:1px solid rgba(125,211,252,0.42) !important;
+  background:
+    linear-gradient(135deg, #1ecbff 0%, #22a6ff 46%, #8b5cf6 100%) !important;
+  box-shadow:
+    0 0 18px rgba(34,211,238,0.34),
+    0 0 14px rgba(139,92,246,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.25) !important;
+  transform:none !important;
+  cursor:pointer !important;
+}
+
+header .auth-buttons a.admin::before,
+header .auth-buttons a.jobseeker-auth::before{
+  display:none !important;
+}
+
+header .auth-buttons a.admin i,
+header .auth-buttons a.jobseeker-auth i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  color:#ffffff !important;
+  font-size:0.86rem !important;
+  line-height:1 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  transform:none !important;
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease !important;
+}
+
+header .auth-buttons a.admin .auth-text,
+header .auth-buttons a.jobseeker-auth .auth-text{
+  color:#ffffff !important;
+  line-height:1 !important;
+}
+
+header .auth-buttons a.admin:hover,
+header .auth-buttons a.admin:focus-visible,
+header .auth-buttons a.jobseeker-auth:hover,
+header .auth-buttons a.jobseeker-auth:focus-visible{
+  color:#ffffff !important;
+  border-color:rgba(59,130,246,0.95) !important;
+  background:#1f2937 !important;
+  box-shadow:
+    0 0 0 1px rgba(59,130,246,0.18),
+    0 0 12px rgba(59,130,246,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transform:none !important;
+}
+
+header .auth-buttons a.admin:hover i,
+header .auth-buttons a.admin:focus-visible i,
+header .auth-buttons a.jobseeker-auth:hover i,
+header .auth-buttons a.jobseeker-auth:focus-visible i{
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.20) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.14) !important;
+  transform:none !important;
+}
+
+/* Keep the same button behavior responsive without breaking compressed headers */
+@media (min-width:1024px) and (max-width:1439px){
+  header .auth-buttons a.admin,
+  header .auth-buttons a.jobseeker-auth{
+    height:32px !important;
+    min-height:32px !important;
+    padding:0 8px !important;
+    gap:5px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+  }
+
+  header .auth-buttons a.admin i,
+  header .auth-buttons a.jobseeker-auth i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header .auth-buttons a.admin,
+  header .auth-buttons a.jobseeker-auth{
+    height:28px !important;
+    min-height:28px !important;
+    padding:0 5px !important;
+    gap:3px !important;
+    font-size:0.56rem !important;
+    border-radius:8px !important;
+  }
+
+  header .auth-buttons a.admin i,
+  header .auth-buttons a.jobseeker-auth i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
+  }
+}
 
 </style>
 </head>
@@ -2548,11 +1970,12 @@ header .auth-buttons .auth-text{
     <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
     <a href="dashboard1.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
     <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
-    <a href="applicantform1.html"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
+    <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
   <div class="auth-buttons">
     <a href="index1.html" class="admin jobseeker-auth"><i class="fa-solid fa-right-to-bracket"></i><span class="auth-text">Login</span></a>
+  
   </div>
 
   <button
@@ -2566,7 +1989,7 @@ header .auth-buttons .auth-text{
   </button>
 </header>
 
-<!-- BACKGROUND WORKERS -->
+<!-- BACKGROUND WORKERS LAYER -->
 <div class="bg-workers" aria-hidden="true">
   <img class="worker-float w1 depth-far" data-depth="0.14" src="w1.jpg" alt="" style="left:6%; top:18%; width:180px; --s:1;" />
   <img class="worker-float w2 depth-far" data-depth="0.16" src="w2.jpg" alt="" style="left:74%; top:10%; width:210px; --s:1;" />
@@ -2576,7 +1999,7 @@ header .auth-buttons .auth-text{
   <img class="worker-float w6 depth-near" data-depth="0.32" src="w6.jpg" alt="" style="left:36%; top:76%; width:260px; --s:1;" />
 </div>
 
-<!-- MOBILE PANEL -->
+<!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
@@ -2606,288 +2029,156 @@ header .auth-buttons .auth-text{
     <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="index1.html"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index1.html"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text"> Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
-<main>
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-copy">
-        <div class="hero-badge">
-          <i class="fa-solid fa-globe"></i>
-          Connecting Global Employers and Remote Professionals
-        </div>
+<!-- HERO SECTION -->
+<section class="hero">
+  <h1>Job Space Link</h1>
+  <p>Connecting global employers with talented remote professionals — anytime, anywhere.</p>
+</section>
 
-        <h1>Build stronger remote teams with <span class="gradient-text">Job Space Link</span></h1>
-        <p>
-          Job Space Link is built to make remote hiring simpler, faster, and more dependable. We help employers find qualified professionals and help jobseekers discover real opportunities that match their skills, goals, and preferred way of working.
-        </p>
+<div class="slanted-divider"></div>
 
-        <div class="hero-actions">
-          <a href="postedhiring1.html" class="hero-btn primary">
-            <i class="fa-solid fa-briefcase"></i>
-            Explore Jobs
-          </a>
-          <a href="postjob1.html" class="hero-btn secondary">
-            <i class="fa-solid fa-plus"></i>
-            Post a Job
-          </a>
-        </div>
+<!-- ABOUT SECTION -->
+<section class="about-section" id="about">
+  <h2>What is Job Space Link?</h2>
+  <p>
+    Job Space Link is a global platform designed to connect international employers
+    with talented remote professionals. Whether you're searching for flexible work-from-home
+    opportunities or seeking world-class remote staff, Job Space Link provides a smooth,
+    secure, and efficient hiring experience.
+  </p>
 
-        <div class="hero-highlights">
-          <div class="highlight-pill"><i class="fa-solid fa-check"></i> Remote-first job marketplace</div>
-          <div class="highlight-pill"><i class="fa-solid fa-check"></i> Faster employer-jobseeker matching</div>
-          <div class="highlight-pill"><i class="fa-solid fa-check"></i> Built for global hiring access</div>
-        </div>
-      </div>
-
-      <div class="hero-panel glass-card">
-        <div class="panel-top">
-          <div class="icon-wrap">
-            <i class="fa-solid fa-network-wired"></i>
-          </div>
-          <div class="status-chip">Platform Vision • Active</div>
-        </div>
-
-        <h3>Why Job Space Link exists</h3>
-        <p>
-          We created Job Space Link to reduce the gap between great employers and great remote talent. Our goal is to give both sides a professional, accessible, and efficient way to connect without unnecessary friction.
-        </p>
-
-        <ul class="panel-points">
-          <li><i class="fa-solid fa-circle-check"></i><span>Clearer pathways for employers to publish openings and attract qualified candidates.</span></li>
-          <li><i class="fa-solid fa-circle-check"></i><span>A stronger online space for remote professionals to present their skills and apply confidently.</span></li>
-          <li><i class="fa-solid fa-circle-check"></i><span>A modern platform experience focused on speed, visibility, and growth.</span></li>
-        </ul>
-
-        <div class="panel-bottom">
-          <div class="mini-stat">
-            <strong>Remote</strong>
-            <span>Focused on flexible and work-from-home opportunities.</span>
-          </div>
-          <div class="mini-stat">
-            <strong>Global</strong>
-            <span>Designed to support international employers and talent.</span>
-          </div>
-        </div>
-      </div>
+  <div class="about-cards">
+    <div class="about-card">
+      <i class="fa-solid fa-laptop-code"></i>
+      <h3>Remote Talent Marketplace</h3>
+      <p>Find skilled remote workers for customer service, admin support, IT, marketing, and more.</p>
     </div>
-  </section>
 
-  <!-- OVERVIEW -->
-  <section class="about-overview">
-    <div class="section-wrap">
-      <div class="section-heading">
-        <span class="eyebrow"><i class="fa-solid fa-circle-info"></i> About the platform</span>
-        <h2>What is Job Space Link</h2>
-        <p>
-          Job Space Link is a global platform designed to connect international employers
-          with talented remote professionals. Whether you're searching for flexible work-from-home
-          opportunities or seeking world-class remote staff, Job Space Link provides a smooth,
-          secure, and efficient hiring experience.
-        </p>
-      </div>
-
-      <div class="about-cards">
-        <article class="about-card glass-card">
-          <div class="card-icon">
-            <i class="fa-solid fa-laptop-code"></i>
-          </div>
-          <h3>Remote Talent Marketplace</h3>
-          <p>
-            Discover skilled remote professionals across customer support, administration, finance, marketing, technology, and other key business functions.
-          </p>
-        </article>
-
-        <article class="about-card glass-card">
-          <div class="card-icon">
-            <i class="fa-solid fa-bolt"></i>
-          </div>
-          <h3>Faster Hiring Flow</h3>
-          <p>
-            Employers can publish openings, improve visibility, and move candidates through the hiring process with a smoother and more organized experience.
-          </p>
-        </article>
-
-        <article class="about-card glass-card">
-          <div class="card-icon">
-            <i class="fa-solid fa-earth-asia"></i>
-          </div>
-          <h3>Global Opportunities</h3>
-          <p>
-            Jobseekers gain access to broader remote opportunities, helping talented professionals work with companies beyond local boundaries.
-          </p>
-        </article>
-      </div>
+    <div class="about-card">
+      <i class="fa-solid fa-briefcase"></i>
+      <h3>Fast Hiring Process</h3>
+      <p>Employers can post jobs instantly and receive qualified applicants in real time.</p>
     </div>
-  </section>
 
-  <!-- STATS -->
-  <section class="stats-strip">
-    <div class="section-wrap">
-      <div class="stats-grid">
-        <div class="stat-box glass-card">
-          <strong>1 Platform</strong>
-          <span>One central place to post jobs, apply, and connect remotely.</span>
-        </div>
-        <div class="stat-box glass-card">
-          <strong>2 Sides</strong>
-          <span>Built equally for employers searching and professionals applying.</span>
-        </div>
-        <div class="stat-box glass-card">
-          <strong>Remote-Ready</strong>
-          <span>Designed around digital-first work opportunities and hiring needs.</span>
-        </div>
-        <div class="stat-box glass-card">
-          <strong>Global Reach</strong>
-          <span>Supports cross-border hiring and broader candidate visibility.</span>
-        </div>
-      </div>
+    <div class="about-card">
+      <i class="fa-solid fa-globe"></i>
+      <h3>Global Opportunities</h3>
+      <p>Discover remote career opportunities with companies worldwide — no boundaries.</p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- STORY -->
-  <section class="story-section">
-    <div class="section-wrap">
-      <div class="story-grid">
-        <div class="story-main glass-card">
-          <h3>Our mission</h3>
-          <p>
-            Job Space Link aims to create a dependable bridge between opportunity and talent. We believe remote hiring should feel professional, transparent, and accessible. That means giving employers a better way to discover capable people and giving jobseekers a better place to be found.
-          </p>
+<!-- WHY CHOOSE -->
+<section class="hero">
+  <h1>Why Choose Job Space Link</h1>
+  <p>We make hiring and getting hired easier, safer, and faster — for global remote work.</p>
+</section>
 
-          <div class="story-columns">
-            <div class="story-point">
-              <h4>For employers</h4>
-              <p>Make remote recruitment more efficient through better exposure, simpler posting, and clearer access to qualified applicants.</p>
-            </div>
-            <div class="story-point">
-              <h4>For jobseekers</h4>
-              <p>Create more visibility for skills, experience, and work readiness in a market where remote careers continue to grow.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="story-side glass-card">
-          <h3>What makes the platform valuable</h3>
-          <p>
-            Beyond listing openings, Job Space Link is positioned as a connection space where remote work becomes easier to discover, evaluate, and act on.
-          </p>
-
-          <ul class="side-list">
-            <li><i class="fa-solid fa-arrow-right"></i><span>Clean pathways from job discovery to application.</span></li>
-            <li><i class="fa-solid fa-arrow-right"></i><span>Stronger branding for employers posting remote roles.</span></li>
-            <li><i class="fa-solid fa-arrow-right"></i><span>Improved presentation of platform purpose and trust.</span></li>
-            <li><i class="fa-solid fa-arrow-right"></i><span>A more polished About page that supports your site credibility.</span></li>
-          </ul>
-        </div>
-      </div>
+<section id="why-choose">
+  <h2>Our Advantages</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <i class="fa-solid fa-earth-americas"></i>
+      <h3>Global Talent Pool</h3>
+      <p>Hire or get hired by companies across the world.</p>
     </div>
-  </section>
-
-  <!-- PROCESS -->
-  <section class="process-section">
-    <div class="section-wrap">
-      <div class="section-heading">
-        <span class="eyebrow"><i class="fa-solid fa-diagram-project"></i> Platform flow</span>
-        <h2>How Job Space Link Platform Works</h2>
-        <p>
-          The platform is designed to keep the path from opportunity to connection simple and understandable for both sides.
-        </p>
-      </div>
-
-      <div class="process-grid">
-        <article class="process-card glass-card">
-          <div class="process-number">01</div>
-          <h3>Post or discover</h3>
-          <p>Employers publish openings while jobseekers explore remote roles that fit their skills and career goals.</p>
-        </article>
-
-        <article class="process-card glass-card">
-          <div class="process-number">02</div>
-          <h3>Present skills clearly</h3>
-          <p>Applicants share their qualifications while employers provide role expectations, requirements, and business context.</p>
-        </article>
-
-        <article class="process-card glass-card">
-          <div class="process-number">03</div>
-          <h3>Connect faster</h3>
-          <p>The platform supports more direct visibility between hiring companies and professionals seeking remote work.</p>
-        </article>
-
-        <article class="process-card glass-card">
-          <div class="process-number">04</div>
-          <h3>Move toward hiring</h3>
-          <p>From application to employer review, the experience is built to reduce friction and encourage better matching outcomes.</p>
-        </article>
-      </div>
+    <div class="why-card">
+      <i class="fa-solid fa-bolt"></i>
+      <h3>Fast Hiring</h3>
+      <p>Streamlined posting and matching system for employers.</p>
     </div>
-  </section>
-
-  <!-- AUDIENCE -->
-  <section class="audience-section">
-    <div class="section-wrap">
-      <div class="audience-grid">
-        <article class="audience-card glass-card">
-          <div class="audience-icon">
-            <i class="fa-solid fa-building"></i>
-          </div>
-          <h3>For employers</h3>
-          <p>
-            Reach remote-ready professionals and present your hiring needs in a more structured, professional environment.
-          </p>
-          <ul>
-            <li><i class="fa-solid fa-check"></i><span>Showcase open roles to a wider talent pool.</span></li>
-            <li><i class="fa-solid fa-check"></i><span>Support faster discovery of candidates for remote positions.</span></li>
-            <li><i class="fa-solid fa-check"></i><span>Strengthen employer visibility on a work-from-home focused platform.</span></li>
-          </ul>
-        </article>
-
-        <article class="audience-card glass-card">
-          <div class="audience-icon">
-            <i class="fa-solid fa-user-tie"></i>
-          </div>
-          <h3>For jobseekers</h3>
-          <p>
-            Find meaningful remote opportunities and share your background where employers are actively looking for talent.
-          </p>
-          <ul>
-            <li><i class="fa-solid fa-check"></i><span>Access remote opportunities from different companies and industries.</span></li>
-            <li><i class="fa-solid fa-check"></i><span>Present your qualifications for flexible, global work settings.</span></li>
-            <li><i class="fa-solid fa-check"></i><span>Engage with a platform designed around remote career growth.</span></li>
-          </ul>
-        </article>
-      </div>
+    <div class="why-card">
+      <i class="fa-solid fa-user-shield"></i>
+      <h3>Secure & Verified</h3>
+      <p>We ensure secure accounts and safe applicant verification.</p>
     </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="cta-section">
-    <div class="section-wrap">
-      <div class="cta-box glass-card">
-        <h2>Ready to use Job Space Link?</h2>
-        <p>
-          Whether you are hiring remote professionals or looking for your next work-from-home opportunity, Job Space Link is built to help you move forward with more clarity, visibility, and confidence.
-        </p>
-
-        <div class="cta-actions">
-          <a href="postjob1.html" class="cta-btn primary">
-            <i class="fa-solid fa-paper-plane"></i>
-            Post Jobs
-          </a>
-          <a href="applicantform1.html?source=jobspacelink" class="cta-btn secondary">
-            <i class="fa-solid fa-file-lines"></i>
-            Post Resume
-          </a>
-        </div>
-      </div>
+    <div class="why-card">
+      <i class="fa-solid fa-filter-circle-dollar"></i>
+      <h3>Better Matching</h3>
+      <p>Smarter filtering to connect the right talent with the right job.</p>
     </div>
-  </section>
-</main>
+    <div class="why-card">
+      <i class="fa-solid fa-headset"></i>
+      <h3>Support Ready</h3>
+      <p>Clear guidance for both employers and applicants whenever needed.</p>
+    </div>
+    <div class="why-card">
+      <i class="fa-solid fa-clock"></i>
+      <h3>Time-Saving</h3>
+      <p>Less time searching — more time hiring and working.</p>
+    </div>
+  </div>
+</section>
 
-<!-- FOOTER -->
+<!-- EMPLOYER CTA SECTION -->
+<section class="employer-cta">
+  <div class="cta-content">
+    <h2>Ready to Hire Top Remote Talent?</h2>
+    <p>Post your first job in minutes and start receiving qualified applicants instantly.</p>
+    <a href="postjob1.html" class="cta-button">
+      <i class="fa-solid fa-briefcase"></i> Post a Job Now
+    </a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="hero">
+  <h1>How It Works</h1>
+  <p>Simple steps for applicants and employers — from posting to getting matched.</p>
+</section>
+
+<section id="how-it-works">
+  <h2>Steps to Get Started</h2>
+  <div class="steps">
+    <div class="step">
+      <span>1</span>
+      <h3>Create an Account</h3>
+      <p>Sign up as an applicant or employer in seconds. Complete your profile to increase visibility.</p>
+    </div>
+    <div class="step">
+      <span>2</span>
+      <h3>Post or Apply</h3>
+      <p>Employers post job openings. Applicants apply instantly and upload resumes and supporting documents.</p>
+    </div>
+    <div class="step">
+      <span>3</span>
+      <h3>Get Matched</h3>
+      <p>Our system helps connect the right talent with the right jobs — faster and easier.</p>
+    </div>
+    <div class="step">
+      <span>4</span>
+      <h3>Interview & Hire</h3>
+      <p>Employers contact shortlisted applicants, schedule interviews, and hire remotely.</p>
+    </div>
+    <div class="step">
+      <span>5</span>
+      <h3>Start Working</h3>
+      <p>Applicants begin their remote work journey with flexible schedules and global opportunities.</p>
+    </div>
+    <div class="step">
+      <span>6</span>
+      <h3>Grow Together</h3>
+      <p>Build long-term remote teams and careers with tools designed for smooth hiring and matching.</p>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICANT CTA SECTION -->
+<section class="applicant-cta">
+  <div class="cta-content">
+    <h2>Looking for a Remote Job?</h2>
+    <p>Join thousands of applicants finding flexible, high-paying remote opportunities worldwide.</p>
+    <a href="applicantform1.html" class="cta-button applicant">
+      <i class="fa-solid fa-paper-plane"></i> Apply Now
+    </a>
+  </div>
+</section>
+
+<!-- FIXED-BOTTOM FOOTER -->
 <footer class="footer-simple">
   <div class="footer-logo">
     <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
@@ -2953,6 +2244,33 @@ header .auth-buttons .auth-text{
       closeAboutMenu();
     });
   });
+})();
+
+/* ============================================================
+   EMPLOYER DROPDOWN (Desktop)
+=========================================================== */
+(function(){
+  const wrap = document.getElementById("employerDropdown");
+  const toggle = document.getElementById("employerToggle");
+  const menu = document.getElementById("employerMenu");
+  if(!wrap || !toggle || !menu) return;
+
+  toggle.addEventListener("click", (e)=>{
+    e.preventDefault();
+    wrap.classList.toggle("open");
+  });
+
+  document.addEventListener("click", (e)=>{
+    if(!wrap.contains(e.target)) wrap.classList.remove("open");
+  });
+
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") wrap.classList.remove("open");
+  });
+
+  menu.querySelectorAll("a").forEach(a =>
+    a.addEventListener("click", ()=> wrap.classList.remove("open"))
+  );
 })();
 
 /* ============================================================
