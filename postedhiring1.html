@@ -13923,6 +13923,575 @@ html.jobseeker-logged-out .mobile-account-login-link{
   }
 }
 
+
+
+/* ============================================================
+   FINAL MOBILE LOGGED-IN HEADER + TWO-ROW CONTROLS PATCH 2026-06-04
+   ✅ Mobile logged-in header keeps the logo locked on the left.
+   ✅ Paper-plane, heart, and hamburger stay inside the right side of the header.
+   ✅ Profile/login avatar button remains removed from the mobile header so it cannot hide behind the logo.
+   ✅ Mobile toolbar is compressed into two visible rows; advanced filters become one horizontal strip.
+   ✅ Existing IDs, JavaScript, session sync, quick filters, hamburger dropdown, table/grid, and logout behavior are preserved.
+============================================================ */
+@media (max-width:768px){
+  :root,
+  html.jobseeker-logged-in,
+  html.jobseeker-logged-out,
+  body.jobseeker-logged-in,
+  body.jobseeker-logged-out{
+    --siteHeaderOffset:72px !important;
+    --header-h:72px !important;
+    --masterTopH:116px !important;
+  }
+
+  body{
+    padding-top:var(--header-h) !important;
+  }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:6px !important;
+    padding:6px 8px !important;
+    overflow:visible !important;
+    z-index:220000 !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 1 auto !important;
+    min-width:0 !important;
+    max-width:min(150px, calc(100vw - 168px)) !important;
+    margin:0 !important;
+    padding:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    position:relative !important;
+    z-index:220010 !important;
+    overflow:hidden !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+    max-height:54px !important;
+    width:auto !important;
+    max-width:100% !important;
+    display:block !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+    margin:0 !important;
+  }
+
+  header nav{
+    display:none !important;
+  }
+
+  header .auth-buttons{
+    order:2 !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    padding:0 !important;
+    flex:0 0 auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:0 !important;
+    min-width:0 !important;
+    overflow:visible !important;
+    position:relative !important;
+    z-index:220020 !important;
+  }
+
+  header .jobseeker-account-menu{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    min-width:0 !important;
+    overflow:visible !important;
+    position:relative !important;
+    z-index:220025 !important;
+  }
+
+  header #headerJobseekerBtn,
+  header .jobseeker-menu-toggle,
+  header .jobseeker-icon-auth,
+  header #headerJobseekerDropdown,
+  header .header-jobseeker-avatar-img,
+  header .header-jobseeker-icon-fallback,
+  header .header-jobseeker-login-text{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+    width:0 !important;
+    min-width:0 !important;
+    max-width:0 !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:0 !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  header .header-jobseeker-quick-icons{
+    display:none !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    margin:0 6px 0 0 !important;
+    padding:0 !important;
+    flex:0 0 auto !important;
+    position:relative !important;
+    z-index:220030 !important;
+    overflow:visible !important;
+  }
+
+  header .header-jobseeker-quick-icons.is-visible{
+    display:inline-flex !important;
+  }
+
+  /* Requested order: paper-plane, heart, hamburger. */
+  header #headerQuickAppliedBtn{order:1 !important;}
+  header #headerQuickFavoriteBtn{order:2 !important;}
+
+  header .jobseeker-quick-icon-btn{
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+    padding:0 !important;
+    border-radius:999px !important;
+    flex:0 0 auto !important;
+    font-size:.80rem !important;
+    line-height:1 !important;
+  }
+
+  header .jobseeker-quick-icon-btn i{
+    font-size:.80rem !important;
+    line-height:1 !important;
+    pointer-events:none !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle{
+    order:3 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 38px !important;
+    width:38px !important;
+    min-width:38px !important;
+    height:38px !important;
+    min-height:38px !important;
+    margin:0 !important;
+    padding:0 !important;
+    position:relative !important;
+    inset:auto !important;
+    transform:none !important;
+    z-index:220040 !important;
+  }
+
+  #mobilePanel.mobile-panel{
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    z-index:219900 !important;
+  }
+
+  .container{
+    width:calc(100vw - 6px) !important;
+    margin-top:calc(var(--header-h) + 8px) !important;
+    padding:5px 4px 12px !important;
+  }
+
+  .sticky-master{
+    top:var(--siteHeaderOffset) !important;
+  }
+
+  .topbar-row,
+  .sticky-master-inner.logged-out-mode .topbar-row,
+  .sticky-master-inner:not(.logged-out-mode) .topbar-row{
+    padding:5px !important;
+    gap:4px !important;
+  }
+
+  .controls-panel,
+  .sticky-master-inner.logged-out-mode .controls-panel,
+  .sticky-master-inner:not(.logged-out-mode) .controls-panel{
+    display:grid !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    grid-template-columns:58px minmax(0,1fr) minmax(108px,.74fr) !important;
+    grid-template-areas:
+      "toolbar-title search-group action-box"
+      "country-filter industry-filter advanced-filters" !important;
+    align-items:stretch !important;
+    gap:4px !important;
+    overflow:visible !important;
+  }
+
+  .job-hiring-toolbar-title{
+    grid-area:toolbar-title !important;
+    width:100% !important;
+    min-width:0 !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:3px 4px !important;
+    border-radius:8px !important;
+    gap:3px !important;
+    justify-content:center !important;
+  }
+
+  .job-hiring-toolbar-title i{
+    font-size:.58rem !important;
+    flex:0 0 auto !important;
+  }
+
+  .job-hiring-toolbar-title span{
+    font-size:.48rem !important;
+    line-height:1 !important;
+    letter-spacing:-.02em !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .search-inline-control{
+    grid-area:search-group !important;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    justify-self:stretch !important;
+    display:flex !important;
+    align-items:stretch !important;
+    gap:0 !important;
+  }
+
+  .search-inline-control .search-wrapper{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    width:auto !important;
+  }
+
+  .search-inline-control .search-wrapper input,
+  .sticky-master-inner.logged-out-mode .search-inline-control .search-wrapper input,
+  .sticky-master-inner:not(.logged-out-mode) .search-inline-control .search-wrapper input,
+  .search-wrapper input{
+    min-height:30px !important;
+    height:30px !important;
+    padding:4px 5px 4px 24px !important;
+    font-size:.54rem !important;
+    border-radius:8px 0 0 8px !important;
+  }
+
+  .search-wrapper .fa-search{
+    left:8px !important;
+    font-size:8px !important;
+  }
+
+  .search-inline-control .search-btn,
+  .sticky-master-inner.logged-out-mode .search-inline-control .search-btn,
+  .sticky-master-inner:not(.logged-out-mode) .search-inline-control .search-btn,
+  .search-btn{
+    flex:0 0 52px !important;
+    min-width:52px !important;
+    width:52px !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:3px 4px !important;
+    border-radius:0 8px 8px 0 !important;
+    font-size:.46rem !important;
+    gap:2px !important;
+    line-height:1 !important;
+  }
+
+  .search-btn i{
+    font-size:.48rem !important;
+  }
+
+  .inline-country-filter-field{
+    grid-area:country-filter !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .inline-industry-filter-field{
+    grid-area:industry-filter !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .inline-country-filter-field select,
+  .inline-industry-filter-field select,
+  .sticky-master-inner.logged-out-mode .inline-country-filter-field select,
+  .sticky-master-inner.logged-out-mode .inline-industry-filter-field select,
+  .sticky-master-inner:not(.logged-out-mode) .inline-country-filter-field select,
+  .sticky-master-inner:not(.logged-out-mode) .inline-industry-filter-field select{
+    width:100% !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:3px 5px !important;
+    font-size:.52rem !important;
+    border-radius:8px !important;
+  }
+
+  .control-row-sub,
+  .view-action-box{
+    grid-area:action-box !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .view-action-box,
+  .sticky-master-inner.logged-out-mode .view-action-box,
+  .sticky-master-inner:not(.logged-out-mode) .view-action-box{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap:2px !important;
+    padding:2px !important;
+    border-radius:8px !important;
+    overflow:hidden !important;
+    min-height:30px !important;
+  }
+
+  .view-action-box .view-toggle{
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    display:flex !important;
+    gap:2px !important;
+  }
+
+  .view-action-box #resetBtn,
+  .view-action-box #viewTableBtn,
+  .view-action-box #viewGridOnlyBtn,
+  .view-action-box #refreshBtn,
+  .refresh-btn{
+    min-width:0 !important;
+    min-height:26px !important;
+    height:26px !important;
+    padding:2px 3px !important;
+    border-radius:6px !important;
+    font-size:0 !important;
+    line-height:1 !important;
+    gap:0 !important;
+    overflow:hidden !important;
+  }
+
+  .view-action-box #resetBtn{flex:0 0 26px !important;}
+  .view-action-box #viewTableBtn,
+  .view-action-box #viewGridOnlyBtn{flex:1 1 0 !important;}
+  .view-action-box #refreshBtn,
+  .refresh-btn{flex:0 0 26px !important;}
+
+  .view-action-box #resetBtn i,
+  .view-action-box #viewTableBtn i,
+  .view-action-box #viewGridOnlyBtn i,
+  .view-action-box #refreshBtn i,
+  .refresh-btn i{
+    display:inline-flex !important;
+    font-size:.66rem !important;
+    line-height:1 !important;
+    margin:0 !important;
+  }
+
+  .advanced-filter-row,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+    grid-area:advanced-filters !important;
+    grid-column:auto !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:4px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    scrollbar-width:thin !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row select,
+  .advanced-filter-row .filter-dd,
+  .advanced-filter-row .filter-dd-trigger{
+    flex:0 0 clamp(82px, 30vw, 128px) !important;
+    width:clamp(82px, 30vw, 128px) !important;
+    min-width:82px !important;
+    max-width:128px !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:3px 5px !important;
+    font-size:.50rem !important;
+    border-radius:8px !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar{
+    height:4px !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar-thumb{
+    background:linear-gradient(90deg,#00c6ff,#7c3aed) !important;
+    border-radius:999px !important;
+  }
+
+  .table-section{
+    padding-top:5px !important;
+  }
+
+  .table-header-sticky{
+    top:calc(var(--siteHeaderOffset) + var(--masterTopH) + 4px) !important;
+  }
+
+  .cards-grid,
+  .cards-grid-only{
+    padding-top:8px !important;
+  }
+}
+
+@media (max-width:480px){
+  :root,
+  html.jobseeker-logged-in,
+  html.jobseeker-logged-out,
+  body.jobseeker-logged-in,
+  body.jobseeker-logged-out{
+    --siteHeaderOffset:68px !important;
+    --header-h:68px !important;
+    --masterTopH:112px !important;
+  }
+
+  header{
+    gap:5px !important;
+    padding:5px 6px !important;
+  }
+
+  header .logo{
+    max-width:min(118px, calc(100vw - 150px)) !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+    max-height:50px !important;
+  }
+
+  header .header-jobseeker-quick-icons{
+    gap:4px !important;
+    margin-right:5px !important;
+  }
+
+  header .jobseeker-quick-icon-btn{
+    width:31px !important;
+    min-width:31px !important;
+    height:31px !important;
+    min-height:31px !important;
+  }
+
+  header .jobseeker-quick-icon-btn i{
+    font-size:.74rem !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle{
+    flex-basis:36px !important;
+    width:36px !important;
+    min-width:36px !important;
+    height:36px !important;
+    min-height:36px !important;
+  }
+
+  .controls-panel,
+  .sticky-master-inner.logged-out-mode .controls-panel,
+  .sticky-master-inner:not(.logged-out-mode) .controls-panel{
+    grid-template-columns:48px minmax(0,1fr) minmax(92px,.72fr) !important;
+    gap:3px !important;
+  }
+
+  .job-hiring-toolbar-title,
+  .search-inline-control .search-wrapper input,
+  .sticky-master-inner.logged-out-mode .search-inline-control .search-wrapper input,
+  .sticky-master-inner:not(.logged-out-mode) .search-inline-control .search-wrapper input,
+  .search-inline-control .search-btn,
+  .inline-country-filter-field select,
+  .inline-industry-filter-field select,
+  .view-action-box,
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row select,
+  .advanced-filter-row .filter-dd,
+  .advanced-filter-row .filter-dd-trigger{
+    min-height:28px !important;
+    height:28px !important;
+  }
+
+  .job-hiring-toolbar-title span{
+    font-size:.42rem !important;
+  }
+
+  .search-inline-control .search-btn{
+    flex-basis:46px !important;
+    min-width:46px !important;
+    width:46px !important;
+    font-size:.42rem !important;
+  }
+
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row select,
+  .advanced-filter-row .filter-dd,
+  .advanced-filter-row .filter-dd-trigger{
+    flex-basis:88px !important;
+    width:88px !important;
+    min-width:88px !important;
+    max-width:88px !important;
+    font-size:.46rem !important;
+  }
+}
+
+@media (max-width:360px){
+  header .logo{
+    max-width:96px !important;
+  }
+
+  header .logo img{
+    height:46px !important;
+  }
+
+  header .jobseeker-quick-icon-btn{
+    width:29px !important;
+    min-width:29px !important;
+    height:29px !important;
+    min-height:29px !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle{
+    flex-basis:34px !important;
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+  }
+}
+
 </style>
 </head>
 
