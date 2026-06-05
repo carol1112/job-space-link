@@ -3111,6 +3111,248 @@ button,input,select,textarea,
   }
 }
 
+
+/* ============================================================
+   MOBILE LOGGED-IN ACCOUNT + QUICK FILTER PATCH 2026-06-04
+   Mobile only:
+   - Shows paper-plane and heart filter buttons beside hamburger
+   - Hides hamburger Login row when employer is logged in
+   - Shows logged-in account card/actions inside hamburger dropdown
+   - Keeps desktop/tablet behavior unchanged
+============================================================ */
+.mobile-header-interaction-filter-wrap{
+  display:none;
+}
+
+.mobile-account-block{
+  display:none;
+}
+
+.mobile-account-card{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(124,58,237,.12));
+  border:1px solid rgba(56,189,248,.24);
+  box-shadow:0 10px 22px rgba(0,0,0,.18);
+  min-width:0;
+}
+
+.mobile-account-logo{
+  width:46px;
+  height:46px;
+  min-width:46px;
+  border-radius:14px;
+  overflow:hidden;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(56,189,248,.14);
+  border:1px solid rgba(255,255,255,.10);
+  color:#9edfff;
+}
+
+.mobile-account-logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+
+.mobile-account-logo img.has-logo{
+  display:block;
+}
+
+.mobile-account-logo img.has-logo + i{
+  display:none!important;
+}
+
+.mobile-account-copy{
+  min-width:0;
+  flex:1 1 auto;
+}
+
+.mobile-account-copy strong,
+.mobile-account-copy span{
+  display:block;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.mobile-account-copy strong{
+  color:#fff;
+  font-size:.92rem;
+  line-height:1.18;
+}
+
+.mobile-account-copy span{
+  color:#a9bdd8;
+  font-size:.76rem;
+  margin-top:3px;
+}
+
+.mobile-account-menu{
+  display:grid;
+  gap:8px;
+  margin-top:9px;
+}
+
+.mobile-account-menu a,
+.mobile-account-menu button{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  font-weight:600;
+}
+
+.mobile-account-menu button{
+  cursor:pointer;
+  font:inherit;
+  text-align:left;
+}
+
+.mobile-account-menu a:hover,
+.mobile-account-menu button:hover{
+  background:rgba(0,198,255,.12);
+  color:#fff;
+}
+
+@media (max-width: 768px){
+  body.employer-logged-in #mobileLoginLink{
+    display:none!important;
+  }
+
+  body.employer-logged-out #mobileLoginLink{
+    display:flex!important;
+  }
+
+  body.employer-logged-in .mobile-account-block{
+    display:block!important;
+  }
+
+  body.employer-logged-out .mobile-account-block{
+    display:none!important;
+  }
+
+  .mobile-header-interaction-filter-wrap{
+    position:absolute!important;
+    top:50%!important;
+    right:54px!important;
+    transform:translateY(-50%)!important;
+    grid-template-columns:repeat(2,36px)!important;
+    gap:6px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    z-index:260009!important;
+    pointer-events:auto!important;
+  }
+
+  body.employer-logged-in .mobile-header-interaction-filter-wrap{
+    display:grid!important;
+  }
+
+  body.employer-logged-out .mobile-header-interaction-filter-wrap{
+    display:none!important;
+  }
+
+  .mobile-header-interaction-filter-wrap .interaction-filter-btn{
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    max-width:36px!important;
+    border-radius:10px!important;
+    font-size:.86rem!important;
+  }
+
+  body.employer-logged-in header .logo{
+    width:calc(100vw - 140px)!important;
+    max-width:calc(100vw - 140px)!important;
+  }
+
+  body.employer-logged-in header .logo img{
+    max-width:min(136px, calc(100vw - 152px))!important;
+  }
+
+  .mobile-panel .mobile-account-menu a,
+  .mobile-panel .mobile-account-menu button{
+    min-width:0!important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  .mobile-header-interaction-filter-wrap{
+    right:58px!important;
+  }
+
+  body.employer-logged-in header .logo{
+    width:calc(100vw - 148px)!important;
+    max-width:calc(100vw - 148px)!important;
+  }
+
+  body.employer-logged-in header .logo img{
+    max-width:min(142px, calc(100vw - 162px))!important;
+  }
+}
+
+@media (max-width: 480px){
+  .mobile-header-interaction-filter-wrap{
+    right:48px!important;
+    grid-template-columns:repeat(2,33px)!important;
+    gap:5px!important;
+  }
+
+  .mobile-header-interaction-filter-wrap .interaction-filter-btn{
+    width:33px!important;
+    height:33px!important;
+    min-width:33px!important;
+    max-width:33px!important;
+    border-radius:9px!important;
+    font-size:.78rem!important;
+  }
+
+  body.employer-logged-in header .logo{
+    width:calc(100vw - 124px)!important;
+    max-width:calc(100vw - 124px)!important;
+  }
+
+  body.employer-logged-in header .logo img{
+    height:50px!important;
+    max-width:min(116px, calc(100vw - 136px))!important;
+  }
+
+  .mobile-account-card{
+    padding:11px 12px!important;
+    border-radius:13px!important;
+  }
+
+  .mobile-account-logo{
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    border-radius:13px!important;
+  }
+
+  .mobile-account-copy strong{
+    font-size:.86rem!important;
+  }
+
+  .mobile-account-copy span{
+    font-size:.72rem!important;
+  }
+}
+
 </style>
 </head>
 <body class="employer-logged-out view-table-active">
@@ -3157,6 +3399,10 @@ button,input,select,textarea,
       </div>
     </div>
   </div>
+  <div class="mobile-header-interaction-filter-wrap" id="mobileHeaderInteractionFilterWrap" aria-label="Logged-in employer applicant filters">
+    <button type="button" class="interaction-filter-btn contacted-filter" id="mobileContactedFilterBtn" title="Show contacted applicants" aria-pressed="false"><i class="fa-solid fa-paper-plane"></i></button>
+    <button type="button" class="interaction-filter-btn favorite-filter" id="mobileFavoriteFilterBtn" title="Show favorite applicants" aria-pressed="false"><i class="fa-regular fa-heart"></i></button>
+  </div>
   <button type="button" class="nav-toggle" id="navToggle" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
 </header>
 
@@ -3177,7 +3423,27 @@ button,input,select,textarea,
     <a href="dashboard1.html"><span><i class="fa-solid fa-users"></i> Jobseeker</span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="postjob1.html"><span><i class="fa-solid fa-square-plus"></i> Post Jobs</span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform1.html?source=jobspacelink"><span><i class="fa-solid fa-file-arrow-up"></i> Post Resume</span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html"><span><i class="fa-solid fa-right-to-bracket"></i> Login</span><i class="fa-solid fa-arrow-right"></i></a>
+
+    <div class="mobile-account-block" id="mobileAccountBlock" aria-label="Logged-in employer account">
+      <div class="mobile-account-card">
+        <div class="mobile-account-logo">
+          <img src="" alt="Company logo" id="mobileAccountLogo" />
+          <i class="fa-solid fa-building-user"></i>
+        </div>
+        <div class="mobile-account-copy">
+          <strong id="mobileAccountCompany">Company / Employer</strong>
+          <span id="mobileAccountEmail">—</span>
+        </div>
+      </div>
+      <div class="mobile-account-menu">
+        <a href="companyprofile.html"><span><i class="fa-solid fa-id-card"></i> Company Profile</span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="subscribe.html"><span><i class="fa-solid fa-credit-card"></i> Subscribe</span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="employer_dashboard.html"><span><i class="fa-solid fa-briefcase"></i> Posted Jobs</span><i class="fa-solid fa-arrow-right"></i></a>
+        <button type="button" id="mobileLogoutButton"><span><i class="fa-solid fa-right-from-bracket"></i> Log out</span><i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <a href="loginemployer.html" id="mobileLoginLink"><span><i class="fa-solid fa-right-to-bracket"></i> Login</span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
@@ -3422,6 +3688,7 @@ const els = {
   loginButton:$("loginButton"), accountButton:$("accountButton"), accountDropdown:$("accountDropdown"), accountLogo:$("accountLogo"), dropdownLogo:$("dropdownLogo"), dropdownCompany:$("dropdownCompany"), dropdownEmail:$("dropdownEmail"), accountButtonText:$("accountButtonText"), logoutButton:$("logoutButton"),
   searchInput:$("searchInput"), mainSearchField:$("mainSearchField"), clearSearchBtn:$("clearSearchBtn"), countryFilter:$("countryFilter"), industryFilter:$("industryFilter"), nameFilter:$("nameFilter"), genderFilter:$("genderFilter"), ageFilter:$("ageFilter"), employmentFilter:$("employmentFilter"), salaryFilter:$("salaryFilter"), positionFilter:$("positionFilter"), cityFilter:$("cityFilter"), zipcodeFilter:$("zipcodeFilter"), dateModeFilter:$("dateModeFilter"), dateFilter:$("dateFilter"),
   resetBtn:$("resetBtn"), refreshBtn:$("refreshBtn"), tableBtn:$("tableBtn"), gridBtn:$("gridBtn"), locationBtn:$("locationBtn"), contactedFilterBtn:$("contactedFilterBtn"), favoriteFilterBtn:$("favoriteFilterBtn"),
+  mobileHeaderInteractionFilterWrap:$("mobileHeaderInteractionFilterWrap"), mobileContactedFilterBtn:$("mobileContactedFilterBtn"), mobileFavoriteFilterBtn:$("mobileFavoriteFilterBtn"), mobileLoginLink:$("mobileLoginLink"), mobileAccountBlock:$("mobileAccountBlock"), mobileAccountLogo:$("mobileAccountLogo"), mobileAccountCompany:$("mobileAccountCompany"), mobileAccountEmail:$("mobileAccountEmail"), mobileLogoutButton:$("mobileLogoutButton"),
   tablePanel:$("tablePanel"), gridPanel:$("gridPanel"), locationPanel:$("locationPanel"), tableBody:$("tableBody"), gridBody:$("gridBody"), locationList:$("locationList"), pagination:$("pagination"), statusLine:$("statusLine"),
   loginModal:$("loginModal"), loginModalText:$("loginModalText"), contactModal:$("contactModal"), contactTo:$("contactTo"), contactSubject:$("contactSubject"), contactMessage:$("contactMessage"), contactStatus:$("contactStatus"), contactMeta:$("contactMeta"), sendContactBtn:$("sendContactBtn"), pdfModal:$("pdfModal"), pdfFrame:$("pdfFrame"), pdfTitle:$("pdfTitle"), pdfStatus:$("pdfStatus"), openPdfNewTab:$("openPdfNewTab"), locationMap:$("locationMap"), googleMapFrame:$("googleMapFrame"), googleMapInfo:$("googleMapInfo"), mapPlaceholder:$("mapPlaceholder")
 };
@@ -3518,20 +3785,24 @@ function updateSearchFieldState(){
 
 function updateInteractionFilterButtons(){
   const canUse = !!state.employer.loggedIn;
-  if(els.contactedFilterBtn){
-    els.contactedFilterBtn.disabled = !canUse;
-    els.contactedFilterBtn.classList.toggle("active", !!state.showContactedOnly);
-    els.contactedFilterBtn.title = state.showContactedOnly ? "Showing contacted applicants" : "Show contacted applicants";
-    els.contactedFilterBtn.setAttribute("aria-pressed", state.showContactedOnly ? "true" : "false");
-    els.contactedFilterBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
-  }
-  if(els.favoriteFilterBtn){
-    els.favoriteFilterBtn.disabled = !canUse;
-    els.favoriteFilterBtn.classList.toggle("active", !!state.showFavoritesOnly);
-    els.favoriteFilterBtn.title = state.showFavoritesOnly ? "Showing favorite applicants" : "Show favorite applicants";
-    els.favoriteFilterBtn.setAttribute("aria-pressed", state.showFavoritesOnly ? "true" : "false");
-    els.favoriteFilterBtn.innerHTML = `<i class="fa-${state.showFavoritesOnly ? "solid" : "regular"} fa-heart"></i>`;
-  }
+  const contactedButtons = [els.contactedFilterBtn, els.mobileContactedFilterBtn].filter(Boolean);
+  const favoriteButtons = [els.favoriteFilterBtn, els.mobileFavoriteFilterBtn].filter(Boolean);
+
+  contactedButtons.forEach(btn=>{
+    btn.disabled = !canUse;
+    btn.classList.toggle("active", !!state.showContactedOnly);
+    btn.title = state.showContactedOnly ? "Showing contacted applicants" : "Show contacted applicants";
+    btn.setAttribute("aria-pressed", state.showContactedOnly ? "true" : "false");
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
+  });
+
+  favoriteButtons.forEach(btn=>{
+    btn.disabled = !canUse;
+    btn.classList.toggle("active", !!state.showFavoritesOnly);
+    btn.title = state.showFavoritesOnly ? "Showing favorite applicants" : "Show favorite applicants";
+    btn.setAttribute("aria-pressed", state.showFavoritesOnly ? "true" : "false");
+    btn.innerHTML = `<i class="fa-${state.showFavoritesOnly ? "solid" : "regular"} fa-heart"></i>`;
+  });
 }
 function toggleContactedFilter(){
   if(!state.employer.loggedIn) return;
@@ -4783,12 +5054,34 @@ async function resolveEmployer(){
   renderEmployerHeader();
 }
 function renderEmployerHeader(){
-  document.body.classList.toggle("employer-logged-in",state.employer.loggedIn); document.body.classList.toggle("employer-logged-out",!state.employer.loggedIn);
-  els.loginButton.style.display=state.employer.loggedIn?"none":"inline-flex"; els.accountButton.style.display=state.employer.loggedIn?"inline-flex":"none";
-  els.accountButtonText.textContent=state.employer.company || "Account"; els.dropdownCompany.textContent=state.employer.company || "Company / Employer"; els.dropdownEmail.textContent=state.employer.email || "—";
-  [els.accountLogo,els.dropdownLogo].forEach(img=>{
+  document.body.classList.toggle("employer-logged-in",state.employer.loggedIn);
+  document.body.classList.toggle("employer-logged-out",!state.employer.loggedIn);
+
+  els.loginButton.style.display=state.employer.loggedIn?"none":"inline-flex";
+  els.accountButton.style.display=state.employer.loggedIn?"inline-flex":"none";
+
+  if(els.mobileLoginLink){
+    els.mobileLoginLink.style.display=state.employer.loggedIn?"none":"flex";
+  }
+  if(els.mobileAccountBlock){
+    els.mobileAccountBlock.style.display=state.employer.loggedIn?"block":"none";
+  }
+
+  const companyName = state.employer.company || "Account";
+  const dropdownCompanyName = state.employer.company || "Company / Employer";
+  const emailText = state.employer.email || "—";
+
+  els.accountButtonText.textContent=companyName;
+  els.dropdownCompany.textContent=dropdownCompanyName;
+  els.dropdownEmail.textContent=emailText;
+
+  if(els.mobileAccountCompany) els.mobileAccountCompany.textContent=dropdownCompanyName;
+  if(els.mobileAccountEmail) els.mobileAccountEmail.textContent=emailText;
+
+  [els.accountLogo,els.dropdownLogo,els.mobileAccountLogo].filter(Boolean).forEach(img=>{
     setCompanyLogoImage(img, state.employer.logo, (state.employer.company || "Company") + " logo");
   });
+
   updateInteractionFilterButtons();
 }
 async function logout(){
@@ -4807,6 +5100,14 @@ function openModal(id){ $(id)?.classList.add("open"); }
 function closeModal(id){ const m=$(id); if(!m) return; m.classList.remove("open"); if(id==="pdfModal") els.pdfFrame.src="about:blank"; if(id==="contactModal") state.contactTarget=null; }
 
 function bind(){
+  const closeMobilePanel = ()=>{
+    if(!els.mobilePanel || !els.navToggle) return;
+    els.mobilePanel.classList.remove("open");
+    els.navToggle.setAttribute("aria-expanded", "false");
+    els.mobilePanel.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("mobile-menu-open");
+  };
+
   els.aboutNavToggle.onclick=(e)=>{e.preventDefault();els.aboutNavDropdown.classList.toggle("open");};
   els.navToggle.onclick=()=>{
     const isOpen = !els.mobilePanel.classList.contains("open");
@@ -4820,6 +5121,10 @@ function bind(){
     const isOpen = els.accountDropdown.classList.toggle("open");
     document.body.classList.toggle("account-menu-open", isOpen);
   };
+
+  if(els.mobilePanel){
+    els.mobilePanel.querySelectorAll("a").forEach(a=>a.addEventListener("click", closeMobilePanel));
+  }
 
   document.querySelectorAll("[data-filter-toggle]").forEach(trigger=>{
     trigger.onclick=(e)=>{
@@ -4856,6 +5161,7 @@ function bind(){
     }
     if(!e.target.closest("#aboutNavDropdown")) els.aboutNavDropdown.classList.remove("open");
     if(!e.target.closest(".filter-unit")) closeFilterDropdowns();
+    if(els.mobilePanel && els.mobilePanel.classList.contains("open") && !e.target.closest("#mobilePanel") && !e.target.closest("#navToggle") && !e.target.closest("#mobileHeaderInteractionFilterWrap")) closeMobilePanel();
   });
 
   els.logoutButton.onclick=logout;
@@ -4863,6 +5169,9 @@ function bind(){
   els.resetBtn.onclick=resetFilters;
   if(els.contactedFilterBtn) els.contactedFilterBtn.onclick=toggleContactedFilter;
   if(els.favoriteFilterBtn) els.favoriteFilterBtn.onclick=toggleFavoriteFilter;
+  if(els.mobileContactedFilterBtn) els.mobileContactedFilterBtn.onclick=toggleContactedFilter;
+  if(els.mobileFavoriteFilterBtn) els.mobileFavoriteFilterBtn.onclick=toggleFavoriteFilter;
+  if(els.mobileLogoutButton) els.mobileLogoutButton.onclick=(e)=>{ e.preventDefault(); logout(); closeMobilePanel(); };
   if(els.clearSearchBtn){
     els.clearSearchBtn.onclick=(e)=>{ e.preventDefault(); els.searchInput.value=""; updateSearchFieldState(); applyFilters(); els.searchInput.focus(); };
   }
@@ -4898,7 +5207,7 @@ function bind(){
   els.pagination.addEventListener("click",e=>{ const b=e.target.closest("button[data-page]"); if(b) setPage(Number(b.dataset.page)); });
   document.querySelectorAll("[data-close-modal]").forEach(btn=>btn.onclick=()=>closeModal(btn.dataset.closeModal));
   document.querySelectorAll(".modal").forEach(modal=>modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(modal.id); }));
-  document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeFilterDropdowns(); document.querySelectorAll(".modal.open").forEach(m=>closeModal(m.id)); } });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeFilterDropdowns(); closeMobilePanel(); document.querySelectorAll(".modal.open").forEach(m=>closeModal(m.id)); } });
   els.sendContactBtn.onclick=sendContact;
 }
 
