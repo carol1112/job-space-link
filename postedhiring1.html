@@ -13648,6 +13648,281 @@ html.jobseeker-logged-out .mobile-account-login-link{
   .mobile-account-email{font-size:.72rem;}
 }
 
+
+/* ============================================================
+   FINAL MOBILE REQUEST PATCH 2026-06-04
+   Mobile-only header refinement:
+   ✅ Removes the logged-in profile picture button from the mobile header
+      so it cannot sit behind/overlap the logo.
+   ✅ Keeps the Job Space Link logo inside the left side of the header.
+   ✅ Places the Favorite heart and Applied paper-plane quick filter icons
+      beside the hamburger menu on the right side.
+   ✅ Keeps the account/login/logout controls inside the hamburger dropdown.
+   ✅ Makes dropdown Logout buttons gray instead of red.
+   ✅ Preserves all existing JavaScript IDs, filter behavior, session sync,
+      hamburger behavior, desktop/tablet behavior, and account dropdown logic.
+============================================================ */
+.mobile-account-logout-btn,
+#mobileJobseekerLogoutBtn,
+#headerJobseekerLogoutBtn{
+  background:linear-gradient(135deg, rgba(107,114,128,0.34), rgba(75,85,99,0.44)) !important;
+  border-color:rgba(156,163,175,0.48) !important;
+  color:#ffffff !important;
+  box-shadow:0 0 14px rgba(148,163,184,0.16) !important;
+}
+
+.mobile-account-logout-btn:hover,
+#mobileJobseekerLogoutBtn:hover,
+#headerJobseekerLogoutBtn:hover{
+  background:linear-gradient(135deg, rgba(156,163,175,0.38), rgba(107,114,128,0.50)) !important;
+  border-color:rgba(209,213,219,0.62) !important;
+  color:#ffffff !important;
+  box-shadow:0 0 18px rgba(148,163,184,0.28) !important;
+}
+
+@media (max-width:768px){
+  header{
+    min-height:78px !important;
+    height:78px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:8px !important;
+    padding:8px 10px 8px 8px !important;
+    overflow:visible !important;
+    z-index:220000 !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:145px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin:0 !important;
+    position:relative !important;
+    z-index:220010 !important;
+    overflow:visible !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+    max-height:58px !important;
+    width:auto !important;
+    max-width:145px !important;
+    object-fit:contain !important;
+    display:block !important;
+  }
+
+  header nav{
+    display:none !important;
+  }
+
+  header .auth-buttons{
+    order:2 !important;
+    flex:0 0 auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:0 !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    padding:0 !important;
+    position:relative !important;
+    z-index:220020 !important;
+    overflow:visible !important;
+  }
+
+  header .jobseeker-account-menu{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    position:relative !important;
+    z-index:220025 !important;
+    overflow:visible !important;
+  }
+
+  /* Hide only the header profile/login avatar button on mobile.
+     The same account/login/logout functionality remains available
+     inside the hamburger dropdown mobile account block. */
+  header #headerJobseekerBtn,
+  header .jobseeker-menu-toggle,
+  header .jobseeker-icon-auth,
+  header #headerJobseekerDropdown{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+    width:0 !important;
+    min-width:0 !important;
+    max-width:0 !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:0 !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  header .header-jobseeker-avatar-img,
+  header .header-jobseeker-icon-fallback,
+  header .header-jobseeker-login-text{
+    display:none !important;
+  }
+
+  header .header-jobseeker-quick-icons{
+    order:1 !important;
+    display:none !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:6px !important;
+    margin:0 7px 0 0 !important;
+    padding:0 !important;
+    position:relative !important;
+    z-index:220030 !important;
+    overflow:visible !important;
+  }
+
+  header .header-jobseeker-quick-icons.is-visible{
+    display:inline-flex !important;
+  }
+
+  header .jobseeker-quick-icon-btn{
+    width:36px !important;
+    min-width:36px !important;
+    height:36px !important;
+    min-height:36px !important;
+    padding:0 !important;
+    border-radius:999px !important;
+    font-size:.86rem !important;
+    line-height:1 !important;
+    flex:0 0 auto !important;
+    position:relative !important;
+    z-index:220035 !important;
+    transform-origin:center !important;
+  }
+
+  header .jobseeker-quick-icon-btn i{
+    font-size:.86rem !important;
+    line-height:1 !important;
+    pointer-events:none !important;
+  }
+
+  header .nav-toggle,
+  #navToggle{
+    order:3 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 40px !important;
+    width:40px !important;
+    min-width:40px !important;
+    height:40px !important;
+    min-height:40px !important;
+    margin:0 !important;
+    padding:0 !important;
+    position:relative !important;
+    top:auto !important;
+    right:auto !important;
+    left:auto !important;
+    bottom:auto !important;
+    z-index:220040 !important;
+    transform:none !important;
+  }
+
+  #mobilePanel.mobile-panel{
+    top:78px !important;
+    max-height:calc(100vh - 78px) !important;
+    overflow-y:auto !important;
+    z-index:219900 !important;
+  }
+}
+
+@media (max-width:480px){
+  header{
+    padding:7px 8px 7px 6px !important;
+    gap:6px !important;
+  }
+
+  header .logo{
+    max-width:126px !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+    max-height:54px !important;
+    max-width:126px !important;
+  }
+
+  header .header-jobseeker-quick-icons{
+    gap:5px !important;
+    margin-right:6px !important;
+  }
+
+  header .jobseeker-quick-icon-btn{
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+    font-size:.80rem !important;
+  }
+
+  header .jobseeker-quick-icon-btn i{
+    font-size:.80rem !important;
+  }
+
+  header .nav-toggle,
+  #navToggle{
+    flex-basis:38px !important;
+    width:38px !important;
+    min-width:38px !important;
+    height:38px !important;
+    min-height:38px !important;
+  }
+}
+
+@media (max-width:380px){
+  header .logo{
+    max-width:108px !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+    max-height:50px !important;
+    max-width:108px !important;
+  }
+
+  header .header-jobseeker-quick-icons{
+    gap:4px !important;
+    margin-right:5px !important;
+  }
+
+  header .jobseeker-quick-icon-btn{
+    width:32px !important;
+    min-width:32px !important;
+    height:32px !important;
+    min-height:32px !important;
+    font-size:.76rem !important;
+  }
+
+  header .nav-toggle,
+  #navToggle{
+    flex-basis:36px !important;
+    width:36px !important;
+    min-width:36px !important;
+    height:36px !important;
+    min-height:36px !important;
+  }
+}
+
 </style>
 </head>
 
