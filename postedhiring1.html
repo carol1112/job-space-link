@@ -13429,6 +13429,225 @@ canvas{
   }
 }
 
+
+/* ============================================================
+   MOBILE HAMBURGER ACCOUNT MENU REFINEMENT 2026-06-04
+   Adds the current Jobseeker account / Login button inside the
+   hamburger dropdown on mobile only while preserving the existing
+   desktop header account behavior and session logic.
+============================================================ */
+.mobile-account-block{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:12px;
+  margin:0 0 10px;
+  border-radius:16px;
+  border:1px solid rgba(56,189,248,0.30);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(0,198,255,0.18), transparent 44%),
+    linear-gradient(180deg, rgba(15,23,42,0.98), rgba(2,6,23,0.96));
+  box-shadow:0 12px 28px rgba(2,6,23,0.35), inset 0 0 0 1px rgba(255,255,255,0.03);
+}
+.mobile-account-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-size:.76rem;
+  font-weight:900;
+  color:#93e8ff;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.mobile-account-login-link,
+.mobile-account-profile-link,
+.mobile-account-logout-btn{
+  width:100%;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 13px;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,0.10);
+  text-decoration:none;
+  color:#ffffff;
+  font-weight:800;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(124,58,237,0.24));
+  box-shadow:0 0 16px rgba(0,198,255,0.10);
+}
+.mobile-account-login-link:hover,
+.mobile-account-profile-link:hover,
+.mobile-account-logout-btn:hover{
+  background:rgba(0,198,255,0.15);
+  border-color:rgba(56,189,248,0.45);
+  transform:translateX(3px);
+}
+.mobile-account-logout-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  cursor:pointer;
+  background:rgba(239,68,68,0.13);
+  border-color:rgba(248,113,113,0.34);
+  text-align:left;
+}
+.mobile-account-card{
+  display:none;
+  align-items:center;
+  gap:11px;
+  padding:10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.09);
+  background:rgba(255,255,255,0.055);
+  min-width:0;
+}
+.mobile-account-avatar-wrap{
+  width:46px;
+  height:46px;
+  min-width:46px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:1px solid rgba(56,189,248,0.28);
+  background:rgba(56,189,248,0.10);
+  box-shadow:0 0 14px rgba(0,198,255,0.12);
+}
+.mobile-account-avatar-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+.mobile-account-avatar-wrap i{
+  color:#dff8ff;
+  font-size:1.05rem;
+}
+.mobile-account-copy{
+  min-width:0;
+  flex:1 1 auto;
+}
+.mobile-account-label{
+  color:#9edfff;
+  font-size:.69rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  margin-bottom:3px;
+}
+.mobile-account-name{
+  display:block;
+  color:#ffffff;
+  font-size:.90rem;
+  font-weight:900;
+  line-height:1.18;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.mobile-account-email{
+  display:block;
+  margin-top:3px;
+  color:#cfe3ff;
+  font-size:.76rem;
+  font-weight:700;
+  line-height:1.22;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-decoration:none;
+}
+.mobile-account-filter-list{
+  display:none;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+.mobile-account-filter{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width:0;
+}
+.mobile-account-filter span{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#dff8ff;
+  font-size:.73rem;
+  font-weight:850;
+}
+.mobile-account-filter span i{
+  width:15px;
+  color:#7dd3fc;
+  text-align:center;
+}
+.mobile-account-filter select{
+  width:100%;
+  min-height:38px;
+  border-radius:12px;
+  border:1px solid rgba(56,189,248,0.28);
+  background:#071325;
+  color:#eaf6ff;
+  padding:0 10px;
+  outline:none;
+  font-size:.78rem;
+  font-weight:800;
+}
+.mobile-account-actions{
+  display:none;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+.mobile-account-login-link{display:flex;}
+body.jobseeker-logged-in .mobile-account-login-link,
+html.jobseeker-logged-in .mobile-account-login-link{
+  display:none!important;
+}
+body.jobseeker-logged-in .mobile-account-card,
+html.jobseeker-logged-in .mobile-account-card{
+  display:flex!important;
+}
+body.jobseeker-logged-in .mobile-account-filter-list,
+html.jobseeker-logged-in .mobile-account-filter-list,
+body.jobseeker-logged-in .mobile-account-actions,
+html.jobseeker-logged-in .mobile-account-actions{
+  display:grid!important;
+}
+body.jobseeker-logged-out .mobile-account-card,
+html.jobseeker-logged-out .mobile-account-card,
+body.jobseeker-logged-out .mobile-account-filter-list,
+html.jobseeker-logged-out .mobile-account-filter-list,
+body.jobseeker-logged-out .mobile-account-actions,
+html.jobseeker-logged-out .mobile-account-actions{
+  display:none!important;
+}
+body.jobseeker-logged-out .mobile-account-login-link,
+html.jobseeker-logged-out .mobile-account-login-link{
+  display:flex!important;
+}
+@media (min-width:1024px){
+  .mobile-account-block{display:none!important;}
+}
+@media (max-width:560px){
+  .mobile-account-block{
+    padding:10px;
+    border-radius:14px;
+    margin-bottom:9px;
+  }
+  .mobile-account-card{padding:9px;}
+  .mobile-account-avatar-wrap{
+    width:42px;
+    height:42px;
+    min-width:42px;
+    border-radius:13px;
+  }
+  .mobile-account-name{font-size:.84rem;}
+  .mobile-account-email{font-size:.72rem;}
+}
+
 </style>
 </head>
 
@@ -13565,6 +13784,61 @@ canvas{
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
+  <div class="mobile-account-block" id="mobileJobseekerAccountBlock">
+      <div class="mobile-account-heading">
+        <span><i class="fa-solid fa-user-tie"></i> Jobseeker Account</span>
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+      </div>
+
+      <a class="mobile-account-login-link" id="mobileJobseekerLoginLink" href="index1.html">
+        <span><i class="fa-solid fa-right-to-bracket"></i> Login</span>
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </a>
+
+      <div class="mobile-account-card" id="mobileJobseekerAccountCard" aria-live="polite">
+        <div class="mobile-account-avatar-wrap">
+          <img id="mobileJobseekerAvatar" alt="Logged-in Jobseeker Profile Picture" />
+          <i id="mobileJobseekerAvatarFallback" class="fa-solid fa-user-tie" aria-hidden="true"></i>
+        </div>
+        <div class="mobile-account-copy">
+          <div class="mobile-account-label">Logged-in Account</div>
+          <div class="mobile-account-name" id="mobileJobseekerName">Logged-in Jobseeker</div>
+          <a class="mobile-account-email" id="mobileJobseekerEmail" href="javascript:void(0)">Not logged in</a>
+        </div>
+      </div>
+
+      <div class="mobile-account-filter-list" id="mobileJobseekerFilterList">
+        <label class="mobile-account-filter">
+          <span><i class="fa-solid fa-heart"></i> Favorite Job</span>
+          <select id="mobileFavoriteFilter" aria-label="Mobile favorite job filter">
+            <option value="" selected>All Favorite Status</option>
+            <option value="favorites_only">Favorite Jobs</option>
+            <option value="non_favorites_only">Non-Favorite Jobs</option>
+          </select>
+        </label>
+
+        <label class="mobile-account-filter">
+          <span><i class="fa-solid fa-paper-plane"></i> Applied Job</span>
+          <select id="mobileAppliedFilter" aria-label="Mobile applied job filter">
+            <option value="" selected>All Applied Status</option>
+            <option value="applied_only">Applied Jobs</option>
+            <option value="not_applied_only">Not Applied Jobs</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mobile-account-actions" id="mobileJobseekerActions">
+        <a class="mobile-account-profile-link" id="mobileViewProfileLink" href="profile.html?profile_mode=logged_out&logged_out=1&force_logged_out=1&clear_profile=1&clear_profile_picture=1">
+          <span><i class="fa-solid fa-id-card"></i> View Profile</span>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+        <button type="button" class="mobile-account-logout-btn" id="mobileJobseekerLogoutBtn">
+          <span><i class="fa-solid fa-right-from-bracket"></i> Logout</span>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
     <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
@@ -15254,6 +15528,18 @@ window.addEventListener("DOMContentLoaded", async () => {
   const headerJobseekerLoginLink = document.getElementById("headerJobseekerLoginLink");
   const headerJobseekerLogoutBtn = document.getElementById("headerJobseekerLogoutBtn");
 
+  const mobileJobseekerAccountBlock = document.getElementById("mobileJobseekerAccountBlock");
+  const mobileJobseekerLoginLink = document.getElementById("mobileJobseekerLoginLink");
+  const mobileJobseekerAccountCard = document.getElementById("mobileJobseekerAccountCard");
+  const mobileJobseekerAvatar = document.getElementById("mobileJobseekerAvatar");
+  const mobileJobseekerAvatarFallback = document.getElementById("mobileJobseekerAvatarFallback");
+  const mobileJobseekerName = document.getElementById("mobileJobseekerName");
+  const mobileJobseekerEmail = document.getElementById("mobileJobseekerEmail");
+  const mobileFavoriteFilter = document.getElementById("mobileFavoriteFilter");
+  const mobileAppliedFilter = document.getElementById("mobileAppliedFilter");
+  const mobileViewProfileLink = document.getElementById("mobileViewProfileLink");
+  const mobileJobseekerLogoutBtn = document.getElementById("mobileJobseekerLogoutBtn");
+
   const imgViewer = document.getElementById("imgViewer");
   const ivTitle = document.getElementById("ivTitle");
   const ivSub = document.getElementById("ivSub");
@@ -15810,11 +16096,84 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (headerJobseekerLogoutBtn){
       headerJobseekerLogoutBtn.style.display = isLogged ? "inline-flex" : "none";
     }
+
+    syncMobileJobseekerAccountPanel({
+      isLogged,
+      cleanEmail,
+      cleanDisplayName,
+      hasProfilePhoto,
+      displayPhotoUrl
+    });
+  }
+
+
+  function syncMobileJobseekerAccountPanel({ isLogged=false, cleanEmail="", cleanDisplayName="", hasProfilePhoto=false, displayPhotoUrl="" } = {}){
+    if (mobileJobseekerAccountBlock){
+      mobileJobseekerAccountBlock.classList.toggle("logged-in", !!isLogged);
+      mobileJobseekerAccountBlock.classList.toggle("logged-out", !isLogged);
+    }
+
+    if (mobileJobseekerName){
+      mobileJobseekerName.textContent = isLogged ? (cleanDisplayName || "Logged-in Jobseeker") : "";
+    }
+
+    if (mobileJobseekerEmail){
+      mobileJobseekerEmail.textContent = isLogged ? cleanEmail : "Not logged in";
+      mobileJobseekerEmail.href = isLogged ? `mailto:${cleanEmail}` : "javascript:void(0)";
+    }
+
+    if (mobileJobseekerLoginLink){
+      mobileJobseekerLoginLink.href = "index1.html";
+      mobileJobseekerLoginLink.style.display = isLogged ? "none" : "flex";
+    }
+
+    if (mobileJobseekerAccountCard){
+      mobileJobseekerAccountCard.style.display = isLogged ? "flex" : "none";
+    }
+
+    if (mobileFavoriteFilter){
+      mobileFavoriteFilter.disabled = !isLogged;
+      mobileFavoriteFilter.value = favoriteFilterEl?.value || "";
+    }
+    if (mobileAppliedFilter){
+      mobileAppliedFilter.disabled = !isLogged;
+      mobileAppliedFilter.value = appliedFilterEl?.value || "";
+    }
+
+    if (mobileViewProfileLink){
+      mobileViewProfileLink.style.display = isLogged ? "flex" : "none";
+    }
+    if (mobileJobseekerLogoutBtn){
+      mobileJobseekerLogoutBtn.style.display = isLogged ? "flex" : "none";
+    }
+
+    if (mobileJobseekerAvatar){
+      if (isLogged && hasProfilePhoto && displayPhotoUrl){
+        mobileJobseekerAvatar.style.display = "block";
+        mobileJobseekerAvatar.src = addCacheBust(stripCacheBust(displayPhotoUrl));
+        mobileJobseekerAvatar.onerror = () => {
+          mobileJobseekerAvatar.style.display = "none";
+          mobileJobseekerAvatar.removeAttribute("src");
+          if (mobileJobseekerAvatarFallback) mobileJobseekerAvatarFallback.style.display = "inline-flex";
+        };
+      }else{
+        mobileJobseekerAvatar.style.display = "none";
+        mobileJobseekerAvatar.removeAttribute("src");
+      }
+    }
+
+    if (mobileJobseekerAvatarFallback){
+      mobileJobseekerAvatarFallback.classList.toggle("fa-right-to-bracket", !isLogged);
+      mobileJobseekerAvatarFallback.classList.toggle("fa-user-tie", isLogged);
+      mobileJobseekerAvatarFallback.style.display = (isLogged && hasProfilePhoto) ? "none" : "inline-flex";
+    }
   }
 
   function syncHeaderFilterDropdownValues(){
     if (headerFavoriteFilter) headerFavoriteFilter.value = favoriteFilterEl?.value || "";
     if (headerAppliedFilter) headerAppliedFilter.value = appliedFilterEl?.value || "";
+    if (mobileFavoriteFilter) mobileFavoriteFilter.value = favoriteFilterEl?.value || "";
+    if (mobileAppliedFilter) mobileAppliedFilter.value = appliedFilterEl?.value || "";
   }
 
   function applyHeaderAccountFilter(kind, value){
@@ -15872,6 +16231,44 @@ window.addEventListener("DOMContentLoaded", async () => {
   if (headerAppliedFilter){
     headerAppliedFilter.addEventListener("change", function(){
       applyHeaderAccountFilter("applied", headerAppliedFilter.value);
+    });
+  }
+
+
+  if (mobileFavoriteFilter){
+    mobileFavoriteFilter.addEventListener("change", function(){
+      applyHeaderAccountFilter("favorite", mobileFavoriteFilter.value);
+    });
+  }
+
+  if (mobileAppliedFilter){
+    mobileAppliedFilter.addEventListener("change", function(){
+      applyHeaderAccountFilter("applied", mobileAppliedFilter.value);
+    });
+  }
+
+  if (mobileViewProfileLink){
+    mobileViewProfileLink.addEventListener("click", async function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const panel = document.getElementById("mobilePanel");
+      const navBtn = document.getElementById("navToggle");
+      if (panel){ panel.classList.remove("open"); panel.setAttribute("aria-hidden", "true"); }
+      if (navBtn) navBtn.setAttribute("aria-expanded", "false");
+      await goToViewProfilePage();
+    });
+  }
+
+  if (mobileJobseekerLogoutBtn){
+    mobileJobseekerLogoutBtn.addEventListener("click", async function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const panel = document.getElementById("mobilePanel");
+      const navBtn = document.getElementById("navToggle");
+      if (panel){ panel.classList.remove("open"); panel.setAttribute("aria-hidden", "true"); }
+      if (navBtn) navBtn.setAttribute("aria-expanded", "false");
+      closeHeaderJobseekerMenu();
+      await performStrictJobseekerLogout();
     });
   }
 
@@ -26349,6 +26746,8 @@ window.addEventListener("DOMContentLoaded", async () => {
       if (appliedFilterEl) appliedFilterEl.value = "";
       if (headerFavoriteFilter) headerFavoriteFilter.value = "";
       if (headerAppliedFilter) headerAppliedFilter.value = "";
+      if (mobileFavoriteFilter) mobileFavoriteFilter.value = "";
+      if (mobileAppliedFilter) mobileAppliedFilter.value = "";
 
       setLoggedOutDesktopInlineMode(false);
       syncLoginSensitiveFilters(false);
