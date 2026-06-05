@@ -14492,6 +14492,668 @@ html.jobseeker-logged-out .mobile-account-login-link{
   }
 }
 
+
+/* ============================================================
+   FINAL MOBILE RESTORE + 4-ROW CONTROLS PATCH 2026-06-04
+   ✅ Restores mobile header placement:
+      Logo on the left, paper-plane + heart + hamburger on the right.
+   ✅ Keeps mobile profile/account controls inside the hamburger dropdown.
+   ✅ Aligns logged-in mobile controls into 4 compact rows to avoid hidden parts.
+   ✅ Preserves existing IDs, JavaScript, session sync, filters, table/grid,
+      favorite/applied quick filters, logout, modals, and desktop/tablet behavior.
+============================================================ */
+@media (max-width:768px){
+  :root,
+  html.jobseeker-logged-in,
+  html.jobseeker-logged-out,
+  body.jobseeker-logged-in,
+  body.jobseeker-logged-out{
+    --header-h:70px !important;
+    --siteHeaderOffset:70px !important;
+    --masterTopH:156px !important;
+  }
+
+  body{
+    padding-top:var(--header-h) !important;
+    overflow-x:hidden !important;
+  }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:6px !important;
+    padding:5px 8px !important;
+    overflow:visible !important;
+    z-index:220000 !important;
+  }
+
+  header nav{
+    display:none !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 1 auto !important;
+    min-width:0 !important;
+    max-width:min(145px, calc(100vw - 164px)) !important;
+    width:auto !important;
+    margin:0 !important;
+    padding:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    position:relative !important;
+    z-index:220010 !important;
+    overflow:hidden !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+    max-height:52px !important;
+    width:auto !important;
+    max-width:100% !important;
+    display:block !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+    margin:0 !important;
+  }
+
+  header .auth-buttons{
+    order:2 !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    padding:0 !important;
+    flex:0 0 auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:0 !important;
+    min-width:0 !important;
+    overflow:visible !important;
+    position:relative !important;
+    z-index:220020 !important;
+  }
+
+  header .jobseeker-account-menu{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    min-width:0 !important;
+    overflow:visible !important;
+    position:relative !important;
+    z-index:220025 !important;
+  }
+
+  /* Keep the profile/login picture out of the mobile header.
+     Account/Login/Profile/Logout stay inside the hamburger dropdown. */
+  header #headerJobseekerBtn,
+  header .jobseeker-menu-toggle,
+  header .jobseeker-icon-auth,
+  header #headerJobseekerDropdown,
+  header .header-jobseeker-avatar-img,
+  header .header-jobseeker-icon-fallback,
+  header .header-jobseeker-login-text{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+    width:0 !important;
+    min-width:0 !important;
+    max-width:0 !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:0 !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  header .header-jobseeker-quick-icons{
+    display:none !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    margin:0 6px 0 0 !important;
+    padding:0 !important;
+    flex:0 0 auto !important;
+    position:relative !important;
+    z-index:220030 !important;
+    overflow:visible !important;
+  }
+
+  header .header-jobseeker-quick-icons.is-visible{
+    display:inline-flex !important;
+  }
+
+  /* Restored order on the right side: paper-plane, heart, hamburger. */
+  header #headerQuickAppliedBtn{
+    order:1 !important;
+  }
+
+  header #headerQuickFavoriteBtn{
+    order:2 !important;
+  }
+
+  header .jobseeker-quick-icon-btn{
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+    padding:0 !important;
+    border-radius:999px !important;
+    flex:0 0 auto !important;
+    font-size:.80rem !important;
+    line-height:1 !important;
+  }
+
+  header .jobseeker-quick-icon-btn i{
+    font-size:.80rem !important;
+    line-height:1 !important;
+    pointer-events:none !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle{
+    order:3 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 38px !important;
+    width:38px !important;
+    min-width:38px !important;
+    height:38px !important;
+    min-height:38px !important;
+    margin:0 !important;
+    padding:0 !important;
+    position:relative !important;
+    inset:auto !important;
+    transform:none !important;
+    z-index:220040 !important;
+  }
+
+  #mobilePanel.mobile-panel{
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    z-index:219900 !important;
+  }
+
+  .container{
+    width:calc(100vw - 6px) !important;
+    margin-top:calc(var(--header-h) + 8px) !important;
+    padding:5px 4px 12px !important;
+  }
+
+  .sticky-master{
+    top:var(--siteHeaderOffset) !important;
+  }
+
+  .sticky-master-inner{
+    overflow:visible !important;
+  }
+
+  .topbar-row,
+  .sticky-master-inner.logged-out-mode .topbar-row,
+  .sticky-master-inner:not(.logged-out-mode) .topbar-row{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    padding:5px !important;
+    gap:4px !important;
+    align-items:stretch !important;
+    overflow:visible !important;
+  }
+
+  /* Mobile account details are available in hamburger dropdown.
+     Hide the large top account summary so controls get full width. */
+  .user-summary,
+  .sticky-master-inner:not(.logged-out-mode) .user-summary,
+  .sticky-master-inner.logged-out-mode .user-summary{
+    display:none !important;
+  }
+
+  /* Four visible compact control rows:
+     Row 1: title + keyword search
+     Row 2: country + industry + favorite + applied
+     Row 3: reset/table/grid/refresh action box
+     Row 4: remaining advanced filters as a compact horizontal strip */
+  .controls-panel,
+  .sticky-master-inner.logged-out-mode .controls-panel,
+  .sticky-master-inner:not(.logged-out-mode) .controls-panel{
+    display:grid !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    grid-template-columns:minmax(52px,.36fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) !important;
+    grid-template-areas:
+      "toolbar-title search-group search-group search-group"
+      "country-filter industry-filter favorite-filter applied-filter"
+      "action-box action-box action-box action-box"
+      "advanced-filters advanced-filters advanced-filters advanced-filters" !important;
+    align-items:stretch !important;
+    gap:4px !important;
+    overflow:visible !important;
+  }
+
+  .job-hiring-toolbar-title{
+    grid-area:toolbar-title !important;
+    width:100% !important;
+    min-width:0 !important;
+    min-height:28px !important;
+    height:28px !important;
+    padding:3px 4px !important;
+    border-radius:8px !important;
+    gap:3px !important;
+    justify-content:center !important;
+  }
+
+  .job-hiring-toolbar-title i{
+    font-size:.56rem !important;
+    flex:0 0 auto !important;
+  }
+
+  .job-hiring-toolbar-title span{
+    font-size:.46rem !important;
+    line-height:1 !important;
+    letter-spacing:-.02em !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .search-inline-control{
+    grid-area:search-group !important;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    justify-self:stretch !important;
+    display:flex !important;
+    align-items:stretch !important;
+    gap:0 !important;
+  }
+
+  .search-inline-control .search-wrapper{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    width:auto !important;
+  }
+
+  .search-inline-control .search-wrapper input,
+  .sticky-master-inner.logged-out-mode .search-inline-control .search-wrapper input,
+  .sticky-master-inner:not(.logged-out-mode) .search-inline-control .search-wrapper input,
+  .search-wrapper input{
+    min-height:28px !important;
+    height:28px !important;
+    padding:4px 5px 4px 23px !important;
+    font-size:.52rem !important;
+    border-radius:8px 0 0 8px !important;
+  }
+
+  .search-wrapper .fa-search{
+    left:8px !important;
+    font-size:8px !important;
+  }
+
+  .search-inline-control .search-btn,
+  .sticky-master-inner.logged-out-mode .search-inline-control .search-btn,
+  .sticky-master-inner:not(.logged-out-mode) .search-inline-control .search-btn,
+  .search-btn{
+    flex:0 0 50px !important;
+    min-width:50px !important;
+    width:50px !important;
+    min-height:28px !important;
+    height:28px !important;
+    padding:3px 4px !important;
+    border-radius:0 8px 8px 0 !important;
+    font-size:.44rem !important;
+    gap:2px !important;
+    line-height:1 !important;
+  }
+
+  .search-btn i{
+    font-size:.46rem !important;
+  }
+
+  .inline-country-filter-field{
+    grid-area:country-filter !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .inline-industry-filter-field{
+    grid-area:industry-filter !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .favorite-filter-field{
+    grid-area:favorite-filter !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .applied-filter-field{
+    grid-area:applied-filter !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .inline-country-filter-field select,
+  .inline-industry-filter-field select,
+  .favorite-filter-field select,
+  .applied-filter-field select,
+  .sticky-master-inner.logged-out-mode .inline-country-filter-field select,
+  .sticky-master-inner.logged-out-mode .inline-industry-filter-field select,
+  .sticky-master-inner:not(.logged-out-mode) .inline-country-filter-field select,
+  .sticky-master-inner:not(.logged-out-mode) .inline-industry-filter-field select,
+  .sticky-master-inner:not(.logged-out-mode) .favorite-filter-field select,
+  .sticky-master-inner:not(.logged-out-mode) .applied-filter-field select{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:28px !important;
+    height:28px !important;
+    padding:3px 4px !important;
+    font-size:.46rem !important;
+    border-radius:8px !important;
+    line-height:1 !important;
+  }
+
+  .control-row-sub,
+  .view-action-box{
+    grid-area:action-box !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .view-action-box,
+  .sticky-master-inner.logged-out-mode .view-action-box,
+  .sticky-master-inner:not(.logged-out-mode) .view-action-box{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap:3px !important;
+    padding:2px !important;
+    border-radius:8px !important;
+    overflow:hidden !important;
+    min-height:30px !important;
+  }
+
+  .view-action-box .view-toggle{
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    display:flex !important;
+    gap:3px !important;
+  }
+
+  .view-action-box #resetBtn,
+  .view-action-box #viewTableBtn,
+  .view-action-box #viewGridOnlyBtn,
+  .view-action-box #refreshBtn,
+  .refresh-btn{
+    min-width:0 !important;
+    min-height:26px !important;
+    height:26px !important;
+    padding:2px 4px !important;
+    border-radius:6px !important;
+    font-size:.48rem !important;
+    line-height:1 !important;
+    gap:2px !important;
+    overflow:hidden !important;
+    white-space:nowrap !important;
+  }
+
+  .view-action-box #resetBtn{flex:0 0 54px !important;}
+  .view-action-box #viewTableBtn,
+  .view-action-box #viewGridOnlyBtn{flex:1 1 0 !important;}
+  .view-action-box #refreshBtn,
+  .refresh-btn{flex:0 0 58px !important;}
+
+  .view-action-box #resetBtn i,
+  .view-action-box #viewTableBtn i,
+  .view-action-box #viewGridOnlyBtn i,
+  .view-action-box #refreshBtn i,
+  .refresh-btn i{
+    display:inline-flex !important;
+    font-size:.58rem !important;
+    line-height:1 !important;
+    margin:0 !important;
+  }
+
+  .advanced-filter-row,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+    grid-area:advanced-filters !important;
+    grid-column:auto !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:4px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    scrollbar-width:thin !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row select,
+  .advanced-filter-row .filter-dd,
+  .advanced-filter-row .filter-dd-trigger{
+    flex:0 0 clamp(84px, 30vw, 126px) !important;
+    width:clamp(84px, 30vw, 126px) !important;
+    min-width:84px !important;
+    max-width:126px !important;
+    min-height:28px !important;
+    height:28px !important;
+    padding:3px 5px !important;
+    font-size:.48rem !important;
+    border-radius:8px !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar{
+    height:4px !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar-thumb{
+    background:linear-gradient(90deg,#00c6ff,#7c3aed) !important;
+    border-radius:999px !important;
+  }
+
+  .table-section{
+    padding-top:5px !important;
+  }
+
+  .table-header-sticky{
+    top:calc(var(--siteHeaderOffset) + var(--masterTopH) + 4px) !important;
+  }
+
+  #gridOnlyWrapper{
+    padding-top:5px !important;
+  }
+
+  .cards-grid,
+  .cards-grid-only{
+    padding-top:8px !important;
+  }
+}
+
+@media (max-width:480px){
+  :root,
+  html.jobseeker-logged-in,
+  html.jobseeker-logged-out,
+  body.jobseeker-logged-in,
+  body.jobseeker-logged-out{
+    --header-h:68px !important;
+    --siteHeaderOffset:68px !important;
+    --masterTopH:154px !important;
+  }
+
+  header{
+    gap:5px !important;
+    padding:5px 6px !important;
+  }
+
+  header .logo{
+    max-width:min(112px, calc(100vw - 148px)) !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+    max-height:48px !important;
+  }
+
+  header .header-jobseeker-quick-icons{
+    gap:4px !important;
+    margin-right:5px !important;
+  }
+
+  header .jobseeker-quick-icon-btn{
+    width:31px !important;
+    min-width:31px !important;
+    height:31px !important;
+    min-height:31px !important;
+  }
+
+  header .jobseeker-quick-icon-btn i{
+    font-size:.72rem !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle{
+    flex-basis:36px !important;
+    width:36px !important;
+    min-width:36px !important;
+    height:36px !important;
+    min-height:36px !important;
+  }
+
+  .controls-panel,
+  .sticky-master-inner.logged-out-mode .controls-panel,
+  .sticky-master-inner:not(.logged-out-mode) .controls-panel{
+    grid-template-columns:48px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) !important;
+    gap:3px !important;
+  }
+
+  .job-hiring-toolbar-title,
+  .search-inline-control .search-wrapper input,
+  .sticky-master-inner.logged-out-mode .search-inline-control .search-wrapper input,
+  .sticky-master-inner:not(.logged-out-mode) .search-inline-control .search-wrapper input,
+  .search-inline-control .search-btn,
+  .inline-country-filter-field select,
+  .inline-industry-filter-field select,
+  .favorite-filter-field select,
+  .applied-filter-field select,
+  .view-action-box,
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row select,
+  .advanced-filter-row .filter-dd,
+  .advanced-filter-row .filter-dd-trigger{
+    min-height:27px !important;
+    height:27px !important;
+  }
+
+  .job-hiring-toolbar-title span{
+    font-size:.40rem !important;
+  }
+
+  .search-inline-control .search-btn{
+    flex-basis:44px !important;
+    min-width:44px !important;
+    width:44px !important;
+    font-size:.40rem !important;
+  }
+
+  .inline-country-filter-field select,
+  .inline-industry-filter-field select,
+  .favorite-filter-field select,
+  .applied-filter-field select{
+    font-size:.42rem !important;
+    padding-left:3px !important;
+    padding-right:3px !important;
+  }
+
+  .view-action-box #resetBtn{
+    flex-basis:44px !important;
+  }
+
+  .view-action-box #refreshBtn,
+  .refresh-btn{
+    flex-basis:48px !important;
+  }
+
+  .view-action-box #resetBtn,
+  .view-action-box #viewTableBtn,
+  .view-action-box #viewGridOnlyBtn,
+  .view-action-box #refreshBtn,
+  .refresh-btn{
+    font-size:.42rem !important;
+    padding-left:2px !important;
+    padding-right:2px !important;
+  }
+
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row select,
+  .advanced-filter-row .filter-dd,
+  .advanced-filter-row .filter-dd-trigger{
+    flex-basis:88px !important;
+    width:88px !important;
+    min-width:88px !important;
+    max-width:88px !important;
+    font-size:.44rem !important;
+  }
+}
+
+@media (max-width:360px){
+  header .logo{
+    max-width:92px !important;
+  }
+
+  header .logo img{
+    height:45px !important;
+  }
+
+  header .jobseeker-quick-icon-btn{
+    width:29px !important;
+    min-width:29px !important;
+    height:29px !important;
+    min-height:29px !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle{
+    flex-basis:34px !important;
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+  }
+
+  .job-hiring-toolbar-title i{
+    display:none !important;
+  }
+
+  .job-hiring-toolbar-title span{
+    font-size:.38rem !important;
+  }
+}
+
 </style>
 </head>
 
