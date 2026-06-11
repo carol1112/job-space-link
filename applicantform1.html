@@ -9,6 +9,7 @@
 <!-- ✅ ENHANCED POPUP LOCK: Qualification and Job Preferences inputs/rows are disabled while message popups are open to prevent accidental field opening. -->
 <!-- ✅ ENHANCED POST-SAVE LOGOUT CLEAR: After saving a new record/password, Logout fully clears the form and blocks delayed restore/session reloading. -->
 <!-- ✅ ENHANCED EXISTING-RECORD AUTO LOGIN SYNC: Loading an existing record now publishes a Jobseeker logged-in session and syncs login/logout with postedhiring1.html. -->
+<!-- ✅ PROFILES ROLE FIX: New applicant saves/password setup now force public.profiles.role = applicant, not employer. -->
 
 <!-- ICONS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
@@ -6357,6 +6358,538 @@ header .auth-buttons .auth-text{
 }
 </style>
 
+
+<style id="choose-portal-applicant-form-theme">
+/* ============================================================
+   CHOOSE PORTAL THEME PATCH FOR APPLICANT FORM
+   Visual-only update: header style, background color, font style,
+   and navy font colors. No HTML IDs/classes or JavaScript behavior
+   are changed.
+============================================================ */
+:root{
+  --hdrH:78px !important;
+  --jsl-portal-white:#ffffff;
+  --jsl-portal-soft:#f8fbff;
+  --jsl-portal-soft2:#eef8ff;
+  --jsl-portal-border:#e5eaf3;
+  --jsl-portal-navy:#002766;
+  --jsl-portal-navy2:#001b4d;
+  --jsl-portal-blue:#0b5cff;
+  --jsl-portal-sky:#38bdf8;
+  --jsl-portal-login1:#27c7ff;
+  --jsl-portal-login2:#4f6dff;
+}
+
+/* Global page font and white Choose Portal background */
+html,
+body{
+  background:#ffffff !important;
+  color:var(--jsl-portal-navy) !important;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif !important;
+}
+body{
+  min-height:100vh !important;
+  background:#ffffff !important;
+  color:var(--jsl-portal-navy) !important;
+  padding-bottom:90px !important;
+}
+body::before,
+body::after{
+  display:none !important;
+}
+body,
+body *:not(.fa):not(.fa-solid):not(.fa-regular):not(.fa-brands){
+  font-family:"Poppins","Segoe UI",Arial,sans-serif !important;
+}
+
+/* ============================================================
+   HEADER - Choose Portal screenshot style
+============================================================ */
+header{
+  height:var(--hdrH) !important;
+  min-height:var(--hdrH) !important;
+  padding:0 16px 0 8px !important;
+  background:#ffffff !important;
+  border-bottom:1px solid var(--jsl-portal-border) !important;
+  box-shadow:0 2px 12px rgba(15,23,42,0.05) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  color:var(--jsl-portal-navy) !important;
+  z-index:1500 !important;
+}
+
+header .logo{
+  margin-left:-4px !important;
+  min-width:140px !important;
+}
+
+header .logo img{
+  height:88px !important;
+  max-width:180px !important;
+  width:auto !important;
+  object-fit:contain !important;
+  filter:none !important;
+}
+
+header nav{
+  gap:20px !important;
+  margin-left:4px !important;
+  align-items:center !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  height:36px !important;
+  padding:0 5px !important;
+  gap:7px !important;
+  color:var(--jsl-portal-navy) !important;
+  font-size:0.88rem !important;
+  font-weight:600 !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  letter-spacing:0 !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  border-radius:7px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  color:#003a70 !important;
+  background:#eaf8ff !important;
+  border:1px solid #c7ecff !important;
+  box-shadow:0 2px 7px rgba(56,189,248,0.20) !important;
+  font-size:0.78rem !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:focus-visible{
+  color:#000000 !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  outline:none !important;
+}
+
+header nav > a:hover i,
+header nav .nav-main-link:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:focus-visible i{
+  color:#000000 !important;
+  background:#dff4ff !important;
+  border-color:#9bdfff !important;
+  box-shadow:0 3px 10px rgba(56,189,248,0.28) !important;
+}
+
+/* About dropdown caret/button */
+.nav-dropdown,
+.nav-dropdown-trigger{
+  height:36px !important;
+}
+
+.nav-dropdown-toggle{
+  width:30px !important;
+  height:30px !important;
+  border-radius:8px !important;
+  background:#eaf8ff !important;
+  border:1px solid #c7ecff !important;
+  color:var(--jsl-portal-navy) !important;
+  box-shadow:0 2px 7px rgba(56,189,248,0.18) !important;
+}
+
+.nav-dropdown-toggle i,
+.nav-dropdown-toggle .nav-caret{
+  color:var(--jsl-portal-navy) !important;
+  font-size:0.88rem !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  background:#dff4ff !important;
+  border-color:#9bdfff !important;
+  color:#000000 !important;
+  outline:none !important;
+}
+
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+/* Dropdown menu white background with navy text */
+.nav-dropdown-menu{
+  top:calc(100% + 12px) !important;
+  min-width:220px !important;
+  padding:10px 0 !important;
+  border-radius:14px !important;
+  background:#ffffff !important;
+  border:1px solid var(--jsl-portal-border) !important;
+  box-shadow:0 16px 36px rgba(15,23,42,0.14) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown.open .nav-dropdown-menu,
+.nav-dropdown:hover .nav-dropdown-menu{
+  display:flex !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--jsl-portal-navy) !important;
+  background:transparent !important;
+  font-weight:600 !important;
+  font-size:0.88rem !important;
+  gap:10px !important;
+}
+
+.nav-dropdown-menu a i{
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  border-radius:7px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  color:#003a70 !important;
+  background:#eaf8ff !important;
+  border:1px solid #c7ecff !important;
+  box-shadow:0 2px 7px rgba(56,189,248,0.16) !important;
+  font-size:0.78rem !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:#f5fbff !important;
+  color:#000000 !important;
+  text-decoration:underline !important;
+  outline:none !important;
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#000000 !important;
+  background:#dff4ff !important;
+  border-color:#9bdfff !important;
+}
+
+/* Login/auth style in the same visual language, if present */
+header .auth-buttons a,
+.header-login-button,
+.login-button,
+#loginBtn,
+#headerLoginBtn{
+  height:36px !important;
+  min-height:36px !important;
+  padding:0 14px !important;
+  border-radius:10px !important;
+  color:#ffffff !important;
+  border:1px solid rgba(59,130,246,0.18) !important;
+  background:linear-gradient(135deg,var(--jsl-portal-login1),var(--jsl-portal-login2)) !important;
+  box-shadow:0 6px 14px rgba(59,130,246,0.22) !important;
+  font-size:0.82rem !important;
+  font-weight:700 !important;
+  text-decoration:none !important;
+}
+
+header .auth-buttons a i,
+.header-login-button i,
+.login-button i,
+#loginBtn i,
+#headerLoginBtn i{
+  color:#ffffff !important;
+}
+
+header .auth-buttons a:hover,
+.header-login-button:hover,
+.login-button:hover,
+#loginBtn:hover,
+#headerLoginBtn:hover{
+  color:#ffffff !important;
+  transform:translateY(-2px) !important;
+  box-shadow:0 8px 18px rgba(59,130,246,0.28) !important;
+  border-color:rgba(59,130,246,0.32) !important;
+}
+
+/* Mobile toggle and panel */
+.nav-toggle{
+  width:40px !important;
+  height:40px !important;
+  border-radius:10px !important;
+  color:var(--jsl-portal-navy) !important;
+  background:#eaf8ff !important;
+  border:1px solid #c7ecff !important;
+  box-shadow:0 2px 7px rgba(56,189,248,0.18) !important;
+}
+
+.nav-toggle i{
+  color:var(--jsl-portal-navy) !important;
+}
+
+.nav-toggle:hover,
+.nav-toggle:focus-visible{
+  color:#000000 !important;
+  background:#dff4ff !important;
+  border-color:#9bdfff !important;
+  outline:none !important;
+}
+
+.nav-toggle:hover i,
+.nav-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+.mobile-panel{
+  top:var(--hdrH) !important;
+  background:#ffffff !important;
+  border-top:1px solid var(--jsl-portal-border) !important;
+  border-bottom:1px solid var(--jsl-portal-border) !important;
+  box-shadow:0 12px 28px rgba(15,23,42,0.12) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--jsl-portal-navy) !important;
+  background:#ffffff !important;
+  border:1px solid var(--jsl-portal-border) !important;
+  font-weight:600 !important;
+  box-shadow:0 2px 8px rgba(15,23,42,0.04) !important;
+}
+
+.mobile-panel .mnav a i,
+.mobile-panel .mnav-main-link i,
+.mobile-panel .mnav-toggle i{
+  color:#003a70 !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:#f5fbff !important;
+  transform:translateX(3px) !important;
+  outline:none !important;
+}
+
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-toggle:hover i{
+  color:#000000 !important;
+}
+
+/* ============================================================
+   PAGE BACKGROUND + NAVY FONT COLOR
+============================================================ */
+.page{
+  margin:calc(var(--hdrH) + 18px) auto 0 !important;
+  color:var(--jsl-portal-navy) !important;
+}
+
+.shell{
+  background:#ffffff !important;
+  border:1px solid var(--jsl-portal-border) !important;
+  box-shadow:0 18px 44px rgba(15,23,42,0.08) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.shell-inner{
+  background:#ffffff !important;
+  border:1px solid var(--jsl-portal-border) !important;
+  color:var(--jsl-portal-navy) !important;
+  box-shadow:0 16px 34px rgba(15,23,42,0.07) !important;
+}
+
+.page-title h1,
+.section-head,
+.section-head .left,
+.profile-name,
+.doc-title,
+.qualification-row-title,
+.job-pref-row-title,
+.ready-work-title,
+.field-card input,
+.field-card select,
+.field-card textarea,
+.doc-file,
+.profile-sub,
+.field-card .lbl,
+.qualification-row-summary,
+.job-pref-row-summary,
+.ready-work-subtitle,
+.ready-work-status{
+  color:var(--jsl-portal-navy) !important;
+}
+
+.page-title .hint,
+.section-head .mini,
+.qualification-subtitle,
+.job-preference-subtitle,
+.profile-sub{
+  color:var(--jsl-portal-navy) !important;
+}
+
+/* Icons inside the form use the same blue badge feel without changing actions */
+.page .fa-solid,
+.page .fa-regular,
+.page .fa-brands{
+  color:#003a70;
+}
+
+.section,
+.profile-card,
+.field-card,
+.doc-row,
+.qualification-card-list,
+.qualification-list-row,
+.job-pref-card-list,
+.job-pref-list-row,
+.ready-work-card{
+  background:#ffffff !important;
+  border-color:var(--jsl-portal-border) !important;
+  color:var(--jsl-portal-navy) !important;
+  box-shadow:0 10px 24px rgba(15,23,42,0.06) !important;
+}
+
+.field-card input::placeholder,
+.field-card textarea::placeholder,
+.auth-field input::placeholder{
+  color:#5f6f8e !important;
+  opacity:1 !important;
+}
+
+/* Keep primary action buttons vivid and readable */
+.bigbtn,
+.primary-btn,
+.ghost-btn,
+.btn-mini{
+  font-family:"Poppins","Segoe UI",Arial,sans-serif !important;
+}
+
+/* Responsive header matching the Choose Portal screenshot */
+@media (min-width:1800px){
+  :root{--hdrH:84px !important;}
+  header{
+    height:84px !important;
+    min-height:84px !important;
+    padding:0 24px 0 14px !important;
+  }
+  header .logo img{height:92px !important;}
+  header nav{gap:22px !important;}
+  header nav > a,
+  header nav .nav-main-link{font-size:0.94rem !important;}
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  :root{--hdrH:78px !important;}
+  header{
+    height:78px !important;
+    min-height:78px !important;
+    padding:0 18px 0 10px !important;
+  }
+  header .logo img{height:86px !important;}
+  header nav{gap:20px !important;}
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  :root{--hdrH:76px !important;}
+  header{
+    height:76px !important;
+    min-height:76px !important;
+    padding:0 14px 0 8px !important;
+  }
+  header .logo{min-width:132px !important;}
+  header .logo img{height:78px !important;max-width:166px !important;}
+  header nav{gap:13px !important;}
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.82rem !important;
+    padding:0 3px !important;
+    gap:6px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  :root{--hdrH:72px !important;}
+  header{
+    height:72px !important;
+    min-height:72px !important;
+    padding:0 12px 0 8px !important;
+  }
+  header .logo{min-width:116px !important;}
+  header .logo img{height:70px !important;max-width:145px !important;}
+  header nav{gap:8px !important;}
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:0.72rem !important;
+    padding:0 2px !important;
+    gap:4px !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:20px !important;
+    height:20px !important;
+    min-width:20px !important;
+    font-size:0.72rem !important;
+  }
+  .nav-dropdown-toggle{
+    width:26px !important;
+    height:26px !important;
+  }
+}
+
+@media (max-width:768px){
+  :root{--hdrH:68px !important;}
+  header{
+    height:68px !important;
+    min-height:68px !important;
+    padding:6px 12px !important;
+  }
+  header .logo{min-width:0 !important;}
+  header .logo img{
+    height:64px !important;
+    max-width:150px !important;
+  }
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+  .nav-toggle{
+    display:flex !important;
+  }
+  .mobile-panel{
+    top:68px !important;
+  }
+  .page{
+    margin-top:calc(var(--hdrH) + 14px) !important;
+  }
+}
+
+@media (max-width:480px){
+  header .logo img{
+    height:58px !important;
+    max-width:132px !important;
+  }
+  .mobile-panel{
+    padding:12px 14px 16px !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -12528,15 +13061,294 @@ async function uploadApplicantStorageFile(fileBlob, options){
 }
 
 async function ensureApplicantAuthUser(email, password, userMeta){
-  var eml = String(email || "").trim();
+  var eml = String(email || "").trim().toLowerCase();
   var pass = String(password || "").trim();
   if (!eml || !pass) throw new Error("Email and password are required.");
+
+  var meta = Object.assign({}, userMeta || {}, {
+    role: "applicant",
+    account_type: "applicant",
+    user_type: "applicant",
+    profile_role: "applicant"
+  });
 
   return await callApplicantFormBackend("ensure_auth_user", {
     email: eml,
     password: pass,
-    user_metadata: userMeta || {}
+    role: "applicant",
+    account_type: "applicant",
+    user_type: "applicant",
+    profile_role: "applicant",
+    user_metadata: meta
   });
+}
+
+/*
+   Keeps public.profiles aligned with applicantform1 saves.
+   New applicant saves must always force the matching public.profiles row to:
+     role = "applicant"
+   This version is stronger than the previous patch:
+   - sends several compatible Edge Function action names for older/newer backends
+   - passes id/user_id candidates when available
+   - updates existing profiles rows by email and by id
+   - inserts/upserts a missing row when the schema/RLS allows it
+   - never breaks the existing applicant save flow if profile sync is blocked by RLS
+*/
+async function ensureApplicantProfilesTableRole(email, options){
+  options = options || {};
+
+  function _clean(v){ return v == null ? "" : String(v).trim(); }
+  function _lower(v){ return _clean(v).toLowerCase(); }
+  function _uniq(list){
+    var out = [];
+    (list || []).forEach(function(item){
+      item = _clean(item);
+      if (item && out.indexOf(item) < 0) out.push(item);
+    });
+    return out;
+  }
+  function _pushId(list, value){
+    value = _clean(value);
+    if (value && list.indexOf(value) < 0) list.push(value);
+  }
+  function _persistPending(reason, extra){
+    try{
+      localStorage.setItem("jsl_pending_profiles_role_sync_v1", JSON.stringify({
+        email: eml,
+        role: requestedRole,
+        reason: _clean(reason || ""),
+        extra: extra || null,
+        at: Date.now()
+      }));
+    }catch(_e){}
+  }
+  function _clearPending(){
+    try{ localStorage.removeItem("jsl_pending_profiles_role_sync_v1"); }catch(_e){}
+  }
+
+  var eml = _lower(email);
+  if (!eml || (typeof isValidLoginCaptureEmail === "function" && !isValidLoginCaptureEmail(eml))) return null;
+
+  var requestedRole = "applicant";
+  var reason = _clean(options.reason || "applicant-save");
+  var fullName = _clean(options.full_name || options.fullName || lastSubmittedFullName || "Applicant");
+  var idCandidates = [];
+
+  _pushId(idCandidates, options.user_id);
+  _pushId(idCandidates, options.userId);
+  _pushId(idCandidates, options.profile_id);
+  _pushId(idCandidates, options.profileId);
+  _pushId(idCandidates, options.auth_user_id);
+  _pushId(idCandidates, options.authUserId);
+  _pushId(idCandidates, options.id);
+
+  try{
+    var activeClient = window.supabase;
+    if (activeClient && activeClient.auth){
+      var activeSession = await getExistingSupabaseSession(activeClient);
+      var activeUser = activeSession && activeSession.user ? activeSession.user : null;
+      if (activeUser && _lower(activeUser.email) === eml){
+        _pushId(idCandidates, activeUser.id);
+      }
+    }
+  }catch(_sessionErr){}
+
+  var profilePayload = {
+    email: eml,
+    role: requestedRole,
+    profile_role: requestedRole,
+    account_type: requestedRole,
+    user_type: requestedRole,
+    full_name: fullName,
+    source: "applicantform1.html",
+    reason: reason
+  };
+
+  if (idCandidates.length){
+    profilePayload.id = idCandidates[0];
+    profilePayload.user_id = idCandidates[0];
+    profilePayload.auth_user_id = idCandidates[0];
+  }
+
+  /*
+     First use the backend service-role path. This is the reliable path when
+     profiles has RLS or id is tied to auth.users. Multiple action names are tried
+     so this HTML keeps working with older/newer applicant-form Edge Function code.
+  */
+  var backendActions = [
+    "ensure_profile_role",
+    "sync_profile_role",
+    "upsert_profile_role",
+    "upsert_profile",
+    "update_profile_role",
+    "ensure_profiles_role"
+  ];
+
+  for (var i = 0; i < backendActions.length; i += 1){
+    try{
+      var backendResult = await callApplicantFormBackend(backendActions[i], profilePayload);
+      if (backendResult && (backendResult.profile || backendResult.success || backendResult.ok || backendResult.data)){
+        _clearPending();
+        return backendResult.profile || backendResult.data || backendResult;
+      }
+    }catch(backendErr){
+      /* Unsupported Edge Function actions are expected on older deployments.
+         Continue to the next fallback without interrupting the applicant save. */
+      console.warn("profiles role backend sync skipped:", backendActions[i], backendErr && backendErr.message ? backendErr.message : backendErr);
+    }
+  }
+
+  /*
+     Direct table fallback. This works when anon/auth RLS policy allows the page to
+     edit public.profiles. It fixes the common case where a row exists with role=employer
+     and only needs to be changed to applicant.
+  */
+  try{
+    var client = window.supabase;
+    if (!client || typeof client.from !== "function"){
+      _persistPending("no-client");
+      return null;
+    }
+
+    var existingRows = [];
+    try{
+      var selectByEmail = await client
+        .from("profiles")
+        .select("id,email,role,created_at")
+        .eq("email", eml)
+        .limit(10);
+
+      if (!selectByEmail.error && Array.isArray(selectByEmail.data)){
+        existingRows = existingRows.concat(selectByEmail.data);
+      }
+    }catch(_selectExactErr){}
+
+    try{
+      var selectByEmailIlike = await client
+        .from("profiles")
+        .select("id,email,role,created_at")
+        .ilike("email", eml)
+        .limit(10);
+
+      if (!selectByEmailIlike.error && Array.isArray(selectByEmailIlike.data)){
+        existingRows = existingRows.concat(selectByEmailIlike.data);
+      }
+    }catch(_selectIlikeErr){}
+
+    existingRows.forEach(function(row){
+      if (row && row.id) _pushId(idCandidates, row.id);
+    });
+
+    existingRows = existingRows.filter(function(row, idx, arr){
+      if (!row) return false;
+      var key = _clean(row.id || "") + "|" + _lower(row.email || "");
+      return arr.findIndex(function(other){
+        return other && (_clean(other.id || "") + "|" + _lower(other.email || "")) === key;
+      }) === idx;
+    });
+
+    var updatePayload = {
+      email: eml,
+      role: requestedRole
+    };
+
+    for (var u = 0; u < idCandidates.length; u += 1){
+      try{
+        var updateById = await client
+          .from("profiles")
+          .update(updatePayload)
+          .eq("id", idCandidates[u])
+          .select("id,email,role")
+          .maybeSingle();
+
+        if (!updateById.error && updateById.data){
+          _clearPending();
+          return updateById.data;
+        }
+      }catch(_updateByIdErr){}
+    }
+
+    try{
+      var updateByEmail = await client
+        .from("profiles")
+        .update(updatePayload)
+        .eq("email", eml)
+        .select("id,email,role");
+
+      if (!updateByEmail.error && Array.isArray(updateByEmail.data) && updateByEmail.data.length){
+        _clearPending();
+        return updateByEmail.data[0];
+      }
+    }catch(_updateByEmailErr){}
+
+    try{
+      var updateByEmailIlike = await client
+        .from("profiles")
+        .update(updatePayload)
+        .ilike("email", eml)
+        .select("id,email,role");
+
+      if (!updateByEmailIlike.error && Array.isArray(updateByEmailIlike.data) && updateByEmailIlike.data.length){
+        _clearPending();
+        return updateByEmailIlike.data[0];
+      }
+    }catch(_updateByEmailIlikeErr){}
+
+    var insertPayloads = [];
+
+    idCandidates.forEach(function(candidateId){
+      insertPayloads.push({
+        id: candidateId,
+        email: eml,
+        role: requestedRole
+      });
+    });
+
+    /* If profiles.id has a default UUID, this insert will work. If profiles.id
+       must match auth.users.id, it will fail safely and be retried after auth setup. */
+    insertPayloads.push({
+      email: eml,
+      role: requestedRole
+    });
+
+    for (var p = 0; p < insertPayloads.length; p += 1){
+      try{
+        var upsertPayload = insertPayloads[p];
+
+        var upsertByEmail = await client
+          .from("profiles")
+          .upsert(upsertPayload, { onConflict:"email" })
+          .select("id,email,role")
+          .maybeSingle();
+
+        if (!upsertByEmail.error && upsertByEmail.data){
+          _clearPending();
+          return upsertByEmail.data;
+        }
+      }catch(_upsertByEmailErr){}
+
+      try{
+        var insertRes = await client
+          .from("profiles")
+          .insert(insertPayloads[p])
+          .select("id,email,role")
+          .maybeSingle();
+
+        if (!insertRes.error && insertRes.data){
+          _clearPending();
+          return insertRes.data;
+        }
+      }catch(_insertErr){}
+    }
+
+    _persistPending("direct-sync-not-allowed", { idCandidates: idCandidates, existingRows: existingRows.length });
+    console.warn("profiles role sync did not complete. It may require Edge Function service-role support or an RLS policy for public.profiles.");
+  }catch(err){
+    _persistPending("direct-sync-error", { message: err && err.message ? err.message : String(err || "") });
+    console.warn("profiles role sync failed:", err && err.message ? err.message : err);
+  }
+
+  return null;
 }
 
 function applyLoadedRecordFromBackend(masterRow, lastTrans, sourceMode, preferredTransaction){
@@ -14227,12 +15039,42 @@ async function sha256Hex(text){
 }
 
 async function ensureEmailOnlyEmployeeAccount(email, employeeName){
-  var eml = (email || "").trim();
-  if (!eml) return;
-  await callApplicantFormBackend("ensure_email_only_account", {
+  var eml = (email || "").trim().toLowerCase();
+  if (!eml) return null;
+
+  var result = await callApplicantFormBackend("ensure_email_only_account", {
     email: eml,
-    employee_name: (employeeName || "Applicant")
+    employee_name: (employeeName || "Applicant"),
+    role: "applicant",
+    profile_role: "applicant",
+    account_type: "applicant",
+    user_type: "applicant",
+    source: "applicantform1.html"
   });
+
+  /*
+     Important: some backend paths create/update the auth/profile record during
+     email-only account creation. Immediately force public.profiles.role to applicant
+     so the row does not stay as employer after saving a new applicant record.
+  */
+  try{
+    var possibleUserId =
+      (result && result.user && result.user.id) ||
+      (result && result.profile && result.profile.id) ||
+      (result && result.id) ||
+      (result && result.user_id) ||
+      "";
+
+    await ensureApplicantProfilesTableRole(eml, {
+      reason: "email-only-account-sync",
+      full_name: (employeeName || "Applicant"),
+      user_id: possibleUserId
+    });
+  }catch(profileSyncErr){
+    console.warn("email-only profile role sync skipped:", profileSyncErr && profileSyncErr.message ? profileSyncErr.message : profileSyncErr);
+  }
+
+  return result;
 }
 
 
@@ -14288,6 +15130,11 @@ authSaveBtn.addEventListener("click", async function(){
     await ensureEmailOnlyEmployeeAccount(email, (lastSubmittedFullName || "Applicant"));
 
     if (!pass){
+      await ensureApplicantProfilesTableRole(email, {
+        reason: "email-only-auth-popup-save",
+        full_name: (lastSubmittedFullName || "Applicant").trim()
+      });
+
       hideAuthPopup();
       showAutoSuccess((window._postAuthSuccessMessage || "Saved successfully.") + " You can login using Email only.");
       return;
@@ -14301,6 +15148,11 @@ authSaveBtn.addEventListener("click", async function(){
 
     var already = await isAlreadyRegistered(email);
     if (already){
+      await ensureApplicantProfilesTableRole(email, {
+        reason: "already-registered-auth-popup-save",
+        full_name: (lastSubmittedFullName || "Applicant").trim()
+      });
+
       hideAuthPopup();
       showAutoSuccess((window._postAuthSuccessMessage || "Saved successfully.") + " This email already has a password login.");
       return;
@@ -14308,9 +15160,14 @@ authSaveBtn.addEventListener("click", async function(){
 
     await ensureApplicantAuthUser(email, pass, {
       role: "applicant",
+      account_type: "applicant",
+      user_type: "applicant",
+      profile_role: "applicant",
       source: detectSource(),
       full_name: (lastSubmittedFullName || "Applicant").trim()
     });
+
+    await ensureApplicantProfilesTableRole(email, { reason:"password-save-auth-user" });
 
     await savePasswordToEmployeeAccounts({
       employee_name: (lastSubmittedFullName || "Applicant").trim(),
@@ -14342,6 +15199,10 @@ async function handlePostSubmitAuthPrompt(savedEmail, baseMessage){
   /* Employee-account syncing is optional and should never slow the main save. */
   try{
     ensureEmailOnlyEmployeeAccount(email, (lastSubmittedFullName || "Applicant")).catch(function(){});
+  }catch(e){}
+
+  try{
+    ensureApplicantProfilesTableRole(email, { reason:"post-submit-auth-prompt" }).catch(function(){});
   }catch(e){}
 
   hideSuccessPopupForce();
@@ -15435,8 +16296,27 @@ appForm.addEventListener("submit", async function(e){
       "Saving applicant data into applicant_transaction_table..."
     );
 
+    var applicantProfileSyncPayload = {
+      email: safeLowerTrim(document.getElementById("email").value),
+      role: "applicant",
+      profile_role: "applicant",
+      account_type: "applicant",
+      user_type: "applicant",
+      full_name: lastSubmittedFullName || [fn,mn,ln].filter(Boolean).join(" ").trim(),
+      source: "applicantform1.html",
+      reason: startedAsExistingRecord ? "existing-applicant-submit-profile" : "new-applicant-submit-profile"
+    };
+
     var submitData = await callApplicantFormBackend("submit_profile", {
       master_id: master_id,
+      profile_role: "applicant",
+      role: "applicant",
+      account_type: "applicant",
+      user_type: "applicant",
+      profile: applicantProfileSyncPayload,
+      profiles: applicantProfileSyncPayload,
+      profiles_table: applicantProfileSyncPayload,
+      ensure_profile_role: true,
       identity: {
         first_name: fn,
         middle_name: mn || null,
@@ -15489,6 +16369,17 @@ appForm.addEventListener("submit", async function(e){
     persistLoadedRecordSessionState("submit-success");
 
     rememberCurrentApplicantEmail(startedAsExistingRecord ? "existing-record-saved" : "new-record-saved");
+
+    await ensureApplicantProfilesTableRole(safeTrim(document.getElementById("email").value), {
+      reason: startedAsExistingRecord ? "existing-applicant-save" : "new-applicant-save",
+      full_name: lastSubmittedFullName || [fn,mn,ln].filter(Boolean).join(" ").trim(),
+      user_id:
+        (submitData && submitData.user && submitData.user.id) ||
+        (submitData && submitData.profile && submitData.profile.id) ||
+        (submitData && submitData.auth_user_id) ||
+        (submitData && submitData.user_id) ||
+        ""
+    });
 
     var suppressAuth = !!window._suppressAuthPromptOnce;
     window._suppressAuthPromptOnce = false;
@@ -22411,6 +23302,1500 @@ function refreshViewStaffMobileModalState(){
       font-size:.82rem;
     }
   }
+
+
+/* ============================================================
+   FINAL BANK-STYLE FONT + BACKGROUND COLOR PATCH
+   Applies the clean white / light gray background and dark navy
+   typography from the reference image while preserving existing
+   icon colors, login button colors, links, layout, JS behavior,
+   video behavior, and responsive breakpoints.
+============================================================ */
+:root{
+  --bank-white:#ffffff;
+  --bank-soft:#f5f5f5;
+  --bank-soft-2:#f7f7f7;
+  --bank-line:#e6e8ec;
+  --bank-navy:#012169;
+  --bank-text:#1f2937;
+  --bank-muted:#4b5563;
+  --bank-link:#0057b8;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body{
+  background:var(--bank-white) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Header background and typography only */
+header{
+  background:var(--bank-white) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo img{
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--bank-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Preserve blue icon style in normal state; keep hover readable on white */
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  color:#070bee !important;
+  text-shadow:0 0 10px rgba(56,189,248,0.35) !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#000000 !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+.nav-dropdown-menu{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--bank-navy) !important;
+  background:var(--bank-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Mobile menu follows the same white / navy reference style */
+.mobile-panel{
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:var(--bank-navy) !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--bank-white) !important;
+}
+
+/* Main page background and content colors */
+.page-shell{
+  background:var(--bank-white) !important;
+}
+
+.portal-card,
+.video-card{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.08) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.portal-card::before,
+.portal-card::after{
+  display:none !important;
+  content:none !important;
+}
+
+.page-title h1,
+.video-info-panel h2,
+.logo-fallback .brand-main{
+  color:var(--bank-navy) !important;
+  font-weight:600 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+}
+
+.page-title p,
+.video-info-panel p,
+.video-benefits li,
+.logo-fallback .brand-sub{
+  color:var(--bank-text) !important;
+  font-weight:400 !important;
+  text-shadow:none !important;
+}
+
+.video-info-panel{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 8px 20px rgba(1,33,105,0.06) !important;
+}
+
+.video-kicker{
+  background:var(--bank-soft) !important;
+  border:1px solid var(--bank-line) !important;
+  color:var(--bank-navy) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.video-frame{
+  background:var(--bank-soft-2) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:0 10px 28px rgba(1,33,105,0.10) !important;
+}
+
+.video-frame::before{
+  background:linear-gradient(135deg, rgba(255,255,255,0.10), transparent 35%) !important;
+}
+
+.logo-center{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 10px 28px rgba(1,33,105,0.08) !important;
+}
+
+.logo-center::before{
+  border-color:var(--bank-line) !important;
+}
+
+.logo-img{
+  filter:none !important;
+}
+
+.skip-now-link{
+  color:var(--bank-link) !important;
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.skip-now-link:hover,
+.skip-now-link:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Keep the original portal and auth button colors/styles intact */
+.portal-button,
+header .auth-buttons a,
+header .auth-buttons a.login-auth{
+  text-decoration:none !important;
+}
+
+.portal-button,
+.portal-button span,
+.portal-button i,
+header .auth-buttons a,
+header .auth-buttons a .auth-text,
+header .auth-buttons a i,
+header .auth-buttons a.login-auth,
+header .auth-buttons a.login-auth .auth-text,
+header .auth-buttons a.login-auth i{
+  font-weight:700 !important;
+}
+
+
+/* ============================================================
+   FINAL MARKED ICON RESTORE PATCH
+   Restores the marked Font Awesome icons after the bank-style
+   font patch. Keeps the existing button colors/styles unchanged.
+============================================================ */
+
+/* Restore Font Awesome font so icons render as icons, not letters/boxes */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far{
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Restore the marked nav/info icons: solid cyan-blue, visible, no boxes */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i,
+.mobile-panel .mnav-left > i,
+.video-kicker > i,
+.video-benefits li > i,
+.skip-now-link > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  color:#360ee9 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:0 0 10px rgba(14,165,233,0.34) !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+/* Desktop header icons */
+header nav > a > i,
+header nav .nav-main-link > i{
+  width:18px !important;
+  min-width:18px !important;
+  height:18px !important;
+  font-size:1rem !important;
+  margin-right:4px !important;
+}
+
+/* Dropdown menu icons */
+.nav-dropdown-menu a > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  font-size:0.95rem !important;
+}
+
+/* Mobile menu icons */
+.mobile-panel .mnav-left > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  font-size:1rem !important;
+}
+
+/* Kicker and feature-list icons inside the video information card */
+.video-kicker > i{
+  width:16px !important;
+  min-width:16px !important;
+  height:16px !important;
+  font-size:0.86rem !important;
+  margin-right:2px !important;
+}
+
+.video-benefits li > i{
+  width:22px !important;
+  min-width:22px !important;
+  height:22px !important;
+  font-size:1rem !important;
+  margin-top:1px !important;
+}
+
+/* Keep requested hover behavior: text and icons turn black with underline */
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i,
+.skip-now-link:hover > i,
+.skip-now-link:focus-visible > i{
+  color:#000000 !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Restore visible caret/dropdown icons without changing the dropdown behavior */
+.nav-dropdown-toggle > i,
+.mobile-panel .mnav-toggle > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:1000 !important;
+  color:var(--bank-navy, #012169) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  opacity:1 !important;
+}
+
+/* Responsive icon sizes: keep them visible while preventing overlap */
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.86rem !important;
+    margin-right:3px !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.86rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:13px !important;
+    min-width:13px !important;
+    height:13px !important;
+    font-size:0.74rem !important;
+    margin-right:2px !important;
+  }
+
+  .video-kicker > i{
+    width:13px !important;
+    min-width:13px !important;
+    height:13px !important;
+    font-size:0.68rem !important;
+  }
+
+  .video-benefits li > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.72rem !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav-left > i{
+    width:19px !important;
+    min-width:19px !important;
+    height:19px !important;
+    font-size:0.96rem !important;
+  }
+
+  .video-kicker > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.80rem !important;
+  }
+
+  .video-benefits li > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    font-size:0.92rem !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left > i{
+    width:17px !important;
+    min-width:17px !important;
+    height:17px !important;
+    font-size:0.88rem !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.82rem !important;
+  }
+}
+
+
+
+
+/* ============================================================
+   FINAL VISIBLE NAV + DROPDOWN ICON PATCH
+   Makes every marked Font Awesome icon render correctly and
+   visually stronger on the white header/background while keeping
+   the existing button colors, links, dropdown JS, video behavior,
+   and responsive layout unchanged.
+============================================================ */
+
+/* Font Awesome uses ::before. Restore the icon font on BOTH the
+   <i> element and its ::before glyph after the global font patch. */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Strong desktop navigation icons, styled like the second reference */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin:0 7px 0 0 !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.26) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.82),
+    0 0 12px rgba(14,165,233,0.30) !important;
+  text-shadow:0 0 10px rgba(14,165,233,0.46) !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+header nav > a > i::before,
+header nav .nav-main-link > i::before,
+.nav-dropdown-menu a > i::before{
+  display:block !important;
+  color:inherit !important;
+  font-size:1rem !important;
+  line-height:1 !important;
+}
+
+/* Give nav text a little more breathing room next to the stronger icons */
+header nav > a,
+header nav .nav-main-link{
+  gap:0 !important;
+  padding-left:7px !important;
+  padding-right:9px !important;
+  min-height:36px !important;
+}
+
+/* Visible About caret/dropdown toggle */
+.nav-dropdown-toggle{
+  width:30px !important;
+  height:30px !important;
+  min-width:30px !important;
+  border-radius:8px !important;
+  margin-left:2px !important;
+  color:#012169 !important;
+  background:rgba(14,165,233,0.06) !important;
+  border:1px solid rgba(14,165,233,0.18) !important;
+}
+
+.nav-dropdown-toggle > i,
+.nav-dropdown-toggle > i::before,
+.mobile-panel .mnav-toggle > i,
+.mobile-panel .mnav-toggle > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+  line-height:1 !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+}
+
+/* Dropdown menu icons match the stronger nav icon treatment */
+.nav-dropdown-menu a{
+  gap:0 !important;
+  padding:11px 14px !important;
+}
+
+.nav-dropdown-menu a > i{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin-right:10px !important;
+  font-size:1rem !important;
+}
+
+/* Video card mini icons, made clearer and easier to read */
+.video-kicker > i,
+.video-benefits li > i,
+.skip-now-link > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  border-radius:7px !important;
+  box-shadow:0 0 12px rgba(14,165,233,0.22) !important;
+  text-shadow:0 0 9px rgba(14,165,233,0.40) !important;
+  opacity:1 !important;
+  transform:none !important;
+}
+
+.video-kicker > i::before,
+.video-benefits li > i::before,
+.skip-now-link > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+}
+
+.video-kicker > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  margin-right:6px !important;
+  font-size:0.86rem !important;
+}
+
+.video-benefits li > i{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin-top:0 !important;
+  font-size:0.95rem !important;
+}
+
+/* Mobile panel icons */
+.mobile-panel .mnav-left > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  border-radius:8px !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  box-shadow:0 0 12px rgba(14,165,233,0.22) !important;
+  text-shadow:0 0 9px rgba(14,165,233,0.36) !important;
+}
+
+.mobile-panel .mnav-left > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+  font-size:1rem !important;
+}
+
+/* Hover remains requested black + underline, but icon is still clear */
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i,
+.video-kicker:hover > i,
+.video-benefits li:hover > i,
+.skip-now-link:hover > i,
+.skip-now-link:focus-visible > i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Keep the login button icon exactly inside the existing blue/purple button style */
+header .auth-buttons a.login-auth > i,
+header .auth-buttons a.login-auth > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:#ffffff !important;
+}
+
+header .auth-buttons a.login-auth > i{
+  width:18px !important;
+  min-width:18px !important;
+  height:18px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.18) !important;
+  border:0 !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.12) !important;
+  margin-right:0 !important;
+}
+
+/* Responsive tuning: icons stay visible without breaking the header */
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:5px !important;
+    padding-right:6px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    margin-right:5px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.86rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:25px !important;
+    min-width:25px !important;
+    height:25px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:3px !important;
+    padding-right:4px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:17px !important;
+    min-width:17px !important;
+    height:17px !important;
+    margin-right:3px !important;
+    border-radius:6px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.72rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    border-radius:6px !important;
+  }
+
+  .video-kicker > i{
+    width:16px !important;
+    min-width:16px !important;
+    height:16px !important;
+    font-size:0.68rem !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.72rem !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav-left > i{
+    width:23px !important;
+    min-width:23px !important;
+    height:23px !important;
+  }
+
+  .video-kicker > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+  }
+
+  .video-benefits li > i{
+    width:22px !important;
+    min-width:22px !important;
+    height:22px !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left > i{
+    width:21px !important;
+    min-width:21px !important;
+    height:21px !important;
+  }
+
+  .video-benefits li > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+  }
+}
+
+
+
+
+/* ============================================================
+   FINAL DARK-BLUE ICON COLOR PATCH
+   Changes all page Font Awesome icons to dark blue and removes
+   icon shadows only. Existing links, layout, buttons, dropdowns,
+   and behavior are preserved.
+============================================================ */
+:root{
+  --jsl-icon-dark-blue:#003a70;
+}
+
+i.fa-solid,
+i.fa-regular,
+i.fa-brands,
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i,
+.mobile-panel .mnav-main-link i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav-left i,
+.video-kicker i,
+.video-benefits i,
+.skip-now-link i,
+.portal-button i,
+header .auth-buttons a i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-toggle:hover i,
+.video-kicker:hover i,
+.video-benefits li:hover i,
+.skip-now-link:hover i,
+.skip-now-link:focus-visible i,
+.portal-button:hover i,
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth i,
+header .auth-buttons a.login-auth:hover i,
+header .auth-buttons a.login-auth:focus-visible i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+/* ============================================================
+   EXACT CHOOSE PORTAL HEADER STYLE OVERRIDE FOR APPLICANT FORM
+   Source-matched to Choose Portal final header/theme code.
+   CSS-only: preserves Applicant Form HTML IDs, scripts, events,
+   Supabase logic, uploads, PDF behavior, and mobile menu JS.
+============================================================ */
+:root{
+  --header-h:78px !important;
+  --hdrH:78px !important;
+  --bank-white:#ffffff !important;
+  --bank-soft:#f5f5f5 !important;
+  --bank-soft-2:#f7f7f7 !important;
+  --bank-line:#e6e8ec !important;
+  --bank-navy:#012169 !important;
+  --bank-text:#1f2937 !important;
+  --bank-muted:#4b5563 !important;
+  --bank-link:#0057b8 !important;
+  --jsl-icon-dark-blue:#003a70 !important;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  width:100% !important;
+  min-height:100% !important;
+  overflow-x:hidden !important;
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body{
+  min-height:100vh !important;
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+header{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  height:var(--header-h) !important;
+  min-height:var(--header-h) !important;
+  max-height:var(--header-h) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  padding:0 16px 0 8px !important;
+  background:var(--bank-white) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  overflow:visible !important;
+  z-index:1500 !important;
+}
+
+header .logo{
+  flex:0 0 auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  margin-left:-4px !important;
+  min-width:140px !important;
+  width:auto !important;
+  max-width:none !important;
+  overflow:visible !important;
+}
+
+header .logo img{
+  height:100px !important;
+  width:auto !important;
+  max-width:180px !important;
+  display:block !important;
+  object-fit:contain !important;
+  filter:none !important;
+}
+
+header nav{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:12px !important;
+  margin-left:4px !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  height:36px !important;
+  min-height:36px !important;
+  padding:0 7px !important;
+  gap:0 !important;
+  color:var(--bank-navy) !important;
+  text-decoration:none !important;
+  font-size:0.88rem !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  transition:color 0.25s ease, text-shadow 0.25s ease, text-decoration-color 0.25s ease !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:18px !important;
+  min-width:18px !important;
+  height:18px !important;
+  margin-right:4px !important;
+  padding:0 !important;
+  border-radius:0 !important;
+  color:var(--jsl-icon-dark-blue) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  height:36px !important;
+  flex:0 0 auto !important;
+  overflow:visible !important;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:2px !important;
+  height:100% !important;
+}
+
+.nav-dropdown-toggle{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  border:1px solid rgba(14,165,233,0.18) !important;
+  outline:none !important;
+  background:rgba(14,165,233,0.06) !important;
+  color:var(--bank-navy) !important;
+  cursor:pointer !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:30px !important;
+  height:30px !important;
+  min-width:30px !important;
+  padding:0 !important;
+  margin-left:2px !important;
+  line-height:1 !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+}
+
+.nav-dropdown-toggle i,
+.nav-dropdown-toggle i::before{
+  pointer-events:none !important;
+  color:inherit !important;
+  font-size:0.9rem !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+}
+
+.nav-dropdown-menu{
+  position:absolute !important;
+  top:calc(100% + 12px) !important;
+  left:0 !important;
+  min-width:220px !important;
+  display:none !important;
+  flex-direction:column !important;
+  gap:0 !important;
+  padding:10px 0 !important;
+  border-radius:14px !important;
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  z-index:1200 !important;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex !important;
+}
+
+.nav-dropdown-menu a{
+  display:flex !important;
+  align-items:center !important;
+  gap:0 !important;
+  padding:11px 14px !important;
+  color:var(--bank-navy) !important;
+  text-decoration:none !important;
+  white-space:nowrap !important;
+  font-weight:500 !important;
+  transition:background 0.25s ease, color 0.25s ease !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:var(--bank-soft) !important;
+  color:#000000 !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+}
+
+.nav-dropdown-menu a > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  margin-right:10px !important;
+  font-size:0.95rem !important;
+  color:var(--jsl-icon-dark-blue) !important;
+}
+
+header .auth-buttons{
+  flex:0 0 auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  white-space:nowrap !important;
+}
+
+header .auth-buttons a,
+header .auth-buttons a.login-auth{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+  height:36px !important;
+  padding:0 11px !important;
+  border-radius:10px !important;
+  text-decoration:none !important;
+  font-size:0.82rem !important;
+  font-weight:700 !important;
+  color:#ffffff !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.92), rgba(79,109,255,0.92)) !important;
+  box-shadow:0 8px 18px rgba(37,99,235,0.18) !important;
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+
+header .auth-buttons a:hover,
+header .auth-buttons a:focus-visible{
+  transform:translateY(-2px) !important;
+  box-shadow:0 12px 22px rgba(37,99,235,0.25) !important;
+  border-color:rgba(0,198,255,0.35) !important;
+  color:#ffffff !important;
+  text-decoration:none !important;
+}
+
+header .auth-buttons a i,
+header .auth-buttons a.login-auth i,
+header .auth-buttons a.login-auth i::before{
+  color:#ffffff !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+.nav-toggle{
+  display:none !important;
+  width:40px !important;
+  height:40px !important;
+  border:none !important;
+  border-radius:10px !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  color:#fff !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  flex:0 0 auto !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.10) !important;
+}
+
+.nav-toggle i{
+  font-size:1rem !important;
+  color:var(--bank-navy) !important;
+}
+
+.mobile-panel{
+  position:fixed !important;
+  top:var(--header-h) !important;
+  left:0 !important;
+  right:0 !important;
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:0 10px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  padding:14px 16px 18px !important;
+  transform:translateY(-10px) !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  transition:opacity 0.25s ease, transform 0.25s ease !important;
+  z-index:1400 !important;
+}
+
+.mobile-panel.open{
+  opacity:1 !important;
+  transform:translateY(0) !important;
+  pointer-events:auto !important;
+}
+
+.mobile-panel .mnav{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  padding:12px 14px !important;
+  border-radius:12px !important;
+  text-decoration:none !important;
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft-2) !important;
+  border:1px solid var(--bank-line) !important;
+  font-weight:600 !important;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  background:var(--bank-soft) !important;
+  color:#000000 !important;
+  transform:translateX(3px) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+}
+
+.mobile-panel .mnav-left{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:11px !important;
+  min-width:0 !important;
+}
+
+.mobile-panel .mnav-left > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  color:var(--jsl-icon-dark-blue) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i{
+  color:#000000 !important;
+}
+
+.mobile-panel .mnav-row{
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+.mobile-panel .mnav-group{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+}
+
+.mobile-panel .mnav-submenu{
+  display:none !important;
+  flex-direction:column !important;
+  gap:8px !important;
+  padding-left:14px !important;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex !important;
+}
+
+/* Choose Portal responsive header sizing copied for Applicant Form */
+@media (min-width:1800px){
+  :root{--header-h:84px !important; --hdrH:84px !important;}
+  header{height:84px !important;min-height:84px !important;padding:0 24px 0 14px !important;gap:18px !important;}
+  header .logo{margin-left:-2px !important;min-width:140px !important;}
+  header .logo img{height:88px !important;max-width:180px !important;}
+  header nav{gap:20px !important;margin-left:10px !important;}
+  header nav > a, header nav .nav-main-link{height:38px !important;font-size:0.94rem !important;}
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  :root{--header-h:78px !important; --hdrH:78px !important;}
+  header{height:78px !important;min-height:78px !important;padding:0 18px 0 10px !important;gap:14px !important;}
+  header .logo{margin-left:-3px !important;min-width:140px !important;}
+  header .logo img{height:80px !important;max-width:180px !important;}
+  header nav{gap:15px !important;margin-left:7px !important;}
+  header nav > a, header nav .nav-main-link{height:36px !important;font-size:0.84rem !important;}
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  :root{--header-h:76px !important; --hdrH:76px !important;}
+  header{height:76px !important;min-height:76px !important;padding:0 12px 0 6px !important;gap:8px !important;}
+  header .logo{flex:0 0 86px !important;min-width:86px !important;margin-left:0 !important;}
+  header .logo img{height:64px !important;max-width:86px !important;}
+  header nav{gap:7px !important;margin-left:2px !important;display:flex !important;}
+  header nav > a, header nav .nav-main-link{height:32px !important;padding:0 5px !important;font-size:0.70rem !important;}
+  header nav > a > i, header nav .nav-main-link > i{width:15px !important;min-width:15px !important;height:15px !important;font-size:0.86rem !important;margin-right:3px !important;}
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  :root{--header-h:72px !important; --hdrH:72px !important;}
+  header{display:flex !important;height:72px !important;min-height:72px !important;padding:0 6px 0 4px !important;gap:4px !important;}
+  header .logo{flex:0 0 70px !important;min-width:70px !important;margin-left:0 !important;}
+  header .logo img{height:50px !important;max-width:70px !important;}
+  header nav{display:flex !important;gap:3px !important;margin-left:0 !important;}
+  header nav > a, header nav .nav-main-link{height:28px !important;padding:0 3px !important;font-size:clamp(0.50rem, 0.72vw, 0.58rem) !important;}
+  header nav > a > i, header nav .nav-main-link > i{width:13px !important;min-width:13px !important;height:13px !important;font-size:0.74rem !important;margin-right:2px !important;}
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+}
+
+@media (max-width:768px){
+  :root{--header-h:68px !important; --hdrH:68px !important;}
+  header{height:68px !important;min-height:68px !important;padding:8px 12px !important;}
+  header .logo{min-width:auto !important;}
+  header .logo img{height:62px !important;max-width:120px !important;}
+  header nav,
+  header .auth-buttons{display:none !important;}
+  .nav-toggle{display:flex !important;}
+  .mobile-panel{top:68px !important;display:block !important;}
+}
+
+@media (max-width:480px){
+  :root{--header-h:64px !important; --hdrH:64px !important;}
+  header{height:64px !important;min-height:64px !important;padding:7px 10px !important;}
+  header .logo img{height:56px !important;max-width:108px !important;}
+  .mobile-panel{top:64px !important;}
+}
+
 </style>
 <script id="final-loggedout-header-login-button-index1-script">
 (function(){
@@ -24099,790 +26484,264 @@ function refreshViewStaffMobileModalState(){
 })();
 </script>
 
+
 <!-- ============================================================
-     FINAL ENHANCEMENT: EMPLOYER / DASHBOARD SESSION ISOLATION
-     ✅ Blocks dashboard1.html / employer logged-in sessions from being treated
-        as a Jobseeker login on this Applicant Form.
-     ✅ Keeps applicantform1.html / postedhiring1.html-style Jobseeker session
-        behavior intact when a real Jobseeker or existing applicant record logs in.
-     ✅ Does NOT delete employer dashboard session keys; it only hides them from
-        this page's Jobseeker loader and forces this page to stay logged out.
+   FINAL PATCH: PROFILES TABLE ROLE SYNC RETRY
+   Ensures a saved applicant email is retried as role=applicant if the first
+   profile sync was delayed by RLS/backend deployment timing.
 ============================================================ -->
-<script id="final-employer-dashboard-session-isolation-patch">
+<script id="jsl-final-profiles-role-sync-retry">
 (function(){
   "use strict";
-  if (window.__JSL_EMPLOYER_DASHBOARD_SESSION_ISOLATION_PATCH__) return;
-  window.__JSL_EMPLOYER_DASHBOARD_SESSION_ISOLATION_PATCH__ = true;
+  if (window.__JSL_FINAL_PROFILES_ROLE_SYNC_RETRY__) return;
+  window.__JSL_FINAL_PROFILES_ROLE_SYNC_RETRY__ = true;
 
-  var JOBSEEKER_EMAIL_KEYS = [
-    "jobSpaceLink_jobseeker_email",
-    "jobSpaceLink_logged_in_email",
-    "employee_email",
-    "jsl_login_email",
-    "jsl_last_login_email",
-    "jobseeker_email",
-    "jobseeker_login_email",
-    "logged_in_email",
-    "loggedInEmail",
-    "applicant_email",
-    "user_email",
-    "email",
-    "login_email"
-  ];
+  var PENDING_KEY = "jsl_pending_profiles_role_sync_v1";
 
-  var JOBSEEKER_FLAG_KEYS = [
-    "jobSpaceLink_jobseeker_logged_in",
-    "employee_logged_in",
-    "jsl_logged_in",
-    "jsl_jobseeker_logged_in",
-    "jobseeker_logged_in",
-    "applicant_logged_in",
-    "logged_in"
-  ];
-
-  var JOBSEEKER_MASTER_KEYS = [
-    "employee_master_id",
-    "jsl_master_id",
-    "jobseeker_master_id",
-    "applicant_master_id",
-    "master_id",
-    "user_master_id",
-    "view_profile_master_id",
-    "current_profile_master_id"
-  ];
-
-  var JOBSEEKER_USER_KEYS = [
-    "jsl_user_id",
-    "user_id",
-    "auth_uid",
-    "auth_id",
-    "uid",
-    "view_profile_user_id",
-    "current_profile_user_id"
-  ];
-
-  var JOBSEEKER_AVATAR_KEYS = [
-    "jobSpaceLink_profile_photo_url",
-    "jobSpaceLink_profile_picture_url",
-    "jobSpaceLink_logged_in_profile_photo",
-    "jsl_avatar_url",
-    "employee_avatar_url",
-    "avatar_url",
-    "view_profile_avatar_url",
-    "jsl_last_avatar_owner",
-    "jsl_last_login_owner"
-  ];
-
-  var JOBSEEKER_OBJECT_KEYS = [
-    "jobSpaceLink_login_identity",
-    "jobSpaceLink_jobseeker_session",
-    "jobSpaceLink_logged_in_jobseeker",
-    "jobSpaceLink_loggedInJobseeker",
-    "jobSpaceLink_current_jobseeker",
-    "loggedInApplicant",
-    "jobseekerSession",
-    "jobseekerUser",
-    "jobseekerAccount",
-    "currentJobseeker",
-    "loggedInJobseeker",
-    "applicantSession",
-    "applicantData",
-    "currentUser",
-    "jsl_view_profile_latest_context_v25",
-    "jsl_view_profile_logged_in_account_context_v25",
-    "jsl_view_profile_context",
-    "view_profile_context",
-    "view_profile_logged_in_account",
-    "current_applicant_profile_context",
-    "applicant_profile_context",
-    "view_profile_edit_context"
-  ];
-
-  var EXPLICIT_EMPLOYER_KEYS = [
-    "loggedInEmployer",
-    "logged_in_employer",
-    "employer_logged_in",
-    "employerLoggedIn",
-    "jobSpaceLink_employer_logged_in",
-    "jobSpaceLink_logged_in_employer",
-    "jobSpaceLink_employer_session",
-    "jobSpaceLink_current_employer",
-    "jobSpaceLink_employer_account",
-    "employerSession",
-    "employerUser",
-    "employerAccount",
-    "currentEmployer",
-    "current_employer",
-    "dashboardEmployer",
-    "dashboard1Employer",
-    "dashboard1_logged_in",
-    "dashboard1_logged_in_employer",
-    "dashboard1_employer_session",
-    "loggedInCompany",
-    "companySession",
-    "companyAccount",
-    "currentCompany",
-    "postJobEmployer",
-    "postedJobsEmployer"
-  ];
-
-  var SESSION_EVENT_KEYS = [
-    "jsl_shared_session_event",
-    "jsl_active_jobseeker_session",
-    "jsl_jobseeker_session_event",
-    "jobSpaceLink_jobseeker_session_event",
-    "jobSpaceLink_shared_session_event"
-  ];
-
-  var ALL_HIDDEN_JOBSEEKER_KEYS = JOBSEEKER_EMAIL_KEYS
-    .concat(JOBSEEKER_FLAG_KEYS, JOBSEEKER_MASTER_KEYS, JOBSEEKER_USER_KEYS, JOBSEEKER_AVATAR_KEYS, JOBSEEKER_OBJECT_KEYS);
-
-  var originalLocalGetItem = null;
-  var originalSessionGetItem = null;
-  var employerIsolationRunning = false;
-
-  function clean(value){ return value === null || value === undefined ? "" : String(value).trim(); }
-  function compact(value){ return clean(value).toLowerCase().replace(/\s+/g, ""); }
-  function isEmail(value){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(compact(value)); }
-  function isTruthy(value){ return /^(1|true|yes|y|on|logged|logged_in|active)$/i.test(clean(value)); }
-  function isFalsy(value){ return /^(0|false|no|n|off|logout|logged_out|signed_out|inactive)$/i.test(clean(value)); }
-  function safeJson(raw){ try{ return JSON.parse(raw); }catch(_e){ return null; } }
-
-  function getRaw(store, key){
+  function clean(v){ return v == null ? "" : String(v).trim(); }
+  function readPending(){
     try{
-      if (store === localStorage && originalLocalGetItem) return clean(originalLocalGetItem.call(localStorage, key));
-      if (store === sessionStorage && originalSessionGetItem) return clean(originalSessionGetItem.call(sessionStorage, key));
-      return clean(store.getItem(key));
-    }catch(_e){ return ""; }
-  }
-
-  function setRaw(store, key, value){ try{ store.setItem(key, value); }catch(_e){} }
-  function removeRaw(store, key){ try{ store.removeItem(key); }catch(_e){} }
-  function readBothRaw(key){ return getRaw(localStorage, key) || getRaw(sessionStorage, key); }
-  function writeBoth(key, value){ setRaw(localStorage, key, value); setRaw(sessionStorage, key, value); }
-  function removeBoth(key){ removeRaw(localStorage, key); removeRaw(sessionStorage, key); }
-
-  function flatten(obj, out, depth){
-    out = out || [];
-    depth = depth || 0;
-    if (!obj || typeof obj !== "object" || depth > 4) return out;
-    out.push(obj);
-    ["user", "account", "profile", "identity", "session", "raw", "employer", "company", "client", "business", "dashboard", "jobseeker", "applicant", "master", "transaction", "latest"].forEach(function(key){
-      if (obj[key] && typeof obj[key] === "object") flatten(obj[key], out, depth + 1);
-    });
-    return out;
-  }
-
-  function pick(obj, keys){
-    obj = obj || {};
-    for (var i = 0; i < keys.length; i++){
-      var value = obj[keys[i]];
-      if (clean(value)) return clean(value);
+      var raw = localStorage.getItem(PENDING_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (!parsed || !parsed.email) return null;
+      return parsed;
+    }catch(_e){
+      return null;
     }
-    return "";
   }
 
-  function joinedAccountText(account){
-    var buckets = flatten(account || {}, []);
-    var parts = [];
-    var keys = [
-      "type", "role", "account_type", "accountType", "user_type", "userType", "kind",
-      "source", "session_source", "login_source", "login_type", "loginType", "page", "from", "reason"
-    ];
-    for (var i = 0; i < buckets.length; i++){
-      var value = pick(buckets[i], keys);
-      if (value) parts.push(value);
-    }
-    return parts.join(" ").toLowerCase();
-  }
-
-  function accountEmail(account){
-    var buckets = flatten(account || {}, []);
-    for (var i = 0; i < buckets.length; i++){
-      var direct = pick(buckets[i], ["jobseeker_email", "applicant_email", "user_email", "login_email", "email"]);
-      if (isEmail(direct)) return compact(direct);
-    }
-    for (var j = 0; j < buckets.length; j++){
-      var legacy = pick(buckets[j], ["employee_email"]);
-      if (isEmail(legacy) && !objectLooksEmployer(account)) return compact(legacy);
-    }
-    return "";
-  }
-
-  function textLooksEmployer(value){
-    return /(dashboard1|dashboard|logged[\s_-]*in[\s_-]*employer|loggedinemployer|employer|company|client|business|post[\s_-]*job|posted[\s_-]*jobs|admin)/i.test(clean(value));
-  }
-
-  function textLooksJobseeker(value){
-    return /(jobseeker|applicant|candidate|applicantform|existing[\s_-]*applicant|postedhiring1|postedhiring)/i.test(clean(value));
-  }
-
-  function objectHasEmployerAccountFields(account){
-    var buckets = flatten(account || {}, []);
-    var keys = [
-      "employer_id", "employerId", "employer_email", "employerEmail", "employer_name", "employerName",
-      "company_id", "companyId", "company_email", "companyEmail", "company_name", "companyName",
-      "company_logo", "companyLogo", "business_name", "businessName", "client_id", "clientId"
-    ];
-    for (var i = 0; i < buckets.length; i++){
-      if (pick(buckets[i], keys)) return true;
-    }
-    return false;
-  }
-
-  function objectLooksEmployer(account){
-    if (!account || typeof account !== "object") return false;
-    var text = joinedAccountText(account);
-    if (textLooksJobseeker(text)) return false;
-    if (textLooksEmployer(text)) return true;
-    return objectHasEmployerAccountFields(account);
-  }
-
-  function objectHasExplicitJobseekerFields(account){
-    var buckets = flatten(account || {}, []);
-    for (var i = 0; i < buckets.length; i++){
-      var value = pick(buckets[i], ["jobseeker_email", "applicant_email", "applicant_master_id", "jobseeker_master_id", "applicant_name", "jobseeker_name"]);
-      if (value) return true;
-    }
-    return false;
-  }
-
-  function objectLooksJobseeker(account){
-    if (!account || typeof account !== "object") return false;
-    var text = joinedAccountText(account);
-    if (textLooksEmployer(text) && !textLooksJobseeker(text)) return false;
-    if (textLooksJobseeker(text)) return true;
-    return objectHasExplicitJobseekerFields(account);
-  }
-
-  function readObjectFromKey(key){
-    var raw = readBothRaw(key);
-    if (!raw || raw.charAt(0) !== "{") return null;
-    var parsed = safeJson(raw);
-    return parsed && typeof parsed === "object" ? parsed : null;
-  }
-
-  function explicitJobseekerSessionExists(){
-    var hasSpecificFlag = false;
-    ["jobSpaceLink_jobseeker_logged_in", "jsl_jobseeker_logged_in", "jobseeker_logged_in", "applicant_logged_in"].forEach(function(key){
-      if (isTruthy(readBothRaw(key))) hasSpecificFlag = true;
-    });
-
-    var specificEmail = "";
-    ["jobSpaceLink_jobseeker_email", "jobseeker_email", "jobseeker_login_email", "applicant_email", "jsl_login_email"].forEach(function(key){
-      if (!specificEmail && isEmail(readBothRaw(key))) specificEmail = compact(readBothRaw(key));
-    });
-
-    for (var i = 0; i < JOBSEEKER_OBJECT_KEYS.length; i++){
-      var parsed = readObjectFromKey(JOBSEEKER_OBJECT_KEYS[i]);
-      if (!parsed || objectLooksEmployer(parsed)) continue;
-      if (objectLooksJobseeker(parsed) && accountEmail(parsed)) return true;
-    }
-
-    return !!(hasSpecificFlag && specificEmail);
-  }
-
-  function keyLooksExplicitEmployerSession(key){
-    var k = clean(key);
-    if (!k || /block[_-]?employers?|blocked[_-]?employers?/i.test(k)) return false;
-    if (EXPLICIT_EMPLOYER_KEYS.indexOf(k) >= 0) return true;
-    return /(dashboard1|dashboard|^employer|_employer|employer_|loggedInEmployer|company.*(session|account|login|logged|current|auth)|business.*(session|account|login|logged|current|auth)|client.*(session|account|login|logged|current|auth))/i.test(k);
-  }
-
-  function rawValueLooksActiveEmployer(key, raw){
-    var value = clean(raw);
-    if (!value || isFalsy(value)) return false;
-    if (keyLooksExplicitEmployerSession(key) && !/^\s*(\[\]|\{\}|null|undefined)\s*$/i.test(value)) return true;
-    if (value.charAt(0) === "{"){
-      var parsed = safeJson(value);
-      if (parsed && objectLooksEmployer(parsed)) return true;
-    }
-    return /loggedinemployer|logged[\s_-]*in[\s_-]*employer|dashboard1|dashboard[\s_-]*employer/i.test(value);
-  }
-
-  function employerSessionExists(){
-    var stores = [localStorage, sessionStorage];
-
-    for (var e = 0; e < EXPLICIT_EMPLOYER_KEYS.length; e++){
-      var explicitKey = EXPLICIT_EMPLOYER_KEYS[e];
-      if (rawValueLooksActiveEmployer(explicitKey, readBothRaw(explicitKey))) return true;
-    }
-
-    for (var s = 0; s < stores.length; s++){
-      var store = stores[s];
-      try{
-        for (var i = store.length - 1; i >= 0; i--){
-          var key = store.key(i) || "";
-          if (!keyLooksExplicitEmployerSession(key)) continue;
-          if (rawValueLooksActiveEmployer(key, getRaw(store, key))) return true;
-        }
-      }catch(_e){}
-    }
-
-    for (var j = 0; j < JOBSEEKER_OBJECT_KEYS.length; j++){
-      var raw = readBothRaw(JOBSEEKER_OBJECT_KEYS[j]);
-      if (rawValueLooksActiveEmployer(JOBSEEKER_OBJECT_KEYS[j], raw)) return true;
-    }
+  function retryPendingProfilesRoleSync(reason){
+    var pending = readPending();
+    if (!pending || !pending.email) return;
+    if (typeof window.ensureApplicantProfilesTableRole !== "function" && typeof ensureApplicantProfilesTableRole !== "function") return;
 
     try{
-      if (window.loggedInEmployer || window.currentEmployer || window.employerSession || window.employerAccount) return true;
-    }catch(_e2){}
-
-    try{
-      if (document.body && document.body.classList && document.body.classList.contains("employer-logged-in")) return true;
-    }catch(_e3){}
-
-    return false;
-  }
-
-  function shouldIsolateEmployerSession(){
-    if (explicitJobseekerSessionExists()) return false;
-    return employerSessionExists();
-  }
-
-  function hiddenJobseekerKey(key){
-    var k = clean(key);
-    if (!k) return false;
-    if (ALL_HIDDEN_JOBSEEKER_KEYS.indexOf(k) >= 0) return true;
-    return /^(jsl_avatar_url__|jsl_master_id__)/i.test(k);
-  }
-
-  function installStorageReadIsolation(){
-    try{
-      if (!window.Storage || !Storage.prototype || Storage.prototype.getItem.__jslEmployerIsolationWrapped) return;
-      var originalGetItem = Storage.prototype.getItem;
-      originalLocalGetItem = originalGetItem;
-      originalSessionGetItem = originalGetItem;
-      Storage.prototype.getItem = function(key){
-        if (shouldIsolateEmployerSession() && hiddenJobseekerKey(key)){
-          return null;
-        }
-        return originalGetItem.apply(this, arguments);
-      };
-      Storage.prototype.getItem.__jslEmployerIsolationWrapped = true;
-      Storage.prototype.getItem.__original = originalGetItem;
-    }catch(_e){}
-  }
-
-  function applyLoggedOutHeader(reason){
-    try{
-      document.body.classList.remove("jobseeker-logged-in", "jsl-logged-in");
-      document.body.classList.add("jobseeker-logged-out", "jsl-logged-out");
-
-      var menu = document.getElementById("jslJobseekerAccountMenu");
-      if (menu){
-        menu.classList.remove("logged-in", "open");
-        menu.classList.add("logged-out", "jsl-login-button-mode");
-        menu.style.display = "none";
-      }
-
-      var dropdown = document.getElementById("jslJobseekerDropdown");
-      if (dropdown) dropdown.setAttribute("aria-hidden", "true");
-
-      var accountBtn = document.getElementById("jslJobseekerAccountBtn");
-      if (accountBtn){
-        accountBtn.classList.remove("has-profile-photo");
-        accountBtn.setAttribute("aria-expanded", "false");
-        accountBtn.setAttribute("aria-label", "Open logged-out Jobseeker account menu");
-      }
-
-      var emailEl = document.getElementById("jslAccountEmail");
-      if (emailEl){
-        emailEl.textContent = "Not logged in";
-        emailEl.title = "Not logged in";
-        emailEl.href = "javascript:void(0)";
-      }
-
-      var title = document.getElementById("jslAccountTitle");
-      if (title) title.textContent = "Jobseeker Account";
-
-      var status = document.getElementById("jslAccountStatus");
-      if (status) status.textContent = "Logged out";
-
-      var login = document.getElementById("jslAccountLogin");
-      if (login){
-        login.style.display = "flex";
-        login.href = "index1.html";
-      }
-
-      var logout = document.getElementById("jslAccountLogout");
-      if (logout) logout.style.display = "none";
-
-      var hiring = document.getElementById("jslAccountJobHiring");
-      if (hiring) hiring.style.display = "none";
-
-      var headerLogin = document.getElementById("jslHeaderLoggedOutLoginBtn");
-      if (headerLogin){
-        headerLogin.href = "index1.html";
-        headerLogin.classList.remove("jsl-hidden");
-        headerLogin.style.display = "inline-flex";
-      }
-
-      var avatar = document.getElementById("jslJobseekerAccountAvatar");
-      if (avatar){ avatar.removeAttribute("src"); avatar.style.display = "none"; }
-      var logo = document.getElementById("jslAccountLogo");
-      if (logo) logo.src = "JOBSPACELINK.png";
-      var icon = document.getElementById("jslJobseekerAccountIcon");
-      if (icon){ icon.style.display = "inline-grid"; icon.className = "fa-solid fa-user"; }
-
-      if (typeof window.JSL_forceLoggedOutHeaderLoginButton === "function"){
-        window.JSL_forceLoggedOutHeaderLoginButton(reason || "employer-dashboard-session-isolated");
-      }
-    }catch(_e){}
-  }
-
-  function clearOnlyJobseekerSessionEcho(reason){
-    try{
-      JOBSEEKER_EMAIL_KEYS.concat(JOBSEEKER_MASTER_KEYS, JOBSEEKER_USER_KEYS, JOBSEEKER_AVATAR_KEYS, JOBSEEKER_OBJECT_KEYS, [
-        "view_profile_applicant_name",
-        "jsl_force_logout",
-        "jsl_logout_reason"
-      ]).forEach(function(key){
-        if (key === "employee_email" || key === "employee_avatar_url" || key === "employee_master_id"){
-          var raw = readBothRaw(key);
-          if (!textLooksEmployer(raw) && isEmail(raw)) return;
-        }
-        removeBoth(key);
+      var syncFn = window.ensureApplicantProfilesTableRole || ensureApplicantProfilesTableRole;
+      Promise.resolve(syncFn(clean(pending.email), {
+        reason: "pending-retry-" + clean(reason || "manual"),
+        full_name: clean(pending.full_name || pending.fullName || "Applicant"),
+        user_id: clean(pending.user_id || pending.userId || pending.id || "")
+      })).catch(function(err){
+        console.warn("pending profiles role retry skipped:", err && err.message ? err.message : err);
       });
-      ["jobSpaceLink_jobseeker_logged_in", "jsl_jobseeker_logged_in", "jobseeker_logged_in", "applicant_logged_in", "jsl_logged_in", "logged_in"].forEach(function(key){ writeBoth(key, "0"); });
-      writeBoth("jsl_last_jobseeker_block_reason", reason || "employer-dashboard-session-isolated");
-    }catch(_e){}
-  }
-
-  function broadcastJobseekerLoggedOut(reason){
-    var payload = {
-      logged:false,
-      event:"logout",
-      action:"logout",
-      source:"applicantform1.html",
-      reason:reason || "employer-dashboard-session-isolated",
-      blockedEmployerSession:true,
-      at:String(Date.now())
-    };
-    var serialized = "";
-    try{ serialized = JSON.stringify(payload); }catch(_e){ serialized = '{"logged":false,"event":"logout"}'; }
-    SESSION_EVENT_KEYS.forEach(function(key){ writeBoth(key, serialized); });
-    try{ window.dispatchEvent(new CustomEvent("jsl-jobseeker-session-sync", { detail:payload })); }catch(_e1){}
-    try{ window.dispatchEvent(new CustomEvent("jobSpaceLink-jobseeker-session", { detail:payload })); }catch(_e2){}
-    if (typeof BroadcastChannel === "function"){
-      ["jobseeker-session-sync", "jsl-jobseeker-session-sync", "jsl_shared_session_sync", "jobSpaceLink-session-sync", "jobSpaceLink_jobseeker_session"].forEach(function(name){
-        try{
-          var channel = new BroadcastChannel(name);
-          channel.postMessage(payload);
-          setTimeout(function(){ try{ channel.close(); }catch(_e3){} }, 120);
-        }catch(_e4){}
-      });
+    }catch(err){
+      console.warn("pending profiles role retry failed:", err && err.message ? err.message : err);
     }
   }
 
-  function scrubEmployerEchoFromEmailField(){
-    try{
-      var emailInput = document.getElementById("email");
-      if (emailInput && !isEmail(emailInput.value)) emailInput.value = "";
-    }catch(_e){}
-  }
-
-  function forceEmployerSessionLoggedOut(reason){
-    if (employerIsolationRunning) return;
-    if (!shouldIsolateEmployerSession()) return;
-    employerIsolationRunning = true;
-    try{
-      clearOnlyJobseekerSessionEcho(reason || "employer-dashboard-session-isolated");
-      applyLoggedOutHeader(reason || "employer-dashboard-session-isolated");
-      scrubEmployerEchoFromEmailField();
-      if (typeof window.JSL_forceBlankLoggedOutApplicantForm === "function"){
-        try{ window.JSL_forceBlankLoggedOutApplicantForm(); }catch(_e1){}
-      }else if (typeof window.silentResetApplicantFormForLogout === "function"){
-        try{ window.silentResetApplicantFormForLogout(reason || "employer-dashboard-session-isolated", ""); }catch(_e2){}
-      }
-      broadcastJobseekerLoggedOut(reason || "employer-dashboard-session-isolated");
-    }finally{
-      employerIsolationRunning = false;
-    }
-  }
-
-  function accountShouldBeBlocked(account, reason){
-    if (objectLooksEmployer(account || {})) return true;
-    if (textLooksEmployer(reason || "") && !textLooksJobseeker(reason || "")) return true;
-    if (shouldIsolateEmployerSession() && !objectLooksJobseeker(account || {})) return true;
-    return false;
-  }
-
-  function installApplyGuard(){
-    try{
-      if (typeof window.JSL_applyLoggedInAccount !== "function" || window.JSL_applyLoggedInAccount.__jslEmployerIsolationGuarded) return;
-      var previousApply = window.JSL_applyLoggedInAccount;
-      var guardedApply = async function(account, reason){
-        if (accountShouldBeBlocked(account || {}, reason || "")){
-          forceEmployerSessionLoggedOut(reason || "blocked-employer-dashboard-session");
-          return { skipped:true, reason:"blocked-employer-dashboard-session", email:accountEmail(account || {}) };
-        }
-        return previousApply.apply(this, arguments);
-      };
-      guardedApply.__jslEmployerIsolationGuarded = true;
-      guardedApply.__previousApply = previousApply;
-      window.JSL_applyLoggedInAccount = guardedApply;
-    }catch(_e){}
-  }
-
-  function installMarkedDropdownGuard(){
-    try{
-      if (!window.jslApplicantMarkedAccountDropdown || typeof window.jslApplicantMarkedAccountDropdown.refresh !== "function" || window.jslApplicantMarkedAccountDropdown.refresh.__jslEmployerIsolationGuarded) return;
-      var previousRefresh = window.jslApplicantMarkedAccountDropdown.refresh;
-      var guardedRefresh = function(ctx){
-        if (ctx && ctx.logged && accountShouldBeBlocked(ctx, "marked-dropdown-refresh")){
-          forceEmployerSessionLoggedOut("blocked-employer-marked-dropdown-refresh");
-          return;
-        }
-        return previousRefresh.apply(this, arguments);
-      };
-      guardedRefresh.__jslEmployerIsolationGuarded = true;
-      window.jslApplicantMarkedAccountDropdown.refresh = guardedRefresh;
-    }catch(_e){}
-  }
-
-  function installSupabaseSessionGuard(){
-    try{
-      var client = window.supabase || window.supabaseClient || null;
-      if (!client || !client.auth || typeof client.auth.getSession !== "function" || client.auth.getSession.__jslEmployerIsolationGuarded) return;
-      var originalGetSession = client.auth.getSession;
-      client.auth.getSession = function(){
-        var args = arguments;
-        return Promise.resolve(originalGetSession.apply(this, args)).then(function(result){
-          if (shouldIsolateEmployerSession()){
-            forceEmployerSessionLoggedOut("blocked-employer-supabase-session");
-            return { data:{ session:null }, error:null };
-          }
-          return result;
-        });
-      };
-      client.auth.getSession.__jslEmployerIsolationGuarded = true;
-      client.auth.getSession.__original = originalGetSession;
-    }catch(_e){}
-  }
-
-  function installForceLoaderGuard(){
-    try{
-      if (typeof window.JSL_forceActiveJobseekerSessionLoad !== "function" || window.JSL_forceActiveJobseekerSessionLoad.__jslEmployerIsolationGuarded) return;
-      var previousForce = window.JSL_forceActiveJobseekerSessionLoad;
-      window.JSL_forceActiveJobseekerSessionLoad = function(){
-        if (shouldIsolateEmployerSession()){
-          forceEmployerSessionLoggedOut("blocked-employer-force-active-loader");
-          return Promise.resolve({ skipped:true, reason:"blocked-employer-force-active-loader" });
-        }
-        return previousForce.apply(this, arguments);
-      };
-      window.JSL_forceActiveJobseekerSessionLoad.__jslEmployerIsolationGuarded = true;
-    }catch(_e){}
-  }
-
-  function start(reason){
-    installStorageReadIsolation();
-    installSupabaseSessionGuard();
-    installApplyGuard();
-    installMarkedDropdownGuard();
-    installForceLoaderGuard();
-    forceEmployerSessionLoggedOut(reason || "start");
-  }
-
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function(){ start("dom"); });
-  else start("immediate");
-
-  [0, 60, 180, 450, 900, 1600, 3000].forEach(function(delay){
-    setTimeout(function(){ start("scheduled-" + delay); }, delay);
-  });
-
-  window.addEventListener("load", function(){ setTimeout(function(){ start("load"); }, 80); });
-  window.addEventListener("pageshow", function(){ setTimeout(function(){ start("pageshow"); }, 80); });
-  window.addEventListener("focus", function(){ setTimeout(function(){ start("focus"); }, 80); });
-  window.addEventListener("storage", function(){ setTimeout(function(){ start("storage"); }, 80); });
-  document.addEventListener("visibilitychange", function(){ if (!document.hidden) setTimeout(function(){ start("visible"); }, 80); });
-
-  setInterval(function(){ start("watchdog"); }, 1200);
-
-  window.JSL_forceEmployerDashboardSessionIsolation = function(reason){
-    forceEmployerSessionLoggedOut(reason || "manual-employer-dashboard-session-isolation");
+  window.JSL_retryPendingApplicantProfilesRoleSync = function(){
+    retryPendingProfilesRoleSync("manual");
   };
+
+  window.addEventListener("load", function(){ setTimeout(function(){ retryPendingProfilesRoleSync("load"); }, 800); });
+  window.addEventListener("focus", function(){ setTimeout(function(){ retryPendingProfilesRoleSync("focus"); }, 300); });
+  document.addEventListener("visibilitychange", function(){
+    if (!document.hidden) setTimeout(function(){ retryPendingProfilesRoleSync("visible"); }, 300);
+  });
 })();
 </script>
 
 
 
 <!-- ============================================================
-   FINAL LOGIN BUTTON VISUAL PATCH
-   ✅ Default matches requested bright cyan-to-purple Login button.
-   ✅ Hover/focus matches requested dark outlined Login button.
-   ✅ Link/session behavior is unchanged.
+   FINAL PATCH: REFERENCE LOGIN BUTTON STYLE + DARK HOVER
+   - Normal state matches the first attached image: compact blue/cyan
+     login button with white text/icon.
+   - Hover/focus state matches the second attached image: compact
+     dark navy login button with white text/icon.
+   - CSS-only change. Header links, dropdowns, session/login logic,
+     redirects, uploads, Supabase behavior, and all existing scripts
+     remain unchanged.
 ============================================================ -->
-<style id="final-requested-login-button-visual-patch">
+<style id="final-reference-login-button-hover-style">
+  :root{
+    --jsl-ref-login-blue-1:#27c7ff;
+    --jsl-ref-login-blue-2:#4f6dff;
+    --jsl-ref-login-hover:#061b3a;
+    --jsl-ref-login-hover-2:#020b1f;
+  }
+
   header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button,
-  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button{
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth,
+  .header-login-button,
+  .login-button,
+  #loginBtn,
+  #headerLoginBtn{
     flex:0 0 auto !important;
     display:inline-flex !important;
     align-items:center !important;
     justify-content:center !important;
-    gap:7px !important;
+    gap:6px !important;
     height:36px !important;
     min-height:36px !important;
-    min-width:auto !important;
-    padding:0 13px !important;
-    margin-left:auto !important;
+    min-width:74px !important;
+    padding:0 12px !important;
     border-radius:10px !important;
+    border:1px solid rgba(96,165,250,0.38) !important;
+    background:linear-gradient(135deg, var(--jsl-ref-login-blue-1), var(--jsl-ref-login-blue-2)) !important;
+    color:#ffffff !important;
+    box-shadow:0 7px 16px rgba(37,99,235,0.24) !important;
     text-decoration:none !important;
+    text-shadow:none !important;
     font-size:0.82rem !important;
-    font-weight:800 !important;
+    font-weight:700 !important;
     line-height:1 !important;
     letter-spacing:0 !important;
-    color:#ffffff !important;
-    border:1px solid rgba(255,255,255,0.18) !important;
-    background:linear-gradient(135deg,#22c7ff 0%,#2f9cff 45%,#8b5cf6 100%) !important;
-    box-shadow:
-      0 0 16px rgba(0,198,255,0.22),
-      inset 0 1px 0 rgba(255,255,255,0.18) !important;
-    filter:none !important;
     white-space:nowrap !important;
     cursor:pointer !important;
-    overflow:hidden !important;
-    isolation:isolate !important;
     transform:none !important;
-    transition:
-      background 0.20s ease,
-      border-color 0.20s ease,
-      box-shadow 0.20s ease,
-      color 0.20s ease,
-      transform 0.20s ease !important;
-  }
-
-  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i,
-  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i{
-    width:17px !important;
-    height:17px !important;
-    min-width:17px !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    border-radius:999px !important;
-    color:#ffffff !important;
-    background:rgba(255,255,255,0.16) !important;
-    font-size:0.76rem !important;
-    line-height:1 !important;
-    text-shadow:none !important;
     filter:none !important;
-    box-shadow:0 0 8px rgba(255,255,255,0.10) !important;
+    overflow:hidden !important;
     transition:
-      background 0.20s ease,
-      color 0.20s ease,
-      box-shadow 0.20s ease,
-      transform 0.20s ease !important;
-  }
-
-  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button span,
-  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button span{
-    color:#ffffff !important;
-    font-weight:800 !important;
-    line-height:1 !important;
+      background 0.22s ease,
+      color 0.22s ease,
+      border-color 0.22s ease,
+      box-shadow 0.22s ease,
+      transform 0.22s ease,
+      filter 0.22s ease !important;
   }
 
   header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:hover,
   header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:focus-visible,
-  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:hover,
-  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:focus-visible{
+  header .auth-buttons a:hover,
+  header .auth-buttons a:focus-visible,
+  header .auth-buttons a.login-auth:hover,
+  header .auth-buttons a.login-auth:focus-visible,
+  .header-login-button:hover,
+  .header-login-button:focus-visible,
+  .login-button:hover,
+  .login-button:focus-visible,
+  #loginBtn:hover,
+  #loginBtn:focus-visible,
+  #headerLoginBtn:hover,
+  #headerLoginBtn:focus-visible{
+    background:linear-gradient(135deg, var(--jsl-ref-login-hover), var(--jsl-ref-login-hover-2)) !important;
     color:#ffffff !important;
-    background:linear-gradient(180deg,#263449 0%,#172235 100%) !important;
-    border-color:rgba(59,130,246,0.88) !important;
-    box-shadow:
-      0 0 0 1px rgba(56,189,248,0.12),
-      0 0 12px rgba(59,130,246,0.22),
-      inset 0 1px 0 rgba(255,255,255,0.08) !important;
-    transform:translateY(-1px) !important;
+    border-color:rgba(96,165,250,0.55) !important;
+    box-shadow:0 6px 14px rgba(2,11,31,0.34), 0 0 0 1px rgba(96,165,250,0.10) inset !important;
+    text-decoration:none !important;
+    text-shadow:none !important;
+    transform:none !important;
     filter:none !important;
     outline:none !important;
   }
 
-  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:hover i,
-  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:focus-visible i,
-  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:hover i,
-  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:focus-visible i{
+  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i,
+  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i::before,
+  header .auth-buttons a i,
+  header .auth-buttons a i::before,
+  header .auth-buttons a.login-auth i,
+  header .auth-buttons a.login-auth i::before,
+  .header-login-button i,
+  .header-login-button i::before,
+  .login-button i,
+  .login-button i::before,
+  #loginBtn i,
+  #loginBtn i::before,
+  #headerLoginBtn i,
+  #headerLoginBtn i::before{
+    font-family:"Font Awesome 6 Free" !important;
+    font-weight:900 !important;
     color:#ffffff !important;
-    background:rgba(255,255,255,0.14) !important;
-    box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    text-shadow:none !important;
+    filter:none !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:0.86rem !important;
+    line-height:1 !important;
     transform:none !important;
   }
 
-  #jslHeaderLoggedOutLoginBtn.jsl-hidden,
-  body.jobseeker-logged-in #jslHeaderLoggedOutLoginBtn,
-  body.jsl-logged-in #jslHeaderLoggedOutLoginBtn{
-    display:none !important;
+  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:hover i,
+  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:hover i::before,
+  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:focus-visible i,
+  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button:focus-visible i::before,
+  header .auth-buttons a:hover i,
+  header .auth-buttons a:hover i::before,
+  header .auth-buttons a:focus-visible i,
+  header .auth-buttons a:focus-visible i::before,
+  .header-login-button:hover i,
+  .header-login-button:hover i::before,
+  .header-login-button:focus-visible i,
+  .header-login-button:focus-visible i::before,
+  .login-button:hover i,
+  .login-button:hover i::before,
+  .login-button:focus-visible i,
+  .login-button:focus-visible i::before,
+  #loginBtn:hover i,
+  #loginBtn:hover i::before,
+  #loginBtn:focus-visible i,
+  #loginBtn:focus-visible i::before,
+  #headerLoginBtn:hover i,
+  #headerLoginBtn:hover i::before,
+  #headerLoginBtn:focus-visible i,
+  #headerLoginBtn:focus-visible i::before{
+    color:#ffffff !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    text-shadow:none !important;
+    filter:none !important;
   }
 
-  @media (min-width:1024px) and (max-width:1439px){
-    header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button,
-    #jslHeaderLoggedOutLoginBtn.jsl-header-login-button{
-      height:32px !important;
-      min-height:32px !important;
-      padding:0 9px !important;
-      border-radius:8px !important;
-      font-size:0.70rem !important;
-      gap:5px !important;
-    }
+  header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button span,
+  header .auth-buttons a span,
+  header .auth-buttons a .auth-text,
+  .header-login-button span,
+  .login-button span,
+  #loginBtn span,
+  #headerLoginBtn span{
+    color:#ffffff !important;
+    font-weight:700 !important;
+    line-height:1 !important;
+    text-shadow:none !important;
+  }
 
-    header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i,
-    #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i{
-      width:14px !important;
-      height:14px !important;
-      min-width:14px !important;
-      font-size:0.62rem !important;
-    }
+  header #jslHeaderLoggedOutLoginBtn.jsl-hidden,
+  body.jobseeker-logged-in header #jslHeaderLoggedOutLoginBtn,
+  body.jsl-logged-in header #jslHeaderLoggedOutLoginBtn{
+    display:none !important;
   }
 
   @media (min-width:769px) and (max-width:1023px){
     header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button,
-    #jslHeaderLoggedOutLoginBtn.jsl-header-login-button{
-      height:30px !important;
-      min-height:30px !important;
-      padding:0 7px !important;
-      border-radius:8px !important;
-      font-size:0.62rem !important;
-      gap:4px !important;
-    }
-
-    header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i,
-    #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i{
-      width:13px !important;
-      height:13px !important;
-      min-width:13px !important;
-      font-size:0.56rem !important;
+    header .auth-buttons a,
+    header .auth-buttons a.login-auth,
+    .header-login-button,
+    .login-button,
+    #loginBtn,
+    #headerLoginBtn{
+      height:32px !important;
+      min-height:32px !important;
+      min-width:66px !important;
+      padding:0 10px !important;
+      border-radius:9px !important;
+      font-size:0.74rem !important;
+      gap:5px !important;
     }
   }
 
   @media (max-width:768px){
     header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button,
-    #jslHeaderLoggedOutLoginBtn.jsl-header-login-button{
-      height:36px !important;
-      min-height:36px !important;
-      padding:0 12px !important;
-      font-size:0.80rem !important;
-      border-radius:10px !important;
-      margin-left:auto !important;
-    }
-  }
-
-  @media (max-width:480px){
-    header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button,
-    #jslHeaderLoggedOutLoginBtn.jsl-header-login-button{
+    header .auth-buttons a,
+    header .auth-buttons a.login-auth,
+    .header-login-button,
+    .login-button,
+    #loginBtn,
+    #headerLoginBtn{
       height:34px !important;
       min-height:34px !important;
-      padding:0 10px !important;
-      font-size:0.76rem !important;
-      gap:6px !important;
-    }
-
-    header #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i,
-    #jslHeaderLoggedOutLoginBtn.jsl-header-login-button i{
-      width:15px !important;
-      height:15px !important;
-      min-width:15px !important;
-      font-size:0.68rem !important;
+      min-width:72px !important;
+      padding:0 11px !important;
+      border-radius:10px !important;
+      font-size:0.80rem !important;
     }
   }
 </style>
