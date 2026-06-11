@@ -10424,5 +10424,234 @@ init();
     }
   }
 </style>
+
+
+<!-- ============================================================
+   FINAL PATCH 2026-06-10: MOBILE TITLE + INDUSTRIES DROPDOWN LAYER
+   ✅ Mobile devices only.
+   ✅ Applicant Directory title enlarged and changed to navy blue.
+   ✅ Country and Industries controls restore the same dark desktop control color.
+   ✅ Industries dropdown overlays above all filter controls to prevent hidden menu.
+   ✅ Country and Industries dropdowns remain directly below their own filter buttons.
+   ✅ CSS-only; existing functionality/behavior remains unchanged.
+============================================================ -->
+<style id="final-mobile-title-industry-dropdown-layer-style">
+  @media (max-width:768px){
+    :root{
+      --mobile-jsl-navy:#002060;
+      --mobile-jsl-dark:#050b1d;
+      --mobile-jsl-light:#dff8ff;
+      --mobile-jsl-cyan:#38dfff;
+      --mobile-jsl-border:rgba(0,198,255,.42);
+      --mobile-jsl-panel-z:999999;
+    }
+
+    .dashboard-shell,
+    .dashboard-card,
+    .dashboard-sticky-top,
+    .controls{
+      overflow:visible!important;
+    }
+
+    .dashboard-sticky-top{
+      isolation:isolate!important;
+      z-index:180000!important;
+      padding-bottom:10px!important;
+    }
+
+    .controls{
+      position:relative!important;
+      z-index:181000!important;
+      isolation:isolate!important;
+      overflow:visible!important;
+    }
+
+    /* Mobile-only Applicant Directory readability */
+    .inline-directory-title,
+    .controls .inline-directory-title{
+      color:var(--mobile-jsl-navy)!important;
+      font-size:1.18rem!important;
+      line-height:1!important;
+      font-weight:950!important;
+      letter-spacing:.01em!important;
+      min-height:46px!important;
+      height:46px!important;
+      padding:0 12px!important;
+      background:rgba(255,255,255,.96)!important;
+      border:1px solid rgba(0,32,96,.22)!important;
+      border-radius:14px!important;
+      box-shadow:0 4px 12px rgba(15,23,42,.12)!important;
+      text-shadow:none!important;
+      width:100%!important;
+      max-width:100%!important;
+    }
+
+    .inline-directory-title span,
+    .controls .inline-directory-title span{
+      color:var(--mobile-jsl-navy)!important;
+      font-size:1.18rem!important;
+      font-weight:950!important;
+      line-height:1!important;
+      text-shadow:none!important;
+    }
+
+    .inline-directory-title i,
+    .controls .inline-directory-title i{
+      color:var(--mobile-jsl-navy)!important;
+      font-size:1.12rem!important;
+      text-shadow:none!important;
+      filter:none!important;
+    }
+
+    /* Restore Country + Industries trigger color from desktop view */
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]) .filter-trigger,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-trigger,
+    .controls > .filter-unit:nth-child(3) .filter-trigger,
+    .controls > .filter-unit:nth-child(4) .filter-trigger{
+      background:var(--mobile-jsl-dark)!important;
+      color:var(--mobile-jsl-light)!important;
+      border:1px solid var(--mobile-jsl-border)!important;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 2px 8px rgba(2,6,23,.22)!important;
+      text-shadow:none!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]) .filter-trigger .filter-label,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-trigger .filter-label,
+    .controls > .filter-unit:nth-child(3) .filter-trigger .filter-label,
+    .controls > .filter-unit:nth-child(4) .filter-trigger .filter-label{
+      color:var(--mobile-jsl-light)!important;
+      font-weight:900!important;
+      text-shadow:none!important;
+      opacity:1!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]) .filter-trigger i,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-trigger i,
+    .controls > .filter-unit:nth-child(3) .filter-trigger i,
+    .controls > .filter-unit:nth-child(4) .filter-trigger i{
+      color:var(--mobile-jsl-cyan)!important;
+      text-shadow:none!important;
+      opacity:1!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]) .filter-trigger:hover,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-trigger:hover,
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]).open .filter-trigger,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]).open .filter-trigger,
+    .controls > .filter-unit:nth-child(3) .filter-trigger:hover,
+    .controls > .filter-unit:nth-child(4) .filter-trigger:hover,
+    .controls > .filter-unit:nth-child(3).open .filter-trigger,
+    .controls > .filter-unit:nth-child(4).open .filter-trigger{
+      background:var(--mobile-jsl-dark)!important;
+      color:#ffffff!important;
+      border-color:rgba(56,189,248,.82)!important;
+      box-shadow:0 0 0 3px rgba(56,189,248,.13),0 4px 12px rgba(2,6,23,.25),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]).open,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]).open,
+    .controls > .filter-unit:nth-child(3).open,
+    .controls > .filter-unit:nth-child(4).open{
+      z-index:var(--mobile-jsl-panel-z)!important;
+      overflow:visible!important;
+      isolation:isolate!important;
+    }
+
+    /* Country and Industries dropdowns: directly below their own buttons, above every filter row/control. */
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]) .filter-panel,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-panel,
+    .controls > .filter-unit:nth-child(3) .filter-panel,
+    .controls > .filter-unit:nth-child(4) .filter-panel{
+      position:absolute!important;
+      top:calc(100% + 8px)!important;
+      left:0!important;
+      right:auto!important;
+      transform:none!important;
+      width:min(320px, calc(100vw - 24px))!important;
+      min-width:min(292px, calc(100vw - 24px))!important;
+      max-width:calc(100vw - 24px)!important;
+      max-height:min(380px,58vh)!important;
+      overflow:auto!important;
+      z-index:var(--mobile-jsl-panel-z)!important;
+      background:#ffffff!important;
+      color:var(--mobile-jsl-navy)!important;
+      border:1px solid rgba(0,32,96,.26)!important;
+      border-radius:15px!important;
+      box-shadow:0 24px 54px rgba(2,6,23,.42),0 0 0 1px rgba(255,255,255,.88)!important;
+      padding:9px!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-panel,
+    .controls > .filter-unit:nth-child(4) .filter-panel{
+      left:auto!important;
+      right:0!important;
+      z-index:1000000!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]).open .filter-panel,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]).open .filter-panel,
+    .controls > .filter-unit:nth-child(3).open .filter-panel,
+    .controls > .filter-unit:nth-child(4).open .filter-panel{
+      display:block!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]) .filter-option,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-option,
+    .controls > .filter-unit:nth-child(3) .filter-option,
+    .controls > .filter-unit:nth-child(4) .filter-option{
+      min-height:40px!important;
+      background:#ffffff!important;
+      color:var(--mobile-jsl-navy)!important;
+      font-size:.88rem!important;
+      font-weight:900!important;
+      line-height:1.25!important;
+      border-radius:10px!important;
+      padding:9px 10px!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]) .filter-option:hover,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-option:hover,
+    .controls > .filter-unit:nth-child(3) .filter-option:hover,
+    .controls > .filter-unit:nth-child(4) .filter-option:hover{
+      background:#f3f4f6!important;
+      color:#020617!important;
+    }
+
+    .controls > .filter-unit:has([data-filter-toggle="countryFilter"]) .filter-option.selected,
+    .controls > .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-option.selected,
+    .controls > .filter-unit:nth-child(3) .filter-option.selected,
+    .controls > .filter-unit:nth-child(4) .filter-option.selected{
+      background:#eff6ff!important;
+      color:#020617!important;
+      box-shadow:inset 0 0 0 1px rgba(0,32,96,.20)!important;
+    }
+
+    .filters{
+      position:relative!important;
+      z-index:15000!important;
+      overflow-x:auto!important;
+      overflow-y:visible!important;
+    }
+  }
+
+  @media (max-width:420px){
+    .inline-directory-title,
+    .controls .inline-directory-title{
+      font-size:1.08rem!important;
+      min-height:44px!important;
+      height:44px!important;
+      padding:0 10px!important;
+    }
+    .inline-directory-title span,
+    .controls .inline-directory-title span{
+      font-size:1.08rem!important;
+    }
+    .inline-directory-title i,
+    .controls .inline-directory-title i{
+      font-size:1.04rem!important;
+    }
+  }
+</style>
+
 </body>
 </html>
