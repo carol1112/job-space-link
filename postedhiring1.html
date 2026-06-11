@@ -32933,5 +32933,218 @@ window.addEventListener("DOMContentLoaded", async () => {
 })();
 </script>
 
+
+
+<style id="final-mobile-floating-filter-dropdowns-above-content-style">
+/* ============================================================
+   FINAL MOBILE FILTER DROPDOWN LAYER PATCH 2026-06-11
+   Mobile-only:
+   - Floats every custom filter dropdown above the controls/table/grid layer.
+   - Prevents dropdown option panels from being clipped by the horizontal
+     scroll containers while keeping all existing filter behavior unchanged.
+============================================================ */
+@media (max-width:768px){
+  body.mobile-filter-dropdown-open .sticky-master,
+  body.mobile-filter-dropdown-open .sticky-master-inner,
+  body.mobile-filter-dropdown-open .topbar-row,
+  body.mobile-filter-dropdown-open .controls-panel,
+  body.mobile-filter-dropdown-open .control-row-main,
+  body.mobile-filter-dropdown-open .control-row-sub,
+  body.mobile-filter-dropdown-open .advanced-filter-row,
+  body.mobile-filter-dropdown-open .inline-country-filter-field,
+  body.mobile-filter-dropdown-open .inline-industry-filter-field,
+  body.mobile-filter-dropdown-open .favorite-filter-field,
+  body.mobile-filter-dropdown-open .applied-filter-field,
+  body.mobile-filter-dropdown-open .filter-dd{
+    overflow:visible !important;
+    isolation:isolate !important;
+  }
+
+  body.mobile-filter-dropdown-open .sticky-master,
+  body.mobile-filter-dropdown-open .sticky-master-inner{
+    z-index:260000 !important;
+  }
+
+  body.mobile-filter-dropdown-open .table-section,
+  body.mobile-filter-dropdown-open .table-header-sticky,
+  body.mobile-filter-dropdown-open .table-head-shell,
+  body.mobile-filter-dropdown-open .table-body-shell,
+  body.mobile-filter-dropdown-open .table-head-scroll,
+  body.mobile-filter-dropdown-open .table-body-scroll,
+  body.mobile-filter-dropdown-open #gridOnlyWrapper,
+  body.mobile-filter-dropdown-open .cards-grid,
+  body.mobile-filter-dropdown-open .cards-grid-only,
+  body.mobile-filter-dropdown-open .listing-card{
+    z-index:1 !important;
+  }
+
+  body .filter-dd.is-open .filter-dd-menu.jsl-mobile-floating-filter-menu{
+    position:fixed !important;
+    left:var(--jsl-filter-menu-left, 8px) !important;
+    top:var(--jsl-filter-menu-top, calc(var(--header-h, 70px) + 8px)) !important;
+    right:auto !important;
+    bottom:auto !important;
+    width:var(--jsl-filter-menu-width, min(320px, calc(100vw - 16px))) !important;
+    min-width:var(--jsl-filter-menu-width, min(320px, calc(100vw - 16px))) !important;
+    max-width:calc(100vw - 16px) !important;
+    max-height:var(--jsl-filter-menu-max-height, 70vh) !important;
+    display:block !important;
+    overflow:hidden !important;
+    transform:none !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    z-index:300500 !important;
+    border:1px solid rgba(96,165,250,.72) !important;
+    box-shadow:0 24px 55px rgba(2,6,23,.72), 0 0 0 1px rgba(255,255,255,.08), 0 0 34px rgba(0,198,255,.24) !important;
+  }
+
+  body .filter-dd.is-open .filter-dd-menu.jsl-mobile-floating-filter-menu .filter-dd-options{
+    max-height:calc(var(--jsl-filter-menu-max-height, 70vh) - 98px) !important;
+    overflow:auto !important;
+  }
+
+  body .filter-dd.is-open{
+    z-index:300400 !important;
+  }
+}
+</style>
+
+<script id="final-mobile-floating-filter-dropdowns-above-content-script">
+/* Mobile-only floating filter dropdown positioning. Keeps existing dropdown click/update/reset behavior unchanged. */
+(function(){
+  var MQ = '(max-width: 768px)';
+  var rafId = 0;
+
+  function isMobile(){
+    return !window.matchMedia || window.matchMedia(MQ).matches;
+  }
+
+  function px(n){
+    return Math.round(Number(n) || 0) + 'px';
+  }
+
+  function clearMenu(menu){
+    if (!menu) return;
+    menu.classList.remove('jsl-mobile-floating-filter-menu');
+    menu.style.removeProperty('--jsl-filter-menu-left');
+    menu.style.removeProperty('--jsl-filter-menu-top');
+    menu.style.removeProperty('--jsl-filter-menu-width');
+    menu.style.removeProperty('--jsl-filter-menu-max-height');
+  }
+
+  function clearClosedMenus(){
+    document.querySelectorAll('.filter-dd-menu.jsl-mobile-floating-filter-menu').forEach(function(menu){
+      var wrap = menu.closest('.filter-dd');
+      if (!wrap || !wrap.classList.contains('is-open')) clearMenu(menu);
+    });
+  }
+
+  function positionMenu(menu){
+    var wrap = menu && menu.closest('.filter-dd');
+    var trigger = wrap && wrap.querySelector('.filter-dd-trigger');
+    if (!menu || !wrap || !trigger || !wrap.classList.contains('is-open')){
+      clearMenu(menu);
+      return false;
+    }
+
+    var rect = trigger.getBoundingClientRect();
+    var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    var gap = 8;
+    var edge = 8;
+
+    var width = Math.min(Math.max(rect.width, 300), Math.max(220, vw - (edge * 2)));
+    var left = rect.left;
+    if (left + width > vw - edge) left = vw - edge - width;
+    if (left < edge) left = edge;
+
+    menu.classList.add('jsl-mobile-floating-filter-menu');
+    menu.style.setProperty('--jsl-filter-menu-width', px(width));
+    menu.style.setProperty('--jsl-filter-menu-left', px(left));
+
+    /* Prefer below the clicked filter; open upward only when the lower area is too small. */
+    var spaceBelow = vh - rect.bottom - gap - edge;
+    var spaceAbove = rect.top - gap - edge;
+    var desired = Math.min(360, Math.max(240, menu.scrollHeight || 300));
+    var top;
+    var maxH;
+
+    if (spaceBelow >= 190 || spaceBelow >= spaceAbove){
+      top = rect.bottom + gap;
+      maxH = Math.max(170, Math.min(360, spaceBelow));
+    }else{
+      maxH = Math.max(170, Math.min(360, spaceAbove));
+      top = Math.max(edge, rect.top - gap - Math.min(desired, maxH));
+    }
+
+    menu.style.setProperty('--jsl-filter-menu-top', px(top));
+    menu.style.setProperty('--jsl-filter-menu-max-height', px(maxH));
+    return true;
+  }
+
+  function updateFloatingMenus(){
+    if (!isMobile()){
+      document.body.classList.remove('mobile-filter-dropdown-open');
+      document.querySelectorAll('.filter-dd-menu.jsl-mobile-floating-filter-menu').forEach(clearMenu);
+      return;
+    }
+
+    var anyOpen = false;
+    document.querySelectorAll('.filter-dd.is-open .filter-dd-menu').forEach(function(menu){
+      if (positionMenu(menu)) anyOpen = true;
+    });
+    clearClosedMenus();
+    document.body.classList.toggle('mobile-filter-dropdown-open', anyOpen);
+  }
+
+  function scheduleFloatingMenus(){
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(function(){
+      rafId = 0;
+      updateFloatingMenus();
+      setTimeout(updateFloatingMenus, 40);
+      setTimeout(updateFloatingMenus, 160);
+    });
+  }
+
+  ['DOMContentLoaded','load','pageshow','resize','orientationchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, scheduleFloatingMenus, { passive:true });
+  });
+
+  document.addEventListener('click', scheduleFloatingMenus, true);
+  document.addEventListener('keydown', scheduleFloatingMenus, true);
+  document.addEventListener('change', scheduleFloatingMenus, true);
+  document.addEventListener('input', scheduleFloatingMenus, true);
+  document.addEventListener('scroll', scheduleFloatingMenus, true);
+
+  if ('ResizeObserver' in window){
+    window.addEventListener('DOMContentLoaded', function(){
+      var ro = new ResizeObserver(scheduleFloatingMenus);
+      ['header', '.sticky-master', '.sticky-master-inner', '.topbar-row', '.controls-panel', '.advanced-filter-row', '.table-section', '#gridOnlyWrapper'].forEach(function(sel){
+        var el = document.querySelector(sel);
+        if (el) ro.observe(el);
+      });
+      scheduleFloatingMenus();
+    }, { once:true });
+  }
+
+  try{
+    var mo = new MutationObserver(function(mutations){
+      for (var i = 0; i < mutations.length; i++){
+        var t = mutations[i].target;
+        if (t && (t.classList && (t.classList.contains('filter-dd') || t.classList.contains('filter-dd-menu') || t.closest && t.closest('.filter-dd')))){
+          scheduleFloatingMenus();
+          return;
+        }
+      }
+    });
+    mo.observe(document.documentElement, { subtree:true, childList:true, attributes:true, attributeFilter:['class','style','aria-expanded'] });
+  }catch(_err){}
+
+  scheduleFloatingMenus();
+  window.__jslUpdateMobileFloatingFilterDropdowns = scheduleFloatingMenus;
+})();
+</script>
+
 </body>
 </html>
