@@ -12,22 +12,37 @@
 <script src="supabase_config.js"></script>
 
 <style>
+/* ============================================================
+   GLOBAL STYLE — MATCHES CHOOSE PORTAL / ATTACHED IMAGE
+============================================================ */
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:"Poppins",sans-serif;
+  font-family:"Poppins","Inter","Segoe UI",Arial,sans-serif;
 }
 
 :root{
-  --header-h:78px;
+  --header-h:86px;
+  --page-bg:#ffffff;
+  --soft-bg:#f8fbff;
+  --navy:#00256f;
+  --navy-dark:#001846;
+  --text:#0f172a;
+  --muted:#475569;
+  --line:#e5edf7;
+  --icon-blue:#0580bd;
+  --icon-bg:#e9f8ff;
+  --accent:#38bdf8;
+  --purple:#4f46e5;
+  --card-shadow:0 18px 42px rgba(15,23,42,0.08);
 }
 
 html, body{
   margin:0;
   padding:0;
-  overflow-x:hidden;
   min-height:100%;
+  overflow-x:hidden;
 }
 
 html{
@@ -38,12 +53,12 @@ html{
 body{
   min-height:100vh;
   padding-top:var(--header-h);
-  background:radial-gradient(circle at 20% 20%, #0ea5e9, #1e1b4b 60%, #020617);
-  color:white;
+  background:var(--page-bg);
+  color:var(--text);
 }
 
 /* ============================================================
-   HEADER - INDEX STYLE
+   HEADER — WHITE CHOOSE PORTAL STYLE
 ============================================================ */
 header{
   position:fixed;
@@ -54,12 +69,11 @@ header{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  padding:0 16px 0 8px;
-  background:rgba(15,23,42,0.92);
-  border-bottom:1px solid rgba(59,130,246,0.28);
-  backdrop-filter:blur(14px);
-  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  gap:18px;
+  padding:0 22px 0 12px;
+  background:#ffffff;
+  border-bottom:1px solid var(--line);
+  box-shadow:0 2px 12px rgba(15,23,42,0.04);
   z-index:1500;
 }
 
@@ -68,15 +82,13 @@ header .logo{
   display:flex;
   align-items:center;
   justify-content:flex-start;
-  margin-left:-4px;
 }
 
 header .logo img{
-  height:80px;
+  height:74px;
   width:auto;
   display:block;
   object-fit:contain;
-  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
 }
 
 header nav{
@@ -85,31 +97,226 @@ header nav{
   display:flex;
   align-items:center;
   justify-content:flex-start;
-  gap:12px;
-  margin-left:4px;
+  gap:42px;
+  margin-left:18px;
   white-space:nowrap;
 }
 
 header nav > a,
 header nav .nav-main-link{
+  position:relative;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  height:36px;
-  padding:0 4px;
-  color:#e5e7eb;
+  gap:8px;
+  min-width:0;
+  height:40px;
+  padding:0 2px;
+  color:var(--navy);
   text-decoration:none;
-  font-size:0.88rem;
-  font-weight:600;
-  transition:color 0.25s ease, text-shadow 0.25s ease;
+  font-size:0.91rem;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:-0.01em;
+  background:transparent;
+  border:none;
+  transition:color 0.22s ease;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:3px;
+  height:2px;
+  border-radius:999px;
+  background:var(--navy-dark);
+  transform:scaleX(0);
+  transform-origin:center;
+  transition:transform 0.22s ease;
 }
 
 header nav > a:hover,
-header nav .nav-main-link:hover{
-  color:#ffffff;
-  text-shadow:0 0 12px rgba(0,198,255,0.55);
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000;
+  outline:none;
 }
 
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown.open .nav-main-link::after{
+  transform:scaleX(1);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  width:22px;
+  height:22px;
+  min-width:22px;
+  display:inline-grid;
+  place-items:center;
+  border-radius:7px;
+  color:var(--icon-blue);
+  background:linear-gradient(180deg,#eefbff,#dff5ff);
+  border:1px solid #cfeeff;
+  box-shadow:0 2px 5px rgba(14,165,233,0.12);
+  font-size:0.82rem;
+  transition:color 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i{
+  color:#000000;
+  border-color:#b7e5fb;
+  background:#edf9ff;
+}
+
+header nav .nav-text,
+.mobile-panel .nav-text{
+  display:inline-block;
+  min-width:0;
+}
+
+/* Header dropdown */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:40px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  height:100%;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  width:30px;
+  height:30px;
+  min-width:30px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  border:1px solid #cfeeff;
+  outline:none;
+  background:#e9f8ff;
+  color:var(--icon-blue);
+  cursor:pointer;
+  transition:color 0.22s ease, border-color 0.22s ease, background 0.22s ease, transform 0.22s ease;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:inherit;
+  font-size:0.82rem;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown.open .nav-dropdown-toggle{
+  color:#000000;
+  background:#f2fbff;
+  border-color:#b7e5fb;
+}
+
+.nav-dropdown.open .nav-dropdown-toggle{
+  transform:rotate(180deg);
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 13px);
+  left:0;
+  min-width:230px;
+  display:none;
+  flex-direction:column;
+  gap:4px;
+  padding:10px;
+  border-radius:16px;
+  background:#ffffff;
+  border:1px solid var(--line);
+  box-shadow:0 16px 36px rgba(15,23,42,0.12);
+  z-index:1600;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:11px 12px;
+  border-radius:12px;
+  color:var(--navy);
+  text-decoration:none;
+  white-space:nowrap;
+  font-size:0.88rem;
+  font-weight:500;
+  transition:color 0.22s ease;
+}
+
+.nav-dropdown-menu a::after{
+  content:"";
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:5px;
+  height:2px;
+  border-radius:999px;
+  background:#000000;
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform 0.22s ease;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000;
+  outline:none;
+}
+
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after{
+  transform:scaleX(1);
+}
+
+.nav-dropdown-menu a i{
+  width:22px;
+  height:22px;
+  min-width:22px;
+  display:inline-grid;
+  place-items:center;
+  border-radius:7px;
+  color:var(--icon-blue);
+  background:#e9f8ff;
+  border:1px solid #cfeeff;
+  font-size:0.8rem;
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#000000;
+}
+
+/* Login button */
 header .auth-buttons{
   flex:0 0 auto;
   display:flex;
@@ -123,40 +330,64 @@ header .auth-buttons a{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:6px;
-  height:36px;
-  padding:0 11px;
+  gap:7px;
+  height:38px;
+  padding:0 16px;
   border-radius:10px;
   text-decoration:none;
-  font-size:0.82rem;
+  font-size:0.86rem;
   font-weight:700;
   color:#ffffff;
-  border:1px solid rgba(255,255,255,0.14);
-  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
-  box-shadow:0 0 14px rgba(0,198,255,0.10);
-  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  border:1px solid rgba(255,255,255,0.22);
+  background:linear-gradient(135deg,#39c8ff 0%,#3b82f6 48%,#6d5dfc 100%);
+  box-shadow:0 8px 20px rgba(59,130,246,0.22);
+  transition:transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
 }
 
-header .auth-buttons a:hover{
-  transform:translateY(-2px);
-  box-shadow:0 0 20px rgba(0,198,255,0.22);
-  border-color:rgba(0,198,255,0.35);
+header .auth-buttons a i{
+  width:16px;
+  height:16px;
+  min-width:16px;
+  display:inline-grid;
+  place-items:center;
+  border-radius:999px;
+  color:#ffffff;
+  font-size:0.78rem;
+  line-height:1;
 }
 
+header .auth-buttons a:hover,
+header .auth-buttons a:focus-visible{
+  transform:translateY(-1px);
+  filter:saturate(1.07);
+  box-shadow:0 10px 24px rgba(59,130,246,0.30);
+  outline:none;
+}
+
+/* Mobile hamburger */
 .nav-toggle{
   display:none;
-  width:40px;
-  height:40px;
+  width:42px;
+  height:42px;
   border:none;
-  border-radius:10px;
-  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
-  color:#fff;
+  border-radius:11px;
+  background:#e9f8ff;
+  color:var(--icon-blue);
   align-items:center;
   justify-content:center;
   cursor:pointer;
   flex:0 0 auto;
-  border:1px solid rgba(255,255,255,0.14);
-  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  border:1px solid #cfeeff;
+  box-shadow:0 4px 12px rgba(14,165,233,0.10);
+  transition:color 0.22s ease, background 0.22s ease, transform 0.22s ease;
+}
+
+.nav-toggle:hover,
+.nav-toggle:focus-visible{
+  color:#000000;
+  background:#f2fbff;
+  transform:translateY(-1px);
+  outline:none;
 }
 
 .nav-toggle i{
@@ -168,17 +399,18 @@ header .auth-buttons a:hover{
   top:var(--header-h);
   left:0;
   right:0;
-  background:rgba(15,23,42,0.97);
-  border-top:1px solid rgba(59,130,246,0.25);
-  border-bottom:1px solid rgba(59,130,246,0.25);
-  box-shadow:0 10px 28px rgba(0,0,0,0.28);
-  backdrop-filter:blur(12px);
+  background:#ffffff;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 16px 36px rgba(15,23,42,0.12);
   padding:14px 16px 18px;
   transform:translateY(-10px);
   opacity:0;
   pointer-events:none;
   transition:opacity 0.25s ease, transform 0.25s ease;
   z-index:1400;
+  max-height:calc(100vh - var(--header-h));
+  overflow-y:auto;
 }
 
 .mobile-panel.open{
@@ -193,25 +425,31 @@ header .auth-buttons a:hover{
   gap:8px;
 }
 
-.mobile-panel .mnav a{
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
   padding:12px 14px;
-  border-radius:12px;
+  border-radius:13px;
   text-decoration:none;
-  color:#e5e7eb;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
+  color:var(--navy);
+  background:#ffffff;
+  border:1px solid var(--line);
   font-weight:600;
-  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  font-size:0.92rem;
+  transition:color 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
 }
 
-.mobile-panel .mnav a:hover{
-  background:rgba(0,198,255,0.12);
-  color:#fff;
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:focus-visible{
+  color:#000000;
+  border-color:#cfeeff;
   transform:translateX(3px);
+  outline:none;
 }
 
 .mobile-panel .mnav-group{
@@ -221,56 +459,34 @@ header .auth-buttons a:hover{
 }
 
 .mobile-panel .mnav-row{
-  display:flex;
-  align-items:center;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 48px;
+  align-items:stretch;
   gap:8px;
 }
 
-.mobile-panel .mnav-main-link{
-  flex:1 1 auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:12px 14px;
-  border-radius:12px;
-  text-decoration:none;
-  color:#e5e7eb;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  font-weight:600;
-  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
-}
-
-.mobile-panel .mnav-main-link:hover{
-  background:rgba(0,198,255,0.12);
-  color:#fff;
-  transform:translateX(3px);
-}
-
 .mobile-panel .mnav-toggle{
-  flex:0 0 48px;
   width:48px;
   min-width:48px;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:12px;
-  padding:12px 14px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.08);
-  background:rgba(255,255,255,0.04);
-  color:#e5e7eb;
+  border-radius:13px;
+  border:1px solid var(--line);
+  background:#ffffff;
+  color:var(--icon-blue);
   font-weight:600;
   font-size:0.96rem;
   cursor:pointer;
-  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  transition:color 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
 }
 
-.mobile-panel .mnav-toggle:hover{
-  background:rgba(0,198,255,0.12);
-  color:#fff;
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000;
+  border-color:#cfeeff;
   transform:translateX(3px);
+  outline:none;
 }
 
 .mobile-panel .mnav-toggle .mnav-caret{
@@ -292,1268 +508,6 @@ header .auth-buttons a:hover{
   display:flex;
 }
 
-.mobile-panel .mnav-submenu a{
-  background:rgba(255,255,255,0.03);
-}
-
-.nav-dropdown{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  height:36px;
-  flex:0 0 auto;
-}
-
-.nav-dropdown-trigger{
-  display:inline-flex;
-  align-items:center;
-  gap:2px;
-  height:100%;
-}
-
-.nav-main-link{
-  display:inline-flex;
-  align-items:center;
-  text-decoration:none;
-}
-
-.nav-dropdown-toggle{
-  appearance:none;
-  -webkit-appearance:none;
-  border:none;
-  outline:none;
-  background:transparent;
-  color:#ffffff;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:24px;
-  height:24px;
-  padding:0;
-  margin:0;
-  line-height:1;
-}
-
-.nav-dropdown-toggle i{
-  pointer-events:none;
-  color:#ffffff;
-  font-size:0.9rem;
-}
-
-.nav-dropdown-menu{
-  position:absolute;
-  top:calc(100% + 12px);
-  left:0;
-  min-width:220px;
-  display:none;
-  flex-direction:column;
-  gap:0;
-  padding:10px 0;
-  border-radius:14px;
-  background:rgba(15,23,42,0.96);
-  border:1px solid rgba(59,130,246,0.35);
-  box-shadow:0 12px 34px rgba(0,0,0,0.35);
-  backdrop-filter:blur(12px);
-  z-index:1200;
-}
-
-.nav-dropdown.open .nav-dropdown-menu{
-  display:flex;
-}
-
-.nav-dropdown-menu a{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 16px;
-  color:#e5e7eb;
-  text-decoration:none;
-  white-space:nowrap;
-  transition:background 0.25s ease, color 0.25s ease;
-}
-
-.nav-dropdown-menu a:hover{
-  background:rgba(0,198,255,0.12);
-  color:#ffffff;
-}
-
-.nav-dropdown-menu i{
-  width:18px;
-  text-align:center;
-}
-
-/* ================= RESET BOX ================= */
-.reset-container{
-  max-width:420px;
-  margin:90px auto 0;
-  background:rgba(15,23,42,0.9);
-  border:2px solid rgba(59,130,246,0.4);
-  border-radius:20px;
-  padding:45px 40px;
-  text-align:center;
-  backdrop-filter:blur(15px);
-  box-shadow:0 0 28px rgba(2,6,23,0.42);
-}
-
-.reset-container h2{
-  font-size:1.8rem;
-  margin-bottom:10px;
-  color:#c0ff33;
-  text-shadow:0 0 10px rgba(147,51,234,0.7);
-}
-
-.reset-container p{
-  color:#e0e7ff;
-  margin-bottom:25px;
-}
-
-.input-group{
-  margin-bottom:20px;
-  text-align:left;
-  position:relative;
-}
-
-label{
-  font-size:0.9rem;
-  margin-bottom:6px;
-  color:#e2e8f0;
-  display:block;
-}
-
-.reset-container input{
-  width:100%;
-  padding:12px 45px 12px 12px;
-  border-radius:10px;
-  border:1.5px solid rgba(255,255,255,0.15);
-  background:rgba(255,255,255,0.05);
-  color:#f1f5f9;
-  outline:none;
-}
-
-.reset-container input:focus{
-  border-color:#38bdf8;
-  box-shadow:0 0 0 3px rgba(56,189,248,0.14), 0 0 14px rgba(56,189,248,0.18);
-}
-
-.eye-toggle{
-  position:absolute;
-  right:12px;
-  top:39px;
-  cursor:pointer;
-  color:#93c5fd;
-  font-size:1.1rem;
-}
-
-.reset-container button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#00c6ff,#8b5cf6,#00c6ff);
-  color:white;
-  font-size:1rem;
-  font-weight:600;
-  cursor:pointer;
-  transition:transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow:0 0 22px rgba(56,189,248,0.20);
-}
-
-.reset-container button:hover{
-  transform:translateY(-1px);
-  box-shadow:0 0 28px rgba(56,189,248,0.28);
-}
-
-.message{
-  margin-top:15px;
-  font-size:0.9rem;
-  color:#22c55e;
-  display:none;
-}
-
-.error{
-  color:#ef4444;
-  margin-top:12px;
-  font-size:0.9rem;
-}
-
-/* ============================================================
-   XXL DESKTOP — 1800px and above
-============================================================ */
-@media (min-width: 1800px) {
-  :root{ --header-h:84px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:18px !important;
-    padding:0 24px 0 14px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:88px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:20px !important;
-    margin-left:10px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:38px !important;
-    padding:0 5px !important;
-    font-size:0.94rem !important;
-  }
-
-  .nav-dropdown{
-    height:38px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:2px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:24px !important;
-    height:24px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.92rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:10px !important;
-  }
-
-  header .auth-buttons a{
-    height:38px !important;
-    padding:0 14px !important;
-    font-size:0.86rem !important;
-    border-radius:10px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-
-  .reset-container {
-    max-width: 520px;
-    padding: 60px 55px;
-    margin-top: 120px;
-    border-radius: 22px;
-  }
-
-  .reset-container h2 { font-size: 2.1rem; }
-  .reset-container input { padding: 14px 50px 14px 14px; font-size: 1rem; }
-  .reset-container button { padding: 14px; font-size: 1.1rem; }
-}
-
-@media (min-width: 1440px) and (max-width: 1799px) {
-  :root{ --header-h:78px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:14px !important;
-    padding:0 18px 0 10px !important;
-  }
-
-  header .logo{
-    margin-left:-3px !important;
-  }
-
-  header .logo img{
-    height:80px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:15px !important;
-    margin-left:7px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:36px !important;
-    padding:0 4px !important;
-    font-size:0.84rem !important;
-  }
-
-  .nav-dropdown{
-    height:36px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:24px !important;
-    height:24px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.88rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:7px !important;
-  }
-
-  header .auth-buttons a{
-    height:36px !important;
-    padding:0 11px !important;
-    font-size:0.79rem !important;
-    border-radius:10px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-
-  .reset-container {
-    max-width: 480px;
-    padding: 55px 50px;
-    margin-top: 110px;
-  }
-
-  .reset-container h2 { font-size: 2rem; }
-  .reset-container input { padding: 13px 48px 13px 14px; }
-  .reset-container button { padding: 13px; font-size: 1.05rem; }
-}
-
-@media (min-width: 1024px) and (max-width: 1439px) {
-  :root{ --header-h:76px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:9px !important;
-    padding:0 12px 0 6px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:66px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:9px !important;
-    margin-left:3px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:34px !important;
-    padding:0 2px !important;
-    font-size:0.75rem !important;
-  }
-
-  .nav-dropdown{
-    height:34px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:1px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:20px !important;
-    height:20px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.74rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:5px !important;
-  }
-
-  header .auth-buttons a{
-    height:32px !important;
-    padding:0 8px !important;
-    font-size:0.70rem !important;
-    border-radius:8px !important;
-    gap:5px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-
-  .reset-container {
-    max-width: 440px;
-    padding: 50px 40px;
-    margin-top: 90px;
-  }
-
-  .reset-container h2 { font-size: 1.85rem; }
-  .reset-container input { padding: 12px 45px 12px 12px; }
-}
-
-@media (min-width: 769px) and (max-width: 1023px) {
-  :root{ --header-h:74px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:7px !important;
-    padding:0 8px 0 5px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:58px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:7px !important;
-    margin-left:2px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:31px !important;
-    padding:0 2px !important;
-    font-size:0.66rem !important;
-  }
-
-  .nav-dropdown{
-    height:31px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:1px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:18px !important;
-    height:18px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.68rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:4px !important;
-  }
-
-  header .auth-buttons a{
-    height:30px !important;
-    padding:0 6px !important;
-    font-size:0.61rem !important;
-    border-radius:8px !important;
-    gap:4px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-
-  .reset-container {
-    max-width: 480px;
-    padding: 24px 20px;
-    margin-top: 40px;
-    border-radius: 14px;
-  }
-
-  #resetForm {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px 12px;
-  }
-
-  .input-group {
-    margin-bottom: 0;
-    grid-column: span 2;
-  }
-
-  .reset-container h2 {
-    font-size: 1.35rem;
-    margin-bottom: 6px;
-  }
-
-  .reset-container p {
-    font-size: 0.82rem;
-    margin-bottom: 12px;
-  }
-
-  .reset-container input {
-    padding: 8px 32px 8px 10px;
-    height: 32px;
-    font-size: 0.8rem;
-    border-radius: 6px;
-  }
-
-  .eye-toggle {
-    top: 32px;
-    right: 10px;
-    font-size: 0.9rem;
-  }
-
-  .reset-container button {
-    grid-column: span 2;
-    padding: 9px;
-    font-size: 0.85rem;
-    border-radius: 6px;
-    margin-top: 6px;
-  }
-
-  .message,
-  .error {
-    grid-column: span 2;
-    font-size: 0.75rem;
-    margin-top: 4px;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-  :root{ --header-h:72px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:2px !important;
-    padding:0 12px 0 8px !important;
-    justify-content:flex-start !important;
-    align-items:center !important;
-  }
-
-  header .logo{
-    order:1 !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-    flex:0 0 auto !important;
-  }
-
-  header .logo img{
-    height:54px !important;
-  }
-
-  header nav{ display:none !important; }
-  header .auth-buttons{ display:none !important; }
-
-  .nav-toggle{
-    order:2 !important;
-    display:inline-flex !important;
-    width:40px !important;
-    height:40px !important;
-    border-radius:10px !important;
-    margin-left:1px !important;
-    margin-right:auto !important;
-    flex:0 0 auto !important;
-    align-self:center !important;
-  }
-
-  .mobile-panel{
-    top:var(--header-h) !important;
-    padding:12px 14px 16px !important;
-  }
-
-  .mobile-panel .mnav{
-    gap:8px !important;
-  }
-
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link,
-  .mobile-panel .mnav-toggle{
-    padding:11px 12px !important;
-    border-radius:11px !important;
-    font-size:0.88rem !important;
-  }
-
-  .mobile-panel .mnav-submenu{
-    padding-left:12px !important;
-  }
-
-  .reset-container {
-    max-width: 85%;
-    padding: 32px 24px;
-    margin-top: 70px;
-    border-radius: 14px;
-  }
-
-  .reset-container h2 { font-size: 1.4rem; }
-  .reset-container p { font-size: 0.85rem; }
-  .reset-container input { padding: 10px 34px 10px 10px; font-size: 0.85rem; }
-  .reset-container button { padding: 10px; font-size: 0.88rem; }
-}
-
-@media (max-width: 480px) {
-  :root{ --header-h:70px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:1px !important;
-    padding:0 10px 0 8px !important;
-    justify-content:flex-start !important;
-    align-items:center !important;
-  }
-
-  header .logo{
-    order:1 !important;
-    flex:0 0 auto !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-  }
-
-  header .logo img{
-    height:50px !important;
-  }
-
-  header nav{ display:none !important; }
-  header .auth-buttons{ display:none !important; }
-
-  .nav-toggle{
-    order:2 !important;
-    display:inline-flex !important;
-    width:38px !important;
-    height:38px !important;
-    border-radius:9px !important;
-    margin-left:0 !important;
-    margin-right:auto !important;
-    flex:0 0 auto !important;
-    align-self:center !important;
-  }
-
-  .mobile-panel{
-    top:var(--header-h) !important;
-    padding:12px 12px 14px !important;
-  }
-
-  .mobile-panel .mnav{
-    gap:7px !important;
-  }
-
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link,
-  .mobile-panel .mnav-toggle{
-    padding:10px 11px !important;
-    border-radius:10px !important;
-    font-size:0.84rem !important;
-  }
-
-  .mobile-panel .mnav-submenu{
-    padding-left:10px !important;
-  }
-
-  .reset-container {
-    max-width: 90%;
-    padding: 26px 20px;
-    margin-top: 64px;
-    border-radius: 12px;
-  }
-
-  .reset-container h2 { font-size: 1.25rem; }
-  .reset-container p { font-size: 0.8rem; }
-  .reset-container input { padding: 9px 32px 9px 10px; font-size: 0.82rem; }
-  .eye-toggle { top: 34px; font-size: 0.95rem; }
-  .reset-container button { padding: 10px; font-size: 0.85rem; }
-  .message, .error { font-size: 0.78rem; }
-}
-
-
-/* ============================================================
-   EXACT LATEST INDEX HEADER OVERRIDE - APPLIED TO RESET PASSWORD
-   Matches the latest Index header: nav icons, dropdown hover effects,
-   refined Login icon, desktop no-overlap sizing,
-   and mobile logo-left / hamburger-right layout.
-============================================================ */
-
-/* ============================================================
-   RESET PASSWORD HEADER HEIGHT SYNC
-   Keeps this page aligned with the exact latest Index header height.
-============================================================ */
-:root{ --header-h:78px; }
-.mobile-panel{ top:var(--header-h) !important; }
-
-
-/* ============================================================
-   FINAL HEADER RESPONSIVE PATCH
-   Exact requested breakpoints
-============================================================ */
-
-/* ===== 1800px and above ===== */
-@media (min-width: 1800px){
-  :root{ --header-h:84px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:18px !important;
-    padding:0 24px 0 14px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:88px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:20px !important;
-    margin-left:10px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:38px !important;
-    padding:0 5px !important;
-    font-size:0.94rem !important;
-  }
-
-  .nav-dropdown{
-    height:38px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:2px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:24px !important;
-    height:24px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.92rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:10px !important;
-  }
-
-  header .auth-buttons a{
-    height:38px !important;
-    padding:0 14px !important;
-    font-size:0.86rem !important;
-    border-radius:10px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
-/* ===== 1440px to 1799px ===== */
-@media (min-width: 1440px) and (max-width: 1799px){
-  :root{ --header-h:78px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:14px !important;
-    padding:0 18px 0 10px !important;
-  }
-
-  header .logo{
-    margin-left:-3px !important;
-  }
-
-  header .logo img{
-    height:80px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:15px !important;
-    margin-left:7px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:36px !important;
-    padding:0 4px !important;
-    font-size:0.84rem !important;
-  }
-
-  .nav-dropdown{
-    height:36px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:24px !important;
-    height:24px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.88rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:7px !important;
-  }
-
-  header .auth-buttons a{
-    height:36px !important;
-    padding:0 11px !important;
-    font-size:0.79rem !important;
-    border-radius:10px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
-/* ===== 1024px to 1439px ===== */
-@media (min-width: 1024px) and (max-width: 1439px){
-  :root{ --header-h:76px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:9px !important;
-    padding:0 12px 0 6px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:66px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:9px !important;
-    margin-left:3px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:34px !important;
-    padding:0 2px !important;
-    font-size:0.75rem !important;
-  }
-
-  .nav-dropdown{
-    height:34px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:1px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:20px !important;
-    height:20px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.74rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:5px !important;
-  }
-
-  header .auth-buttons a{
-    height:32px !important;
-    padding:0 8px !important;
-    font-size:0.70rem !important;
-    border-radius:8px !important;
-    gap:5px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
-/* ===== 769px to 1023px ===== */
-@media (min-width: 769px) and (max-width: 1023px){
-  :root{ --header-h:74px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:7px !important;
-    padding:0 8px 0 5px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:58px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:7px !important;
-    margin-left:2px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:31px !important;
-    padding:0 2px !important;
-    font-size:0.66rem !important;
-  }
-
-  .nav-dropdown{
-    height:31px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:1px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:18px !important;
-    height:18px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.68rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:4px !important;
-  }
-
-  header .auth-buttons a{
-    height:30px !important;
-    padding:0 6px !important;
-    font-size:0.61rem !important;
-    border-radius:8px !important;
-    gap:4px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
-/* ===== 481px to 768px ===== */
-@media (min-width: 481px) and (max-width: 768px){
-  :root{ --header-h:72px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:8px !important;
-    padding:0 12px 0 8px !important;
-    justify-content:space-between !important;
-    align-items:center !important;
-  }
-
-  header .logo{
-    order:1 !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-    flex:0 0 auto !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-  }
-
-  header .logo img{
-    height:54px !important;
-  }
-
-  header nav{ display:none !important; }
-  header .auth-buttons{ display:none !important; }
-
-  .nav-toggle{
-    order:2 !important;
-    display:inline-flex !important;
-    width:40px !important;
-    height:40px !important;
-    border-radius:10px !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
-    flex:0 0 auto !important;
-    align-self:center !important;
-  }
-
-  .mobile-panel{
-    top:var(--header-h) !important;
-    padding:12px 14px 16px !important;
-  }
-
-  .mobile-panel .mnav{
-    gap:8px !important;
-  }
-
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link,
-  .mobile-panel .mnav-toggle{
-    padding:11px 12px !important;
-    border-radius:11px !important;
-    font-size:0.88rem !important;
-  }
-
-  .mobile-panel .mnav-submenu{
-    padding-left:12px !important;
-  }
-
-  .why-grid,
-  .steps{
-    grid-template-columns:1fr !important;
-  }
-}
-
-/* ===== 480px and below ===== */
-@media (max-width: 480px){
-  :root{ --header-h:70px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:8px !important;
-    padding:0 10px 0 8px !important;
-    justify-content:space-between !important;
-    align-items:center !important;
-  }
-
-  header .logo{
-    order:1 !important;
-    flex:0 0 auto !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-  }
-
-  header .logo img{
-    height:50px !important;
-  }
-
-  header nav{ display:none !important; }
-  header .auth-buttons{ display:none !important; }
-
-  .nav-toggle{
-    order:2 !important;
-    display:inline-flex !important;
-    width:38px !important;
-    height:38px !important;
-    border-radius:9px !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
-    flex:0 0 auto !important;
-    align-self:center !important;
-  }
-
-  .mobile-panel{
-    top:var(--header-h) !important;
-    padding:12px 12px 14px !important;
-  }
-
-  .mobile-panel .mnav{
-    gap:7px !important;
-  }
-
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link,
-  .mobile-panel .mnav-toggle{
-    padding:10px 11px !important;
-    border-radius:10px !important;
-    font-size:0.84rem !important;
-  }
-
-  .mobile-panel .mnav-submenu{
-    padding-left:10px !important;
-  }
-
-  .why-grid,
-  .steps{
-    grid-template-columns:1fr !important;
-  }
-}
-
-
-/* ============================================================
-   FINAL MOBILE HEADER LOCK
-   Force logo left + hamburger right inside header
-============================================================ */
-@media (max-width: 768px){
-  header{
-    display:grid !important;
-    grid-template-columns:auto 1fr auto !important;
-    align-items:center !important;
-    column-gap:10px !important;
-    justify-content:unset !important;
-  }
-
-  header .logo{
-    grid-column:1 !important;
-    justify-self:start !important;
-    align-self:center !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-    padding-left:0 !important;
-    min-width:0 !important;
-  }
-
-  header .logo img{
-    display:block !important;
-    margin:0 !important;
-  }
-
-  .nav-toggle{
-    grid-column:3 !important;
-    justify-self:end !important;
-    align-self:center !important;
-    margin:0 !important;
-  }
-
-  header nav,
-  header .auth-buttons{
-    display:none !important;
-  }
-}
-
-@media (max-width: 480px){
-  header{
-    padding-left:8px !important;
-    padding-right:8px !important;
-  }
-
-  header .logo img{
-    height:48px !important;
-  }
-
-  .nav-toggle{
-    width:38px !important;
-    height:38px !important;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px){
-  header{
-    padding-left:8px !important;
-    padding-right:10px !important;
-  }
-
-  header .logo img{
-    height:52px !important;
-  }
-
-  .nav-toggle{
-    width:40px !important;
-    height:40px !important;
-  }
-}
-
-
-
-/* ============================================================
-   NAV ICON + NO-OVERLAP HEADER PATCH
-   Adds icons to every nav item and compresses safely by screen size.
-============================================================ */
-header nav > a,
-header nav .nav-main-link{
-  gap:7px !important;
-  min-width:0 !important;
-  overflow:visible !important;
-}
-
-header nav > a i,
-header nav .nav-main-link i,
-.nav-dropdown-menu a i,
-.mobile-panel .mnav a i:not(.fa-arrow-right),
-.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
-.mobile-panel .mnav-toggle i:not(.mnav-caret){
-  flex:0 0 auto;
-  color:#38bdf8;
-  text-shadow:0 0 10px rgba(56,189,248,0.35);
-}
-
-header nav > a i,
-header nav .nav-main-link i{
-  width:16px;
-  min-width:16px;
-  text-align:center;
-  font-size:0.92em;
-}
-
-header nav .nav-text,
-.mobile-panel .nav-text{
-  display:inline-block;
-  min-width:0;
-}
-
-.nav-dropdown-trigger{
-  gap:2px !important;
-}
-
-.nav-dropdown-toggle{
-  flex:0 0 auto !important;
-}
-
-.nav-dropdown-menu{
-  min-width:238px !important;
-}
-
-.nav-dropdown-menu a{
-  gap:11px !important;
-  font-size:0.88rem !important;
-}
-
-.nav-dropdown-menu a i{
-  width:20px !important;
-  min-width:20px !important;
-  text-align:center !important;
-}
-
-.mobile-panel .mnav a,
-.mobile-panel .mnav-main-link{
-  min-width:0 !important;
-}
-
 .mobile-panel .mnav-left{
   display:inline-flex;
   align-items:center;
@@ -1562,310 +516,416 @@ header nav .nav-text,
 }
 
 .mobile-panel .mnav-left i{
-  width:18px;
-  min-width:18px;
-  text-align:center;
+  width:24px;
+  height:24px;
+  min-width:24px;
+  display:inline-grid;
+  place-items:center;
+  border-radius:8px;
+  color:var(--icon-blue);
+  background:#e9f8ff;
+  border:1px solid #cfeeff;
+  font-size:0.84rem;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#000000;
 }
 
 .mobile-panel .mnav a .fa-arrow-right,
 .mobile-panel .mnav-main-link .fa-arrow-right{
   flex:0 0 auto;
-  color:#93c5fd;
+  color:#94a3b8;
 }
 
-.mobile-panel .mnav-row{
-  display:grid !important;
-  grid-template-columns:minmax(0, 1fr) 46px !important;
-  align-items:center !important;
-  gap:8px !important;
+/* ============================================================
+   RESET PASSWORD CONTENT — LIGHT CARD STYLE
+============================================================ */
+.reset-wrap{
+  min-height:calc(100vh - var(--header-h));
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:84px 18px 60px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(56,189,248,0.08), transparent 34%),
+    radial-gradient(circle at 85% 25%, rgba(79,70,229,0.06), transparent 30%),
+    #ffffff;
 }
 
-.mobile-panel .mnav-toggle{
-  width:46px !important;
-  min-width:46px !important;
-  max-width:46px !important;
-  height:auto !important;
-  align-self:stretch !important;
-  justify-content:center !important;
-  padding:0 !important;
-  flex:0 0 46px !important;
+.reset-container{
+  width:min(100%, 460px);
+  background:#ffffff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:44px 40px 38px;
+  text-align:center;
+  box-shadow:var(--card-shadow);
 }
 
-.mobile-panel .mnav-toggle .mnav-caret{
-  color:#e5e7eb !important;
+.reset-icon-badge{
+  width:58px;
+  height:58px;
+  margin:0 auto 18px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  color:var(--icon-blue);
+  background:linear-gradient(180deg,#effbff,#e5f7ff);
+  border:1px solid #cfeeff;
+  box-shadow:0 10px 24px rgba(14,165,233,0.10);
 }
 
+.reset-icon-badge i{
+  font-size:1.35rem;
+}
+
+.reset-container h2{
+  font-size:2rem;
+  line-height:1.15;
+  margin-bottom:10px;
+  color:var(--navy);
+  font-weight:800;
+  letter-spacing:-0.035em;
+}
+
+.reset-container p{
+  color:var(--muted);
+  margin-bottom:26px;
+  font-size:0.95rem;
+  line-height:1.55;
+}
+
+#resetForm{
+  width:100%;
+}
+
+.input-group{
+  margin-bottom:18px;
+  text-align:left;
+  position:relative;
+}
+
+label{
+  font-size:0.88rem;
+  margin-bottom:7px;
+  color:var(--navy);
+  display:block;
+  font-weight:700;
+}
+
+.reset-container input{
+  width:100%;
+  height:46px;
+  padding:12px 45px 12px 14px;
+  border-radius:12px;
+  border:1.5px solid #d7e2ee;
+  background:#ffffff;
+  color:var(--text);
+  font-size:0.96rem;
+  outline:none;
+  transition:border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.reset-container input::placeholder{
+  color:#94a3b8;
+}
+
+.reset-container input:focus{
+  border-color:#38bdf8;
+  box-shadow:0 0 0 4px rgba(56,189,248,0.14);
+}
+
+.eye-toggle{
+  position:absolute;
+  right:14px;
+  top:39px;
+  cursor:pointer;
+  color:var(--icon-blue);
+  font-size:1rem;
+  transition:color 0.22s ease, transform 0.22s ease;
+}
+
+.eye-toggle:hover{
+  color:#000000;
+  transform:scale(1.05);
+}
+
+.reset-container button{
+  width:100%;
+  height:46px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:0 14px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#39c8ff 0%,#3b82f6 48%,#6d5dfc 100%);
+  color:#ffffff;
+  font-size:1rem;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(59,130,246,0.24);
+  transition:transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+
+.reset-container button:hover,
+.reset-container button:focus-visible{
+  transform:translateY(-1px);
+  filter:saturate(1.07);
+  box-shadow:0 14px 30px rgba(59,130,246,0.32);
+  outline:none;
+}
+
+.message{
+  margin:14px 0 0 !important;
+  font-size:0.9rem !important;
+  color:#16a34a !important;
+  display:none;
+  font-weight:700;
+}
+
+.error{
+  color:#dc2626 !important;
+  margin:12px 0 0 !important;
+  font-size:0.9rem !important;
+  font-weight:700;
+}
+
+/* ============================================================
+   RESPONSIVE HEADER + PAGE
+============================================================ */
 @media (min-width:1800px){
+  :root{ --header-h:90px; }
+  header{ padding:0 30px 0 18px; gap:24px; }
+  header .logo img{ height:80px; }
+  header nav{ gap:54px; margin-left:26px; }
   header nav > a,
-  header nav .nav-main-link{ gap:8px !important; }
-  header nav > a i,
-  header nav .nav-main-link i{ width:17px !important; min-width:17px !important; }
+  header nav .nav-main-link{ font-size:0.98rem; }
+  header .auth-buttons a{ height:40px; padding:0 18px; font-size:0.9rem; }
+  .reset-wrap{ padding-top:110px; }
+  .reset-container{ width:min(100%, 520px); padding:54px 52px 46px; }
+  .reset-container h2{ font-size:2.18rem; }
 }
 
 @media (min-width:1440px) and (max-width:1799px){
-  header nav{ gap:13px !important; }
-  header nav > a,
-  header nav .nav-main-link{ gap:6px !important; }
-  header nav > a i,
-  header nav .nav-main-link i{ width:15px !important; min-width:15px !important; }
+  :root{ --header-h:86px; }
+  header{ padding:0 24px 0 14px; gap:20px; }
+  header .logo img{ height:76px; }
+  header nav{ gap:44px; margin-left:20px; }
 }
 
 @media (min-width:1024px) and (max-width:1439px){
-  header{ gap:8px !important; padding-left:6px !important; padding-right:10px !important; }
-  header nav{ gap:6px !important; margin-left:2px !important; }
+  :root{ --header-h:78px; }
+  header{ padding:0 14px 0 8px; gap:12px; }
+  header .logo img{ height:66px; }
+  header nav{ gap:24px; margin-left:10px; }
   header nav > a,
-  header nav .nav-main-link{
-    gap:4px !important;
-    padding:0 1px !important;
-    font-size:0.69rem !important;
-    letter-spacing:-0.01em !important;
-  }
+  header nav .nav-main-link{ font-size:0.82rem; gap:6px; }
   header nav > a i,
-  header nav .nav-main-link i{
-    width:12px !important;
-    min-width:12px !important;
-    font-size:0.82em !important;
-  }
-  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
-  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
-  header .auth-buttons{ gap:4px !important; }
-  header .auth-buttons a{ padding:0 6px !important; font-size:0.66rem !important; }
+  header nav .nav-main-link i{ width:20px; height:20px; min-width:20px; font-size:0.74rem; }
+  .nav-dropdown-trigger{ gap:6px; }
+  .nav-dropdown-toggle{ width:28px; height:28px; min-width:28px; }
+  header .auth-buttons a{ height:34px; padding:0 12px; font-size:0.78rem; }
+  .reset-wrap{ padding-top:72px; }
 }
 
 @media (min-width:769px) and (max-width:1023px){
-  header{ gap:5px !important; padding-left:4px !important; padding-right:6px !important; }
-  header .logo img{ height:54px !important; }
-  header nav{ gap:4px !important; margin-left:1px !important; }
+  :root{ --header-h:74px; }
+  header{ padding:0 10px 0 6px; gap:8px; }
+  header .logo img{ height:58px; }
+  header nav{ gap:12px; margin-left:4px; }
   header nav > a,
-  header nav .nav-main-link{
-    gap:3px !important;
-    padding:0 1px !important;
-    font-size:0.58rem !important;
-    letter-spacing:-0.03em !important;
-  }
+  header nav .nav-main-link{ font-size:0.67rem; gap:4px; }
   header nav > a i,
-  header nav .nav-main-link i{
-    width:10px !important;
-    min-width:10px !important;
-    font-size:0.78em !important;
-  }
-  .nav-dropdown-toggle{ width:15px !important; height:15px !important; }
-  .nav-dropdown-toggle i{ font-size:0.58rem !important; }
-  header .auth-buttons{ gap:3px !important; }
-  header .auth-buttons a{
-    height:28px !important;
-    padding:0 4px !important;
-    font-size:0.56rem !important;
-    gap:3px !important;
-  }
-  header .auth-buttons a i{ font-size:0.70em !important; }
+  header nav .nav-main-link i{ width:17px; height:17px; min-width:17px; border-radius:6px; font-size:0.62rem; }
+  .nav-dropdown-trigger{ gap:4px; }
+  .nav-dropdown-toggle{ width:24px; height:24px; min-width:24px; border-radius:7px; }
+  .nav-dropdown-toggle i{ font-size:0.68rem; }
+  header .auth-buttons a{ height:30px; padding:0 8px; border-radius:8px; font-size:0.62rem; gap:4px; }
+  header .auth-buttons a i{ width:13px; height:13px; min-width:13px; font-size:0.62rem; }
+  .reset-wrap{ padding:48px 14px 44px; }
+  .reset-container{ width:min(100%, 430px); padding:30px 28px; border-radius:20px; }
+  .reset-icon-badge{ width:50px; height:50px; border-radius:15px; margin-bottom:14px; }
+  .reset-container h2{ font-size:1.55rem; }
+  .reset-container p{ font-size:0.86rem; margin-bottom:20px; }
 }
 
 @media (max-width:768px){
-  .mobile-panel{
-    max-height:calc(100vh - var(--header-h)) !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
+  :root{ --header-h:72px; }
+  header{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    column-gap:10px;
+    padding:0 12px 0 8px;
   }
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link{
-    justify-content:space-between !important;
-  }
+  header .logo{ grid-column:1; justify-self:start; }
+  header .logo img{ height:54px; }
+  header nav,
+  header .auth-buttons{ display:none; }
+  .nav-toggle{ grid-column:3; display:inline-flex; justify-self:end; }
+  .mobile-panel{ top:var(--header-h); }
+  .reset-wrap{ min-height:calc(100vh - var(--header-h)); padding:54px 16px 42px; }
+  .reset-container{ width:min(100%, 440px); padding:32px 24px; border-radius:20px; }
+  .reset-container h2{ font-size:1.58rem; }
+  .reset-container p{ font-size:0.88rem; margin-bottom:20px; }
 }
 
 @media (max-width:480px){
-  .mobile-panel .mnav-left{ gap:9px !important; }
-  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
-  .mobile-panel .mnav-row{ grid-template-columns:minmax(0, 1fr) 42px !important; gap:7px !important; }
-  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
+  :root{ --header-h:70px; }
+  header{ padding:0 9px 0 8px; }
+  header .logo img{ height:48px; }
+  .nav-toggle{ width:38px; height:38px; border-radius:9px; }
+  .mobile-panel{ padding:12px; }
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0,1fr) 42px; gap:7px; }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link{ padding:10px 11px; border-radius:11px; font-size:0.84rem; }
+  .mobile-panel .mnav-toggle{ width:42px; min-width:42px; border-radius:11px; }
+  .mobile-panel .mnav-submenu{ padding-left:10px; }
+  .mobile-panel .mnav-left{ gap:9px; }
+  .mobile-panel .mnav-left i{ width:21px; height:21px; min-width:21px; font-size:0.76rem; }
+  .reset-wrap{ padding:44px 12px 36px; }
+  .reset-container{ padding:28px 20px; border-radius:18px; }
+  .reset-icon-badge{ width:48px; height:48px; border-radius:14px; margin-bottom:13px; }
+  .reset-container h2{ font-size:1.38rem; }
+  .reset-container p{ font-size:0.82rem; }
+  .reset-container input,
+  .reset-container button{ height:44px; font-size:0.9rem; }
+  label{ font-size:0.82rem; }
+  .eye-toggle{ top:38px; }
+  .message,
+  .error{ font-size:0.82rem !important; }
 }
-
 
 /* ============================================================
-   FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
-   Applies dropdown-style hover to desktop nav links and refines
-   Login button icon without causing overlap.
+   FINAL HEADER HOVER PATCH — NAVY TEXT / BLACK HOVER / NO BG-SHADOW
+   Keeps all dropdown/mobile behavior, but removes hover background,
+   shadow, glow, transform, and text-shadow effects from header nav
+   links and dropdown menu items. Hover is font color + underline only.
 ============================================================ */
 header nav > a,
-header nav .nav-main-link{
-  position:relative !important;
-  border-radius:12px !important;
-  border:1px solid transparent !important;
-  background:transparent !important;
-  overflow:hidden !important;
-  isolation:isolate !important;
-  transition:
-    background 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease,
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    text-shadow 0.25s ease !important;
-}
-
-header nav > a::before,
-header nav .nav-main-link::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12));
-  opacity:0;
-  transform:scaleX(0.72);
-  transform-origin:center;
-  transition:opacity 0.25s ease, transform 0.25s ease;
-  z-index:-1;
+header nav .nav-main-link,
+.nav-dropdown-menu a,
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link{
+  color:var(--navy) !important;
+  background:#ffffff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
 }
 
 header nav > a:hover,
 header nav > a:focus-visible,
 header nav .nav-main-link:hover,
 header nav .nav-main-link:focus-visible,
-.nav-dropdown.open .nav-main-link{
-  color:#ffffff !important;
-  background:rgba(0,198,255,0.12) !important;
-  border-color:rgba(56,189,248,0.28) !important;
-  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
-  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
-  transform:translateY(-1px) !important;
+.nav-dropdown.open .nav-main-link,
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible,
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:focus-visible{
+  color:#000000 !important;
+  background:#ffffff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  filter:none !important;
+  outline:none !important;
 }
 
-header nav > a:hover::before,
-header nav > a:focus-visible::before,
-header nav .nav-main-link:hover::before,
-header nav .nav-main-link:focus-visible::before,
-.nav-dropdown.open .nav-main-link::before{
-  opacity:1;
-  transform:scaleX(1);
+header nav > a::before,
+header nav .nav-main-link::before,
+.nav-dropdown-menu a::before,
+.mobile-panel .mnav a::before,
+.mobile-panel .mnav-main-link::before{
+  display:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav-left i{
+  color:var(--icon-blue) !important;
+  background:#e9f8ff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
 }
 
 header nav > a:hover i,
 header nav > a:focus-visible i,
 header nav .nav-main-link:hover i,
 header nav .nav-main-link:focus-visible i,
-.nav-dropdown.open .nav-main-link i{
-  color:#ffffff !important;
-  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
-  transform:scale(1.08);
-}
-
-header nav > a i,
-header nav .nav-main-link i{
-  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
-}
-
-.nav-dropdown-menu a{
-  border:1px solid transparent !important;
-  border-radius:10px !important;
-  margin:0 8px !important;
-  padding:12px 12px !important;
-}
-
-.nav-dropdown-menu a:hover,
-.nav-dropdown-menu a:focus-visible{
-  background:rgba(0,198,255,0.12) !important;
-  border-color:rgba(56,189,248,0.24) !important;
-  color:#ffffff !important;
-  transform:translateX(3px);
-  box-shadow:0 0 14px rgba(0,198,255,0.12);
-}
-
+.nav-dropdown.open .nav-main-link i,
 .nav-dropdown-menu a:hover i,
-.nav-dropdown-menu a:focus-visible i{
-  color:#ffffff !important;
-  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
-}
-
-header .auth-buttons a{
-  position:relative !important;
-  overflow:hidden !important;
-  isolation:isolate !important;
-  gap:7px !important;
-}
-
-header .auth-buttons a::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  opacity:0;
-  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
-  transition:opacity 0.25s ease;
-  z-index:-1;
-}
-
-header .auth-buttons a:hover::before,
-header .auth-buttons a:focus-visible::before{
-  opacity:1;
-}
-
-header .auth-buttons a i{
-  width:18px !important;
-  height:18px !important;
-  min-width:18px !important;
-  display:inline-grid !important;
-  place-items:center !important;
-  border-radius:999px !important;
-  font-size:0.85rem !important;
-  line-height:1 !important;
-  color:#ffffff !important;
-  background:rgba(255,255,255,0.16) !important;
-  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
-  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
-}
-
-header .auth-buttons a.login-auth i{
-  background:rgba(56,189,248,0.22) !important;
-  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
-}
-
-header .auth-buttons a:hover i,
-header .auth-buttons a:focus-visible i{
-  transform:scale(1.10) rotate(-3deg);
-  background:rgba(255,255,255,0.24) !important;
-  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
-}
-
-header .auth-buttons .auth-text{
-  display:inline-block;
-  min-width:0;
-}
-
+.nav-dropdown-menu a:focus-visible i,
 .mobile-panel .mnav a:hover .mnav-left i,
-.mobile-panel .mnav-main-link:hover .mnav-left i{
-  color:#ffffff !important;
-  transform:scale(1.08);
-  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+.mobile-panel .mnav-main-link:hover .mnav-left i,
+.mobile-panel .mnav a:focus-visible .mnav-left i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left i{
+  color:#000000 !important;
+  background:#e9f8ff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  filter:none !important;
 }
 
-.mobile-panel .mnav-left i{
-  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+.nav-dropdown-toggle,
+.mobile-panel .mnav-toggle{
+  color:var(--icon-blue) !important;
+  background:#e9f8ff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
 }
 
-@media (min-width:1024px) and (max-width:1439px){
-  header nav > a,
-  header nav .nav-main-link{
-    border-radius:9px !important;
-  }
-  header .auth-buttons a i{
-    width:15px !important;
-    height:15px !important;
-    min-width:15px !important;
-    font-size:0.68rem !important;
-  }
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown.open .nav-dropdown-toggle,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:#e9f8ff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  outline:none !important;
 }
 
-@media (min-width:769px) and (max-width:1023px){
-  header nav > a,
-  header nav .nav-main-link{
-    border-radius:8px !important;
-  }
-  header .auth-buttons a i{
-    width:13px !important;
-    height:13px !important;
-    min-width:13px !important;
-    font-size:0.58rem !important;
-  }
+.nav-dropdown.open .nav-dropdown-toggle{
+  transform:rotate(180deg) !important;
+}
+
+.nav-dropdown-menu,
+.nav-dropdown.open .nav-dropdown-menu,
+.mobile-panel{
+  background:#ffffff !important;
+}
+
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after,
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown.open .nav-main-link::after{
+  background:#000000 !important;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:#94a3b8 !important;
+  background:transparent !important;
+  box-shadow:none !important;
 }
 
 </style>
@@ -1910,7 +970,7 @@ header .auth-buttons .auth-text{
   </nav>
 
   <div class="auth-buttons">
-    <a href="index1.html" class="admin login-auth"><i class="fa-solid fa-user"></i><span class="auth-text">Login</span></a>
+    <a href="index1.html" class="admin login-auth"><i class="fa-solid fa-right-to-bracket"></i><span class="auth-text">Login</span></a>
   </div>
 
   <button
@@ -1954,536 +1014,241 @@ header .auth-buttons .auth-text{
     <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="index1.html"><span class="mnav-left"><i class="fa-solid fa-user"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index1.html"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
-<div class="reset-container">
-  <h2><i class="fa-solid fa-lock"></i> Reset Password</h2>
-  <p>Enter your new password below.</p>
-
-  <form id="resetForm">
-    <div class="input-group">
-      <label for="newPassword">New Password</label>
-      <input type="password" id="newPassword" required>
-      <i class="fa-solid fa-eye eye-toggle" onclick="togglePassword('newPassword', this)"></i>
+<main class="reset-wrap">
+  <div class="reset-container">
+    <div class="reset-icon-badge">
+      <i class="fa-solid fa-lock"></i>
     </div>
 
-    <div class="input-group">
-      <label for="confirmPassword">Confirm Password</label>
-      <input type="password" id="confirmPassword" required>
-      <i class="fa-solid fa-eye eye-toggle" onclick="togglePassword('confirmPassword', this)"></i>
-    </div>
+    <h2>Reset Password</h2>
+    <p>Enter your new password below.</p>
 
-    <button type="submit"><i class="fa-solid fa-key"></i> Update Password</button>
+    <form id="resetForm">
+      <div class="input-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" required>
+        <i class="fa-solid fa-eye eye-toggle" onclick="togglePassword('newPassword', this)"></i>
+      </div>
 
-    <p class="error" id="errorMsg"></p>
-    <p class="message" id="successMsg">Password updated! Redirecting...</p>
-  </form>
-</div>
+      <div class="input-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" required>
+        <i class="fa-solid fa-eye eye-toggle" onclick="togglePassword('confirmPassword', this)"></i>
+      </div>
+
+      <button type="submit"><i class="fa-solid fa-key"></i> Update Password</button>
+
+      <p class="error" id="errorMsg"></p>
+      <p class="message" id="successMsg">Password updated! Redirecting...</p>
+    </form>
+  </div>
+</main>
 
 <script>
-/*
-  RESET PASSWORD FIX
-  This script fixes the "Supabase client is not initialized" error by:
-  1. Reading a Supabase client from many common config names.
-  2. Reading Supabase URL/key from many common config variable names.
-  3. Creating the Supabase client if only URL/key are available.
-  4. Handling Supabase reset-password recovery tokens from the URL.
+function resolveSupabaseClient(){
+  const directCandidates = [
+    window.sb,
+    window.sbClient,
+    window.supabaseClient,
+    window._supabaseClient,
+    window.client
+  ];
 
-  If your supabase_config.js does not expose anything globally, paste your
-  project URL and anon key below as a last-resort fallback.
-*/
-(function(){
-  "use strict";
-
-  const PAGE_SUPABASE_URL = "";       // optional fallback: paste your Supabase Project URL here if needed
-  const PAGE_SUPABASE_ANON_KEY = "";  // optional fallback: paste your Supabase anon public key here if needed
-
-  let cachedSupabaseClient = null;
-  let recoverySessionPromise = null;
-
-  function isUsableSupabaseClient(client){
-    return !!(
-      client &&
-      client.auth &&
-      typeof client.auth.updateUser === "function" &&
-      typeof client.auth.getSession === "function"
-    );
+  for (const c of directCandidates){
+    if (c && c.auth && typeof c.auth.updateUser === "function"){
+      return c;
+    }
   }
 
-  function firstNonEmptyString(values){
-    for (const value of values){
-      if (typeof value === "string" && value.trim()){
-        return value.trim();
+  const ctor = window.supabase && typeof window.supabase.createClient === "function"
+    ? window.supabase.createClient
+    : null;
+
+  const url =
+    window.SUPABASE_URL ||
+    window.supabaseUrl ||
+    window.__SUPABASE_URL ||
+    (typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : "") ||
+    (typeof supabaseUrl !== "undefined" ? supabaseUrl : "");
+
+  const key =
+    window.SUPABASE_ANON_KEY ||
+    window.supabaseAnonKey ||
+    window.__SUPABASE_ANON_KEY ||
+    (typeof SUPABASE_ANON_KEY !== "undefined" ? SUPABASE_ANON_KEY : "") ||
+    (typeof supabaseAnonKey !== "undefined" ? supabaseAnonKey : "");
+
+  if (ctor && url && key){
+    const created = ctor(url, key);
+    window.supabaseClient = created;
+    return created;
+  }
+
+  return null;
+}
+
+const sb = resolveSupabaseClient();
+
+function initHeaderMenus(){
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
+
+  if(dd && toggle && menu){
+    function closeAboutMenu(){
+      dd.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+
+    function openAboutMenu(){
+      dd.classList.add("open");
+      toggle.setAttribute("aria-expanded", "true");
+    }
+
+    toggle.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+
+      const isOpen = dd.classList.contains("open");
+      if(isOpen){
+        closeAboutMenu();
+      }else{
+        openAboutMenu();
       }
-    }
-    return "";
-  }
+    });
 
-  function readConfigUrl(config){
-    if (!config || typeof config !== "object") return "";
-    return firstNonEmptyString([
-      config.SUPABASE_URL,
-      config.supabaseUrl,
-      config.supabase_url,
-      config.url,
-      config.projectUrl,
-      config.projectURL,
-      config.NEXT_PUBLIC_SUPABASE_URL,
-      config.VITE_SUPABASE_URL
-    ]);
-  }
-
-  function readConfigAnonKey(config){
-    if (!config || typeof config !== "object") return "";
-    return firstNonEmptyString([
-      config.SUPABASE_ANON_KEY,
-      config.SUPABASE_KEY,
-      config.supabaseAnonKey,
-      config.supabaseKey,
-      config.anonKey,
-      config.publicAnonKey,
-      config.key,
-      config.apiKey,
-      config.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      config.VITE_SUPABASE_ANON_KEY
-    ]);
-  }
-
-  function getMetaContent(name){
-    const el = document.querySelector('meta[name="' + name + '"]');
-    return el && el.content ? el.content.trim() : "";
-  }
-
-  function resolveSupabaseClient(){
-    if (isUsableSupabaseClient(cachedSupabaseClient)){
-      return cachedSupabaseClient;
-    }
-
-    /*
-      IMPORTANT:
-      Top-level const variables from supabase_config.js do NOT always appear
-      as window.variableName, so this checks both window properties and normal
-      global lexical variables using typeof.
-    */
-    const clientCandidates = [
-      window.sb,
-      window.sbClient,
-      window.supabaseClient,
-      window._supabaseClient,
-      window.client,
-      window.db,
-      (typeof sb !== "undefined" ? sb : null),
-      (typeof sbClient !== "undefined" ? sbClient : null),
-      (typeof supabaseClient !== "undefined" ? supabaseClient : null),
-      (typeof _supabaseClient !== "undefined" ? _supabaseClient : null),
-      (typeof client !== "undefined" ? client : null),
-      (typeof db !== "undefined" ? db : null),
-      (typeof supabase !== "undefined" ? supabase : null)
-    ];
-
-    for (const candidate of clientCandidates){
-      if (isUsableSupabaseClient(candidate)){
-        cachedSupabaseClient = candidate;
-        window.supabaseClient = candidate;
-        return cachedSupabaseClient;
+    document.addEventListener("click", function(e){
+      if(!dd.contains(e.target)){
+        closeAboutMenu();
       }
-    }
+    });
 
-    const configCandidates = [
-      window.SUPABASE_CONFIG,
-      window.supabaseConfig,
-      window.supabase_config,
-      window.appConfig,
-      window.CONFIG,
-      (typeof SUPABASE_CONFIG !== "undefined" ? SUPABASE_CONFIG : null),
-      (typeof supabaseConfig !== "undefined" ? supabaseConfig : null),
-      (typeof supabase_config !== "undefined" ? supabase_config : null),
-      (typeof appConfig !== "undefined" ? appConfig : null),
-      (typeof CONFIG !== "undefined" ? CONFIG : null)
-    ];
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape"){
+        closeAboutMenu();
+      }
+    });
 
-    const configUrl = firstNonEmptyString(configCandidates.map(readConfigUrl));
-    const configAnonKey = firstNonEmptyString(configCandidates.map(readConfigAnonKey));
-
-    const supabaseUrl = firstNonEmptyString([
-      window.SUPABASE_URL,
-      window.supabaseUrl,
-      window.supabase_url,
-      window.NEXT_PUBLIC_SUPABASE_URL,
-      window.VITE_SUPABASE_URL,
-      (typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : ""),
-      (typeof supabaseUrl !== "undefined" ? supabaseUrl : ""),
-      (typeof supabase_url !== "undefined" ? supabase_url : ""),
-      (typeof NEXT_PUBLIC_SUPABASE_URL !== "undefined" ? NEXT_PUBLIC_SUPABASE_URL : ""),
-      (typeof VITE_SUPABASE_URL !== "undefined" ? VITE_SUPABASE_URL : ""),
-      configUrl,
-      getMetaContent("supabase-url"),
-      PAGE_SUPABASE_URL
-    ]);
-
-    const supabaseAnonKey = firstNonEmptyString([
-      window.SUPABASE_ANON_KEY,
-      window.SUPABASE_KEY,
-      window.supabaseAnonKey,
-      window.supabaseKey,
-      window.anonKey,
-      window.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      window.VITE_SUPABASE_ANON_KEY,
-      (typeof SUPABASE_ANON_KEY !== "undefined" ? SUPABASE_ANON_KEY : ""),
-      (typeof SUPABASE_KEY !== "undefined" ? SUPABASE_KEY : ""),
-      (typeof supabaseAnonKey !== "undefined" ? supabaseAnonKey : ""),
-      (typeof supabaseKey !== "undefined" ? supabaseKey : ""),
-      (typeof anonKey !== "undefined" ? anonKey : ""),
-      (typeof NEXT_PUBLIC_SUPABASE_ANON_KEY !== "undefined" ? NEXT_PUBLIC_SUPABASE_ANON_KEY : ""),
-      (typeof VITE_SUPABASE_ANON_KEY !== "undefined" ? VITE_SUPABASE_ANON_KEY : ""),
-      configAnonKey,
-      getMetaContent("supabase-anon-key"),
-      PAGE_SUPABASE_ANON_KEY
-    ]);
-
-    const supabaseLibrary =
-      window.supabase && typeof window.supabase.createClient === "function"
-        ? window.supabase
-        : (
-            typeof supabase !== "undefined" &&
-            supabase &&
-            typeof supabase.createClient === "function"
-              ? supabase
-              : null
-          );
-
-    if (supabaseLibrary && supabaseUrl && supabaseAnonKey){
-      cachedSupabaseClient = supabaseLibrary.createClient(supabaseUrl, supabaseAnonKey, {
-        auth: {
-          detectSessionInUrl: true,
-          persistSession: true,
-          autoRefreshToken: true
-        }
+    menu.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click", function(){
+        closeAboutMenu();
       });
+    });
+  }
 
-      window.supabaseClient = cachedSupabaseClient;
-      window.sbClient = cachedSupabaseClient;
-      return cachedSupabaseClient;
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  const aboutGroup = document.getElementById("mobileAboutGroup");
+  const aboutToggle = document.getElementById("mobileAboutToggle");
+
+  if(btn && panel){
+    function closeAbout(){
+      if(!aboutGroup || !aboutToggle) return;
+      aboutGroup.classList.remove("open");
+      aboutToggle.setAttribute("aria-expanded","false");
     }
 
-    return null;
-  }
-
-  function getHashParams(){
-    const hash = (window.location.hash || "").replace(/^#/, "");
-    return new URLSearchParams(hash);
-  }
-
-  function cleanRecoveryUrl(){
-    try{
-      const url = new URL(window.location.href);
-      url.hash = "";
-      url.searchParams.delete("code");
-      window.history.replaceState({}, document.title, url.pathname + url.search);
-    }catch(_err){
-      // URL cleanup is optional. Ignore browser/history errors.
-    }
-  }
-
-  async function initializeRecoverySession(){
-    const client = resolveSupabaseClient();
-
-    if (!client){
-      throw new Error(
-        "Supabase client is not initialized. Make sure supabase_config.js is loaded and exposes SUPABASE_URL + SUPABASE_ANON_KEY, or window.supabaseClient."
-      );
+    function toggleAbout(){
+      if(!aboutGroup || !aboutToggle) return;
+      const open = aboutGroup.classList.toggle("open");
+      aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
     }
 
-    const hashParams = getHashParams();
-    const accessToken = hashParams.get("access_token");
-    const refreshToken = hashParams.get("refresh_token");
-
-    if (accessToken && refreshToken){
-      const { error } = await client.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken
-      });
-
-      if (error) throw error;
-
-      cleanRecoveryUrl();
-      return true;
+    function closeMobilePanel(){
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden","true");
+      btn.setAttribute("aria-expanded","false");
+      closeAbout();
     }
 
-    const currentUrl = new URL(window.location.href);
-    const code = currentUrl.searchParams.get("code");
+    btn.addEventListener("click", ()=>{
+      const open = panel.classList.toggle("open");
+      panel.setAttribute("aria-hidden", open ? "false" : "true");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      if(!open) closeAbout();
+    });
 
-    if (code && typeof client.auth.exchangeCodeForSession === "function"){
-      const { error } = await client.auth.exchangeCodeForSession(code);
-
-      if (error) throw error;
-
-      cleanRecoveryUrl();
-      return true;
-    }
-
-    return false;
-  }
-
-  function ensureRecoverySessionInitialized(){
-    if (!recoverySessionPromise){
-      recoverySessionPromise = initializeRecoverySession().catch((err) => {
-        recoverySessionPromise = null;
-        throw err;
-      });
-    }
-
-    return recoverySessionPromise;
-  }
-
-  function setMessage(element, text, display){
-    if (!element) return;
-    element.textContent = text || "";
-    element.style.display = display ? "block" : "none";
-  }
-
-  function setSubmitState(isBusy){
-    const btn = document.querySelector("#resetForm button[type='submit']");
-    if (!btn) return;
-
-    btn.disabled = isBusy;
-    btn.style.opacity = isBusy ? "0.7" : "1";
-    btn.style.cursor = isBusy ? "not-allowed" : "pointer";
-    btn.innerHTML = isBusy
-      ? '<i class="fa-solid fa-spinner fa-spin"></i> Updating...'
-      : '<i class="fa-solid fa-key"></i> Update Password';
-  }
-
-  function initHeaderMenus(){
-    const dd = document.getElementById("aboutNavDropdown");
-    const toggle = document.getElementById("aboutNavToggle");
-    const menu = document.getElementById("aboutNavMenu");
-
-    if(dd && toggle && menu){
-      function closeAboutMenu(){
-        dd.classList.remove("open");
-        toggle.setAttribute("aria-expanded", "false");
-      }
-
-      function openAboutMenu(){
-        dd.classList.add("open");
-        toggle.setAttribute("aria-expanded", "true");
-      }
-
-      toggle.addEventListener("click", function(e){
+    if(aboutToggle){
+      aboutToggle.addEventListener("click", (e)=>{
         e.preventDefault();
         e.stopPropagation();
-
-        const isOpen = dd.classList.contains("open");
-        if(isOpen){
-          closeAboutMenu();
-        }else{
-          openAboutMenu();
-        }
-      });
-
-      document.addEventListener("click", function(e){
-        if(!dd.contains(e.target)){
-          closeAboutMenu();
-        }
-      });
-
-      document.addEventListener("keydown", function(e){
-        if(e.key === "Escape"){
-          closeAboutMenu();
-        }
-      });
-
-      menu.querySelectorAll("a").forEach(function(a){
-        a.addEventListener("click", function(){
-          closeAboutMenu();
-        });
+        toggleAbout();
       });
     }
 
-    const btn = document.getElementById("navToggle");
-    const panel = document.getElementById("mobilePanel");
-    const aboutGroup = document.getElementById("mobileAboutGroup");
-    const aboutToggle = document.getElementById("mobileAboutToggle");
+    panel.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMobilePanel));
 
-    if(btn && panel){
-      function closeAbout(){
-        if(!aboutGroup || !aboutToggle) return;
-        aboutGroup.classList.remove("open");
-        aboutToggle.setAttribute("aria-expanded","false");
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeMobilePanel();
+    });
+
+    document.addEventListener("click", (e)=>{
+      if(panel.classList.contains("open")){
+        const header = document.querySelector("header");
+        if(header && header.contains(e.target)) return;
+        if(panel.contains(e.target)) return;
+        closeMobilePanel();
       }
+    });
 
-      function toggleAbout(){
-        if(!aboutGroup || !aboutToggle) return;
-        const open = aboutGroup.classList.toggle("open");
-        aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
-      }
+    window.addEventListener("resize", ()=>{
+      if(window.innerWidth >= 769) closeMobilePanel();
+    }, { passive:true });
+  }
+}
 
-      function closeMobilePanel(){
-        panel.classList.remove("open");
-        panel.setAttribute("aria-hidden","true");
-        btn.setAttribute("aria-expanded","false");
-        closeAbout();
-      }
+function togglePassword(id, icon){
+  const input = document.getElementById(id);
+  const show = input.type === "password";
+  input.type = show ? "text" : "password";
+  icon.classList.toggle("fa-eye");
+  icon.classList.toggle("fa-eye-slash");
+}
 
-      btn.addEventListener("click", ()=>{
-        const open = panel.classList.toggle("open");
-        panel.setAttribute("aria-hidden", open ? "false" : "true");
-        btn.setAttribute("aria-expanded", open ? "true" : "false");
-        if(!open) closeAbout();
-      });
+document.getElementById("resetForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-      if(aboutToggle){
-        aboutToggle.addEventListener("click", (e)=>{
-          e.preventDefault();
-          e.stopPropagation();
-          toggleAbout();
-        });
-      }
+  const pw = document.getElementById("newPassword").value.trim();
+  const cpw = document.getElementById("confirmPassword").value.trim();
+  const error = document.getElementById("errorMsg");
+  const success = document.getElementById("successMsg");
 
-      panel.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMobilePanel));
+  error.textContent = "";
+  success.style.display = "none";
 
-      document.addEventListener("keydown", (e)=>{
-        if(e.key === "Escape") closeMobilePanel();
-      });
-
-      document.addEventListener("click", (e)=>{
-        if(panel.classList.contains("open")){
-          const header = document.querySelector("header");
-          if(header && header.contains(e.target)) return;
-          if(panel.contains(e.target)) return;
-          closeMobilePanel();
-        }
-      });
-
-      window.addEventListener("resize", ()=>{
-        if(window.innerWidth >= 769) closeMobilePanel();
-      }, { passive:true });
-    }
+  if(!sb){
+    error.textContent = "Supabase client is not initialized. Check supabase_config.js.";
+    return;
   }
 
-  window.togglePassword = function(id, icon){
-    const input = document.getElementById(id);
-    if (!input) return;
-
-    const show = input.type === "password";
-    input.type = show ? "text" : "password";
-
-    if (icon){
-      icon.classList.toggle("fa-eye", !show);
-      icon.classList.toggle("fa-eye-slash", show);
-    }
-  };
-
-  async function handleResetSubmit(e){
-    e.preventDefault();
-
-    const client = resolveSupabaseClient();
-    const newPasswordInput = document.getElementById("newPassword");
-    const confirmPasswordInput = document.getElementById("confirmPassword");
-    const error = document.getElementById("errorMsg");
-    const success = document.getElementById("successMsg");
-
-    setMessage(error, "", false);
-    setMessage(success, "", false);
-
-    if(!client){
-      setMessage(
-        error,
-        "Supabase client is not initialized. Check supabase_config.js. It must expose SUPABASE_URL and SUPABASE_ANON_KEY, or create window.supabaseClient.",
-        true
-      );
-      return;
-    }
-
-    const pw = (newPasswordInput && newPasswordInput.value ? newPasswordInput.value : "").trim();
-    const cpw = (confirmPasswordInput && confirmPasswordInput.value ? confirmPasswordInput.value : "").trim();
-
-    if(pw !== cpw){
-      setMessage(error, "Passwords do not match.", true);
-      return;
-    }
-
-    if(pw.length < 6){
-      setMessage(error, "Password must be at least 6 characters.", true);
-      return;
-    }
-
-    try{
-      setSubmitState(true);
-
-      try{
-        await ensureRecoverySessionInitialized();
-      }catch(sessionErr){
-        setMessage(
-          error,
-          "Reset session is not ready. Open this page from the password reset email link, or check your Supabase redirect URL. Details: " + sessionErr.message,
-          true
-        );
-        return;
-      }
-
-      const { data: sessionData, error: sessionError } = await client.auth.getSession();
-
-      if(sessionError){
-        setMessage(error, "Session error: " + sessionError.message, true);
-        return;
-      }
-
-      if(!sessionData || !sessionData.session){
-        setMessage(
-          error,
-          "No reset session found. Please open this page from the Supabase password reset email link.",
-          true
-        );
-        return;
-      }
-
-      const { error: updateErr } = await client.auth.updateUser({ password: pw });
-
-      if(updateErr){
-        setMessage(error, "Error: " + updateErr.message, true);
-        return;
-      }
-
-      setMessage(success, "Password updated! Redirecting...", true);
-
-      setTimeout(() => {
-        window.location.href = "index1.html";
-      }, 1800);
-
-    }finally{
-      setSubmitState(false);
-    }
+  if(pw !== cpw){
+    error.textContent = "Passwords do not match.";
+    return;
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    initHeaderMenus();
+  if(pw.length < 6){
+    error.textContent = "Password must be at least 6 characters.";
+    return;
+  }
 
-    const form = document.getElementById("resetForm");
-    if (form){
-      form.addEventListener("submit", handleResetSubmit);
-    }
+  const { error: updateErr } = await sb.auth.updateUser({ password: pw });
 
-    /*
-      Initialize immediately when the reset email link contains Supabase tokens.
-      Do not show an error on normal page load, because the user may still be
-      testing the page manually.
-    */
-    const hashParams = getHashParams();
-    const hasRecoveryTokens = !!(hashParams.get("access_token") && hashParams.get("refresh_token"));
-    const hasPkceCode = new URL(window.location.href).searchParams.has("code");
+  if(updateErr){
+    error.textContent = "Error: " + updateErr.message;
+    return;
+  }
 
-    if (hasRecoveryTokens || hasPkceCode){
-      ensureRecoverySessionInitialized().catch((err) => {
-        const error = document.getElementById("errorMsg");
-        setMessage(error, "Could not prepare reset session: " + err.message, true);
-      });
-    }
-  });
-})();
+  success.style.display = "block";
+  setTimeout(() => window.location.href = "index1.html", 2000);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  initHeaderMenus();
+});
 </script>
 
 </body>

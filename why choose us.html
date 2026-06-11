@@ -600,7 +600,7 @@ section, footer, .slanted-divider{
 #why-choose h2{
   font-size:2.4rem;
   margin-bottom:10px;
-  text-shadow:0 0 18px #00c6ff;
+  
 }
 
 .why-grid{
@@ -659,7 +659,6 @@ section, footer, .slanted-divider{
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 18px rgba(0,198,255,0.5);
 }
 
 .employer-cta p{
@@ -760,7 +759,7 @@ section, footer, .slanted-divider{
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 18px rgba(147,51,234,0.55);
+  
 }
 
 .applicant-cta p{
@@ -1833,7 +1832,583 @@ header .auth-buttons .auth-text{
 }
 
 
-  </style>
+  
+/* ============================================================
+   FINAL CHOOSE PORTAL HEADER + FONT + BACKGROUND PATCH
+   Applies only the Choose Portal header style, font color/style,
+   and page background color. Existing content cards, icons,
+   buttons, sections, layout, links, and JavaScript behavior stay
+   unchanged.
+============================================================ */
+:root{
+  --choose-white:#ffffff;
+  --choose-soft:#f7f7f7;
+  --choose-line:#e6e8ec;
+  --choose-navy:#012169;
+  --choose-text:#1f2937;
+  --choose-muted:#4b5563;
+  --choose-icon:#003a70;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  background:var(--choose-white) !important;
+  color:var(--choose-text) !important;
+}
+
+body{
+  background:var(--choose-white) !important;
+}
+
+/* Keep page content styles, but remove only the dark page wash so the
+   Choose Portal background color is visible behind existing content. */
+.bg-workers::before{
+  background:transparent !important;
+}
+
+/* Header background, font color/style, and dropdown surface from Choose Portal */
+header{
+  background:var(--choose-white) !important;
+  border-bottom:1px solid var(--choose-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo img{
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--choose-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i,
+.nav-dropdown-menu a i,
+.nav-toggle i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret),
+.mobile-panel .mnav-left i{
+  color:var(--choose-icon) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:var(--choose-icon) !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--choose-navy) !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+.nav-dropdown-menu{
+  background:var(--choose-white) !important;
+  border:1px solid var(--choose-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--choose-navy) !important;
+  background:var(--choose-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Mobile menu follows the same Choose Portal white/navy header style */
+.nav-toggle{
+  background:var(--choose-white) !important;
+  color:var(--choose-icon) !important;
+  border:1px solid var(--choose-line) !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel{
+  background:var(--choose-white) !important;
+  border-top:1px solid var(--choose-line) !important;
+  border-bottom:1px solid var(--choose-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--choose-navy) !important;
+  background:var(--choose-white) !important;
+  border:1px solid var(--choose-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:var(--choose-icon) !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--choose-white) !important;
+}
+
+
+
+/* ============================================================
+   FINAL ENHANCED CHOOSE PORTAL HEADER STYLE PATCH
+   Applies the Choose Portal white header, navy font color/style,
+   page background color, mobile/dropdown header surfaces, and
+   restores the Our Advantages icon styling. Content cards,
+   section effects, buttons, footer, and behavior are preserved.
+============================================================ */
+:root{
+  --choose-white:#ffffff;
+  --choose-soft:#f7f7f7;
+  --choose-line:#e6e8ec;
+  --choose-navy:#012169;
+  --choose-text:#1f2937;
+  --choose-muted:#4b5563;
+  --choose-icon:#003a70;
+  --why-advantage-icon:#00c6ff;
+}
+
+/* Choose Portal font style/color background */
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  background:var(--choose-white) !important;
+  color:var(--choose-text) !important;
+}
+
+body{
+  background:var(--choose-white) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Keep floating worker images, but remove only the dark overlay wash so
+   the Choose Portal background color shows behind the existing content. */
+.bg-workers::before{
+  background:transparent !important;
+}
+
+/* Font Awesome restore after the global font patch */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Header surface/layout from Choose Portal */
+header{
+  background:var(--choose-white) !important;
+  border-bottom:1px solid var(--choose-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo{
+  min-width:140px !important;
+  margin-left:-4px !important;
+}
+
+header .logo img{
+  height:100px !important;
+  width:auto !important;
+  max-width:180px !important;
+  object-fit:contain !important;
+  filter:none !important;
+}
+
+/* Desktop nav text: navy normal, black + underline on hover */
+header nav > a,
+header nav .nav-main-link{
+  color:var(--choose-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Header-only icons: dark blue, readable, no glow/shadow */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-toggle > i,
+.nav-dropdown-menu a > i,
+.nav-toggle > i,
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav-toggle > i,
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:var(--choose-icon) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  opacity:1 !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--choose-navy) !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+/* Dropdown menu follows Choose Portal white/nave style */
+.nav-dropdown-menu{
+  background:var(--choose-white) !important;
+  border:1px solid var(--choose-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--choose-navy) !important;
+  background:var(--choose-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Mobile header/menu same as Choose Portal */
+.nav-toggle{
+  background:var(--choose-white) !important;
+  color:var(--choose-icon) !important;
+  border:1px solid var(--choose-line) !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel{
+  background:var(--choose-white) !important;
+  border-top:1px solid var(--choose-line) !important;
+  border-bottom:1px solid var(--choose-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--choose-navy) !important;
+  background:var(--choose-white) !important;
+  border:1px solid var(--choose-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--choose-white) !important;
+}
+
+/* Keep header/logo sizes matched with the Choose Portal breakpoints */
+@media (min-width:1800px){
+  header .logo img{ height:88px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header .logo img{ height:80px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header .logo img{ height:66px !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header .logo img{ height:54px !important; }
+}
+
+@media (min-width:481px) and (max-width:768px){
+  body > header .logo img,
+  header .logo img{ height:52px !important; }
+}
+
+@media (max-width:480px){
+  body > header .logo img,
+  header .logo img{ height:48px !important; }
+}
+
+/* RESTORE: Our Advantages content icons keep their original page style.
+   This intentionally targets only the card icons inside #why-choose. */
+#why-choose .why-card > i,
+#why-choose .why-card > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+#why-choose .why-card > i{
+  display:inline-block !important;
+  width:auto !important;
+  min-width:0 !important;
+  height:auto !important;
+  margin:0 0 12px 0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:var(--why-advantage-icon) !important;
+  font-size:2.2rem !important;
+  line-height:1 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+#why-choose .why-card:hover > i{
+  color:var(--why-advantage-icon) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+#why-choose .why-card > i::before,
+#why-choose .why-card:hover > i::before{
+  color:inherit !important;
+  font-size:inherit !important;
+  line-height:1 !important;
+}
+
+
+</style>
 </head>
 
 <body>

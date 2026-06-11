@@ -4451,6 +4451,751 @@ form.addEventListener("submit", async (e) => {
   }
 </style>
 
+
+<style id="subscribe-choose-portal-light-theme-css">
+/* ============================================================
+   CHOOSE PORTAL STYLE PATCH FOR SUBSCRIBE PAGE
+   Applies the attached Choose Portal white background, navy
+   typography, visible blue/navy icon treatment, and clean header
+   styling while preserving the existing subscription form IDs,
+   Supabase logic, account dropdown behavior, and JavaScript.
+============================================================ */
+:root{
+  --bank-white:#ffffff;
+  --bank-soft:#f5f5f5;
+  --bank-soft-2:#f7f7f7;
+  --bank-line:#e6e8ec;
+  --bank-navy:#012169;
+  --bank-blue:#003a70;
+  --bank-cyan:#0ea5e9;
+  --bank-text:#1f2937;
+  --bank-muted:#4b5563;
+  --bank-link:#0057b8;
+}
+
+/* Match Choose Portal font style without breaking Font Awesome */
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"],
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas,
+.fa-solid::before,
+.fas::before,
+i.fa-solid::before,
+i.fas::before{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* White background like Choose Portal reference */
+html,
+body,
+body.subscribe-page{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* ============================================================
+   HEADER - CHOOSE PORTAL LIGHT STYLE
+============================================================ */
+header{
+  background:var(--bank-white) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo img{
+  filter:none !important;
+}
+
+/* Main desktop nav text */
+header nav > a,
+header nav .nav-main-link{
+  color:var(--bank-navy) !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-decoration:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+/* Strong visible navigation icons like the Choose Portal screenshot */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin:0 7px 0 0 !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  color:var(--bank-blue) !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.26) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+header nav > a > i::before,
+header nav .nav-main-link > i::before,
+.nav-dropdown-menu a > i::before{
+  color:inherit !important;
+  font-size:1rem !important;
+  line-height:1 !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  gap:0 !important;
+  padding-left:7px !important;
+  padding-right:9px !important;
+  min-height:36px !important;
+}
+
+/* Nav and dropdown icons turn black on hover without hover background */
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* About dropdown button and menu */
+.nav-dropdown-toggle{
+  width:30px !important;
+  min-width:30px !important;
+  height:30px !important;
+  min-height:30px !important;
+  border-radius:8px !important;
+  margin-left:2px !important;
+  color:var(--bank-navy) !important;
+  background:rgba(14,165,233,0.06) !important;
+  border:1px solid rgba(14,165,233,0.18) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle i,
+.nav-dropdown-toggle i::before{
+  color:inherit !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+  outline:none !important;
+}
+
+.nav-dropdown-menu{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  z-index:2200 !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--bank-navy) !important;
+  background:var(--bank-white) !important;
+  border-color:transparent !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  gap:0 !important;
+  padding:11px 14px !important;
+}
+
+.nav-dropdown-menu a > i{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin-right:10px !important;
+  font-size:1rem !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+/* Header auth/account button keeps behavior but uses the same clean blue/purple button family */
+header .auth-buttons a,
+header .auth-buttons button,
+header .auth-buttons .subscribe-employer-icon-btn,
+.subscribe-employer-icon-btn{
+  background:linear-gradient(135deg,#20bdf5,#6d5df6) !important;
+  color:#ffffff !important;
+  border:1px solid rgba(14,165,233,0.26) !important;
+  box-shadow:0 8px 18px rgba(37,99,235,0.18) !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+}
+
+header .auth-buttons a:hover,
+header .auth-buttons a:focus-visible,
+header .auth-buttons button:hover,
+header .auth-buttons button:focus-visible,
+header .auth-buttons .subscribe-employer-icon-btn:hover,
+header .auth-buttons .subscribe-employer-icon-btn:focus-visible,
+.subscribe-employer-icon-btn:hover,
+.subscribe-employer-icon-btn:focus-visible{
+  background:linear-gradient(135deg,#18b8f2,#5d55ee) !important;
+  color:#ffffff !important;
+  border-color:rgba(14,165,233,0.36) !important;
+  box-shadow:0 10px 24px rgba(37,99,235,0.24) !important;
+  transform:translateY(-1px) !important;
+  outline:none !important;
+}
+
+header .auth-buttons a i,
+header .auth-buttons button i,
+.subscribe-employer-icon-btn i{
+  color:#ffffff !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+/* Mobile panel follows the same white / navy style */
+.mobile-panel{
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border:1px solid var(--bank-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav-left > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  border-radius:8px !important;
+  color:var(--bank-blue) !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav-left > i::before{
+  color:inherit !important;
+  font-size:1rem !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+}
+
+.mobile-panel .mnav-toggle > i,
+.mobile-panel .mnav-toggle > i::before,
+.mobile-panel .mnav-toggle .mnav-caret,
+.mobile-panel .mnav-toggle .mnav-caret::before{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:var(--bank-navy) !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--bank-white) !important;
+}
+
+/* ============================================================
+   SUBSCRIBE PAGE CONTENT - LIGHT CHOOSE PORTAL LOOK
+============================================================ */
+.wrap{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.08) !important;
+  color:var(--bank-text) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.title{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+}
+
+.title i{
+  color:var(--bank-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+.sub{
+  color:var(--bank-text) !important;
+  opacity:1 !important;
+  text-shadow:none !important;
+  font-weight:400 !important;
+}
+
+.sub b{
+  color:var(--bank-navy) !important;
+  font-weight:700 !important;
+}
+
+.card{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 8px 20px rgba(1,33,105,0.06) !important;
+  color:var(--bank-text) !important;
+}
+
+.plan{
+  background:var(--bank-soft) !important;
+  border:1px solid var(--bank-line) !important;
+  color:var(--bank-navy) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.plan i{
+  color:var(--bank-blue) !important;
+  text-shadow:none !important;
+}
+
+.plan strong{
+  color:var(--bank-navy) !important;
+}
+
+label{
+  color:var(--bank-navy) !important;
+  font-weight:700 !important;
+  text-shadow:none !important;
+}
+
+input{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+  border:1px solid #cfd8e3 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+input::placeholder{
+  color:#9aa4b2 !important;
+}
+
+input:focus{
+  outline:none !important;
+  border-color:var(--bank-cyan) !important;
+  box-shadow:0 0 0 4px rgba(14,165,233,0.12) !important;
+  background:var(--bank-white) !important;
+}
+
+input[readonly]{
+  background:var(--bank-soft-2) !important;
+  color:var(--bank-muted) !important;
+}
+
+#statusBtn,
+#payBtn,
+#exitBtn{
+  color:#ffffff !important;
+  text-shadow:none !important;
+  border:none !important;
+  font-weight:700 !important;
+}
+
+#statusBtn i,
+#payBtn i,
+#exitBtn i{
+  color:#ffffff !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+#statusBtn{
+  background:linear-gradient(135deg,#20bdf5,#2563eb) !important;
+  box-shadow:0 8px 18px rgba(37,99,235,0.18) !important;
+}
+
+#payBtn{
+  background:linear-gradient(135deg,#20bdf5,#6d5df6) !important;
+  box-shadow:0 8px 18px rgba(37,99,235,0.20) !important;
+}
+
+#exitBtn{
+  background:linear-gradient(135deg,#6b7280,#9ca3af) !important;
+  box-shadow:0 8px 16px rgba(107,114,128,0.14) !important;
+}
+
+#statusBtn:hover:not(:disabled),
+#payBtn:hover:not(:disabled),
+#exitBtn:hover:not(:disabled){
+  transform:translateY(-1px) !important;
+  filter:brightness(1.03) !important;
+}
+
+#msg{
+  color:var(--bank-text) !important;
+}
+
+.note{
+  color:var(--bank-muted) !important;
+}
+
+#msg.success,
+.msg.success{
+  background:#ecfdf5 !important;
+  border:1px solid #bbf7d0 !important;
+  color:#166534 !important;
+}
+
+#msg.error,
+.msg.error{
+  background:#fef2f2 !important;
+  border:1px solid #fecaca !important;
+  color:#991b1b !important;
+}
+
+/* Account dropdown still opens/closes exactly the same, only restyled light */
+.subscribe-employer-account-dropdown,
+.subscribe-employer-account-dropdown.is-logged-in,
+.subscribe-employer-account-dropdown.is-logged-out{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 16px 34px rgba(1,33,105,0.12) !important;
+  color:var(--bank-text) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.subscribe-employer-dropdown-profile,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-profile{
+  background:var(--bank-soft) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.subscribe-employer-dropdown-logo-wrap,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-logo-wrap{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 6px 14px rgba(1,33,105,0.08) !important;
+}
+
+.subscribe-employer-dropdown-logo-wrap img,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-logo-wrap img,
+#subscribeEmployerDropdownLogo{
+  background:transparent !important;
+}
+
+.subscribe-employer-dropdown-label{
+  color:var(--bank-muted) !important;
+}
+
+.subscribe-employer-dropdown-company,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-company{
+  color:var(--bank-navy) !important;
+  font-weight:700 !important;
+}
+
+.subscribe-employer-dropdown-email{
+  color:var(--bank-muted) !important;
+}
+
+.subscribe-employer-dropdown-item,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  color:var(--bank-navy) !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+}
+
+.subscribe-employer-dropdown-item i,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item i{
+  color:var(--bank-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+.subscribe-employer-dropdown-item:hover,
+.subscribe-employer-dropdown-item:focus,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item:hover,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-item:focus{
+  background:var(--bank-white) !important;
+  color:#000000 !important;
+  border-color:var(--bank-line) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+.subscribe-employer-dropdown-item:hover i,
+.subscribe-employer-dropdown-item:focus i{
+  color:#000000 !important;
+}
+
+.subscribe-employer-dropdown-login,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login{
+  background:linear-gradient(135deg,#20bdf5,#6d5df6) !important;
+  border-color:rgba(14,165,233,0.26) !important;
+  color:#ffffff !important;
+  box-shadow:0 8px 18px rgba(37,99,235,0.18) !important;
+}
+
+.subscribe-employer-dropdown-login i,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login i{
+  color:#ffffff !important;
+}
+
+.subscribe-employer-dropdown-login:hover,
+.subscribe-employer-dropdown-login:focus,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login:hover,
+.subscribe-employer-account-dropdown.is-logged-out .subscribe-employer-dropdown-login:focus{
+  background:linear-gradient(135deg,#18b8f2,#5d55ee) !important;
+  color:#ffffff !important;
+  text-decoration:none !important;
+}
+
+.subscribe-employer-dropdown-logout{
+  background:linear-gradient(135deg,#6b7280,#9ca3af) !important;
+  border-color:rgba(107,114,128,0.20) !important;
+  color:#ffffff !important;
+}
+
+.subscribe-employer-dropdown-logout i{
+  color:#ffffff !important;
+}
+
+/* Dark-blue final icon color, matching the latest Choose Portal icon patch */
+i.fa-solid,
+i.fa-regular,
+i.fa-brands,
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i,
+.mobile-panel .mnav-main-link i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav-left i,
+.title i,
+.plan i,
+header .auth-buttons a i,
+header .auth-buttons button i{
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+/* Responsive tuning so the stronger icons do not crowd the header */
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:5px !important;
+    padding-right:6px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    margin-right:5px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.86rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:25px !important;
+    min-width:25px !important;
+    height:25px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:3px !important;
+    padding-right:4px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:17px !important;
+    min-width:17px !important;
+    height:17px !important;
+    margin-right:3px !important;
+    border-radius:6px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.72rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    border-radius:6px !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav-left > i{
+    width:23px !important;
+    min-width:23px !important;
+    height:23px !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left > i{
+    width:21px !important;
+    min-width:21px !important;
+    height:21px !important;
+  }
+}
+</style>
+
 <script id="final-subscribe-loggedin-company-logo-script">
 (function(){
   "use strict";
@@ -4952,6 +5697,616 @@ form.addEventListener("submit", async (e) => {
   }
 
   window.addEventListener("load", bindLogoutRedirect, { once:true });
+})();
+</script>
+
+
+<!-- ============================================================
+   RESTORE PATCH: logged-in employer account dropdown display/style
+   Restores the logged-in account dropdown without changing the
+   subscribe form, payment, status, exit, or logout behavior.
+============================================================ -->
+<style id="restore-subscribe-logged-in-account-dropdown-style">
+  header,
+  header .auth-buttons.subscribe-employer-auth-shell,
+  .subscribe-employer-account-wrap{
+    overflow:visible !important;
+  }
+
+  header .auth-buttons.subscribe-employer-auth-shell{
+    position:relative !important;
+    z-index:2800 !important;
+  }
+
+  .subscribe-employer-account-wrap{
+    position:relative !important;
+    z-index:2801 !important;
+  }
+
+  #subscribeEmployerAccountBtn.subscribe-employer-icon-btn{
+    position:relative !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:42px !important;
+    height:42px !important;
+    min-width:42px !important;
+    border-radius:14px !important;
+    border:1px solid rgba(56,189,248,0.34) !important;
+    background:linear-gradient(135deg, rgba(0,198,255,0.24), rgba(124,58,237,0.24)) !important;
+    color:#ffffff !important;
+    box-shadow:0 0 14px rgba(0,198,255,0.14) !important;
+    cursor:pointer !important;
+    padding:0 !important;
+    overflow:hidden !important;
+  }
+
+  #subscribeEmployerAccountBtn.subscribe-employer-icon-btn:hover,
+  #subscribeEmployerAccountBtn.subscribe-employer-icon-btn:focus-visible,
+  #subscribeEmployerAccountBtn.subscribe-employer-icon-btn[aria-expanded="true"]{
+    border-color:rgba(56,189,248,0.58) !important;
+    box-shadow:0 0 20px rgba(0,198,255,0.26) !important;
+    outline:none !important;
+    transform:none !important;
+  }
+
+  #subscribeEmployerAccountBtn.subscribe-employer-icon-btn > i{
+    display:block !important;
+    color:#ffffff !important;
+    font-size:1.12rem !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+    line-height:1 !important;
+  }
+
+  #subscribeEmployerAccountBtn.is-logged-in{
+    background:linear-gradient(135deg, #020617, #111827) !important;
+    border-color:rgba(0,198,255,0.58) !important;
+    box-shadow:0 0 18px rgba(0,198,255,0.22) !important;
+  }
+
+  #subscribeEmployerAccountBtn.has-account-logo #subscribeEmployerAccountLogo{
+    display:block !important;
+  }
+
+  #subscribeEmployerAccountBtn.has-account-logo > i{
+    display:none !important;
+  }
+
+  #subscribeEmployerAccountLogo{
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    padding:4px !important;
+    border-radius:inherit !important;
+    background:#071325 !important;
+  }
+
+  #subscribeEmployerAccountDropdown.subscribe-employer-account-dropdown{
+    position:absolute !important;
+    top:calc(100% + 12px) !important;
+    right:0 !important;
+    z-index:5000 !important;
+  }
+
+  #subscribeEmployerAccountDropdown.subscribe-employer-account-dropdown.open{
+    display:flex !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    pointer-events:auto !important;
+    transform:none !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in{
+    width:min(410px, calc(100vw - 28px)) !important;
+    padding:14px !important;
+    gap:14px !important;
+    border-radius:24px !important;
+    background:linear-gradient(180deg, rgba(7,18,42,0.99), rgba(2,8,24,0.99)) !important;
+    border:1px solid rgba(0,198,255,0.40) !important;
+    box-shadow:0 22px 52px rgba(0,0,0,0.54), 0 0 22px rgba(0,198,255,0.20) !important;
+    backdrop-filter:blur(14px) !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-profile{
+    display:flex !important;
+    align-items:center !important;
+    min-height:94px !important;
+    padding:13px 16px !important;
+    gap:16px !important;
+    border-radius:20px !important;
+    background:linear-gradient(180deg, rgba(8,24,55,0.98), rgba(5,17,39,0.98)) !important;
+    border:1px solid rgba(0,198,255,0.30) !important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.03) !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logo-wrap{
+    width:72px !important;
+    height:72px !important;
+    min-width:72px !important;
+    border-radius:20px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    background:#071325 !important;
+    border:1px solid rgba(0,198,255,0.44) !important;
+    box-shadow:0 10px 24px rgba(0,0,0,0.28) !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logo-wrap img{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    padding:6px !important;
+    border-radius:inherit !important;
+    background:#071325 !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logo-wrap:not(.has-logo) img{
+    display:none !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logo-wrap.has-logo .subscribe-employer-dropdown-logo-fallback{
+    display:none !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logo-fallback{
+    display:block !important;
+    color:#38bdf8 !important;
+    font-size:1.55rem !important;
+    filter:drop-shadow(0 0 10px rgba(56,189,248,0.42)) !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-identity{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+    gap:4px !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-label{
+    display:block !important;
+    color:#7dd3fc !important;
+    font-size:0.72rem !important;
+    font-weight:900 !important;
+    letter-spacing:0.08em !important;
+    text-transform:uppercase !important;
+    line-height:1.15 !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-company{
+    display:block !important;
+    color:#ffffff !important;
+    font-size:1.06rem !important;
+    font-weight:900 !important;
+    line-height:1.16 !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-email{
+    display:block !important;
+    color:#dbeafe !important;
+    font-size:0.86rem !important;
+    font-weight:700 !important;
+    line-height:1.2 !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-menu{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:10px !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-item{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    min-height:50px !important;
+    padding:0 16px !important;
+    border-radius:14px !important;
+    border:1px solid rgba(0,198,255,0.22) !important;
+    background:rgba(2,8,24,0.74) !important;
+    color:#ffffff !important;
+    font-size:0.94rem !important;
+    font-weight:800 !important;
+    gap:12px !important;
+    text-decoration:none !important;
+    width:100% !important;
+    cursor:pointer !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-item:hover,
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-item:focus-visible{
+    background:rgba(0,198,255,0.12) !important;
+    border-color:rgba(0,198,255,0.38) !important;
+    color:#ffffff !important;
+    outline:none !important;
+    transform:none !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-item i{
+    width:20px !important;
+    min-width:20px !important;
+    color:#16c8ff !important;
+    text-align:center !important;
+    filter:drop-shadow(0 0 8px rgba(22,200,255,0.42)) !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-login{
+    display:none !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logout{
+    display:flex !important;
+    background:linear-gradient(180deg, #64748b, #475569) !important;
+    border-color:rgba(203,213,225,0.34) !important;
+    color:#ffffff !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logout:hover,
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logout:focus-visible{
+    background:linear-gradient(180deg, #748399, #536176) !important;
+    border-color:rgba(203,213,225,0.52) !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logout i{
+    color:#ffffff !important;
+    filter:none !important;
+  }
+
+  @media (min-width:1800px){
+    #subscribeEmployerAccountBtn.subscribe-employer-icon-btn{
+      width:46px !important;
+      height:46px !important;
+      min-width:46px !important;
+      border-radius:16px !important;
+    }
+  }
+
+  @media (min-width:1024px) and (max-width:1439px){
+    #subscribeEmployerAccountBtn.subscribe-employer-icon-btn{
+      width:38px !important;
+      height:38px !important;
+      min-width:38px !important;
+      border-radius:13px !important;
+    }
+    #subscribeEmployerAccountDropdown.is-logged-in{
+      width:min(390px, calc(100vw - 22px)) !important;
+    }
+  }
+
+  @media (min-width:769px) and (max-width:1023px){
+    #subscribeEmployerAccountBtn.subscribe-employer-icon-btn{
+      width:34px !important;
+      height:34px !important;
+      min-width:34px !important;
+      border-radius:12px !important;
+    }
+    #subscribeEmployerAccountDropdown.is-logged-in{
+      width:min(360px, calc(100vw - 18px)) !important;
+      right:-2px !important;
+      padding:12px !important;
+    }
+    #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-profile{
+      min-height:82px !important;
+      padding:10px 12px !important;
+      gap:12px !important;
+    }
+    #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logo-wrap{
+      width:58px !important;
+      height:58px !important;
+      min-width:58px !important;
+      border-radius:16px !important;
+    }
+    #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-company{
+      font-size:0.96rem !important;
+    }
+    #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-email{
+      font-size:0.78rem !important;
+    }
+    #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-item{
+      min-height:46px !important;
+      font-size:0.84rem !important;
+      padding:0 12px !important;
+    }
+  }
+</style>
+
+<script id="restore-subscribe-logged-in-account-dropdown-behavior">
+(function(){
+  "use strict";
+
+  var EMAIL_KEYS = [
+    "loggedInEmployerEmail", "employerEmail", "companyEmail", "loginEmployerEmail",
+    "employer_email", "jobspacelinkEmployerEmail", "JSL_EMPLOYER_EMAIL",
+    "JSL_LOGGED_IN_EMPLOYER_EMAIL", "lastSubscribedEmail"
+  ];
+
+  var COMPANY_KEYS = [
+    "loggedInCompanyName", "companyName", "employerCompanyName", "company_name",
+    "jobspacelinkEmployerCompanyName", "JSL_EMPLOYER_COMPANY",
+    "JSL_LOGGED_IN_COMPANY_NAME", "lastSubscribedCompanyName"
+  ];
+
+  var LOGO_KEYS = [
+    "loggedInEmployerLogo", "employerLogo", "companyLogo", "company_logo",
+    "jobspacelinkEmployerLogo", "companyLogoUrl", "company_logo_url", "logo_url",
+    "JSL_EMPLOYER_LOGO", "JSL_LOGGED_IN_COMPANY_LOGO"
+  ];
+
+  function byId(id){ return document.getElementById(id); }
+  function clean(value){ return value == null ? "" : String(value).trim(); }
+  function lowerEmail(value){ return clean(value).toLowerCase(); }
+  function good(value){ return !!clean(value) && clean(value).toLowerCase() !== "null" && clean(value).toLowerCase() !== "undefined"; }
+
+  function readOne(key){
+    try{ var v = localStorage.getItem(key); if(good(v)) return clean(v); }catch(_err){}
+    try{ var s = sessionStorage.getItem(key); if(good(s)) return clean(s); }catch(_err){}
+    return "";
+  }
+
+  function readFirst(keys){
+    for(var i = 0; i < keys.length; i++){
+      var v = readOne(keys[i]);
+      if(good(v)) return v;
+    }
+    return "";
+  }
+
+  function getSupabaseClientSafe(){
+    try{
+      if(typeof resolveSupabaseClient === "function") return resolveSupabaseClient();
+    }catch(_err){}
+    try{
+      if(window.supabaseClient && window.supabaseClient.auth) return window.supabaseClient;
+    }catch(_err){}
+    try{
+      if(window.supabase && window.supabase.auth) return window.supabase;
+    }catch(_err){}
+    return null;
+  }
+
+  async function getSessionEmail(){
+    try{
+      var client = getSupabaseClientSafe();
+      if(client && client.auth && typeof client.auth.getSession === "function"){
+        var sessionResult = await client.auth.getSession();
+        var email = lowerEmail(sessionResult && sessionResult.data && sessionResult.data.session && sessionResult.data.session.user && sessionResult.data.session.user.email);
+        if(email) return email;
+      }
+      if(client && client.auth && typeof client.auth.getUser === "function"){
+        var userResult = await client.auth.getUser();
+        var userEmail = lowerEmail(userResult && userResult.data && userResult.data.user && userResult.data.user.email);
+        if(userEmail) return userEmail;
+      }
+    }catch(_err){}
+    return "";
+  }
+
+  function setDropdownOpen(open){
+    var btn = byId("subscribeEmployerAccountBtn");
+    var dropdown = byId("subscribeEmployerAccountDropdown");
+    if(!btn || !dropdown) return;
+    dropdown.classList.toggle("open", !!open);
+    dropdown.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function setButtonLogo(logo, company){
+    var btn = byId("subscribeEmployerAccountBtn");
+    var img = byId("subscribeEmployerAccountLogo");
+    if(!btn || !img) return;
+
+    btn.classList.add("is-logged-in");
+    btn.classList.remove("is-logged-out");
+    btn.title = company || "Employer account";
+    btn.setAttribute("aria-label", (company || "Employer") + " account menu");
+
+    if(good(logo)){
+      img.hidden = false;
+      img.removeAttribute("hidden");
+      img.referrerPolicy = "no-referrer";
+      img.alt = (company || "Company") + " logo";
+      img.onerror = function(){
+        btn.classList.remove("has-account-logo");
+        img.hidden = true;
+        img.removeAttribute("src");
+      };
+      if(clean(img.getAttribute("src")) !== logo) img.src = logo;
+      btn.classList.add("has-account-logo");
+    }else{
+      btn.classList.remove("has-account-logo");
+      img.hidden = true;
+      img.removeAttribute("src");
+    }
+  }
+
+  function setDropdownLogo(logo, company){
+    var wrap = byId("subscribeEmployerDropdownLogoWrap");
+    var img = byId("subscribeEmployerDropdownLogo");
+    var fallback = byId("subscribeEmployerDropdownLogoFallback");
+    if(!wrap || !img) return;
+
+    if(good(logo)){
+      img.referrerPolicy = "no-referrer";
+      img.alt = (company || "Company") + " logo";
+      img.onerror = function(){
+        wrap.classList.remove("has-logo");
+        if(fallback) fallback.style.display = "block";
+        img.removeAttribute("src");
+      };
+      if(clean(img.getAttribute("src")) !== logo) img.src = logo;
+      wrap.classList.add("has-logo");
+      if(fallback) fallback.style.display = "none";
+    }else{
+      wrap.classList.remove("has-logo");
+      img.removeAttribute("src");
+      if(fallback) fallback.style.display = "block";
+    }
+  }
+
+  function renderLoggedOut(){
+    var btn = byId("subscribeEmployerAccountBtn");
+    var dropdown = byId("subscribeEmployerAccountDropdown");
+    var label = byId("subscribeEmployerDropdownLabel");
+    var companyEl = byId("subscribeEmployerDropdownCompany");
+    var emailEl = byId("subscribeEmployerDropdownEmail");
+    var img = byId("subscribeEmployerAccountLogo");
+    var dLogo = byId("subscribeEmployerDropdownLogo");
+    var dWrap = byId("subscribeEmployerDropdownLogoWrap");
+
+    if(btn){
+      btn.classList.remove("is-logged-in", "has-account-logo");
+      btn.classList.add("is-logged-out");
+      btn.title = "Employer account";
+      btn.setAttribute("aria-label", "Employer account menu");
+    }
+    if(img){ img.hidden = true; img.removeAttribute("src"); }
+    if(dropdown){
+      dropdown.classList.remove("is-logged-in");
+      dropdown.classList.add("is-logged-out");
+    }
+    if(label) label.textContent = "";
+    if(companyEl) companyEl.textContent = "No login account";
+    if(emailEl) emailEl.textContent = "";
+    if(dLogo){ dLogo.src = "JOBSPACELINK.png"; dLogo.alt = "Job Space Link logo"; }
+    if(dWrap) dWrap.classList.add("has-logo");
+    document.body.classList.remove("employer-logged-in");
+  }
+
+  function renderLoggedIn(identity){
+    identity = identity || {};
+    var dropdown = byId("subscribeEmployerAccountDropdown");
+    var label = byId("subscribeEmployerDropdownLabel");
+    var companyEl = byId("subscribeEmployerDropdownCompany");
+    var emailEl = byId("subscribeEmployerDropdownEmail");
+    var company = clean(identity.company) || "Company / Employer";
+    var email = lowerEmail(identity.email) || "Logged in employer";
+    var logo = clean(identity.logo);
+
+    if(dropdown){
+      dropdown.classList.add("is-logged-in");
+      dropdown.classList.remove("is-logged-out");
+    }
+    if(label) label.textContent = "Logged in account";
+    if(companyEl) companyEl.textContent = company;
+    if(emailEl) emailEl.textContent = email;
+    setButtonLogo(logo, company);
+    setDropdownLogo(logo, company);
+    document.body.classList.add("employer-logged-in");
+  }
+
+  async function hydrateEmployerAccount(){
+    try{
+      if(typeof window.refreshSubscribeEmployerDropdown === "function"){
+        var possiblePromise = window.refreshSubscribeEmployerDropdown();
+        if(possiblePromise && typeof possiblePromise.then === "function") await possiblePromise;
+      }
+    }catch(_err){}
+
+    try{
+      if(typeof window.refreshSubscribeLoggedInCompanyLogo === "function"){
+        var logoPromise = window.refreshSubscribeLoggedInCompanyLogo();
+        if(logoPromise && typeof logoPromise.then === "function") await logoPromise;
+      }
+    }catch(_err){}
+
+    var formCompany = clean(byId("companyName") && byId("companyName").value);
+    var formEmail = lowerEmail(byId("companyEmail") && byId("companyEmail").value);
+
+    var email = lowerEmail(readFirst(EMAIL_KEYS)) || formEmail;
+    var sessionEmail = await getSessionEmail();
+    if(sessionEmail) email = sessionEmail;
+
+    var company = clean(readFirst(COMPANY_KEYS)) || formCompany || "Company / Employer";
+    var logo = clean(readFirst(LOGO_KEYS));
+
+    if(email){
+      try{ localStorage.setItem("employerEmail", email); }catch(_err){}
+      try{ localStorage.setItem("companyEmail", email); }catch(_err){}
+      if(company){ try{ localStorage.setItem("employerCompanyName", company); }catch(_err){} }
+      renderLoggedIn({ email:email, company:company, logo:logo });
+      return { loggedIn:true, email:email, company:company, logo:logo };
+    }
+
+    renderLoggedOut();
+    return { loggedIn:false };
+  }
+
+  function bindRestoredDropdown(){
+    var btn = byId("subscribeEmployerAccountBtn");
+    var dropdown = byId("subscribeEmployerAccountDropdown");
+    if(!btn || !dropdown || btn.__restoreSubscribeLoggedInDropdownBound) return;
+    btn.__restoreSubscribeLoggedInDropdownBound = true;
+
+    btn.addEventListener("click", async function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      if(typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
+      var shouldOpen = !dropdown.classList.contains("open");
+      await hydrateEmployerAccount();
+      setDropdownOpen(shouldOpen);
+    }, true);
+
+    dropdown.addEventListener("click", function(event){
+      event.stopPropagation();
+    }, true);
+
+    document.addEventListener("click", function(event){
+      if(event.target && event.target.closest && event.target.closest("#subscribeEmployerAccountBtn, #subscribeEmployerAccountDropdown")) return;
+      setDropdownOpen(false);
+    }, true);
+
+    document.addEventListener("keydown", function(event){
+      if(event.key === "Escape") setDropdownOpen(false);
+    });
+  }
+
+  async function boot(){
+    bindRestoredDropdown();
+    await hydrateEmployerAccount();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", boot, { once:true });
+  }else{
+    boot();
+  }
+
+  window.addEventListener("load", function(){
+    boot();
+    setTimeout(boot, 250);
+    setTimeout(boot, 900);
+  }, { once:true });
+  window.addEventListener("focus", boot, { passive:true });
+  window.addEventListener("storage", boot, { passive:true });
+
+  try{
+    var client = getSupabaseClientSafe();
+    if(client && client.auth && typeof client.auth.onAuthStateChange === "function"){
+      client.auth.onAuthStateChange(function(){ setTimeout(boot, 80); });
+    }
+  }catch(_err){}
+
+  window.restoreSubscribeLoggedInAccountDropdown = boot;
 })();
 </script>
 

@@ -2717,6 +2717,639 @@ header .auth-buttons .auth-text{
   }
 }
 
+
+
+/* ============================================================
+   FINAL HOME / CHOOSE-PORTAL STYLE PATCH FOR EMPLOYER LOGIN
+   Applied from Job Space Link | Remote Work Opportunities page:
+   - white page background
+   - Arial / Segoe UI font style
+   - navy header links + dark-blue icons
+   - no background hover on header nav/dropdown; underline only
+   - light employer login card styling
+   Existing form IDs, Supabase login flow, modals, and JavaScript behavior stay unchanged.
+============================================================ */
+:root{
+  --choose-white:#ffffff;
+  --choose-soft:#f7f7f7;
+  --choose-line:#e6e8ec;
+  --choose-navy:#012169;
+  --choose-text:#1f2937;
+  --choose-muted:#4b5563;
+  --choose-icon:#003a70;
+  --choose-sky:#0ea5e9;
+  --choose-violet:#7c3aed;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  background:var(--choose-white) !important;
+  color:var(--choose-text) !important;
+}
+
+body{
+  min-height:100vh !important;
+  background:var(--choose-white) !important;
+  color:var(--choose-text) !important;
+  overflow-x:hidden !important;
+}
+
+body::before{
+  content:"" !important;
+  position:fixed !important;
+  top:var(--header-h) !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  pointer-events:none !important;
+  z-index:-1 !important;
+  background:
+    linear-gradient(125deg,
+      transparent 0%,
+      transparent 26%,
+      rgba(14,165,233,0.11) 26%,
+      rgba(14,165,233,0.11) 47%,
+      rgba(255,255,255,0.90) 47%,
+      rgba(255,255,255,0.90) 51%,
+      rgba(124,58,237,0.10) 51%,
+      rgba(124,58,237,0.10) 73%,
+      transparent 73%),
+    radial-gradient(circle at 18% 22%, rgba(14,165,233,0.07), transparent 30%),
+    radial-gradient(circle at 84% 64%, rgba(124,58,237,0.06), transparent 34%) !important;
+}
+
+/* Restore Font Awesome after applying the global page font. */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Header surface, logo, nav font color/style from the attached Home page. */
+header{
+  background:var(--choose-white) !important;
+  border-bottom:1px solid var(--choose-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo{
+  min-width:140px !important;
+  margin-left:-4px !important;
+}
+
+header .logo img{
+  height:100px !important;
+  width:auto !important;
+  max-width:180px !important;
+  display:block !important;
+  object-fit:contain !important;
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--choose-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+  display:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Header/menu icons only: dark-blue by default, black on hover. */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-toggle > i,
+.nav-dropdown-menu a > i,
+.nav-toggle > i,
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav-toggle > i,
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right,
+header .auth-buttons a > i{
+  color:var(--choose-icon) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  opacity:1 !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+header .auth-buttons a:hover > i,
+header .auth-buttons a:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--choose-navy) !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+/* Dropdown menu follows Home page white/navy style and keeps hover background removed. */
+.nav-dropdown-menu{
+  background:var(--choose-white) !important;
+  border:1px solid var(--choose-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--choose-navy) !important;
+  background:var(--choose-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+  box-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Header login button, when present, matches the attached Home page button. */
+header .auth-buttons a.admin,
+header .auth-buttons a.jobseeker-auth,
+header .auth-buttons a{
+  height:38px !important;
+  min-height:38px !important;
+  padding:0 13px !important;
+  gap:7px !important;
+  border-radius:10px !important;
+  color:#ffffff !important;
+  text-decoration:none !important;
+  font-size:0.84rem !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+  border:1px solid rgba(125,211,252,0.42) !important;
+  background:linear-gradient(135deg, #1ecbff 0%, #22a6ff 46%, #8b5cf6 100%) !important;
+  box-shadow:
+    0 0 18px rgba(34,211,238,0.34),
+    0 0 14px rgba(139,92,246,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.25) !important;
+  transform:none !important;
+  cursor:pointer !important;
+}
+
+header .auth-buttons a::before{
+  display:none !important;
+}
+
+header .auth-buttons a i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  color:#ffffff !important;
+  font-size:0.86rem !important;
+  line-height:1 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+header .auth-buttons a:hover,
+header .auth-buttons a:focus-visible{
+  color:#ffffff !important;
+  border-color:rgba(59,130,246,0.95) !important;
+  background:#1f2937 !important;
+  box-shadow:
+    0 0 0 1px rgba(59,130,246,0.18),
+    0 0 12px rgba(59,130,246,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transform:none !important;
+  text-decoration:none !important;
+}
+
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.20) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.14) !important;
+  transform:none !important;
+}
+
+/* Mobile header/menu same as the attached Home page. */
+.nav-toggle{
+  background:var(--choose-white) !important;
+  color:var(--choose-icon) !important;
+  border:1px solid var(--choose-line) !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel{
+  background:var(--choose-white) !important;
+  border-top:1px solid var(--choose-line) !important;
+  border-bottom:1px solid var(--choose-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--choose-navy) !important;
+  background:var(--choose-white) !important;
+  border:1px solid var(--choose-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--choose-white) !important;
+}
+
+/* Employer login body/card converted to the same clean white/navy visual language. */
+.page-wrap{
+  min-height:calc(100svh - var(--header-h)) !important;
+  padding:42px 16px 44px !important;
+  background:transparent !important;
+  position:relative !important;
+  z-index:1 !important;
+}
+
+.login-box{
+  width:min(500px, 92vw) !important;
+  background:rgba(255,255,255,0.94) !important;
+  color:var(--choose-text) !important;
+  border:1px solid var(--choose-line) !important;
+  border-radius:20px !important;
+  box-shadow:
+    0 22px 58px rgba(1,33,105,0.14),
+    0 0 0 1px rgba(14,165,233,0.06) inset !important;
+  overflow:hidden !important;
+}
+
+.login-box:before{
+  background:
+    radial-gradient(circle at 18% 15%, rgba(14,165,233,0.15), transparent 46%),
+    radial-gradient(circle at 84% 80%, rgba(124,58,237,0.12), transparent 48%) !important;
+}
+
+.login-box h2{
+  color:var(--choose-navy) !important;
+  font-weight:800 !important;
+}
+
+.login-box h2 i{
+  color:var(--choose-icon) !important;
+}
+
+.subtext{
+  color:var(--choose-muted) !important;
+}
+
+.subtext b{
+  color:var(--choose-navy) !important;
+}
+
+label{
+  color:var(--choose-navy) !important;
+  font-weight:700 !important;
+}
+
+input{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border:1px solid #cbd5e1 !important;
+  box-shadow:0 1px 0 rgba(15,23,42,0.02) inset !important;
+}
+
+input::placeholder{
+  color:#9ca3af !important;
+}
+
+input:focus{
+  border-color:rgba(14,165,233,0.72) !important;
+  box-shadow:0 0 0 4px rgba(14,165,233,0.12) !important;
+}
+
+.toggle-pass{
+  color:var(--choose-icon) !important;
+  background:transparent !important;
+}
+
+.toggle-pass:hover{
+  color:#000000 !important;
+  background:rgba(14,165,233,0.08) !important;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg, #1ecbff 0%, #22a6ff 46%, #8b5cf6 100%) !important;
+  color:#ffffff !important;
+  box-shadow:0 0 18px rgba(34,211,238,0.25), 0 0 14px rgba(139,92,246,0.18) !important;
+}
+
+.btn-primary:hover{
+  background:#1f2937 !important;
+  color:#ffffff !important;
+  box-shadow:0 0 16px rgba(59,130,246,0.22) !important;
+}
+
+.btn-secondary{
+  background:#ffffff !important;
+  color:var(--choose-navy) !important;
+  border:1px solid #cbd5e1 !important;
+}
+
+.btn-secondary:hover{
+  background:#f8fafc !important;
+  color:#000000 !important;
+}
+
+.hint-links{
+  color:var(--choose-muted) !important;
+}
+
+.hint-links a{
+  color:var(--choose-navy) !important;
+}
+
+.hint-links a:hover{
+  color:#000000 !important;
+}
+
+/* Light modal styling while preserving the same modal IDs and JS behavior. */
+.modal-backdrop{
+  background:rgba(15,23,42,0.26) !important;
+  backdrop-filter:blur(5px) !important;
+}
+
+.modal{
+  background:rgba(255,255,255,0.97) !important;
+  color:var(--choose-text) !important;
+  border:1px solid rgba(239,68,68,0.38) !important;
+  box-shadow:0 22px 54px rgba(1,33,105,0.18) !important;
+}
+
+.modal-title{
+  color:#b91c1c !important;
+}
+
+.modal-body{
+  color:var(--choose-text) !important;
+}
+
+.modal-close{
+  background:rgba(239,68,68,0.08) !important;
+  color:#b91c1c !important;
+  border:1px solid rgba(239,68,68,0.24) !important;
+}
+
+.modal-close:hover{
+  background:rgba(239,68,68,0.14) !important;
+}
+
+#portalModal .portal-modal{
+  background:
+    radial-gradient(circle at top left, rgba(14,165,233,0.10), transparent 42%),
+    radial-gradient(circle at bottom right, rgba(124,58,237,0.10), transparent 46%),
+    rgba(255,255,255,0.98) !important;
+  border:1px solid rgba(59,130,246,0.28) !important;
+  box-shadow:0 22px 54px rgba(1,33,105,0.18) !important;
+}
+
+#portalModal .portal-modal::before{
+  background:transparent !important;
+}
+
+.portal-title{
+  color:var(--choose-navy) !important;
+}
+
+.portal-title i{
+  color:var(--choose-icon) !important;
+}
+
+.portal-subtext,
+.portal-note{
+  color:var(--choose-muted) !important;
+}
+
+.portal-status{
+  background:#f8fafc !important;
+  border:1px solid var(--choose-line) !important;
+  color:var(--choose-text) !important;
+}
+
+.portal-status.active{
+  background:rgba(34,197,94,0.10) !important;
+  border-color:rgba(34,197,94,0.25) !important;
+  color:#166534 !important;
+}
+
+.portal-status.inactive{
+  background:rgba(251,191,36,0.16) !important;
+  border-color:rgba(251,191,36,0.30) !important;
+  color:#92400e !important;
+}
+
+.portal-close{
+  background:linear-gradient(135deg, rgba(239,68,68,0.92), rgba(124,58,237,0.92)) !important;
+  color:#ffffff !important;
+}
+
+/* Keep header/logo sizes matched with the Home page breakpoints. */
+@media (min-width:1800px){
+  header .logo img{ height:88px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header .logo img{ height:80px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header .logo img{ height:66px !important; }
+  header .auth-buttons a{
+    height:32px !important;
+    min-height:32px !important;
+    padding:0 8px !important;
+    gap:5px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+  }
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header .logo img{ height:54px !important; }
+  header .auth-buttons a{
+    height:28px !important;
+    min-height:28px !important;
+    padding:0 5px !important;
+    gap:3px !important;
+    font-size:0.56rem !important;
+    border-radius:8px !important;
+  }
+  header .auth-buttons a i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
+  }
+}
+
+@media (min-width:481px) and (max-width:768px){
+  body > header .logo img,
+  header .logo img{ height:52px !important; }
+  .page-wrap{ padding:28px 14px 32px !important; }
+  .login-box{ width:min(390px, 90vw) !important; }
+}
+
+@media (max-width:480px){
+  body > header .logo img,
+  header .logo img{ height:48px !important; }
+  .page-wrap{ padding:22px 12px 28px !important; }
+  .login-box{ width:min(350px, 100%) !important; }
+}
+
 </style>
 </head>
 
@@ -2758,9 +3391,19 @@ header .auth-buttons .auth-text{
     <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
- 
-   
-  
+  <div class="auth-buttons">
+    <a href="index1.html" class="admin jobseeker-auth"><i class="fa-solid fa-right-to-bracket"></i><span class="auth-text">Login</span></a>
+  </div>
+
+  <button
+    type="button"
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open mobile menu"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
 </header>
 
 <!-- Mobile panel -->
@@ -2795,6 +3438,7 @@ header .auth-buttons .auth-text{
     <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index1.html"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text"> Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
