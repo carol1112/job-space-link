@@ -10653,5 +10653,575 @@ init();
   }
 </style>
 
+
+
+<!-- ============================================================
+   FINAL PATCH 2026-06-11: ZERO FILTER/TABLE GAP + TABLET OUTER SCROLL
+   ✅ All devices: removes the visual gap between the second-row controls
+      and the table header while scrolling vertically.
+   ✅ 769px-1023px tablets: restores the outside/right page scrollbar so
+      pagination controls and all content can be viewed in table, grid,
+      and location views.
+   ✅ CSS-only patch; existing JavaScript functionality/behavior is unchanged.
+============================================================ -->
+<style id="final-zero-gap-tablet-outer-scroll-pagination-style">
+  /* All devices: keep the second filter row attached directly to the results/table header. */
+  .dashboard-sticky-top{
+    padding-bottom:0!important;
+    margin-bottom:0!important;
+  }
+  .filters{
+    margin-bottom:0!important;
+  }
+  .results-area{
+    margin-top:0!important;
+    border-top-left-radius:12px!important;
+    border-top-right-radius:12px!important;
+  }
+  #tablePanel .table-scroll,
+  .table-scroll{
+    padding-top:0!important;
+  }
+  #tablePanel table,
+  .table-scroll table{
+    margin-top:0!important;
+  }
+  #tablePanel thead th{
+    top:0!important;
+  }
+
+  /* Tablet only: use the browser/page scrollbar on the outside right side. */
+  @media (min-width:769px) and (max-width:1023px){
+    html,
+    body{
+      height:auto!important;
+      min-height:100%!important;
+      overflow-x:hidden!important;
+      overflow-y:auto!important;
+      scrollbar-gutter:stable!important;
+    }
+    body{
+      padding-bottom:96px!important;
+    }
+
+    .dashboard-shell{
+      height:auto!important;
+      min-height:calc(100vh - var(--header-h))!important;
+      overflow:visible!important;
+      margin-bottom:36px!important;
+    }
+    .dashboard-card{
+      height:auto!important;
+      min-height:calc(100vh - var(--header-h) - 18px)!important;
+      display:block!important;
+      overflow:visible!important;
+      padding-bottom:14px!important;
+    }
+    .dashboard-sticky-top{
+      position:sticky!important;
+      top:var(--header-h)!important;
+      z-index:12000!important;
+      padding-top:0!important;
+      padding-bottom:0!important;
+      margin-bottom:0!important;
+      overflow:visible!important;
+    }
+
+    .controls{
+      margin-bottom:3px!important;
+    }
+    .filters{
+      margin-bottom:0!important;
+    }
+
+    .results-area{
+      display:block!important;
+      min-height:0!important;
+      height:auto!important;
+      overflow:visible!important;
+      margin-top:0!important;
+    }
+    .view-panel.active,
+    #tablePanel.active,
+    #gridPanel.active,
+    #locationPanel.active{
+      display:block!important;
+      height:auto!important;
+      min-height:0!important;
+      overflow:visible!important;
+    }
+
+    #tablePanel .table-scroll,
+    .table-scroll{
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      overflow-y:visible!important;
+      overflow-x:hidden!important;
+      padding-top:0!important;
+      padding-bottom:8px!important;
+    }
+    #tablePanel thead th{
+      top:0!important;
+      z-index:760!important;
+    }
+
+    #gridPanel .grid-wrap,
+    .grid-wrap{
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      overflow-y:visible!important;
+      overflow-x:hidden!important;
+      padding-top:10px!important;
+    }
+
+    .location-layout{
+      height:auto!important;
+      min-height:0!important;
+      overflow:visible!important;
+    }
+    .location-list{
+      height:auto!important;
+      max-height:none!important;
+      min-height:0!important;
+      overflow-y:visible!important;
+      overflow-x:hidden!important;
+    }
+    .map-box{
+      position:relative!important;
+      height:420px!important;
+      min-height:420px!important;
+      max-height:none!important;
+      top:auto!important;
+    }
+
+    .pagination{
+      position:relative!important;
+      z-index:200!important;
+      margin-top:0!important;
+      flex-wrap:wrap!important;
+    }
+  }
+</style>
+
+
+<!-- ============================================================
+   FINAL PATCH 2026-06-11: TABLET INSIDE RIGHT SCROLL + STICKY CONTROLS
+   ✅ 769px-1023px only.
+   ✅ Restores inside right vertical scrollbars for Table and Grid views.
+   ✅ Restores inside right vertical scrollbar for Location cards/list.
+   ✅ Removes header-to-first-row gap and keeps 1st/2nd row controls fixed on top.
+   ✅ CSS-only patch; existing JavaScript functionality/behavior is unchanged.
+============================================================ -->
+<style id="final-tablet-inside-right-scroll-sticky-controls-style">
+  @media (min-width:769px) and (max-width:1023px){
+    html,
+    body{
+      height:100%!important;
+      max-height:100%!important;
+      overflow-x:hidden!important;
+      overflow-y:hidden!important;
+      scrollbar-gutter:auto!important;
+    }
+
+    body{
+      padding-top:var(--header-h)!important;
+      padding-bottom:0!important;
+    }
+
+    header{
+      height:var(--header-h)!important;
+      min-height:var(--header-h)!important;
+      z-index:230000!important;
+    }
+
+    .dashboard-shell{
+      width:100%!important;
+      max-width:100%!important;
+      height:calc(100vh - var(--header-h))!important;
+      min-height:0!important;
+      margin:0!important;
+      padding:0!important;
+      border-radius:0!important;
+      overflow:hidden!important;
+      position:relative!important;
+    }
+
+    .dashboard-card{
+      width:100%!important;
+      height:100%!important;
+      min-height:0!important;
+      max-height:100%!important;
+      display:flex!important;
+      flex-direction:column!important;
+      padding:0 6px 6px!important;
+      border-radius:0 0 16px 16px!important;
+      overflow:hidden!important;
+      position:relative!important;
+    }
+
+    /* Keep first row and second row controls pinned at the top, directly below header. */
+    .dashboard-sticky-top{
+      flex:0 0 auto!important;
+      position:relative!important;
+      top:auto!important;
+      z-index:125000!important;
+      width:100%!important;
+      margin:0!important;
+      padding:0 0 4px!important;
+      border-radius:0 0 12px 12px!important;
+      overflow:visible!important;
+      background:linear-gradient(180deg,rgba(7,15,33,.99) 0%,rgba(7,15,33,.98) 100%)!important;
+      box-shadow:0 6px 14px rgba(2,6,23,.18)!important;
+    }
+
+    .controls{
+      margin-top:0!important;
+      margin-bottom:3px!important;
+      padding-top:0!important;
+      position:relative!important;
+      z-index:125100!important;
+      overflow:visible!important;
+    }
+
+    .filters{
+      margin-top:0!important;
+      margin-bottom:0!important;
+      padding-top:0!important;
+      padding-bottom:0!important;
+      position:relative!important;
+      z-index:125050!important;
+      overflow:visible!important;
+    }
+
+    .filter-unit.open{
+      z-index:126000!important;
+    }
+
+    .filter-unit.open .filter-panel{
+      z-index:126500!important;
+    }
+
+    /* Content area fills the remaining height; only the active view content scrolls inside. */
+    .results-area{
+      flex:1 1 auto!important;
+      min-height:0!important;
+      height:auto!important;
+      max-height:none!important;
+      display:flex!important;
+      flex-direction:column!important;
+      overflow:hidden!important;
+      margin-top:0!important;
+      border-radius:12px!important;
+      position:relative!important;
+      z-index:1!important;
+    }
+
+    .view-panel{
+      display:none!important;
+      min-height:0!important;
+      height:auto!important;
+      overflow:hidden!important;
+    }
+
+    .view-panel.active,
+    #tablePanel.active,
+    #gridPanel.active,
+    #locationPanel.active{
+      display:flex!important;
+      flex:1 1 auto!important;
+      min-height:0!important;
+      height:auto!important;
+      max-height:none!important;
+      overflow:hidden!important;
+      position:relative!important;
+    }
+
+    #tablePanel.active,
+    #gridPanel.active,
+    #locationPanel.active{
+      flex-direction:column!important;
+    }
+
+    /* Table view: inside vertical scrollbar at the right side. */
+    #tablePanel .table-scroll,
+    .table-scroll{
+      flex:1 1 auto!important;
+      width:100%!important;
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      overflow-y:auto!important;
+      overflow-x:hidden!important;
+      scrollbar-gutter:stable!important;
+      padding:0 0 6px 0!important;
+      border-radius:12px 12px 0 0!important;
+      position:relative!important;
+      z-index:2!important;
+    }
+
+    #tablePanel table,
+    .table-scroll table{
+      margin-top:0!important;
+    }
+
+    #tablePanel thead th,
+    .table-scroll thead th{
+      position:sticky!important;
+      top:0!important;
+      z-index:780!important;
+    }
+
+    /* Grid view: inside vertical scrollbar at the right side. */
+    #gridPanel .grid-wrap,
+    .grid-wrap{
+      flex:1 1 auto!important;
+      width:100%!important;
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      overflow-y:auto!important;
+      overflow-x:hidden!important;
+      scrollbar-gutter:stable!important;
+      padding-top:10px!important;
+      padding-bottom:14px!important;
+      border-radius:12px 12px 0 0!important;
+      position:relative!important;
+      z-index:2!important;
+    }
+
+    /* Location view: cards/grid list scrolls inside on the right side; map stays visible. */
+    #locationPanel.active{
+      overflow:hidden!important;
+    }
+
+    .location-layout{
+      flex:1 1 auto!important;
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      display:grid!important;
+      grid-template-columns:minmax(300px,.78fr) minmax(340px,1.22fr)!important;
+      gap:10px!important;
+      padding:8px!important;
+      overflow:hidden!important;
+      align-items:stretch!important;
+    }
+
+    .location-list{
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      overflow-y:auto!important;
+      overflow-x:hidden!important;
+      scrollbar-gutter:stable!important;
+      padding:0 8px 12px 0!important;
+      border-radius:12px!important;
+      position:relative!important;
+      z-index:2!important;
+    }
+
+    .location-list .app-card,
+    .location-list .location-grid-card{
+      width:100%!important;
+      max-width:100%!important;
+    }
+
+    .map-box{
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      position:relative!important;
+      top:auto!important;
+      overflow:hidden!important;
+      border-radius:14px!important;
+    }
+
+    #googleMapFrame,
+    #locationMap{
+      height:100%!important;
+      min-height:0!important;
+      max-height:none!important;
+    }
+
+    .pagination{
+      flex:0 0 auto!important;
+      position:relative!important;
+      z-index:30!important;
+      margin:0!important;
+      padding:7px 8px!important;
+      min-height:42px!important;
+      max-height:58px!important;
+      overflow-x:auto!important;
+      overflow-y:hidden!important;
+      flex-wrap:nowrap!important;
+      justify-content:flex-start!important;
+      scrollbar-gutter:stable!important;
+    }
+
+    .pagination button{
+      flex:0 0 auto!important;
+    }
+
+    /* Keep visible inside scrollbars at the right side of each view. */
+    #tablePanel .table-scroll::-webkit-scrollbar,
+    #gridPanel .grid-wrap::-webkit-scrollbar,
+    .location-list::-webkit-scrollbar{
+      width:14px!important;
+      height:14px!important;
+      display:block!important;
+    }
+
+    #tablePanel .table-scroll::-webkit-scrollbar-track,
+    #gridPanel .grid-wrap::-webkit-scrollbar-track,
+    .location-list::-webkit-scrollbar-track{
+      background:rgba(226,232,240,.14)!important;
+      border-radius:999px!important;
+    }
+
+    #tablePanel .table-scroll::-webkit-scrollbar-thumb,
+    #gridPanel .grid-wrap::-webkit-scrollbar-thumb,
+    .location-list::-webkit-scrollbar-thumb{
+      background:linear-gradient(180deg,#00c6ff,#7c3aed)!important;
+      border-radius:999px!important;
+      border:3px solid rgba(3,9,22,.92)!important;
+    }
+
+    #tablePanel .table-scroll,
+    #gridPanel .grid-wrap,
+    .location-list{
+      scrollbar-width:thin!important;
+      scrollbar-color:#00c6ff rgba(226,232,240,.14)!important;
+    }
+  }
+</style>
+
+
+
+<!-- ============================================================
+   FINAL PATCH 2026-06-11: TABLET CENTERED PAGINATION + CLEAR CONTROLS BACKDROP
+   ✅ 769px-1023px only.
+   ✅ Centers pagination controls at the bottom of the board area.
+   ✅ Removes the black background/box behind the 1st-row and 2nd-row controls.
+   ✅ Keeps the 1st-row controls and 2nd-row filters sticky at the top while inner views scroll.
+   ✅ CSS-only patch; existing JavaScript functionality/behavior is unchanged.
+============================================================ -->
+<style id="final-tablet-centered-pagination-clear-controls-style">
+  @media (min-width:769px) and (max-width:1023px){
+    /* Remove the black boxed backdrop around the two control rows only. */
+    .dashboard-sticky-top{
+      background:transparent!important;
+      background-image:none!important;
+      box-shadow:none!important;
+      border:none!important;
+      border-radius:0!important;
+      backdrop-filter:none!important;
+      -webkit-backdrop-filter:none!important;
+      padding-top:0!important;
+      padding-bottom:3px!important;
+      margin-top:0!important;
+      margin-bottom:0!important;
+    }
+
+    .dashboard-sticky-top::before,
+    .dashboard-sticky-top::after{
+      display:none!important;
+      content:none!important;
+    }
+
+    .controls,
+    .filters{
+      background:transparent!important;
+      background-image:none!important;
+      box-shadow:none!important;
+      border:none!important;
+      outline:none!important;
+    }
+
+    .controls{
+      margin-top:0!important;
+      margin-bottom:3px!important;
+    }
+
+    .filters{
+      margin-top:0!important;
+      margin-bottom:0!important;
+    }
+
+    /* Keep inner scrolling active while controls remain fixed above the content area. */
+    .results-area{
+      flex:1 1 auto!important;
+      min-height:0!important;
+      overflow:hidden!important;
+      margin-top:0!important;
+    }
+
+    #tablePanel .table-scroll,
+    .table-scroll,
+    #gridPanel .grid-wrap,
+    .grid-wrap,
+    .location-list{
+      overflow-y:auto!important;
+      scrollbar-gutter:stable!important;
+    }
+
+    /* Pagination: centered at the bottom for table/grid/location views. */
+    .pagination,
+    #pagination{
+      width:100%!important;
+      max-width:100%!important;
+      margin:0 auto!important;
+      padding:7px 8px 8px!important;
+      min-height:44px!important;
+      max-height:64px!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      align-content:center!important;
+      gap:5px!important;
+      flex-wrap:wrap!important;
+      overflow-x:auto!important;
+      overflow-y:hidden!important;
+      text-align:center!important;
+      background:rgba(3,9,22,.52)!important;
+      border-top:1px solid rgba(0,198,255,.18)!important;
+      border-radius:0 0 12px 12px!important;
+      position:relative!important;
+      left:auto!important;
+      right:auto!important;
+      bottom:auto!important;
+      z-index:40!important;
+      scrollbar-gutter:stable!important;
+    }
+
+    .pagination button,
+    #pagination button,
+    .pagination .page-info,
+    #pagination .page-info{
+      flex:0 0 auto!important;
+    }
+
+    .pagination::-webkit-scrollbar,
+    #pagination::-webkit-scrollbar{
+      height:8px!important;
+      display:block!important;
+    }
+
+    .pagination::-webkit-scrollbar-track,
+    #pagination::-webkit-scrollbar-track{
+      background:rgba(226,232,240,.10)!important;
+      border-radius:999px!important;
+    }
+
+    .pagination::-webkit-scrollbar-thumb,
+    #pagination::-webkit-scrollbar-thumb{
+      background:linear-gradient(90deg,#00c6ff,#7c3aed)!important;
+      border-radius:999px!important;
+      border:2px solid rgba(3,9,22,.80)!important;
+    }
+  }
+</style>
+
 </body>
 </html>
