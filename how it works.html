@@ -458,21 +458,21 @@
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     }
 
-    .step{
-      padding: 30px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      transition: 0.3s;
-      box-shadow: 0 0 20px rgba(0, 198, 255, 0.18);
-    }
+    
+.step{
+  padding:30px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);
+  transition:0.3s;
+}
 
-    .step:hover{
-      transform: translateY(-6px);
-      box-shadow: 0 0 35px rgba(0, 198, 255, 0.45);
-      background: linear-gradient(90deg, #00c6ff, #8b5cf6);
-    }
+.step:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(0,198,255,0.45);
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6);
+}
 
     .step span{
       display: inline-block;
@@ -1636,11 +1636,4055 @@ body > header *,
 }
 
 
+
+
+/* ============================================================
+   FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
+   Applies dropdown-style hover to desktop nav links and refines
+   Employer / Jobseeker button icons without causing overlap.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  border-radius:12px !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    text-shadow 0.25s ease !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12));
+  opacity:0;
+  transform:scaleX(0.72);
+  transform-origin:center;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:-1;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#ffffff !important;
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
+  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
+  transform:translateY(-1px) !important;
+}
+
+header nav > a:hover::before,
+header nav > a:focus-visible::before,
+header nav .nav-main-link:hover::before,
+header nav .nav-main-link:focus-visible::before,
+.nav-dropdown.open .nav-main-link::before{
+  opacity:1;
+  transform:scaleX(1);
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
+  transform:scale(1.08);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+.nav-dropdown-menu a{
+  border:1px solid transparent !important;
+  border-radius:10px !important;
+  margin:0 8px !important;
+  padding:12px 12px !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.24) !important;
+  color:#ffffff !important;
+  transform:translateX(3px);
+  box-shadow:0 0 14px rgba(0,198,255,0.12);
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+header .auth-buttons a{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  gap:7px !important;
+}
+
+header .auth-buttons a::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  opacity:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+  transition:opacity 0.25s ease;
+  z-index:-1;
+}
+
+header .auth-buttons a:hover::before,
+header .auth-buttons a:focus-visible::before{
+  opacity:1;
+}
+
+header .auth-buttons a i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  font-size:0.85rem !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.16) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
+  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+header .auth-buttons a.employer-auth i{
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+}
+
+header .auth-buttons a.jobseeker-auth i{
+  background:rgba(167,139,250,0.22) !important;
+  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
+}
+
+header .auth-buttons a.login-auth{
+  background:linear-gradient(135deg, rgba(0,198,255,0.30), rgba(139,92,246,0.30)) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+}
+
+header .auth-buttons a.login-auth i{
+  background:rgba(56,189,248,0.24) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.20) !important;
+}
+
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  transform:scale(1.10) rotate(-3deg);
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+header .auth-buttons .auth-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#ffffff !important;
+  transform:scale(1.08);
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+.mobile-panel .mnav-left i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:9px !important;
+  }
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:8px !important;
+  }
+  header .auth-buttons a i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL LOGIN BUTTON EXACT DISPLAY PATCH
+   Normal state matches the bright cyan / purple Login button.
+   Hover state matches the compact dark button with blue outline.
+   Link target and click behavior remain unchanged.
+============================================================ */
+header .auth-buttons a.login-auth{
+  color:#ffffff !important;
+  background:linear-gradient(135deg, #18caff 0%, #7c4dff 100%) !important;
+  border:1px solid rgba(56,189,248,0.74) !important;
+  box-shadow:
+    0 0 18px rgba(0,198,255,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.24) !important;
+  text-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth::before{
+  opacity:0 !important;
+}
+
+header .auth-buttons a.login-auth i{
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.18) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.12) !important;
+}
+
+header .auth-buttons a.login-auth .auth-text{
+  color:#ffffff !important;
+}
+
+header .auth-buttons a.login-auth:hover,
+header .auth-buttons a.login-auth:focus-visible{
+  transform:none !important;
+  color:#ffffff !important;
+  background:linear-gradient(180deg, rgba(31,41,55,0.98) 0%, rgba(15,23,42,0.98) 100%) !important;
+  border-color:rgba(59,130,246,0.92) !important;
+  box-shadow:
+    0 0 0 1px rgba(59,130,246,0.38),
+    0 0 14px rgba(59,130,246,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.12) !important;
+  text-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth:hover::before,
+header .auth-buttons a.login-auth:focus-visible::before{
+  opacity:0 !important;
+}
+
+header .auth-buttons a.login-auth:hover i,
+header .auth-buttons a.login-auth:focus-visible i{
+  transform:none !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.12) !important;
+  box-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth:hover .auth-text,
+header .auth-buttons a.login-auth:focus-visible .auth-text{
+  color:#ffffff !important;
+}
+
+header .auth-buttons a.login-auth:focus-visible{
+  outline:2px solid rgba(56,189,248,0.42) !important;
+  outline-offset:2px !important;
+}
+
+
+/* ============================================================
+   FINAL FULL RESPONSIVE LAYOUT PATCH
+   Requested breakpoints:
+   - 1800px+
+   - 1440px+
+   - 1024px+
+   - 769px to 1023px: desktop layout kept, compressed
+   - 481px to 768px
+   - 480px and below
+
+   This patch only adjusts layout/spacing/sizing. It does not change
+   links, IDs, dropdown JS, mobile menu JS, video behavior, or login behavior.
+============================================================ */
+
+img,
+video{
+  max-width:100%;
+}
+
+header,
+header *,
+.page-shell,
+.portal-card,
+.video-showcase,
+.video-frame-wrap,
+.video-info-panel,
+.page-title{
+  min-width:0;
+}
+
+.video-showcase{
+  width:100%;
+}
+
+.video-info-panel p,
+.video-benefits li,
+.page-title p{
+  overflow-wrap:anywhere;
+}
+
+.video-benefits li span{
+  min-width:0;
+}
+
+/* ===== 1024px and above: desktop layout, compact-safe default ===== */
+@media (min-width: 1024px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 12px 0 6px !important;
+    gap:8px !important;
+  }
+
+  header .logo{
+    min-width:86px !important;
+    flex:0 0 86px !important;
+    margin-left:0 !important;
+  }
+
+  header .logo img{
+    height:64px !important;
+    max-width:86px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:32px !important;
+    padding:0 3px !important;
+    gap:4px !important;
+    font-size:0.70rem !important;
+    line-height:1 !important;
+    letter-spacing:-0.015em !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+
+  .nav-dropdown{
+    height:32px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:31px !important;
+    padding:0 8px !important;
+    gap:5px !important;
+    border-radius:8px !important;
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    width:min(1120px, calc(100% - 24px)) !important;
+    min-height:100vh !important;
+    padding:112px 12px 34px !important;
+    align-items:center !important;
+  }
+
+  .portal-card{
+    border-radius:24px !important;
+  }
+
+  .video-card{
+    padding:96px 20px 28px !important;
+  }
+
+  .page-title{
+    top:22px !important;
+    padding:0 16px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.35rem, 2.05vw, 1.78rem) !important;
+    line-height:1.12 !important;
+  }
+
+  .page-title p{
+    margin-top:6px !important;
+    font-size:0.80rem !important;
+    line-height:1.35 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.20fr) minmax(270px, 0.80fr) !important;
+    gap:20px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    padding:20px 18px !important;
+    border-radius:20px !important;
+  }
+
+  .video-kicker{
+    min-height:26px !important;
+    padding:6px 10px !important;
+    font-size:0.64rem !important;
+    margin-bottom:10px !important;
+    letter-spacing:0.055em !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.18rem, 1.65vw, 1.55rem) !important;
+    line-height:1.12 !important;
+    margin-bottom:9px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.78rem !important;
+    line-height:1.50 !important;
+    margin-bottom:12px !important;
+  }
+
+  .video-benefits{
+    gap:8px !important;
+  }
+
+  .video-benefits li{
+    gap:8px !important;
+    font-size:0.74rem !important;
+    line-height:1.34 !important;
+  }
+
+  .video-benefits i{
+    width:15px !important;
+    min-width:15px !important;
+    font-size:0.82rem !important;
+  }
+
+  .video-frame{
+    border-radius:20px !important;
+  }
+}
+
+/* ===== 1440px and above: full desktop spacing ===== */
+@media (min-width: 1440px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 18px 0 10px !important;
+    gap:14px !important;
+  }
+
+  header .logo{
+    min-width:118px !important;
+    flex:0 0 118px !important;
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+    max-width:118px !important;
+  }
+
+  header nav{
+    gap:13px !important;
+    margin-left:7px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    gap:6px !important;
+    font-size:0.84rem !important;
+    letter-spacing:0 !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:15px !important;
+    min-width:15px !important;
+    font-size:0.92em !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    gap:7px !important;
+    border-radius:10px !important;
+    font-size:0.79rem !important;
+  }
+
+  header .auth-buttons a i{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+    font-size:0.85rem !important;
+  }
+
+  .page-shell{
+    width:min(1280px, calc(100% - 44px)) !important;
+    padding:124px 22px 42px !important;
+  }
+
+  .video-card{
+    padding:112px 30px 38px !important;
+    border-radius:28px !important;
+  }
+
+  .page-title{
+    top:28px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.72rem, 2.25vw, 2.05rem) !important;
+  }
+
+  .page-title p{
+    font-size:0.90rem !important;
+    line-height:1.45 !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:minmax(0, 1.25fr) minmax(300px, 0.75fr) !important;
+    gap:28px !important;
+  }
+
+  .video-info-panel{
+    padding:26px 22px !important;
+    border-radius:23px !important;
+  }
+
+  .video-kicker{
+    min-height:30px !important;
+    padding:7px 12px !important;
+    font-size:0.76rem !important;
+    margin-bottom:13px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.42rem, 1.85vw, 2rem) !important;
+    line-height:1.12 !important;
+    margin-bottom:12px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.92rem !important;
+    line-height:1.62 !important;
+    margin-bottom:16px !important;
+  }
+
+  .video-benefits{
+    gap:10px !important;
+  }
+
+  .video-benefits li{
+    gap:10px !important;
+    font-size:0.86rem !important;
+    line-height:1.42 !important;
+  }
+
+  .video-benefits i{
+    width:18px !important;
+    min-width:18px !important;
+    font-size:0.94rem !important;
+  }
+
+  .video-frame{
+    border-radius:24px !important;
+  }
+}
+
+/* ===== 1800px and above: wide desktop ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 24px 0 14px !important;
+    gap:18px !important;
+  }
+
+  header .logo{
+    min-width:132px !important;
+    flex:0 0 132px !important;
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+    max-width:132px !important;
+  }
+
+  header nav{
+    gap:20px !important;
+    margin-left:10px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    gap:8px !important;
+    font-size:0.94rem !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:17px !important;
+    min-width:17px !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .page-shell{
+    width:min(1500px, calc(100% - 72px)) !important;
+    padding:132px 36px 54px !important;
+  }
+
+  .video-card{
+    padding:126px 44px 46px !important;
+    border-radius:30px !important;
+  }
+
+  .page-title{
+    top:32px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.95rem, 2vw, 2.35rem) !important;
+  }
+
+  .page-title p{
+    font-size:0.98rem !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:minmax(0, 1.28fr) minmax(340px, 0.72fr) !important;
+    gap:34px !important;
+  }
+
+  .video-info-panel{
+    padding:30px 26px !important;
+    border-radius:24px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.62rem, 1.75vw, 2.15rem) !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.98rem !important;
+    line-height:1.65 !important;
+  }
+
+  .video-benefits li{
+    font-size:0.91rem !important;
+    line-height:1.46 !important;
+  }
+
+  .video-frame{
+    border-radius:26px !important;
+  }
+}
+
+/* ===== 769px to 1023px: keep desktop layout but compress everything ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    display:flex !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 6px 0 4px !important;
+    gap:4px !important;
+  }
+
+  header .logo{
+    min-width:70px !important;
+    flex:0 0 70px !important;
+    margin-left:0 !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+    max-width:70px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:3px !important;
+    margin-left:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:28px !important;
+    padding:0 1px !important;
+    gap:2px !important;
+    border-radius:7px !important;
+    font-size:clamp(0.50rem, 0.72vw, 0.58rem) !important;
+    letter-spacing:-0.04em !important;
+    line-height:1 !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:9px !important;
+    min-width:9px !important;
+    font-size:0.76em !important;
+  }
+
+  header nav .nav-text{
+    display:inline-block !important;
+    max-width:none !important;
+  }
+
+  .nav-dropdown{
+    height:28px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:0 !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:13px !important;
+    height:13px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.52rem !important;
+  }
+
+  .nav-dropdown-menu{
+    min-width:190px !important;
+  }
+
+  .nav-dropdown-menu a{
+    padding:10px 10px !important;
+    font-size:0.76rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:2px !important;
+  }
+
+  header .auth-buttons a{
+    height:26px !important;
+    padding:0 5px !important;
+    gap:3px !important;
+    border-radius:7px !important;
+    font-size:0.54rem !important;
+    letter-spacing:-0.02em !important;
+  }
+
+  header .auth-buttons a i{
+    width:12px !important;
+    height:12px !important;
+    min-width:12px !important;
+    font-size:0.52rem !important;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:100vh !important;
+    padding:calc(var(--header-h) + 12px) 8px 22px !important;
+    align-items:center !important;
+  }
+
+  .portal-card{
+    border-radius:18px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:78px 12px 18px !important;
+  }
+
+  .page-title{
+    top:14px !important;
+    padding:0 10px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.08rem, 2vw, 1.28rem) !important;
+    line-height:1.12 !important;
+    letter-spacing:-0.035em !important;
+  }
+
+  .page-title p{
+    margin-top:5px !important;
+    font-size:0.68rem !important;
+    line-height:1.25 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.08fr) minmax(220px, 0.72fr) !important;
+    gap:12px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    padding:13px 12px !important;
+    border-radius:16px !important;
+  }
+
+  .video-kicker{
+    min-height:22px !important;
+    padding:4px 8px !important;
+    font-size:0.55rem !important;
+    letter-spacing:0.035em !important;
+    margin-bottom:7px !important;
+    gap:5px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.92rem, 1.5vw, 1.08rem) !important;
+    line-height:1.08 !important;
+    letter-spacing:-0.035em !important;
+    margin-bottom:7px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.62rem !important;
+    line-height:1.35 !important;
+    margin-bottom:8px !important;
+  }
+
+  .video-benefits{
+    gap:6px !important;
+  }
+
+  .video-benefits li{
+    gap:6px !important;
+    font-size:0.58rem !important;
+    line-height:1.25 !important;
+  }
+
+  .video-benefits i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.66rem !important;
+    margin-top:1px !important;
+  }
+
+  .video-frame{
+    border-radius:14px !important;
+    box-shadow:
+      0 0 0 4px rgba(0,198,255,0.04),
+      0 0 22px rgba(0,198,255,0.16),
+      0 16px 32px rgba(2,6,23,0.34),
+      inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  }
+}
+
+/* ===== 481px to 768px: mobile/tablet stack, no hidden content ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 10px 0 8px !important;
+    gap:8px !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+    max-width:88px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    justify-self:end !important;
+    margin:0 !important;
+  }
+
+  .mobile-panel{
+    display:block !important;
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-row{
+    grid-template-columns:minmax(0,1fr) 46px !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    width:46px !important;
+    min-width:46px !important;
+    max-width:46px !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 16px) 12px 28px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:22px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:84px 14px 24px !important;
+  }
+
+  .page-title{
+    top:20px !important;
+    padding:0 12px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.18rem, 4vw, 1.55rem) !important;
+    line-height:1.15 !important;
+  }
+
+  .page-title p{
+    margin-top:6px !important;
+    font-size:0.78rem !important;
+    line-height:1.32 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:16px !important;
+    align-items:start !important;
+  }
+
+  .video-frame-wrap{
+    order:1 !important;
+  }
+
+  .video-info-panel{
+    order:2 !important;
+    padding:20px 18px !important;
+    border-radius:18px !important;
+  }
+
+  .video-kicker{
+    min-height:26px !important;
+    padding:6px 10px !important;
+    font-size:0.68rem !important;
+    margin-bottom:10px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.24rem, 4.3vw, 1.65rem) !important;
+    line-height:1.12 !important;
+    margin-bottom:10px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.88rem !important;
+    line-height:1.52 !important;
+    margin-bottom:14px !important;
+  }
+
+  .video-benefits{
+    gap:9px !important;
+  }
+
+  .video-benefits li{
+    gap:9px !important;
+    font-size:0.82rem !important;
+    line-height:1.38 !important;
+  }
+
+  .video-frame{
+    border-radius:18px !important;
+  }
+}
+
+/* ===== 480px and below: compact mobile ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 8px !important;
+    gap:8px !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+    max-width:78px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    justify-self:end !important;
+    margin:0 !important;
+  }
+
+  .mobile-panel{
+    display:block !important;
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-left{
+    gap:9px !important;
+  }
+
+  .mobile-panel .mnav-left i{
+    width:16px !important;
+    min-width:16px !important;
+  }
+
+  .mobile-panel .mnav-row{
+    grid-template-columns:minmax(0,1fr) 42px !important;
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    width:42px !important;
+    min-width:42px !important;
+    max-width:42px !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 12px) 8px 22px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:18px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:76px 10px 18px !important;
+  }
+
+  .page-title{
+    top:17px !important;
+    padding:0 9px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.02rem, 6vw, 1.26rem) !important;
+    line-height:1.12 !important;
+    letter-spacing:-0.035em !important;
+  }
+
+  .page-title p{
+    margin-top:5px !important;
+    font-size:0.68rem !important;
+    line-height:1.25 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+    align-items:start !important;
+  }
+
+  .video-frame-wrap{
+    order:1 !important;
+  }
+
+  .video-info-panel{
+    order:2 !important;
+    padding:16px 13px !important;
+    border-radius:16px !important;
+  }
+
+  .video-kicker{
+    min-height:24px !important;
+    padding:5px 9px !important;
+    font-size:0.60rem !important;
+    letter-spacing:0.04em !important;
+    margin-bottom:9px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(1.08rem, 5.3vw, 1.34rem) !important;
+    line-height:1.12 !important;
+    margin-bottom:9px !important;
+  }
+
+  .video-info-panel p{
+    font-size:0.78rem !important;
+    line-height:1.45 !important;
+    margin-bottom:12px !important;
+  }
+
+  .video-benefits{
+    gap:8px !important;
+  }
+
+  .video-benefits li{
+    gap:8px !important;
+    font-size:0.74rem !important;
+    line-height:1.35 !important;
+  }
+
+  .video-benefits i{
+    width:15px !important;
+    min-width:15px !important;
+    font-size:0.82rem !important;
+  }
+
+  .video-frame{
+    border-radius:14px !important;
+    box-shadow:
+      0 0 0 4px rgba(0,198,255,0.04),
+      0 0 22px rgba(0,198,255,0.16),
+      0 16px 32px rgba(2,6,23,0.34),
+      inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  }
+}
+
+
+/* Hide any old markup/caption/action strips if browser cache still has them. */
+.video-play-overlay,
+.video-caption,
+.video-status-pill,
+.portal-actions-row{
+  display:none !important;
+}
+
+
+
+/* ============================================================
+   EXTRA ULTRA-COMPACT TABLET DESKTOP PATCH
+   Breakpoint: 769px to 1023px
+   Keeps the desktop header/content layout visible.
+   No links, IDs, scripts, dropdown behavior, mobile behavior,
+   video behavior, or login behavior are changed.
+============================================================ */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{
+    --header-h:60px !important;
+  }
+
+  html,
+  body{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+  }
+
+  header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    max-height:var(--header-h) !important;
+    padding:0 3px 0 2px !important;
+    gap:2px !important;
+    overflow:visible !important;
+  }
+
+  header .logo{
+    flex:0 0 54px !important;
+    width:54px !important;
+    min-width:54px !important;
+    max-width:54px !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+
+  header .logo img{
+    height:44px !important;
+    width:auto !important;
+    max-width:54px !important;
+    object-fit:contain !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:1px !important;
+    margin:0 !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    flex:0 0 auto !important;
+    min-width:0 !important;
+    height:24px !important;
+    min-height:24px !important;
+    padding:0 1px !important;
+    gap:1px !important;
+    border-radius:6px !important;
+    font-size:clamp(0.43rem, 0.64vw, 0.50rem) !important;
+    line-height:1 !important;
+    letter-spacing:-0.055em !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:7px !important;
+    min-width:7px !important;
+    max-width:7px !important;
+    font-size:0.72em !important;
+  }
+
+  header nav .nav-text,
+  header .auth-buttons .auth-text{
+    display:inline-block !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+  }
+
+  .nav-dropdown{
+    height:24px !important;
+    flex:0 0 auto !important;
+    min-width:0 !important;
+  }
+
+  .nav-dropdown-trigger{
+    height:24px !important;
+    gap:0 !important;
+    min-width:0 !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:10px !important;
+    min-width:10px !important;
+    height:10px !important;
+    min-height:10px !important;
+    padding:0 !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.42rem !important;
+  }
+
+  .nav-dropdown-menu{
+    top:calc(100% + 8px) !important;
+    min-width:168px !important;
+    padding:7px 0 !important;
+    border-radius:10px !important;
+  }
+
+  .nav-dropdown-menu a{
+    height:auto !important;
+    padding:8px 8px !important;
+    gap:7px !important;
+    font-size:0.68rem !important;
+    letter-spacing:0 !important;
+  }
+
+  .nav-dropdown-menu a i{
+    width:13px !important;
+    min-width:13px !important;
+    font-size:0.82em !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:1px !important;
+    margin:0 !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    flex:0 0 auto !important;
+    height:24px !important;
+    min-height:24px !important;
+    padding:0 4px !important;
+    gap:2px !important;
+    border-radius:6px !important;
+    font-size:0.48rem !important;
+    line-height:1 !important;
+    letter-spacing:-0.03em !important;
+    white-space:nowrap !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:10px !important;
+    height:10px !important;
+    min-width:10px !important;
+    max-width:10px !important;
+    font-size:0.46rem !important;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:calc(100vh - var(--header-h)) !important;
+    padding:calc(var(--header-h) + 6px) 4px 12px !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+  }
+
+  .portal-card{
+    width:100% !important;
+    max-width:100% !important;
+    border-radius:14px !important;
+    overflow:hidden !important;
+  }
+
+  .video-card{
+    padding:50px 8px 10px !important;
+  }
+
+  .page-title{
+    top:8px !important;
+    padding:0 8px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(0.88rem, 1.72vw, 1.04rem) !important;
+    line-height:1.05 !important;
+    letter-spacing:-0.045em !important;
+  }
+
+  .page-title p{
+    margin-top:3px !important;
+    font-size:clamp(0.50rem, 0.92vw, 0.58rem) !important;
+    line-height:1.18 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1fr) minmax(174px, 0.56fr) !important;
+    align-items:center !important;
+    gap:7px !important;
+    width:100% !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  .video-frame{
+    border-radius:11px !important;
+    border-width:1px !important;
+    box-shadow:
+      0 0 0 3px rgba(0,198,255,0.035),
+      0 0 16px rgba(0,198,255,0.14),
+      0 10px 22px rgba(2,6,23,0.28),
+      inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    min-width:0 !important;
+    padding:8px 7px !important;
+    border-radius:11px !important;
+  }
+
+  .video-kicker{
+    min-height:18px !important;
+    padding:3px 6px !important;
+    gap:4px !important;
+    font-size:0.45rem !important;
+    line-height:1 !important;
+    letter-spacing:0.02em !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-kicker i{
+    font-size:0.58rem !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.72rem, 1.27vw, 0.88rem) !important;
+    line-height:1.04 !important;
+    letter-spacing:-0.05em !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.48rem, 0.78vw, 0.55rem) !important;
+    line-height:1.22 !important;
+    margin-bottom:6px !important;
+  }
+
+  .video-benefits{
+    gap:4px !important;
+  }
+
+  .video-benefits li{
+    gap:4px !important;
+    font-size:clamp(0.45rem, 0.72vw, 0.52rem) !important;
+    line-height:1.15 !important;
+  }
+
+  .video-benefits i{
+    width:9px !important;
+    min-width:9px !important;
+    max-width:9px !important;
+    margin-top:0 !important;
+    font-size:0.52rem !important;
+  }
+}
+
+/* Extra squeeze for the narrowest tablet widths while still keeping desktop layout */
+@media (min-width: 769px) and (max-width: 860px){
+  header{
+    padding-left:1px !important;
+    padding-right:2px !important;
+    gap:1px !important;
+  }
+
+  header .logo{
+    flex-basis:48px !important;
+    width:48px !important;
+    min-width:48px !important;
+    max-width:48px !important;
+  }
+
+  header .logo img{
+    height:40px !important;
+    max-width:48px !important;
+  }
+
+  header nav{
+    gap:0 !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:23px !important;
+    padding:0 1px !important;
+    gap:1px !important;
+    font-size:clamp(0.40rem, 0.60vw, 0.46rem) !important;
+    letter-spacing:-0.065em !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:6px !important;
+    min-width:6px !important;
+    max-width:6px !important;
+    font-size:0.68em !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:8px !important;
+    min-width:8px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.38rem !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:23px !important;
+    padding:0 3px !important;
+    gap:1px !important;
+    font-size:0.44rem !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:9px !important;
+    height:9px !important;
+    min-width:9px !important;
+    max-width:9px !important;
+    font-size:0.42rem !important;
+  }
+
+  .video-card{
+    padding:46px 6px 9px !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:minmax(0, 1fr) minmax(160px, 0.50fr) !important;
+    gap:6px !important;
+  }
+
+  .video-info-panel{
+    padding:7px 6px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.66rem, 1.18vw, 0.80rem) !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.44rem, 0.70vw, 0.50rem) !important;
+    line-height:1.16 !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-benefits li{
+    font-size:clamp(0.41rem, 0.66vw, 0.47rem) !important;
+    line-height:1.12 !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL REQUESTED RESPONSIVE OVERRIDE - DESKTOP SAME LAYOUT
+   769px to 1023px keeps the desktop header/page layout and
+   only compresses spacing/sizes so content stays visible.
+   No HTML, links, IDs, scripts, dropdown behavior, video behavior,
+   mobile menu behavior, or login behavior are changed.
+============================================================ */
+img,
+video{
+  max-width:100%;
+}
+
+header,
+header *,
+.page-shell,
+.portal-card,
+.video-showcase,
+.video-frame-wrap,
+.video-info-panel,
+.page-title{
+  min-width:0 !important;
+}
+
+.video-showcase{
+  width:100% !important;
+}
+
+.video-info-panel p,
+.video-benefits li,
+.page-title p{
+  overflow-wrap:anywhere !important;
+}
+
+.video-benefits li span{
+  min-width:0 !important;
+}
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    padding:0 24px 0 14px !important;
+    gap:18px !important;
+  }
+
+  header .logo{
+    flex:0 0 132px !important;
+    min-width:132px !important;
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+    max-width:132px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    gap:8px !important;
+    font-size:0.94rem !important;
+    letter-spacing:0 !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:17px !important;
+    min-width:17px !important;
+    font-size:0.92em !important;
+  }
+
+  .nav-dropdown{ height:38px !important; }
+  .nav-dropdown-trigger{ gap:2px !important; }
+  .nav-dropdown-toggle{ width:24px !important; height:24px !important; }
+  .nav-dropdown-toggle i{ font-size:0.92rem !important; }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:38px !important;
+    padding:0 14px !important;
+    gap:7px !important;
+    border-radius:10px !important;
+    font-size:0.86rem !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+    font-size:0.85rem !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .page-shell{
+    width:min(1500px, calc(100% - 72px)) !important;
+    min-height:100vh !important;
+    padding:132px 36px 54px !important;
+    align-items:center !important;
+  }
+
+  .video-card{
+    padding:126px 44px 46px !important;
+    border-radius:30px !important;
+  }
+
+  .page-title{ top:32px !important; }
+  .page-title h1{ font-size:clamp(1.95rem, 2vw, 2.35rem) !important; }
+  .page-title p{ font-size:0.98rem !important; line-height:1.5 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.28fr) minmax(340px, 0.72fr) !important;
+    gap:34px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{ order:initial !important; }
+  .video-info-panel{
+    order:initial !important;
+    padding:30px 26px !important;
+    border-radius:24px !important;
+  }
+  .video-info-panel h2{ font-size:clamp(1.62rem, 1.75vw, 2.15rem) !important; }
+  .video-info-panel p{ font-size:0.98rem !important; line-height:1.65 !important; }
+  .video-benefits li{ font-size:0.91rem !important; line-height:1.46 !important; }
+  .video-frame{ border-radius:26px !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    padding:0 18px 0 10px !important;
+    gap:14px !important;
+  }
+
+  header .logo{
+    flex:0 0 118px !important;
+    min-width:118px !important;
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+    max-width:118px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:13px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    gap:6px !important;
+    font-size:0.84rem !important;
+    letter-spacing:0 !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:15px !important;
+    min-width:15px !important;
+    font-size:0.92em !important;
+  }
+
+  .nav-dropdown{ height:36px !important; }
+  .nav-dropdown-trigger{ gap:2px !important; }
+  .nav-dropdown-toggle{ width:24px !important; height:24px !important; }
+  .nav-dropdown-toggle i{ font-size:0.88rem !important; }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:36px !important;
+    padding:0 11px !important;
+    gap:7px !important;
+    border-radius:10px !important;
+    font-size:0.79rem !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+    font-size:0.85rem !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .page-shell{
+    width:min(1280px, calc(100% - 44px)) !important;
+    min-height:100vh !important;
+    padding:124px 22px 42px !important;
+    align-items:center !important;
+  }
+
+  .video-card{
+    padding:112px 30px 38px !important;
+    border-radius:28px !important;
+  }
+
+  .page-title{ top:28px !important; }
+  .page-title h1{ font-size:clamp(1.72rem, 2.25vw, 2.05rem) !important; }
+  .page-title p{ font-size:0.90rem !important; line-height:1.45 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.25fr) minmax(300px, 0.75fr) !important;
+    gap:28px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{ order:initial !important; }
+  .video-info-panel{
+    order:initial !important;
+    padding:26px 22px !important;
+    border-radius:23px !important;
+  }
+  .video-info-panel h2{ font-size:clamp(1.42rem, 1.85vw, 2rem) !important; }
+  .video-info-panel p{ font-size:0.92rem !important; line-height:1.62 !important; }
+  .video-benefits li{ font-size:0.86rem !important; line-height:1.42 !important; }
+  .video-frame{ border-radius:24px !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    padding:0 12px 0 6px !important;
+    gap:8px !important;
+  }
+
+  header .logo{
+    flex:0 0 86px !important;
+    min-width:86px !important;
+    margin-left:0 !important;
+  }
+
+  header .logo img{
+    height:64px !important;
+    max-width:86px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:32px !important;
+    padding:0 3px !important;
+    gap:4px !important;
+    font-size:0.70rem !important;
+    line-height:1 !important;
+    letter-spacing:-0.015em !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+
+  .nav-dropdown{ height:32px !important; }
+  .nav-dropdown-trigger{ gap:1px !important; }
+  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
+  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:31px !important;
+    padding:0 8px !important;
+    gap:5px !important;
+    border-radius:8px !important;
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+
+  .page-shell{
+    width:min(1120px, calc(100% - 24px)) !important;
+    min-height:100vh !important;
+    padding:112px 12px 34px !important;
+    align-items:center !important;
+  }
+
+  .video-card{
+    padding:96px 20px 28px !important;
+    border-radius:24px !important;
+  }
+
+  .page-title{ top:22px !important; padding:0 16px !important; }
+  .page-title h1{ font-size:clamp(1.35rem, 2.05vw, 1.78rem) !important; line-height:1.12 !important; }
+  .page-title p{ margin-top:6px !important; font-size:0.80rem !important; line-height:1.35 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.20fr) minmax(270px, 0.80fr) !important;
+    gap:20px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{ order:initial !important; }
+  .video-info-panel{
+    order:initial !important;
+    padding:20px 18px !important;
+    border-radius:20px !important;
+  }
+  .video-kicker{ font-size:0.64rem !important; min-height:26px !important; padding:6px 10px !important; margin-bottom:10px !important; }
+  .video-info-panel h2{ font-size:clamp(1.18rem, 1.65vw, 1.55rem) !important; line-height:1.12 !important; margin-bottom:9px !important; }
+  .video-info-panel p{ font-size:0.78rem !important; line-height:1.50 !important; margin-bottom:12px !important; }
+  .video-benefits{ gap:8px !important; }
+  .video-benefits li{ font-size:0.74rem !important; line-height:1.34 !important; }
+  .video-frame{ border-radius:20px !important; }
+}
+
+/* ===== 769px to 1023px: desktop layout retained, compressed only ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  html,
+  body{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+  }
+
+  header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    max-height:var(--header-h) !important;
+    padding:0 6px 0 4px !important;
+    gap:4px !important;
+    overflow:visible !important;
+  }
+
+  header .logo{
+    flex:0 0 72px !important;
+    width:72px !important;
+    min-width:72px !important;
+    max-width:72px !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+    width:auto !important;
+    max-width:72px !important;
+    object-fit:contain !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:3px !important;
+    margin:0 !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    flex:0 0 auto !important;
+    min-width:0 !important;
+    height:28px !important;
+    min-height:28px !important;
+    padding:0 2px !important;
+    gap:2px !important;
+    border-radius:7px !important;
+    font-size:clamp(0.50rem, 0.80vw, 0.60rem) !important;
+    line-height:1 !important;
+    letter-spacing:-0.045em !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:9px !important;
+    min-width:9px !important;
+    max-width:9px !important;
+    font-size:0.74em !important;
+    margin:0 !important;
+  }
+
+  header nav .nav-text,
+  header .auth-buttons .auth-text{
+    display:inline-block !important;
+    min-width:0 !important;
+    max-width:none !important;
+    white-space:nowrap !important;
+  }
+
+  .nav-dropdown{
+    height:28px !important;
+    flex:0 0 auto !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:0 !important;
+    height:28px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:13px !important;
+    min-width:13px !important;
+    height:13px !important;
+    padding:0 !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.50rem !important;
+  }
+
+  .nav-dropdown-menu{
+    min-width:190px !important;
+    top:calc(100% + 8px) !important;
+  }
+
+  .nav-dropdown-menu a{
+    padding:10px 10px !important;
+    gap:8px !important;
+    font-size:0.76rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    flex:0 0 auto !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:2px !important;
+    margin:0 !important;
+  }
+
+  header .auth-buttons a,
+  header .auth-buttons a.login-auth{
+    height:27px !important;
+    min-height:27px !important;
+    padding:0 5px !important;
+    gap:3px !important;
+    border-radius:7px !important;
+    font-size:0.54rem !important;
+    letter-spacing:-0.02em !important;
+    white-space:nowrap !important;
+  }
+
+  header .auth-buttons a i,
+  header .auth-buttons a.login-auth i{
+    width:12px !important;
+    height:12px !important;
+    min-width:12px !important;
+    max-width:12px !important;
+    font-size:0.52rem !important;
+  }
+
+  .nav-toggle{
+    display:none !important;
+  }
+
+  .mobile-panel{
+    display:none !important;
+  }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 14px) 10px 24px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    width:100% !important;
+    border-radius:20px !important;
+  }
+
+  .video-card{
+    padding:78px 12px 18px !important;
+  }
+
+  .page-title{
+    top:15px !important;
+    padding:0 10px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(1.05rem, 2.2vw, 1.36rem) !important;
+    line-height:1.10 !important;
+    letter-spacing:-0.035em !important;
+  }
+
+  .page-title p{
+    margin-top:5px !important;
+    font-size:clamp(0.64rem, 1.2vw, 0.76rem) !important;
+    line-height:1.25 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.05fr) minmax(210px, 0.72fr) !important;
+    gap:12px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    padding:13px 12px !important;
+    border-radius:16px !important;
+  }
+
+  .video-kicker{
+    min-height:22px !important;
+    padding:4px 8px !important;
+    gap:5px !important;
+    font-size:0.55rem !important;
+    letter-spacing:0.035em !important;
+    margin-bottom:7px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.92rem, 1.65vw, 1.12rem) !important;
+    line-height:1.08 !important;
+    letter-spacing:-0.035em !important;
+    margin-bottom:7px !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.60rem, 1.05vw, 0.68rem) !important;
+    line-height:1.35 !important;
+    margin-bottom:8px !important;
+  }
+
+  .video-benefits{
+    gap:6px !important;
+  }
+
+  .video-benefits li{
+    gap:6px !important;
+    font-size:clamp(0.56rem, 1vw, 0.64rem) !important;
+    line-height:1.25 !important;
+  }
+
+  .video-benefits i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.66rem !important;
+    margin-top:1px !important;
+  }
+
+  .video-frame{
+    border-radius:14px !important;
+    box-shadow:
+      0 0 0 4px rgba(0,198,255,0.04),
+      0 0 22px rgba(0,198,255,0.16),
+      0 16px 32px rgba(2,6,23,0.34),
+      inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 10px 0 8px !important;
+    gap:8px !important;
+    align-items:center !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+    max-width:88px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    justify-self:end !important;
+    margin:0 !important;
+  }
+
+  .mobile-panel{
+    display:block !important;
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{ gap:8px !important; }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0,1fr) 46px !important; }
+  .mobile-panel .mnav-toggle{ width:46px !important; min-width:46px !important; max-width:46px !important; }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 16px) 12px 28px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:22px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:84px 14px 24px !important;
+  }
+
+  .page-title{ top:20px !important; padding:0 12px !important; }
+  .page-title h1{ font-size:clamp(1.18rem, 4vw, 1.55rem) !important; line-height:1.15 !important; }
+  .page-title p{ margin-top:6px !important; font-size:0.78rem !important; line-height:1.32 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:16px !important;
+    align-items:start !important;
+  }
+
+  .video-frame-wrap{ order:1 !important; }
+  .video-info-panel{
+    order:2 !important;
+    padding:20px 18px !important;
+    border-radius:18px !important;
+  }
+  .video-kicker{ min-height:26px !important; padding:6px 10px !important; font-size:0.68rem !important; margin-bottom:10px !important; }
+  .video-info-panel h2{ font-size:clamp(1.24rem, 4.3vw, 1.65rem) !important; line-height:1.12 !important; margin-bottom:10px !important; }
+  .video-info-panel p{ font-size:0.88rem !important; line-height:1.52 !important; margin-bottom:14px !important; }
+  .video-benefits{ gap:9px !important; }
+  .video-benefits li{ gap:9px !important; font-size:0.82rem !important; line-height:1.38 !important; }
+  .video-frame{ border-radius:18px !important; }
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    padding:0 8px !important;
+    gap:8px !important;
+    align-items:center !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+    max-width:78px !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    justify-self:end !important;
+    margin:0 !important;
+  }
+
+  .mobile-panel{
+    display:block !important;
+    top:var(--header-h) !important;
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{ gap:7px !important; }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+  .mobile-panel .mnav-left{ gap:9px !important; }
+  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0,1fr) 42px !important; gap:7px !important; }
+  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
+
+  .page-shell{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:auto !important;
+    padding:calc(var(--header-h) + 12px) 8px 22px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:18px !important;
+    width:100% !important;
+  }
+
+  .video-card{
+    padding:76px 10px 18px !important;
+  }
+
+  .page-title{ top:17px !important; padding:0 9px !important; }
+  .page-title h1{ font-size:clamp(1.02rem, 6vw, 1.26rem) !important; line-height:1.12 !important; letter-spacing:-0.035em !important; }
+  .page-title p{ margin-top:5px !important; font-size:0.68rem !important; line-height:1.25 !important; }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+    align-items:start !important;
+  }
+
+  .video-frame-wrap{ order:1 !important; }
+  .video-info-panel{
+    order:2 !important;
+    padding:16px 13px !important;
+    border-radius:16px !important;
+  }
+  .video-kicker{ min-height:24px !important; padding:5px 9px !important; font-size:0.60rem !important; letter-spacing:0.04em !important; margin-bottom:9px !important; }
+  .video-info-panel h2{ font-size:clamp(1.08rem, 5.3vw, 1.34rem) !important; line-height:1.12 !important; margin-bottom:9px !important; }
+  .video-info-panel p{ font-size:0.78rem !important; line-height:1.45 !important; margin-bottom:12px !important; }
+  .video-benefits{ gap:8px !important; }
+  .video-benefits li{ gap:8px !important; font-size:0.74rem !important; line-height:1.35 !important; }
+  .video-benefits i{ width:15px !important; min-width:15px !important; font-size:0.82rem !important; }
+  .video-frame{ border-radius:14px !important; }
+}
+
+
+/* ============================================================
+   FINAL 769px-1023px VIDEO EXTRA COMPRESSION PATCH
+   Compresses only the video/content area for tablet-width desktop layout.
+   Header, links, IDs, dropdown JS, login behavior, mobile menu behavior,
+   and video autoplay/controls behavior remain unchanged.
+============================================================ */
+@media (min-width: 769px) and (max-width: 1023px){
+  .page-shell{
+    padding-top:calc(var(--header-h) + 8px) !important;
+    padding-left:8px !important;
+    padding-right:8px !important;
+    padding-bottom:16px !important;
+    align-items:flex-start !important;
+  }
+
+  .portal-card{
+    border-radius:18px !important;
+  }
+
+  .video-card{
+    padding:62px 10px 14px !important;
+  }
+
+  .page-title{
+    top:10px !important;
+    padding:0 8px !important;
+  }
+
+  .page-title h1{
+    font-size:clamp(0.96rem, 2vw, 1.18rem) !important;
+    line-height:1.05 !important;
+    letter-spacing:-0.045em !important;
+    margin:0 !important;
+  }
+
+  .page-title p{
+    margin-top:4px !important;
+    font-size:clamp(0.56rem, 1.05vw, 0.66rem) !important;
+    line-height:1.18 !important;
+  }
+
+  .video-showcase{
+    display:grid !important;
+    grid-template-columns:minmax(0, 0.98fr) minmax(190px, 0.62fr) !important;
+    gap:9px !important;
+    align-items:center !important;
+  }
+
+  .video-frame-wrap{
+    order:initial !important;
+    justify-self:center !important;
+    width:100% !important;
+    max-width:clamp(360px, 54vw, 500px) !important;
+  }
+
+  .video-frame{
+    aspect-ratio:16 / 8.4 !important;
+    border-radius:12px !important;
+    border-width:1px !important;
+    box-shadow:
+      0 0 0 3px rgba(0,198,255,0.035),
+      0 0 16px rgba(0,198,255,0.13),
+      0 12px 24px rgba(2,6,23,0.30),
+      inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  }
+
+  .intro-video{
+    object-fit:cover !important;
+  }
+
+  .video-info-panel{
+    order:initial !important;
+    padding:10px 10px !important;
+    border-radius:14px !important;
+    align-self:center !important;
+  }
+
+  .video-kicker{
+    min-height:19px !important;
+    padding:3px 7px !important;
+    gap:4px !important;
+    font-size:0.50rem !important;
+    letter-spacing:0.025em !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.80rem, 1.45vw, 1.02rem) !important;
+    line-height:1.05 !important;
+    letter-spacing:-0.045em !important;
+    margin-bottom:5px !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.54rem, 0.95vw, 0.62rem) !important;
+    line-height:1.25 !important;
+    margin-bottom:6px !important;
+  }
+
+  .video-benefits{
+    gap:4px !important;
+  }
+
+  .video-benefits li{
+    gap:5px !important;
+    font-size:clamp(0.50rem, 0.90vw, 0.58rem) !important;
+    line-height:1.16 !important;
+  }
+
+  .video-benefits i{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:0.56rem !important;
+    margin-top:1px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 860px){
+  .video-card{
+    padding:58px 8px 12px !important;
+  }
+
+  .video-showcase{
+    grid-template-columns:minmax(0, 0.96fr) minmax(178px, 0.60fr) !important;
+    gap:7px !important;
+  }
+
+  .video-frame-wrap{
+    max-width:clamp(330px, 53vw, 420px) !important;
+  }
+
+  .video-frame{
+    aspect-ratio:16 / 8.2 !important;
+  }
+
+  .video-info-panel{
+    padding:9px 8px !important;
+  }
+
+  .video-info-panel h2{
+    font-size:clamp(0.74rem, 1.42vw, 0.92rem) !important;
+  }
+
+  .video-info-panel p{
+    font-size:clamp(0.50rem, 0.92vw, 0.57rem) !important;
+  }
+
+  .video-benefits li{
+    font-size:clamp(0.47rem, 0.86vw, 0.54rem) !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL BANK-STYLE FONT + BACKGROUND COLOR PATCH
+   Applies the clean white / light gray background and dark navy
+   typography from the reference image while preserving existing
+   icon colors, login button colors, links, layout, JS behavior,
+   video behavior, and responsive breakpoints.
+============================================================ */
+:root{
+  --bank-white:#ffffff;
+  --bank-soft:#f5f5f5;
+  --bank-soft-2:#f7f7f7;
+  --bank-line:#e6e8ec;
+  --bank-navy:#012169;
+  --bank-text:#1f2937;
+  --bank-muted:#4b5563;
+  --bank-link:#0057b8;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body{
+  background:var(--bank-white) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Header background and typography only */
+header{
+  background:var(--bank-white) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo img{
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--bank-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Preserve blue icon style in normal state; keep hover readable on white */
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  color:#070bee !important;
+  text-shadow:0 0 10px rgba(56,189,248,0.35) !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#000000 !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+.nav-dropdown-menu{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--bank-navy) !important;
+  background:var(--bank-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Mobile menu follows the same white / navy reference style */
+.mobile-panel{
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:var(--bank-navy) !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--bank-white) !important;
+}
+
+/* Main page background and content colors */
+.page-shell{
+  background:var(--bank-white) !important;
+}
+
+.portal-card,
+.video-card{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.08) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.portal-card::before,
+.portal-card::after{
+  display:none !important;
+  content:none !important;
+}
+
+.page-title h1,
+.video-info-panel h2,
+.logo-fallback .brand-main{
+  color:var(--bank-navy) !important;
+  font-weight:600 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+}
+
+.page-title p,
+.video-info-panel p,
+.video-benefits li,
+.logo-fallback .brand-sub{
+  color:var(--bank-text) !important;
+  font-weight:400 !important;
+  text-shadow:none !important;
+}
+
+.video-info-panel{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 8px 20px rgba(1,33,105,0.06) !important;
+}
+
+.video-kicker{
+  background:var(--bank-soft) !important;
+  border:1px solid var(--bank-line) !important;
+  color:var(--bank-navy) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.video-frame{
+  background:var(--bank-soft-2) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:0 10px 28px rgba(1,33,105,0.10) !important;
+}
+
+.video-frame::before{
+  background:linear-gradient(135deg, rgba(255,255,255,0.10), transparent 35%) !important;
+}
+
+.logo-center{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 10px 28px rgba(1,33,105,0.08) !important;
+}
+
+.logo-center::before{
+  border-color:var(--bank-line) !important;
+}
+
+.logo-img{
+  filter:none !important;
+}
+
+.skip-now-link{
+  color:var(--bank-link) !important;
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.skip-now-link:hover,
+.skip-now-link:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Keep the original portal and auth button colors/styles intact */
+.portal-button,
+header .auth-buttons a,
+header .auth-buttons a.login-auth{
+  text-decoration:none !important;
+}
+
+.portal-button,
+.portal-button span,
+.portal-button i,
+header .auth-buttons a,
+header .auth-buttons a .auth-text,
+header .auth-buttons a i,
+header .auth-buttons a.login-auth,
+header .auth-buttons a.login-auth .auth-text,
+header .auth-buttons a.login-auth i{
+  font-weight:700 !important;
+}
+
+
+/* ============================================================
+   FINAL MARKED ICON RESTORE PATCH
+   Restores the marked Font Awesome icons after the bank-style
+   font patch. Keeps the existing button colors/styles unchanged.
+============================================================ */
+
+/* Restore Font Awesome font so icons render as icons, not letters/boxes */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far{
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Restore the marked nav/info icons: solid cyan-blue, visible, no boxes */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i,
+.mobile-panel .mnav-left > i,
+.video-kicker > i,
+.video-benefits li > i,
+.skip-now-link > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  color:#360ee9 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:0 0 10px rgba(14,165,233,0.34) !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+/* Desktop header icons */
+header nav > a > i,
+header nav .nav-main-link > i{
+  width:18px !important;
+  min-width:18px !important;
+  height:18px !important;
+  font-size:1rem !important;
+  margin-right:4px !important;
+}
+
+/* Dropdown menu icons */
+.nav-dropdown-menu a > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  font-size:0.95rem !important;
+}
+
+/* Mobile menu icons */
+.mobile-panel .mnav-left > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  font-size:1rem !important;
+}
+
+/* Kicker and feature-list icons inside the video information card */
+.video-kicker > i{
+  width:16px !important;
+  min-width:16px !important;
+  height:16px !important;
+  font-size:0.86rem !important;
+  margin-right:2px !important;
+}
+
+.video-benefits li > i{
+  width:22px !important;
+  min-width:22px !important;
+  height:22px !important;
+  font-size:1rem !important;
+  margin-top:1px !important;
+}
+
+/* Keep requested hover behavior: text and icons turn black with underline */
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i,
+.skip-now-link:hover > i,
+.skip-now-link:focus-visible > i{
+  color:#000000 !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Restore visible caret/dropdown icons without changing the dropdown behavior */
+.nav-dropdown-toggle > i,
+.mobile-panel .mnav-toggle > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:1000 !important;
+  color:var(--bank-navy, #012169) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  opacity:1 !important;
+}
+
+/* Responsive icon sizes: keep them visible while preventing overlap */
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.86rem !important;
+    margin-right:3px !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.86rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:13px !important;
+    min-width:13px !important;
+    height:13px !important;
+    font-size:0.74rem !important;
+    margin-right:2px !important;
+  }
+
+  .video-kicker > i{
+    width:13px !important;
+    min-width:13px !important;
+    height:13px !important;
+    font-size:0.68rem !important;
+  }
+
+  .video-benefits li > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.72rem !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav-left > i{
+    width:19px !important;
+    min-width:19px !important;
+    height:19px !important;
+    font-size:0.96rem !important;
+  }
+
+  .video-kicker > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.80rem !important;
+  }
+
+  .video-benefits li > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    font-size:0.92rem !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left > i{
+    width:17px !important;
+    min-width:17px !important;
+    height:17px !important;
+    font-size:0.88rem !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.82rem !important;
+  }
+}
+
+
+
+
+/* ============================================================
+   FINAL VISIBLE NAV + DROPDOWN ICON PATCH
+   Makes every marked Font Awesome icon render correctly and
+   visually stronger on the white header/background while keeping
+   the existing button colors, links, dropdown JS, video behavior,
+   and responsive layout unchanged.
+============================================================ */
+
+/* Font Awesome uses ::before. Restore the icon font on BOTH the
+   <i> element and its ::before glyph after the global font patch. */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Strong desktop navigation icons, styled like the second reference */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin:0 7px 0 0 !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.26) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.82),
+    0 0 12px rgba(14,165,233,0.30) !important;
+  text-shadow:0 0 10px rgba(14,165,233,0.46) !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+header nav > a > i::before,
+header nav .nav-main-link > i::before,
+.nav-dropdown-menu a > i::before{
+  display:block !important;
+  color:inherit !important;
+  font-size:1rem !important;
+  line-height:1 !important;
+}
+
+/* Give nav text a little more breathing room next to the stronger icons */
+header nav > a,
+header nav .nav-main-link{
+  gap:0 !important;
+  padding-left:7px !important;
+  padding-right:9px !important;
+  min-height:36px !important;
+}
+
+/* Visible About caret/dropdown toggle */
+.nav-dropdown-toggle{
+  width:30px !important;
+  height:30px !important;
+  min-width:30px !important;
+  border-radius:8px !important;
+  margin-left:2px !important;
+  color:#012169 !important;
+  background:rgba(14,165,233,0.06) !important;
+  border:1px solid rgba(14,165,233,0.18) !important;
+}
+
+.nav-dropdown-toggle > i,
+.nav-dropdown-toggle > i::before,
+.mobile-panel .mnav-toggle > i,
+.mobile-panel .mnav-toggle > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+  line-height:1 !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+}
+
+/* Dropdown menu icons match the stronger nav icon treatment */
+.nav-dropdown-menu a{
+  gap:0 !important;
+  padding:11px 14px !important;
+}
+
+.nav-dropdown-menu a > i{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin-right:10px !important;
+  font-size:1rem !important;
+}
+
+/* Video card mini icons, made clearer and easier to read */
+.video-kicker > i,
+.video-benefits li > i,
+.skip-now-link > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  border-radius:7px !important;
+  box-shadow:0 0 12px rgba(14,165,233,0.22) !important;
+  text-shadow:0 0 9px rgba(14,165,233,0.40) !important;
+  opacity:1 !important;
+  transform:none !important;
+}
+
+.video-kicker > i::before,
+.video-benefits li > i::before,
+.skip-now-link > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+}
+
+.video-kicker > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  margin-right:6px !important;
+  font-size:0.86rem !important;
+}
+
+.video-benefits li > i{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin-top:0 !important;
+  font-size:0.95rem !important;
+}
+
+/* Mobile panel icons */
+.mobile-panel .mnav-left > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  border-radius:8px !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  box-shadow:0 0 12px rgba(14,165,233,0.22) !important;
+  text-shadow:0 0 9px rgba(14,165,233,0.36) !important;
+}
+
+.mobile-panel .mnav-left > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+  font-size:1rem !important;
+}
+
+/* Hover remains requested black + underline, but icon is still clear */
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i,
+.video-kicker:hover > i,
+.video-benefits li:hover > i,
+.skip-now-link:hover > i,
+.skip-now-link:focus-visible > i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Keep the login button icon exactly inside the existing blue/purple button style */
+header .auth-buttons a.login-auth > i,
+header .auth-buttons a.login-auth > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:#ffffff !important;
+}
+
+header .auth-buttons a.login-auth > i{
+  width:18px !important;
+  min-width:18px !important;
+  height:18px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.18) !important;
+  border:0 !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.12) !important;
+  margin-right:0 !important;
+}
+
+/* Responsive tuning: icons stay visible without breaking the header */
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:5px !important;
+    padding-right:6px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    margin-right:5px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.86rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:25px !important;
+    min-width:25px !important;
+    height:25px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:3px !important;
+    padding-right:4px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:17px !important;
+    min-width:17px !important;
+    height:17px !important;
+    margin-right:3px !important;
+    border-radius:6px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.72rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    border-radius:6px !important;
+  }
+
+  .video-kicker > i{
+    width:16px !important;
+    min-width:16px !important;
+    height:16px !important;
+    font-size:0.68rem !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.72rem !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav-left > i{
+    width:23px !important;
+    min-width:23px !important;
+    height:23px !important;
+  }
+
+  .video-kicker > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+  }
+
+  .video-benefits li > i{
+    width:22px !important;
+    min-width:22px !important;
+    height:22px !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left > i{
+    width:21px !important;
+    min-width:21px !important;
+    height:21px !important;
+  }
+
+  .video-benefits li > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+  }
+}
+
+
+
+
+/* ============================================================
+   FINAL DARK-BLUE ICON COLOR PATCH
+   Changes all page Font Awesome icons to dark blue and removes
+   icon shadows only. Existing links, layout, buttons, dropdowns,
+   and behavior are preserved.
+============================================================ */
+:root{
+  --jsl-icon-dark-blue:#003a70;
+}
+
+i.fa-solid,
+i.fa-regular,
+i.fa-brands,
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i,
+.mobile-panel .mnav-main-link i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav-left i,
+.video-kicker i,
+.video-benefits i,
+.skip-now-link i,
+.portal-button i,
+header .auth-buttons a i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-toggle:hover i,
+.video-kicker:hover i,
+.video-benefits li:hover i,
+.skip-now-link:hover i,
+.skip-now-link:focus-visible i,
+.portal-button:hover i,
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth i,
+header .auth-buttons a.login-auth:hover i,
+header .auth-buttons a.login-auth:focus-visible i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+/* ============================================================
+   FINAL HOW IT WORKS + CHOOSE PORTAL STYLE SYNC PATCH
+   Applies the Choose Portal header, font/color, and page background
+   to this page while preserving the How It Works content structure,
+   step styling behavior, mobile menu behavior, and JavaScript IDs.
+============================================================ */
+:root{
+  --bank-white:#ffffff;
+  --bank-soft:#f5f5f5;
+  --bank-soft-2:#f7f7f7;
+  --bank-line:#e6e8ec;
+  --bank-navy:#012169;
+  --bank-text:#1f2937;
+  --bank-muted:#4b5563;
+  --bank-link:#0057b8;
+  --jsl-icon-dark-blue:#003a70;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+  box-sizing:border-box;
+}
+
+html,
+body{
+  width:100% !important;
+  min-height:100% !important;
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Choose Portal white header style */
+header{
+  background:var(--bank-white) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo img{
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--bank-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+.nav-dropdown-menu{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--bank-navy) !important;
+  background:var(--bank-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel{
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--bank-white) !important;
+}
+
+/* Dark-blue no-shadow header/mobile icons from Choose Portal */
+i.fa-solid,
+i.fa-regular,
+i.fa-brands,
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i,
+.mobile-panel .mnav-main-link i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav-left i,
+header .auth-buttons a i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-toggle:hover i,
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+/* Keep the Login button style/color from the existing header */
+header .auth-buttons a,
+header .auth-buttons a.login-auth{
+  text-decoration:none !important;
+}
+
+header .auth-buttons a,
+header .auth-buttons a .auth-text,
+header .auth-buttons a i,
+header .auth-buttons a.login-auth,
+header .auth-buttons a.login-auth .auth-text,
+header .auth-buttons a.login-auth i{
+  font-weight:700 !important;
+}
+
+/* Apply Choose Portal font/color/background to How It Works text without changing its behavior */
+.hero,
+#how-it-works{
+  background:transparent !important;
+  color:var(--bank-text) !important;
+}
+
+.hero::before{
+  display:none !important;
+  content:none !important;
+  animation:none !important;
+}
+
+.hero h1,
+#how-it-works h2{
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:var(--bank-navy) !important;
+  color:var(--bank-navy) !important;
+  font-weight:600 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+}
+
+.hero p,
+.step p{
+  color:var(--bank-text) !important;
+  font-weight:400 !important;
+  text-shadow:none !important;
+}
+
+.step{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.08) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.step:hover{
+  background:var(--bank-white) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:0 18px 34px rgba(1,33,105,0.12) !important;
+  transform:translateY(-6px) !important;
+}
+
+.step span{
+  background:#00c6ff !important;
+  color:#000000 !important;
+  box-shadow:none !important;
+}
+
+.footer-simple{
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  color:var(--bank-text) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.footer-simple .footer-logo img{
+  filter:none !important;
+}
+
+.footer-simple .footer-bottom{
+  color:var(--bank-muted) !important;
+}
+
+
+
+/* ============================================================
+   FINAL STEP CONTENT HOVER RESTORE PATCH
+   Restores the original gradient hover behavior for the How It Works
+   step cards while keeping the Choose Portal header/font/background.
+============================================================ */
+.step,
+.step h3,
+.step p,
+.step span{
+  transition:
+    transform 0.30s ease,
+    color 0.30s ease,
+    background 0.30s ease,
+    border-color 0.30s ease,
+    box-shadow 0.30s ease,
+    text-shadow 0.30s ease !important;
+}
+
+.step{
+  position:relative !important;
+  overflow:hidden !important;
+}
+
+.step:hover,
+.step:focus-within{
+  background:linear-gradient(90deg,#00c6ff,#8b5cf6) !important;
+  border-color:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 35px rgba(0,198,255,0.45) !important;
+  transform:translateY(-6px) !important;
+}
+
+.step:hover h3,
+.step:focus-within h3,
+.step:hover p,
+.step:focus-within p{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(2,6,23,0.22) !important;
+}
+
+.step:hover span,
+.step:focus-within span{
+  background:#ffffff !important;
+  color:#012169 !important;
+  box-shadow:0 0 18px rgba(255,255,255,0.28) !important;
+  transform:translateY(-2px) scale(1.04) !important;
+}
+
 </style>
 </head>
 
 <body>
-<!-- HEADER -->
 <header>
   <div class="logo">
     <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
@@ -1677,8 +5721,10 @@ body > header *,
   </nav>
 
   <div class="auth-buttons">
-    <a href="index1.html" class="admin jobseeker-auth"><i class="fa-solid fa-right-to-bracket"></i><span class="auth-text"> Login</span></a>
-  
+    <a href="index1.html" class="login-auth">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      <span class="auth-text">Login</span>
+    </a>
   </div>
 
   <button
@@ -1691,10 +5737,12 @@ body > header *,
     <i class="fa-solid fa-bars"></i>
   </button>
 </header>
+
 <!-- Mobile panel -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="index1.html" class="mobile-login-link"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
@@ -1720,9 +5768,7 @@ body > header *,
     <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="index1.html" class="admin jobseeker-auth"><i class="fa-solid fa-right-to-bracket"></i><span class="auth-text"> Login</span></a>
-
+    <a href="applicantform1.html"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 

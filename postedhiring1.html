@@ -2,6 +2,11 @@
      PART 1 OF 3
      postedhiring25.html | View Staff Requirements | Job Space Link
 
+     ✅ LATEST HEADER DROPDOWN + SECOND-ROW FILTER VISIBILITY UPDATE:
+        ✅ Header nav dropdowns now stay above sticky controls/table/grid content to prevent hidden menu parts.
+        ✅ Second-row advanced filters now use the same white background, navy font color, font style, hover, focus, menu, and option styling as the All Industries filter.
+        ✅ Existing functionality, session handling, filtering, table/grid, favorite/apply, and Supabase behavior remain unchanged.
+
      ✅ UPDATED AGAIN:
         ✅ Header navigation now adds Jobseeker and Post Jobs links immediately after Job Hiring on desktop and mobile.
         ✅ Logged-out users now DO NOT see:
@@ -313,7 +318,7 @@ header nav .nav-main-link{
 header nav > a:hover,
 header nav .nav-main-link:hover{
   color:#ffffff;
-  text-shadow:0 0 12px rgba(0,198,255,0.55);
+
 }
 
 header .auth-buttons{
@@ -361,8 +366,7 @@ header .auth-buttons a:hover{
   justify-content:center;
   cursor:pointer;
   flex:0 0 auto;
-  border:1px solid rgba(255,255,255,0.14);
-  box-shadow:0 0 14px rgba(0,198,255,0.10);
+ 
 }
 
 .nav-toggle i{
@@ -12524,6 +12528,8 @@ canvas{
   .job-hiring-toolbar-title span{
     font-size:.53rem !important;
     letter-spacing:-.04em !important;
+  
+
   }
 
   .search-inline-control{
@@ -15825,6 +15831,1846 @@ html.jobseeker-logged-out .mobile-account-login-link{
   .refresh-btn i{
     display:none !important;
   }
+}
+
+
+
+/* ============================================================
+   FINAL CHOOSE PORTAL STYLE PATCH FOR POSTED HIRING
+   Applies the Choose Portal white header/background, Arial-style
+   typography, dark-navy text, visible blue nav icons, white mobile
+   panel/dropdowns, and light page surfaces while keeping all IDs,
+   JS hooks, Supabase logic, filters, table/grid behavior, account
+   dropdown behavior, favorite/apply logic, and responsive layouts.
+============================================================ */
+:root{
+  --bank-white:#ffffff;
+  --bank-soft:#f5f5f5;
+  --bank-soft-2:#f7f7f7;
+  --bank-line:#e6e8ec;
+  --bank-navy:#012169;
+  --bank-text:#1f2937;
+  --bank-muted:#4b5563;
+  --bank-link:#0057b8;
+  --jsl-icon-dark-blue:#003a70;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+/* Restore Font Awesome after the global font patch */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{font-weight:900 !important;}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+html,
+body,
+html.jobseeker-logged-in,
+html.jobseeker-logged-out,
+body.jobseeker-logged-in,
+body.jobseeker-logged-out{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Choose Portal header: white surface, navy text, visible blue icons */
+header{
+  background:var(--bank-white) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo img{
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--bank-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  gap:0 !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin:0 7px 0 0 !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  color:var(--jsl-icon-dark-blue) !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.26) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+header nav > a > i::before,
+header nav .nav-main-link > i::before,
+.nav-dropdown-menu a > i::before{
+  color:inherit !important;
+  font-size:1rem !important;
+  line-height:1 !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.about-dropdown-btn{
+  color:var(--bank-navy) !important;
+  background:rgba(14,165,233,0.06) !important;
+  border:1px solid rgba(14,165,233,0.18) !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle i,
+.about-dropdown-btn i{
+  color:inherit !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.about-dropdown-btn:hover,
+.about-dropdown-btn:focus-visible{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+}
+
+.nav-dropdown-menu{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--bank-navy) !important;
+  background:var(--bank-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Header login/account button keeps its behavior but matches the Choose Portal button feel */
+header .auth-buttons .jobseeker-menu-toggle,
+header .auth-buttons a,
+header .auth-buttons a.jobseeker-icon-auth{
+  color:#ffffff !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.92), rgba(99,102,241,0.92)) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.14) !important;
+  text-shadow:none !important;
+}
+
+header .auth-buttons .jobseeker-menu-toggle:hover,
+header .auth-buttons .jobseeker-account-menu.open .jobseeker-menu-toggle,
+header .auth-buttons a:hover,
+header .auth-buttons a:focus-visible{
+  transform:translateY(-2px) !important;
+  box-shadow:0 0 20px rgba(0,198,255,0.24) !important;
+  border-color:rgba(0,198,255,0.38) !important;
+}
+
+header .auth-buttons .jobseeker-menu-toggle i,
+header .auth-buttons .jobseeker-menu-toggle i::before,
+header .auth-buttons a i,
+header .auth-buttons a i::before,
+.header-jobseeker-login-text{
+  color:#ffffff !important;
+  text-shadow:none !important;
+}
+
+header .auth-buttons .jobseeker-menu-toggle.has-profile-photo{
+  background:var(--bank-white) !important;
+  border-color:rgba(14,165,233,0.36) !important;
+  box-shadow:0 0 0 3px rgba(14,165,233,0.12), 0 0 18px rgba(14,165,233,0.18) !important;
+}
+
+/* Quick icons remain account-scoped and clickable; defaults are visible on white header */
+header .jobseeker-quick-icon-btn.favorite:not(.active) i,
+header .jobseeker-quick-icon-btn.applied:not(.active) i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+}
+
+header .jobseeker-quick-icon-btn.favorite:not(.active),
+header .jobseeker-quick-icon-btn.applied:not(.active){
+  border-color:rgba(14,165,233,0.22) !important;
+  background:rgba(14,165,233,0.10) !important;
+  box-shadow:none !important;
+}
+
+/* Mobile menu follows the same white / navy Choose Portal reference style */
+.nav-toggle,
+header #navToggle{
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  color:var(--bank-navy) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  box-shadow:none !important;
+}
+
+.nav-toggle i,
+header #navToggle i{color:var(--bank-navy) !important;}
+
+.mobile-panel{
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav-main-link .mnav-left > i,
+.mobile-panel .mnav-toggle > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  color:var(--jsl-icon-dark-blue) !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-toggle:hover > i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:var(--bank-navy) !important;
+  background:transparent !important;
+  border:0 !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--bank-white) !important;
+}
+
+.mobile-account-block{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.08) !important;
+}
+
+.mobile-account-heading,
+.mobile-account-label,
+.mobile-account-name,
+.mobile-account-email{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.mobile-account-card{
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+/* Light page surfaces so the Posted Hiring page uses the same background language */
+.container{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.08) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  color:var(--bank-text) !important;
+}
+
+.sticky-master-inner,
+.sticky-master-inner.logged-out-mode,
+.sticky-master-inner:not(.logged-out-mode){
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 10px 24px rgba(1,33,105,0.06) !important;
+}
+
+.job-hiring-toolbar-title,
+.job-hiring-toolbar-title span,
+.user-summary-name,
+.user-summary-line,
+.user-summary-line span,
+.user-summary-line a{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.job-hiring-toolbar-title i,
+.user-summary-line i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+}
+
+.search-wrapper input,
+.search-field select,
+.favorite-filter-field select,
+.applied-filter-field select,
+.inline-industry-filter-field select,
+.inline-country-filter-field select,
+.advanced-filter-input,
+.filter-dd-trigger{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.search-wrapper input::placeholder,
+.advanced-filter-input::placeholder{
+  color:var(--bank-muted) !important;
+}
+
+.search-wrapper input:focus,
+.search-field select:focus,
+.favorite-filter-field select:focus,
+.applied-filter-field select:focus,
+.inline-industry-filter-field select:focus,
+.inline-country-filter-field select:focus,
+.advanced-filter-input:focus,
+.filter-dd-trigger:focus-visible,
+.filter-dd.is-open .filter-dd-trigger{
+  border-color:#38bdf8 !important;
+  box-shadow:0 0 0 3px rgba(14,165,233,0.12) !important;
+  background:var(--bank-white) !important;
+}
+
+.search-wrapper .fa-search{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+}
+
+.search-field option,
+.favorite-filter-field option,
+.applied-filter-field option,
+.inline-industry-filter-field option,
+.inline-country-filter-field option,
+.advanced-filter-select option{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+.filter-dd-trigger-text,
+.filter-dd-caret{
+  color:var(--bank-text) !important;
+  text-shadow:none !important;
+}
+
+.filter-dd-menu{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 14px 34px rgba(1,33,105,0.13) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.filter-dd-menu-title,
+.filter-dd-option,
+.filter-dd-option-label,
+.filter-dd-pending-chip{
+  color:var(--bank-text) !important;
+  text-shadow:none !important;
+}
+
+.filter-dd-option:hover,
+.filter-dd-option.is-pending{
+  background:var(--bank-soft) !important;
+  color:#000000 !important;
+}
+
+.filter-dd-option.is-active::after,
+.filter-dd-option.is-pending::after{
+  color:var(--bank-link) !important;
+}
+
+.advanced-filter-row,
+.view-action-box,
+.sticky-master-inner.logged-out-mode .advanced-filter-row,
+.sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+  background:var(--bank-soft-2) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.reset-btn,
+.logout-btn,
+.toggle-btn,
+.refresh-btn,
+.filter-dd-reset,
+.filter-dd-update{
+  text-shadow:none !important;
+}
+
+/* Tables and grids: keep layout/behavior, change only surfaces and readable fonts */
+.table-head-shell,
+.table-body-shell,
+.table-section,
+.table-body-scroll,
+.table-head-scroll{
+  background:var(--bank-white) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.body-table tbody tr td,
+.body-table tbody tr:nth-child(even) td{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.body-table tbody tr:hover td{
+  background:var(--bank-soft) !important;
+  color:var(--bank-text) !important;
+  box-shadow:inset 0 0 0 1px rgba(14,165,233,0.18) !important;
+}
+
+.loc-cell,
+.loc-cell small,
+.card-empty{
+  color:var(--bank-text) !important;
+}
+
+.company-pic-placeholder,
+.listing-media-placeholder{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+}
+
+.cards-grid,
+.cards-grid-only,
+#gridOnlyWrapper{
+  background:var(--bank-white) !important;
+}
+
+.listing-card{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 10px 24px rgba(1,33,105,0.08) !important;
+  color:var(--bank-text) !important;
+}
+
+.listing-card:hover{
+  border-color:rgba(14,165,233,0.38) !important;
+  box-shadow:0 18px 42px rgba(1,33,105,0.13), 0 0 0 1px rgba(14,165,233,0.10) !important;
+}
+
+.listing-media{
+  background:var(--bank-soft) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+}
+
+.listing-media::after{
+  background:linear-gradient(to top, rgba(255,255,255,0.50), rgba(255,255,255,0)) !important;
+}
+
+.listing-company{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  box-shadow:none !important;
+}
+
+.listing-price,
+.listing-industry,
+.listing-position,
+.meta-pill,
+.listing-footer,
+.badge-date{
+  color:var(--bank-text) !important;
+}
+
+.listing-industry i,
+.meta-pill i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+}
+
+.meta-pill.locked-location,
+.badge-date.locked-date,
+.loc-locked,
+.posted-locked{
+  background:var(--bank-soft) !important;
+  border:1px solid var(--bank-line) !important;
+  color:var(--bank-navy) !important;
+}
+
+.meta-pill.locked-location i,
+.badge-date.locked-date i,
+.loc-locked i,
+.posted-locked i,
+.meta-pill.locked-location span,
+.badge-date.locked-date span,
+.loc-locked span,
+.posted-locked span{
+  color:var(--bank-navy) !important;
+}
+
+.no-pdf{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+}
+
+.pagination,
+.pagination span,
+#pageInfo,
+#gridPageInfo{
+  color:var(--bank-text) !important;
+}
+
+/* Header account dropdown follows the white/navy menu style */
+.jobseeker-account-dropdown{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 18px 42px rgba(1,33,105,0.12) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.header-account-card,
+.header-account-filter,
+.header-account-actions{
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.header-account-label,
+.header-account-name,
+#headerJobseekerEmail,
+.header-account-filter span,
+.header-account-filter select{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.header-account-filter select{
+  background:var(--bank-white) !important;
+  border-color:var(--bank-line) !important;
+}
+
+.header-account-profile-link,
+#headerJobseekerLoginLink,
+#headerJobseekerLogoutBtn{
+  color:var(--bank-navy) !important;
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.header-account-profile-link:hover,
+#headerJobseekerLoginLink:hover,
+#headerJobseekerLogoutBtn:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.header-account-profile-link i,
+#headerJobseekerLoginLink i,
+#headerJobseekerLogoutBtn i,
+.header-account-filter i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+}
+
+/* Modals keep functionality but become readable on the light page */
+.modal-content,
+.pdf-modal-content,
+.image-modal-content{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:0 18px 42px rgba(1,33,105,0.16) !important;
+}
+
+/* Responsive tuning for the stronger Choose Portal-style nav icons */
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:5px !important;
+    padding-right:6px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    margin-right:5px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.86rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:3px !important;
+    padding-right:4px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:17px !important;
+    min-width:17px !important;
+    height:17px !important;
+    margin-right:3px !important;
+    border-radius:6px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.72rem !important;
+  }
+
+  .nav-dropdown-toggle,
+  .about-dropdown-btn{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    border-radius:6px !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav-left > i{
+    width:23px !important;
+    min-width:23px !important;
+    height:23px !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left > i{
+    width:21px !important;
+    min-width:21px !important;
+    height:21px !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL FILTER CONTROL STYLE SYNC
+   Applies the same font color, white background, border, menu,
+   option, hover, focus, and open-state treatment used by the
+   All Industries filter to every filter control while preserving
+   existing IDs, JS events, dropdown behavior, and filter logic.
+============================================================ */
+:root{
+  --filter-control-bg:var(--bank-white, #ffffff);
+  --filter-control-hover-bg:var(--bank-soft, #f5f5f5);
+  --filter-control-text:var(--bank-navy, #012169);
+  --filter-control-hover-text:#000000;
+  --filter-control-muted:var(--bank-muted, #4b5563);
+  --filter-control-line:var(--bank-line, #e6e8ec);
+  --filter-control-blue:#0ea5e9;
+  --filter-control-blue-soft:rgba(14,165,233,0.12);
+  --filter-control-shadow:0 0 0 3px rgba(14,165,233,0.12);
+}
+
+/* Native selects and search/filter inputs */
+body .search-wrapper input,
+body .search-field select,
+body .favorite-filter-field select,
+body .applied-filter-field select,
+body .inline-industry-filter-field select,
+body .inline-country-filter-field select,
+body .advanced-filter-row select,
+body .advanced-filter-input,
+body .advanced-filter-select,
+body .header-account-filter select,
+body .jobseeker-account-dropdown select{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  border:1px solid var(--filter-control-line) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  outline:none !important;
+  transition:
+    background-color .22s ease,
+    color .22s ease,
+    border-color .22s ease,
+    box-shadow .22s ease,
+    transform .22s ease !important;
+}
+
+body .search-wrapper input::placeholder,
+body .advanced-filter-input::placeholder{
+  color:var(--filter-control-muted) !important;
+  opacity:1 !important;
+}
+
+body .search-wrapper input:hover,
+body .search-field select:hover,
+body .favorite-filter-field select:hover,
+body .applied-filter-field select:hover,
+body .inline-industry-filter-field select:hover,
+body .inline-country-filter-field select:hover,
+body .advanced-filter-row select:hover,
+body .advanced-filter-input:hover,
+body .advanced-filter-select:hover,
+body .header-account-filter select:hover,
+body .jobseeker-account-dropdown select:hover{
+  background:var(--filter-control-hover-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+  border-color:rgba(14,165,233,0.38) !important;
+  box-shadow:var(--filter-control-shadow) !important;
+}
+
+body .search-wrapper input:focus,
+body .search-field select:focus,
+body .favorite-filter-field select:focus,
+body .applied-filter-field select:focus,
+body .inline-industry-filter-field select:focus,
+body .inline-country-filter-field select:focus,
+body .advanced-filter-row select:focus,
+body .advanced-filter-input:focus,
+body .advanced-filter-select:focus,
+body .header-account-filter select:focus,
+body .jobseeker-account-dropdown select:focus{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+  border-color:var(--filter-control-blue) !important;
+  box-shadow:var(--filter-control-shadow) !important;
+}
+
+body .search-field option,
+body .favorite-filter-field option,
+body .applied-filter-field option,
+body .inline-industry-filter-field option,
+body .inline-country-filter-field option,
+body .advanced-filter-row option,
+body .advanced-filter-select option,
+body .header-account-filter option,
+body .jobseeker-account-dropdown option{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  font-weight:500 !important;
+}
+
+body .search-field option:checked,
+body .favorite-filter-field option:checked,
+body .applied-filter-field option:checked,
+body .inline-industry-filter-field option:checked,
+body .inline-country-filter-field option:checked,
+body .advanced-filter-row option:checked,
+body .advanced-filter-select option:checked,
+body .header-account-filter option:checked,
+body .jobseeker-account-dropdown option:checked{
+  background:var(--filter-control-hover-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+}
+
+/* Enhanced JS dropdowns: make every generated filter match All Industries */
+body .filter-dd,
+body .inline-industry-filter-field .filter-dd,
+body .inline-country-filter-field .filter-dd,
+body .favorite-filter-field .filter-dd,
+body .applied-filter-field .filter-dd,
+body .advanced-filter-row .filter-dd{
+  color:var(--filter-control-text) !important;
+}
+
+body .filter-dd-trigger,
+body .inline-industry-filter-field .filter-dd-trigger,
+body .inline-country-filter-field .filter-dd-trigger,
+body .favorite-filter-field .filter-dd-trigger,
+body .applied-filter-field .filter-dd-trigger,
+body .advanced-filter-row .filter-dd-trigger,
+body .sticky-master-inner.logged-out-mode .filter-dd-trigger,
+body .sticky-master-inner:not(.logged-out-mode) .filter-dd-trigger{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  border:1px solid var(--filter-control-line) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  transition:
+    background-color .22s ease,
+    color .22s ease,
+    border-color .22s ease,
+    box-shadow .22s ease,
+    transform .22s ease !important;
+}
+
+body .filter-dd-trigger-text,
+body .filter-dd-trigger-text span,
+body .filter-dd-caret,
+body .inline-industry-filter-field .filter-dd-trigger-text,
+body .inline-country-filter-field .filter-dd-trigger-text,
+body .favorite-filter-field .filter-dd-trigger-text,
+body .applied-filter-field .filter-dd-trigger-text,
+body .advanced-filter-row .filter-dd-trigger-text{
+  color:inherit !important;
+  text-shadow:none !important;
+  font-weight:500 !important;
+}
+
+body .filter-dd-trigger:hover,
+body .filter-dd-trigger:focus-visible,
+body .filter-dd.is-open .filter-dd-trigger,
+body .inline-industry-filter-field .filter-dd-trigger:hover,
+body .inline-country-filter-field .filter-dd-trigger:hover,
+body .favorite-filter-field .filter-dd-trigger:hover,
+body .applied-filter-field .filter-dd-trigger:hover,
+body .advanced-filter-row .filter-dd-trigger:hover{
+  background:var(--filter-control-hover-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+  border-color:rgba(14,165,233,0.38) !important;
+  box-shadow:var(--filter-control-shadow) !important;
+  text-shadow:none !important;
+  transform:translateY(-1px) !important;
+}
+
+body .filter-dd.is-open .filter-dd-trigger{
+  border-color:var(--filter-control-blue) !important;
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+}
+
+body .filter-dd-menu,
+body .inline-industry-filter-field .filter-dd-menu,
+body .inline-country-filter-field .filter-dd-menu,
+body .favorite-filter-field .filter-dd-menu,
+body .applied-filter-field .filter-dd-menu,
+body .advanced-filter-row .filter-dd-menu,
+body .header-account-filter .filter-dd-menu{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  border:1px solid var(--filter-control-line) !important;
+  box-shadow:0 14px 34px rgba(1,33,105,0.13) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+body .filter-dd-menu-title,
+body .filter-dd-option,
+body .filter-dd-option-label,
+body .filter-dd-pending-chip{
+  color:var(--filter-control-text) !important;
+  text-shadow:none !important;
+  font-weight:500 !important;
+}
+
+body .filter-dd-menu-title{
+  font-weight:700 !important;
+  letter-spacing:.03em !important;
+}
+
+body .filter-dd-pending-chip{
+  background:var(--filter-control-blue-soft) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+}
+
+body .filter-dd-option,
+body .inline-industry-filter-field .filter-dd-option,
+body .inline-country-filter-field .filter-dd-option,
+body .favorite-filter-field .filter-dd-option,
+body .applied-filter-field .filter-dd-option,
+body .advanced-filter-row .filter-dd-option{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  border:1px solid transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transition:
+    background-color .18s ease,
+    color .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    transform .18s ease !important;
+}
+
+body .filter-dd-option:hover,
+body .filter-dd-option:focus-visible,
+body .filter-dd-option.is-pending,
+body .filter-dd-option.is-active,
+body .inline-industry-filter-field .filter-dd-option:hover,
+body .inline-country-filter-field .filter-dd-option:hover,
+body .favorite-filter-field .filter-dd-option:hover,
+body .applied-filter-field .filter-dd-option:hover,
+body .advanced-filter-row .filter-dd-option:hover{
+  background:var(--filter-control-hover-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+  border-color:rgba(14,165,233,0.20) !important;
+  box-shadow:inset 0 0 0 1px rgba(14,165,233,0.08) !important;
+  transform:translateX(2px) !important;
+}
+
+body .filter-dd-option.is-active::after,
+body .filter-dd-option.is-pending::after{
+  color:var(--filter-control-blue) !important;
+  font-weight:900 !important;
+}
+
+body .filter-dd-options{
+  scrollbar-color:rgba(14,165,233,.65) var(--filter-control-hover-bg) !important;
+}
+body .filter-dd-options::-webkit-scrollbar-track{
+  background:var(--filter-control-hover-bg) !important;
+  border-radius:999px !important;
+}
+body .filter-dd-options::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg, #0ea5e9, #2563eb) !important;
+  border-radius:999px !important;
+}
+
+body .filter-dd-actions{
+  border-top:1px solid var(--filter-control-line) !important;
+}
+
+/* Keep Reset / Update readable inside every filter dropdown */
+body .filter-dd-reset,
+body .filter-dd-update{
+  color:#ffffff !important;
+  text-shadow:none !important;
+  border:1px solid transparent !important;
+  box-shadow:none !important;
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease !important;
+}
+body .filter-dd-reset:hover,
+body .filter-dd-update:hover{
+  filter:brightness(1.04) !important;
+  transform:translateY(-1px) !important;
+  box-shadow:0 8px 18px rgba(1,33,105,0.12) !important;
+}
+
+/* Disabled filter controls keep the same visual language without looking broken */
+body .filter-dd.is-disabled,
+body select:disabled,
+body input:disabled{
+  opacity:.58 !important;
+  color:var(--filter-control-muted) !important;
+  background:var(--filter-control-hover-bg) !important;
+  cursor:not-allowed !important;
+}
+
+
+
+/* ============================================================
+   FINAL ENHANCEMENT PATCH - HEADER DROPDOWN ABOVE CONTROLS
+   + SECOND ROW FILTERS MATCH ALL INDUSTRIES STYLE
+   Keeps all IDs, JavaScript behavior, Supabase logic, filter events,
+   account dropdown behavior, and responsive layouts intact.
+============================================================ */
+:root{
+  --filter-control-bg:#ffffff;
+  --filter-control-hover-bg:#f5f5f5;
+  --filter-control-text:#012169;
+  --filter-control-hover-text:#000000;
+  --filter-control-muted:#4b5563;
+  --filter-control-line:#e6e8ec;
+  --filter-control-blue:#0ea5e9;
+  --filter-control-blue-soft:rgba(14,165,233,0.12);
+  --filter-control-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  --header-dropdown-z:25000;
+}
+
+/* Keep header dropdowns visible above sticky toolbar/table controls */
+header,
+header nav,
+.nav-dropdown,
+.nav-dropdown-trigger,
+.about-nav-link-wrap,
+.auth-buttons,
+.jobseeker-auth-wrap,
+.header-jobseeker-menu-wrap{
+  overflow:visible !important;
+}
+
+header{
+  z-index:var(--header-dropdown-z) !important;
+  isolation:isolate !important;
+}
+
+.nav-dropdown,
+.nav-dropdown.open,
+.header-jobseeker-menu-wrap,
+.header-jobseeker-menu-wrap.open{
+  z-index:calc(var(--header-dropdown-z) + 5) !important;
+}
+
+.nav-dropdown-menu,
+.nav-dropdown.open .nav-dropdown-menu,
+.about-dropdown-menu,
+.about-nav-link-wrap.open .about-dropdown-menu{
+  z-index:calc(var(--header-dropdown-z) + 10) !important;
+  top:calc(100% + 10px) !important;
+  max-height:calc(100vh - 96px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  pointer-events:auto !important;
+}
+
+.mobile-panel,
+.mobile-panel.open{
+  z-index:calc(var(--header-dropdown-z) - 1) !important;
+  max-height:calc(100vh - 78px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+
+/* Force page controls underneath header dropdown layer */
+.container,
+.board-scroll,
+.sticky-master,
+.sticky-master-inner,
+.topbar-row,
+.controls-panel,
+.advanced-filter-row,
+.table-header-sticky,
+.table-section,
+.table-head-shell,
+.table-body-shell,
+#gridOnlyWrapper,
+.cards-grid,
+.cards-grid-only{
+  z-index:auto;
+}
+
+.sticky-master{z-index:400 !important;}
+.table-header-sticky{z-index:360 !important;}
+.filter-dd-menu{z-index:12000 !important;}
+
+/* Give the second-row filter box the same light/visible language as All Industries */
+body .advanced-filter-row,
+body .sticky-master-inner.logged-out-mode .advanced-filter-row,
+body .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+  background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,247,247,0.96)) !important;
+  border:1px solid var(--filter-control-line) !important;
+  box-shadow:0 8px 22px rgba(1,33,105,0.08), inset 0 1px 0 rgba(255,255,255,0.90) !important;
+}
+
+body .advanced-filter-row::before,
+body .sticky-master-inner.logged-out-mode .advanced-filter-row::before,
+body .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row::before{
+  color:var(--filter-control-text) !important;
+  text-shadow:none !important;
+  font-weight:700 !important;
+}
+
+body .advanced-filter-row .filter-dd::before,
+body .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd::before,
+body .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd::before{
+  color:var(--filter-control-text) !important;
+  text-shadow:none !important;
+  font-weight:700 !important;
+}
+
+body .advanced-filter-row .filter-dd,
+body .advanced-filter-row .filter-dd *{
+  text-shadow:none !important;
+}
+
+/* Second-row generated dropdown triggers */
+body .advanced-filter-row .filter-dd-trigger,
+body .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd-trigger,
+body .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd-trigger{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  border:1px solid var(--filter-control-line) !important;
+  box-shadow:none !important;
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  transition:
+    background-color .18s ease,
+    color .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    transform .18s ease !important;
+}
+
+body .advanced-filter-row .filter-dd-trigger-text,
+body .advanced-filter-row .filter-dd-caret,
+body .advanced-filter-row .filter-dd-trigger i,
+body .advanced-filter-row .filter-dd-trigger svg{
+  color:inherit !important;
+  fill:currentColor !important;
+  text-shadow:none !important;
+}
+
+body .advanced-filter-row .filter-dd-trigger:hover,
+body .advanced-filter-row .filter-dd-trigger:focus-visible,
+body .advanced-filter-row .filter-dd.is-open .filter-dd-trigger,
+body .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd-trigger:hover,
+body .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd-trigger:hover{
+  background:var(--filter-control-hover-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+  border-color:rgba(14,165,233,0.38) !important;
+  box-shadow:var(--filter-control-shadow) !important;
+  transform:translateY(-1px) !important;
+}
+
+body .advanced-filter-row .filter-dd.is-open .filter-dd-trigger{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+  border-color:var(--filter-control-blue) !important;
+}
+
+/* Second-row native fallback controls, including date/search/select fields */
+body .advanced-filter-row .advanced-filter-input,
+body .advanced-filter-row .advanced-filter-select,
+body .advanced-filter-row select,
+body .advanced-filter-row input,
+body .advanced-filter-row button.filter-dd-trigger{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  border:1px solid var(--filter-control-line) !important;
+  box-shadow:none !important;
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+  color-scheme:light !important;
+}
+
+body .advanced-filter-row .advanced-filter-input::placeholder,
+body .advanced-filter-row input::placeholder{
+  color:var(--filter-control-muted) !important;
+  opacity:.90 !important;
+}
+
+body .advanced-filter-row .advanced-filter-input:hover,
+body .advanced-filter-row .advanced-filter-select:hover,
+body .advanced-filter-row select:hover,
+body .advanced-filter-row input:hover,
+body .advanced-filter-row .advanced-filter-input:focus,
+body .advanced-filter-row .advanced-filter-select:focus,
+body .advanced-filter-row select:focus,
+body .advanced-filter-row input:focus{
+  background:var(--filter-control-hover-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+  border-color:rgba(14,165,233,0.38) !important;
+  box-shadow:var(--filter-control-shadow) !important;
+  outline:none !important;
+}
+
+body .advanced-filter-row option,
+body .advanced-filter-row select option{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+}
+
+/* Second-row dropdown menus and options */
+body .advanced-filter-row .filter-dd-menu{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  border:1px solid var(--filter-control-line) !important;
+  box-shadow:0 18px 40px rgba(1,33,105,0.16) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  z-index:12000 !important;
+}
+
+body .advanced-filter-row .filter-dd-menu-title,
+body .advanced-filter-row .filter-dd-option,
+body .advanced-filter-row .filter-dd-option-label,
+body .advanced-filter-row .filter-dd-pending-chip{
+  color:var(--filter-control-text) !important;
+  background:transparent !important;
+  text-shadow:none !important;
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+  font-weight:500 !important;
+}
+
+body .advanced-filter-row .filter-dd-menu-title{
+  font-weight:700 !important;
+}
+
+body .advanced-filter-row .filter-dd-pending-chip{
+  background:var(--filter-control-blue-soft) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+}
+
+body .advanced-filter-row .filter-dd-option{
+  background:var(--filter-control-bg) !important;
+  color:var(--filter-control-text) !important;
+  border:1px solid transparent !important;
+  box-shadow:none !important;
+  transition:
+    background-color .18s ease,
+    color .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    transform .18s ease !important;
+}
+
+body .advanced-filter-row .filter-dd-option:hover,
+body .advanced-filter-row .filter-dd-option:focus-visible,
+body .advanced-filter-row .filter-dd-option.is-pending,
+body .advanced-filter-row .filter-dd-option.is-active{
+  background:var(--filter-control-hover-bg) !important;
+  color:var(--filter-control-hover-text) !important;
+  border-color:rgba(14,165,233,0.20) !important;
+  box-shadow:inset 0 0 0 1px rgba(14,165,233,0.08) !important;
+  transform:translateX(2px) !important;
+}
+
+body .advanced-filter-row .filter-dd-option.is-active::after,
+body .advanced-filter-row .filter-dd-option.is-pending::after{
+  color:var(--filter-control-blue) !important;
+  font-weight:900 !important;
+}
+
+body .advanced-filter-row .filter-dd-options{
+  scrollbar-color:rgba(14,165,233,.65) var(--filter-control-hover-bg) !important;
+}
+body .advanced-filter-row .filter-dd-options::-webkit-scrollbar-track{
+  background:var(--filter-control-hover-bg) !important;
+  border-radius:999px !important;
+}
+body .advanced-filter-row .filter-dd-options::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg, #0ea5e9, #2563eb) !important;
+  border-radius:999px !important;
+}
+
+body .advanced-filter-row .filter-dd-actions{
+  border-top:1px solid var(--filter-control-line) !important;
+}
+
+/* Mobile/tablet: keep header dropdowns above filter rows and table */
+@media (max-width:1023px){
+  header{z-index:var(--header-dropdown-z) !important;}
+  .mobile-panel.open{z-index:calc(var(--header-dropdown-z) - 1) !important;}
+  .nav-dropdown-menu,
+  .nav-dropdown.open .nav-dropdown-menu{
+    z-index:calc(var(--header-dropdown-z) + 10) !important;
+  }
+  body .advanced-filter-row,
+  body .sticky-master-inner.logged-out-mode .advanced-filter-row,
+  body .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+    background:#ffffff !important;
+  }
+}
+
+
+/* ============================================================
+   FINAL VISUAL ENHANCEMENT PATCH - FILTER SIZE + NAVY TITLE + TABLE HEADER CONTRAST
+   Requested:
+   - Enlarge the second-row advanced filter controls.
+   - Give All Countries and All Industries a blue/purple button-style background
+     that blends with the Table/Grid controls.
+   - Change the "Job Hiring" title color to navy blue.
+   - Improve table header column text contrast.
+   CSS-only patch: preserves existing HTML IDs, JS behavior, filters, sessions,
+   table/grid toggles, dropdown actions, pagination, and modal behavior.
+============================================================ */
+
+/* Job Hiring title: navy-blue text while keeping the same layout and behavior */
+.job-hiring-toolbar-title,
+.sticky-master-inner.logged-out-mode .job-hiring-toolbar-title,
+.sticky-master-inner:not(.logged-out-mode) .job-hiring-toolbar-title{
+  color:#012169 !important;
+}
+
+.job-hiring-toolbar-title span,
+.sticky-master-inner.logged-out-mode .job-hiring-toolbar-title span,
+.sticky-master-inner:not(.logged-out-mode) .job-hiring-toolbar-title span{
+  color:#012169 !important;
+  font-weight:800 !important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.55),
+    0 0 10px rgba(255,255,255,0.28) !important;
+}
+
+.job-hiring-toolbar-title i,
+.sticky-master-inner.logged-out-mode .job-hiring-toolbar-title i,
+.sticky-master-inner:not(.logged-out-mode) .job-hiring-toolbar-title i{
+  color:#012169 !important;
+  filter:
+    drop-shadow(0 1px 0 rgba(255,255,255,0.52))
+    drop-shadow(0 0 7px rgba(255,255,255,0.28)) !important;
+}
+
+/* First-row All Countries and All Industries controls:
+   blue/purple button-style background matching Table/Grid action controls */
+.inline-country-filter-field select,
+.inline-industry-filter-field select,
+.sticky-master-inner.logged-out-mode .inline-country-filter-field select,
+.sticky-master-inner.logged-out-mode .inline-industry-filter-field select,
+.sticky-master-inner:not(.logged-out-mode) .inline-country-filter-field select,
+.sticky-master-inner:not(.logged-out-mode) .inline-industry-filter-field select,
+.inline-country-filter-field .filter-dd-trigger,
+.inline-industry-filter-field .filter-dd-trigger,
+body .inline-country-filter-field .filter-dd-trigger,
+body .inline-industry-filter-field .filter-dd-trigger,
+body .sticky-master-inner.logged-out-mode .inline-country-filter-field .filter-dd-trigger,
+body .sticky-master-inner.logged-out-mode .inline-industry-filter-field .filter-dd-trigger,
+body .sticky-master-inner:not(.logged-out-mode) .inline-country-filter-field .filter-dd-trigger,
+body .sticky-master-inner:not(.logged-out-mode) .inline-industry-filter-field .filter-dd-trigger{
+  min-height:40px !important;
+  background:linear-gradient(90deg,#00c6ff 0%,#3b82f6 48%,#7c3aed 100%) !important;
+  color:#ffffff !important;
+  border:1px solid rgba(125,211,252,0.58) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    0 0 14px rgba(59,130,246,0.34) !important;
+  font-weight:800 !important;
+  letter-spacing:.01em !important;
+  text-shadow:0 1px 1px rgba(2,6,23,0.34) !important;
+}
+
+.inline-country-filter-field select:hover,
+.inline-industry-filter-field select:hover,
+.inline-country-filter-field select:focus,
+.inline-industry-filter-field select:focus,
+.inline-country-filter-field .filter-dd-trigger:hover,
+.inline-industry-filter-field .filter-dd-trigger:hover,
+.inline-country-filter-field .filter-dd.is-open .filter-dd-trigger,
+.inline-industry-filter-field .filter-dd.is-open .filter-dd-trigger,
+body .inline-country-filter-field .filter-dd-trigger:hover,
+body .inline-industry-filter-field .filter-dd-trigger:hover,
+body .inline-country-filter-field .filter-dd.is-open .filter-dd-trigger,
+body .inline-industry-filter-field .filter-dd.is-open .filter-dd-trigger{
+  background:linear-gradient(90deg,#0284c7 0%,#2563eb 48%,#6d28d9 100%) !important;
+  color:#ffffff !important;
+  border-color:rgba(191,219,254,0.86) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.24),
+    0 0 18px rgba(59,130,246,0.48),
+    0 7px 16px rgba(15,23,42,0.20) !important;
+  transform:translateY(-1px) !important;
+}
+
+.inline-country-filter-field .filter-dd-trigger-text,
+.inline-industry-filter-field .filter-dd-trigger-text,
+.inline-country-filter-field .filter-dd-caret,
+.inline-industry-filter-field .filter-dd-caret,
+.inline-country-filter-field .filter-dd-trigger i,
+.inline-industry-filter-field .filter-dd-trigger i,
+body .inline-country-filter-field .filter-dd-trigger-text,
+body .inline-industry-filter-field .filter-dd-trigger-text,
+body .inline-country-filter-field .filter-dd-caret,
+body .inline-industry-filter-field .filter-dd-caret{
+  color:#ffffff !important;
+  fill:#ffffff !important;
+  font-weight:800 !important;
+  text-shadow:0 1px 1px rgba(2,6,23,0.34) !important;
+}
+
+.inline-country-filter-field select option,
+.inline-industry-filter-field select option{
+  background:#0f172a !important;
+  color:#ffffff !important;
+}
+
+/* Second-row advanced filters: larger, more readable font and stronger contrast */
+.advanced-filter-row .advanced-filter-input,
+.advanced-filter-row .advanced-filter-select,
+.advanced-filter-row select,
+.advanced-filter-row input,
+.advanced-filter-row button.filter-dd-trigger,
+.advanced-filter-row .filter-dd-trigger,
+body .advanced-filter-row .advanced-filter-input,
+body .advanced-filter-row .advanced-filter-select,
+body .advanced-filter-row select,
+body .advanced-filter-row input,
+body .advanced-filter-row button.filter-dd-trigger,
+body .advanced-filter-row .filter-dd-trigger,
+body .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd-trigger,
+body .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd-trigger{
+  min-height:42px !important;
+  padding:10px 12px !important;
+  font-size:.86rem !important;
+  line-height:1.18 !important;
+  font-weight:700 !important;
+  color:#012169 !important;
+  background:#ffffff !important;
+  border:1px solid rgba(1,33,105,0.18) !important;
+  border-radius:12px !important;
+  box-shadow:0 2px 8px rgba(1,33,105,0.06) !important;
+}
+
+.advanced-filter-row .filter-dd-trigger-text,
+.advanced-filter-row .filter-dd-caret,
+.advanced-filter-row .filter-dd-trigger i,
+body .advanced-filter-row .filter-dd-trigger-text,
+body .advanced-filter-row .filter-dd-caret,
+body .advanced-filter-row .filter-dd-trigger i{
+  color:#012169 !important;
+  fill:#012169 !important;
+  font-weight:700 !important;
+}
+
+.advanced-filter-row .filter-dd::before,
+body .advanced-filter-row .filter-dd::before{
+  font-size:.80rem !important;
+  font-weight:800 !important;
+  color:#012169 !important;
+  letter-spacing:.01em !important;
+}
+
+.advanced-filter-row .advanced-filter-input::placeholder,
+body .advanced-filter-row input::placeholder,
+body .advanced-filter-row .advanced-filter-input::placeholder{
+  color:#475569 !important;
+  opacity:.92 !important;
+}
+
+.advanced-filter-row .advanced-filter-input:hover,
+.advanced-filter-row .advanced-filter-select:hover,
+.advanced-filter-row select:hover,
+.advanced-filter-row input:hover,
+.advanced-filter-row .filter-dd-trigger:hover,
+.advanced-filter-row .advanced-filter-input:focus,
+.advanced-filter-row .advanced-filter-select:focus,
+.advanced-filter-row select:focus,
+.advanced-filter-row input:focus,
+.advanced-filter-row .filter-dd.is-open .filter-dd-trigger,
+body .advanced-filter-row .filter-dd-trigger:hover,
+body .advanced-filter-row .filter-dd.is-open .filter-dd-trigger{
+  background:#f5f9ff !important;
+  color:#000000 !important;
+  border-color:rgba(14,165,233,0.46) !important;
+  box-shadow:
+    0 0 0 3px rgba(14,165,233,0.12),
+    0 5px 14px rgba(1,33,105,0.10) !important;
+}
+
+/* Second-row dropdown options: readable with the enlarged controls */
+body .advanced-filter-row .filter-dd-menu-title,
+body .advanced-filter-row .filter-dd-option,
+body .advanced-filter-row .filter-dd-option-label,
+body .advanced-filter-row .filter-dd-pending-chip{
+  font-size:.84rem !important;
+  color:#012169 !important;
+}
+
+body .advanced-filter-row .filter-dd-option:hover,
+body .advanced-filter-row .filter-dd-option:focus-visible,
+body .advanced-filter-row .filter-dd-option.is-pending,
+body .advanced-filter-row .filter-dd-option.is-active{
+  color:#000000 !important;
+  background:#eef6ff !important;
+}
+
+/* Table header columns: high-contrast white text on the blue/purple header */
+.head-table thead th,
+.staff-table thead th,
+.table-head-shell thead th,
+body .head-table thead th{
+  color:#ffffff !important;
+  font-weight:900 !important;
+  letter-spacing:.045em !important;
+  text-shadow:
+    0 1px 1px rgba(2,6,23,0.58),
+    0 0 8px rgba(2,6,23,0.25) !important;
+}
+
+.head-table thead th i,
+.head-table thead th .sort-icon,
+.staff-table thead th i,
+.staff-table thead th .sort-icon{
+  color:#ffffff !important;
+  opacity:.96 !important;
+  text-shadow:0 1px 1px rgba(2,6,23,0.55) !important;
+}
+
+/* Responsive safeguards: keep the requested font enlargement readable without breaking layout */
+@media (min-width:1800px){
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row .advanced-filter-select,
+  .advanced-filter-row select,
+  .advanced-filter-row input,
+  .advanced-filter-row .filter-dd-trigger,
+  body .advanced-filter-row .filter-dd-trigger{
+    min-height:46px !important;
+    font-size:.88rem !important;
+    padding:11px 13px !important;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row .advanced-filter-select,
+  .advanced-filter-row select,
+  .advanced-filter-row input,
+  .advanced-filter-row .filter-dd-trigger,
+  body .advanced-filter-row .filter-dd-trigger{
+    min-height:40px !important;
+    font-size:.78rem !important;
+    padding:9px 10px !important;
+  }
+  .advanced-filter-row .filter-dd::before,
+  body .advanced-filter-row .filter-dd::before{
+    font-size:.72rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row .advanced-filter-select,
+  .advanced-filter-row select,
+  .advanced-filter-row input,
+  .advanced-filter-row .filter-dd-trigger,
+  body .advanced-filter-row .filter-dd-trigger{
+    min-height:36px !important;
+    font-size:.70rem !important;
+    padding:7px 8px !important;
+  }
+  .advanced-filter-row .filter-dd::before,
+  body .advanced-filter-row .filter-dd::before{
+    font-size:.64rem !important;
+  }
+  .inline-country-filter-field select,
+  .inline-industry-filter-field select,
+  .inline-country-filter-field .filter-dd-trigger,
+  .inline-industry-filter-field .filter-dd-trigger,
+  body .inline-country-filter-field .filter-dd-trigger,
+  body .inline-industry-filter-field .filter-dd-trigger{
+    min-height:32px !important;
+    font-size:.60rem !important;
+    padding:5px 7px !important;
+  }
+}
+
+@media (max-width:768px){
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row .advanced-filter-select,
+  .advanced-filter-row select,
+  .advanced-filter-row input,
+  .advanced-filter-row .filter-dd-trigger,
+  body .advanced-filter-row .filter-dd-trigger{
+    min-height:38px !important;
+    font-size:.76rem !important;
+    padding:8px 9px !important;
+  }
+  .advanced-filter-row .filter-dd::before,
+  body .advanced-filter-row .filter-dd::before{
+    font-size:.68rem !important;
+  }
+}
+
+/* ============================================================
+   FINAL HEADER NAV + DROPDOWN HOVER BACKGROUND REMOVAL
+   Removes hover background effects from header navigation links,
+   dropdown links, dropdown toggle buttons, and mobile nav dropdown
+   items while preserving existing IDs, JavaScript hooks, dropdown
+   open/close behavior, routing, login/session behavior, filters,
+   table/grid behavior, favorite/apply behavior, and Supabase logic.
+============================================================ */
+header nav > a::before,
+header nav .nav-main-link::before{
+  display:none !important;
+  content:none !important;
+  background:transparent !important;
+  opacity:0 !important;
+  transform:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.about-dropdown-btn:hover,
+.about-dropdown-btn:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-toggle:hover > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+
+
+/* ============================================================
+   FINAL ENHANCEMENT PATCH - FAVORITE HEART VISIBILITY + USER ACTION DISPLAY
+   ✅ Favorite hearts are now black by default with a solid black border.
+   ✅ Added/marked favorites stay red and keep a black border for visibility.
+   ✅ Applied/Favorite display state is refreshed from the logged-in jobseeker's saved records.
+============================================================ */
+.fav-btn,
+.body-table .fav-btn,
+.cards-grid-only .fav-btn,
+.listing-actions-compact .fav-btn{
+  border:2px solid #020617 !important;
+  background:#ffffff !important;
+  color:#020617 !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.70) inset,
+    0 4px 12px rgba(2,6,23,0.26) !important;
+}
+
+.fav-btn i,
+.body-table .fav-btn i,
+.cards-grid-only .fav-btn i,
+.listing-actions-compact .fav-btn i{
+  color:#020617 !important;
+  text-shadow:none !important;
+  -webkit-text-stroke:.35px #020617;
+}
+
+.fav-btn:hover,
+.body-table .fav-btn:hover,
+.cards-grid-only .fav-btn:hover,
+.listing-actions-compact .fav-btn:hover{
+  transform:translateY(-1px) scale(1.08) !important;
+  border-color:#000000 !important;
+  background:#f8fafc !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.82) inset,
+    0 6px 16px rgba(2,6,23,0.34),
+    0 0 14px rgba(255,255,255,0.22) !important;
+}
+
+.fav-btn.active,
+.body-table .fav-btn.active,
+.cards-grid-only .fav-btn.active,
+.listing-actions-compact .fav-btn.active{
+  border:2px solid #020617 !important;
+  background:#ffffff !important;
+  color:#ef4444 !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.85) inset,
+    0 5px 16px rgba(2,6,23,0.30),
+    0 0 18px rgba(239,68,68,0.34) !important;
+}
+
+.fav-btn.active i,
+.body-table .fav-btn.active i,
+.cards-grid-only .fav-btn.active i,
+.listing-actions-compact .fav-btn.active i{
+  color:#ef4444 !important;
+  text-shadow:
+    0 0 10px rgba(239,68,68,0.55),
+    0 1px 0 rgba(2,6,23,0.55) !important;
+  -webkit-text-stroke:.45px #020617;
+}
+
+.fav-btn[aria-pressed="true"],
+.body-table .fav-btn[aria-pressed="true"],
+.cards-grid-only .fav-btn[aria-pressed="true"],
+.listing-actions-compact .fav-btn[aria-pressed="true"]{
+  border-color:#020617 !important;
+  color:#ef4444 !important;
 }
 
 </style>
@@ -22708,8 +24554,56 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   function isFavoriteShadowRowForCurrentUser(row){
     const currentEmail = getCurrentFavoriteOwnerEmail();
-    if (!currentEmail) return false;
-    return normEmail(row?.favorite_email_address) === currentEmail;
+    let ctx = {};
+    try{
+      ctx = (typeof getCurrentAppliedOwnerContext === "function") ? getCurrentAppliedOwnerContext() : {};
+    }catch(_err){
+      ctx = {};
+    }
+
+    const rowEmails = [
+      row?.favorite_email_address,
+      row?.favorite_email,
+      row?.favorite_user_email,
+      row?.favorite_jobseeker_email,
+      row?.favorite_applicant_email,
+      row?.applicant_email,
+      row?.applicant_email_address,
+      row?.candidate_email
+    ].map(normEmail).filter(Boolean);
+
+    const rowMasters = [
+      row?.favorite_applicant_master_id,
+      row?.favorite_master_id,
+      row?.favorite_applicant_master_table_id,
+      row?.applicant_master_id,
+      row?.applicant_master_table_id,
+      row?.candidate_master_id,
+      row?.jobseeker_master_id
+    ].map(v => safeStr(v).trim()).filter(Boolean);
+
+    const rowUsers = [
+      row?.favorite_user_id,
+      row?.favorite_auth_user_id,
+      row?.favorite_jobseeker_user_id,
+      row?.applicant_user_id,
+      row?.candidate_user_id,
+      row?.jobseeker_user_id
+    ].map(v => safeStr(v).trim()).filter(Boolean);
+
+    const rowIdentities = [
+      row?.favorite_owner_identity,
+      row?.favorite_identity,
+      row?.favorite_tagged_user
+    ].map(normalize).filter(Boolean);
+
+    if (currentEmail && rowEmails.includes(currentEmail)) return true;
+    if (ctx?.email && rowEmails.includes(ctx.email)) return true;
+    if (ctx?.masterId && rowMasters.includes(ctx.masterId)) return true;
+    if (ctx?.userId && rowUsers.includes(ctx.userId)) return true;
+    if (ctx?.identity && rowIdentities.includes(ctx.identity)) return true;
+
+    return false;
   }
 
   function isFavoriteShadowRowActive(row){
@@ -22805,7 +24699,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
     favoriteShadowRowsForUser = favoriteShadowRows
-      .filter(row => isFavoriteShadowRow(row) && normEmail(row?.favorite_email_address) === currentEmail)
+      .filter(row => isFavoriteShadowRow(row) && isFavoriteShadowRowForCurrentUser(row))
       .sort(compareRowRecencyDesc);
 
     favoriteShadowKeyMap = new Map();
@@ -22834,10 +24728,43 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   function buildFavoriteInsertPayloadFromJob(item, favoriteTaggedUser, favoriteEmailAddress, favoriteHeartStatus = FAVORITE_HEART_DB_VALUE){
     const payload = JSON.parse(JSON.stringify(item || {}));
+    const originalItem = item || {};
+
+    /*
+      Keep a stable pointer back to the real posted job before removing the
+      copied row id. This lets the logged-in jobseeker see every saved Favorite
+      again after refresh/login, and it also keeps the red-heart state synced
+      between the original job row and the Favorite history row.
+    */
+    const originalJobRef = [
+      originalItem?.original_staff_requirement_id,
+      originalItem?.parent_job_id,
+      originalItem?.staff_requirement_id,
+      originalItem?.job_post_id,
+      originalItem?.requirement_id,
+      originalItem?.id
+    ].map(v => safeStr(v).trim()).find(Boolean) || "";
 
     delete payload.id;
     delete payload.created_at;
     delete payload.updated_at;
+
+    const setReferenceIfColumnExists = (key) => {
+      /*
+        Avoid breaking older Supabase schemas: only write reference columns that
+        already exist on SELECT * rows. When those columns exist but are blank,
+        fill them with the clicked original staff_requirements id.
+      */
+      if (originalJobRef && Object.prototype.hasOwnProperty.call(originalItem, key)){
+        payload[key] = originalJobRef;
+      }
+    };
+
+    setReferenceIfColumnExists("original_staff_requirement_id");
+    setReferenceIfColumnExists("parent_job_id");
+    setReferenceIfColumnExists("staff_requirement_id");
+    setReferenceIfColumnExists("job_post_id");
+    setReferenceIfColumnExists("requirement_id");
 
     payload.source_type = FAVORITE_SOURCE_TYPE_VALUE;
     payload.favorite_tagged_user = safeStr(favoriteTaggedUser).trim();
@@ -25134,7 +27061,31 @@ window.addEventListener("DOMContentLoaded", async () => {
 
       if (error) throw error;
 
-      favoriteShadowRows = (Array.isArray(data) ? data : []).filter(isFavoriteShadowRow);
+      const freshFavoriteRows = (Array.isArray(data) ? data : []).filter(isFavoriteShadowRow);
+      const cachedFavoriteRows = (Array.isArray(staffRequirementRowsCache) ? staffRequirementRowsCache : [])
+        .filter(isFavoriteShadowRow);
+
+      const merged = [];
+      const seen = new Set();
+      freshFavoriteRows.concat(cachedFavoriteRows).forEach(row => {
+        if (!row) return;
+        const key = safeStr(row?.id || [
+          row?.source_type,
+          row?.favorite_email_address,
+          row?.favorite_tagged_user,
+          row?.favorite_heart_status,
+          getActionJobId(row),
+          JSON.stringify(getFavoriteComparableShape(row)),
+          row?.created_at,
+          row?.updated_at
+        ].join("|")).trim();
+
+        if (key && seen.has(key)) return;
+        if (key) seen.add(key);
+        merged.push(row);
+      });
+
+      favoriteShadowRows = merged;
       rebuildFavoriteShadowCacheForCurrentUser();
       return favoriteShadowRows;
     }catch(err){
@@ -25780,8 +27731,23 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     const rowRefs = getStrictActionReferenceSet(row);
     const targetRefs = getStrictActionReferenceSet(targetItem);
+    const rowIsAction = isFavoriteShadowRow(row) || isAppliedShadowRow(row);
+    const targetIsAction = isFavoriteShadowRow(targetItem) || isAppliedShadowRow(targetItem);
 
-    if (!rowRefs.size || !targetRefs.size) return false;
+    /*
+      Older Favorite/Applied history rows were copied from the original
+      staff_requirements row after deleting the id, so some of them have no
+      original_staff_requirement_id / parent_job_id / staff_requirement_id.
+      When a user-scoped action row has no concrete reference, fall back to the
+      saved job shape so the logged-in jobseeker still sees every marked
+      Favorite and Applied record after reload/login.
+    */
+    if (!rowRefs.size || !targetRefs.size){
+      if ((rowIsAction || targetIsAction) && favoriteRowMatchesItem(row, targetItem)){
+        return true;
+      }
+      return false;
+    }
 
     for (const ref of rowRefs){
       if (targetRefs.has(ref)) return true;
@@ -26722,7 +28688,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   function getFavoriteDisplayStateForItem(item){
     if (!item || !getLoginEmailLocal()) return false;
 
-    return rowHasActiveFavoriteForCurrentJob(item, item);
+    if (rowHasActiveFavoriteForCurrentJob(item, item)) return true;
+
+    /*
+      Display fallback for older saved favorites: when the history row belongs
+      to this logged-in jobseeker and matches the saved job shape, show the
+      visible heart as red even if the old row has no explicit original job id.
+    */
+    const latest = getLatestFavoriteShadowRowForItem(item, { includeInactive:true });
+    return !!(latest && isFavoriteShadowRowForCurrentUser(latest) && isFavoriteShadowRowActive(latest));
   }
 
   function getAppliedDisplayRecordForItem(item, options={}){
@@ -27926,6 +29900,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       if (tableBodyScroll) tableBodyScroll.scrollLeft = bodyX;
       window.scrollTo({ top: bodyY, left: 0, behavior: "auto" });
       syncAllApplyButtons();
+      syncAllFavoriteButtons();
     });
   }
 

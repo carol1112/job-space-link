@@ -505,7 +505,7 @@ section, footer, .slanted-divider{
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 30px rgba(0,198,255,0.4);
+
   animation:fadeInText 1s ease;
 }
 
@@ -539,14 +539,14 @@ section, footer, .slanted-divider{
 .about-section h2{
   font-size:2.7rem;
   margin-bottom:40px;
-  text-shadow:0 0 18px #00c6ff;
+  
 }
 
 .about-section p{
   max-width:900px;
   margin:0 auto;
   font-size:1.15rem;
-  color:#e5e7eb;
+  color:black;
   line-height:1.7;
 }
 
@@ -602,7 +602,7 @@ section, footer, .slanted-divider{
 #why-choose h2{
   font-size:2.4rem;
   margin-bottom:40px;
-  text-shadow:0 0 18px #00c6ff;
+  
 }
 
 .why-grid{
@@ -661,12 +661,12 @@ section, footer, .slanted-divider{
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 18px rgba(0,198,255,0.5);
+
 }
 
 .employer-cta p{
   font-size:1.15rem;
-  color:#dbeafe;
+  color:black;
   max-width:700px;
   margin:0 auto 28px;
   line-height:1.6;
@@ -700,7 +700,7 @@ section, footer, .slanted-divider{
 #how-it-works h2{
   font-size:2.4rem;
   margin-bottom:40px;
-  text-shadow:0 0 18px #00c6ff;
+  
 }
 
 .steps{
@@ -762,12 +762,11 @@ section, footer, .slanted-divider{
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 18px rgba(147,51,234,0.55);
 }
 
 .applicant-cta p{
   font-size:1.15rem;
-  color:#dce3ff;
+  color:black;
   max-width:700px;
   margin:0 auto 28px;
   line-height:1.6;
@@ -1930,6 +1929,331 @@ header .auth-buttons a.jobseeker-auth:focus-visible i{
     min-width:13px !important;
     font-size:0.58rem !important;
   }
+}
+
+
+
+/* ============================================================
+   FINAL CHOOSE PORTAL HEADER + FONT + BACKGROUND PATCH
+   Applies ONLY the Choose Portal header style, font style/color,
+   and page background color into the Remote Work Opportunities page.
+   Existing page content icons, cards, buttons, sections, footer,
+   layout, links, and JavaScript functionality are preserved.
+============================================================ */
+:root{
+  --choose-white:#ffffff;
+  --choose-soft:#f7f7f7;
+  --choose-line:#e6e8ec;
+  --choose-navy:#012169;
+  --choose-text:#1f2937;
+  --choose-muted:#4b5563;
+  --choose-icon:#003a70;
+}
+
+/* Choose Portal font style/color and clean background */
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  background:var(--choose-white) !important;
+  color:var(--choose-text) !important;
+}
+
+body{
+  background:var(--choose-white) !important;
+  color:var(--choose-text) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Keep the worker images/content effects, but remove only the dark page wash
+   so the Choose Portal white background is visible behind the page content. */
+.bg-workers::before{
+  background:transparent !important;
+}
+
+/* Restore Font Awesome after applying the global Choose Portal font. */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Header surface, logo, nav font color/style from Choose Portal */
+header{
+  background:var(--choose-white) !important;
+  border-bottom:1px solid var(--choose-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo{
+  min-width:140px !important;
+  margin-left:-4px !important;
+}
+
+header .logo img{
+  height:100px !important;
+  width:auto !important;
+  max-width:180px !important;
+  display:block !important;
+  object-fit:contain !important;
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--choose-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Header/menu icons only: match Choose Portal dark-blue icon style.
+   Content icons keep their original page CSS. */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-toggle > i,
+.nav-dropdown-menu a > i,
+.nav-toggle > i,
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav-toggle > i,
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right,
+header .auth-buttons a > i{
+  color:var(--choose-icon) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  opacity:1 !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+header .auth-buttons a:hover > i,
+header .auth-buttons a:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--choose-navy) !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+/* Dropdown menu follows Choose Portal white/navy style */
+.nav-dropdown-menu{
+  background:var(--choose-white) !important;
+  border:1px solid var(--choose-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--choose-navy) !important;
+  background:var(--choose-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Mobile header/menu same as Choose Portal */
+.nav-toggle{
+  background:var(--choose-white) !important;
+  color:var(--choose-icon) !important;
+  border:1px solid var(--choose-line) !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel{
+  background:var(--choose-white) !important;
+  border-top:1px solid var(--choose-line) !important;
+  border-bottom:1px solid var(--choose-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--choose-navy) !important;
+  background:var(--choose-white) !important;
+  border:1px solid var(--choose-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--choose-white) !important;
+}
+
+/* Keep header/logo sizes matched with the Choose Portal breakpoints */
+@media (min-width:1800px){
+  header .logo img{ height:88px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header .logo img{ height:80px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header .logo img{ height:66px !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header .logo img{ height:54px !important; }
+}
+
+@media (min-width:481px) and (max-width:768px){
+  body > header .logo img,
+  header .logo img{ height:52px !important; }
+}
+
+@media (max-width:480px){
+  body > header .logo img,
+  header .logo img{ height:48px !important; }
 }
 
 </style>
