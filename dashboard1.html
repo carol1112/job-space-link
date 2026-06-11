@@ -10203,5 +10203,226 @@ init();
   }
 </style>
 
+
+
+<!-- ============================================================
+   FINAL PATCH 2026-06-10: MOBILE FILTER FINAL READABILITY UPDATE
+   ✅ Mobile phone devices only.
+   ✅ Applicant Directory title is navy blue and easier to read.
+   ✅ Country / Industries controls restore the original dark control background.
+   ✅ Country / Industries dropdown panels open directly below their own filter.
+   ✅ Advanced filter labels are slightly larger/readable while preserving one-row horizontal scroll.
+   ✅ CSS-only; existing functionality/behavior remains unchanged.
+============================================================ -->
+<style id="final-mobile-filter-readability-country-industry-restore-style">
+  @media (max-width:768px){
+    :root{
+      --mobile-final-navy:#002060;
+      --mobile-final-black:#020617;
+      --mobile-final-light:#dff8ff;
+      --mobile-final-cyan:#38dfff;
+      --mobile-final-dark-control:#050b1d;
+      --mobile-final-dark-border:rgba(0,198,255,.42);
+    }
+
+    /* Applicant Directory title - mobile only */
+    .inline-directory-title,
+    .controls .inline-directory-title{
+      color:var(--mobile-final-navy)!important;
+      font-size:1rem!important;
+      font-weight:950!important;
+      letter-spacing:.01em!important;
+      text-shadow:none!important;
+    }
+    .inline-directory-title i,
+    .inline-directory-title span,
+    .controls .inline-directory-title i,
+    .controls .inline-directory-title span{
+      color:var(--mobile-final-navy)!important;
+      font-weight:950!important;
+      text-shadow:none!important;
+      filter:none!important;
+    }
+
+    /* Restore Country and Industries filter background, while keeping the dropdown under each filter. */
+    .controls .filter-unit,
+    .controls > .filter-unit{
+      position:relative!important;
+      overflow:visible!important;
+      z-index:19000!important;
+      isolation:visible!important;
+    }
+    .controls .filter-unit.open,
+    .controls > .filter-unit.open{
+      z-index:260000!important;
+    }
+    .controls .filter-unit .filter-trigger,
+    .controls > .filter-unit .filter-trigger{
+      background:var(--mobile-final-dark-control)!important;
+      color:var(--mobile-final-light)!important;
+      border:1px solid var(--mobile-final-dark-border)!important;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 2px 8px rgba(2,6,23,.20)!important;
+    }
+    .controls .filter-unit .filter-trigger .filter-label,
+    .controls .filter-unit .filter-trigger i,
+    .controls > .filter-unit .filter-trigger .filter-label,
+    .controls > .filter-unit .filter-trigger i{
+      color:var(--mobile-final-light)!important;
+      text-shadow:none!important;
+      font-weight:900!important;
+      opacity:1!important;
+    }
+    .controls .filter-unit .filter-trigger i,
+    .controls > .filter-unit .filter-trigger i{
+      color:var(--mobile-final-cyan)!important;
+    }
+    .controls .filter-unit .filter-trigger:hover,
+    .controls .filter-unit .filter-trigger:focus-visible,
+    .controls .filter-unit.open .filter-trigger,
+    .controls > .filter-unit .filter-trigger:hover,
+    .controls > .filter-unit .filter-trigger:focus-visible,
+    .controls > .filter-unit.open .filter-trigger{
+      background:var(--mobile-final-dark-control)!important;
+      color:#ffffff!important;
+      border-color:rgba(56,189,248,.78)!important;
+      box-shadow:0 0 0 3px rgba(56,189,248,.12),0 4px 12px rgba(2,6,23,.24),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+      outline:none!important;
+    }
+    .controls .filter-unit .filter-trigger:hover .filter-label,
+    .controls .filter-unit .filter-trigger:focus-visible .filter-label,
+    .controls .filter-unit.open .filter-trigger .filter-label,
+    .controls > .filter-unit .filter-trigger:hover .filter-label,
+    .controls > .filter-unit .filter-trigger:focus-visible .filter-label,
+    .controls > .filter-unit.open .filter-trigger .filter-label{
+      color:#ffffff!important;
+    }
+
+    .controls .filter-unit .filter-panel,
+    .controls > .filter-unit .filter-panel{
+      position:absolute!important;
+      top:calc(100% + 8px)!important;
+      left:0!important;
+      right:auto!important;
+      transform:none!important;
+      display:none!important;
+      width:min(292px, calc(100vw - 28px))!important;
+      min-width:min(292px, calc(100vw - 28px))!important;
+      max-width:calc(100vw - 28px)!important;
+      max-height:min(345px,52vh)!important;
+      overflow:auto!important;
+      z-index:260001!important;
+      background:#ffffff!important;
+      border:1px solid rgba(0,32,96,.24)!important;
+      border-radius:14px!important;
+      box-shadow:0 18px 42px rgba(15,23,42,.30),0 0 0 1px rgba(255,255,255,.88)!important;
+      color:var(--mobile-final-navy)!important;
+    }
+    .controls .filter-unit.open .filter-panel,
+    .controls > .filter-unit.open .filter-panel{
+      display:block!important;
+    }
+    .controls .filter-unit:has([data-filter-toggle="industryFilter"]) .filter-panel,
+    .controls > .filter-unit:nth-child(4) .filter-panel{
+      left:auto!important;
+      right:0!important;
+    }
+
+    .controls .filter-option{
+      background:#ffffff!important;
+      color:var(--mobile-final-navy)!important;
+      font-size:.86rem!important;
+      font-weight:900!important;
+    }
+    .controls .filter-option:hover,
+    .controls .filter-option:focus-visible{
+      color:var(--mobile-final-black)!important;
+      background:#f3f4f6!important;
+    }
+
+    /* Advanced filters - keep single horizontal row but make labels a little larger/readable. */
+    .filters > .input,
+    .filters > .filter-unit{
+      flex-basis:186px!important;
+      width:186px!important;
+      min-width:186px!important;
+      max-width:186px!important;
+    }
+    .filters > #nameFilter{
+      flex-basis:168px!important;
+      width:168px!important;
+      min-width:168px!important;
+      max-width:168px!important;
+    }
+    .filters > #zipcodeFilter{
+      flex-basis:162px!important;
+      width:162px!important;
+      min-width:162px!important;
+      max-width:162px!important;
+    }
+    .filters .input,
+    .filters .filter-trigger,
+    .filters .date-input,
+    .filters .specific-date-input,
+    #dateFilter.specific-date-input{
+      height:44px!important;
+      min-height:44px!important;
+      font-size:.86rem!important;
+      line-height:1.08!important;
+      font-weight:950!important;
+      padding-left:12px!important;
+      padding-right:12px!important;
+    }
+    .filters .input::placeholder,
+    .filters .filter-trigger .filter-label,
+    .filters .filter-trigger i{
+      font-size:.86rem!important;
+      line-height:1.08!important;
+      font-weight:950!important;
+    }
+    .filters .filter-option{
+      font-size:.86rem!important;
+      font-weight:900!important;
+      line-height:1.28!important;
+    }
+  }
+
+  @media (max-width:420px){
+    .filters > .input,
+    .filters > .filter-unit{
+      flex-basis:178px!important;
+      width:178px!important;
+      min-width:178px!important;
+      max-width:178px!important;
+    }
+    .filters > #nameFilter{
+      flex-basis:160px!important;
+      width:160px!important;
+      min-width:160px!important;
+      max-width:160px!important;
+    }
+    .filters > #zipcodeFilter{
+      flex-basis:156px!important;
+      width:156px!important;
+      min-width:156px!important;
+      max-width:156px!important;
+    }
+    .filters .input,
+    .filters .filter-trigger,
+    .filters .date-input,
+    .filters .specific-date-input,
+    #dateFilter.specific-date-input{
+      height:43px!important;
+      min-height:43px!important;
+      font-size:.82rem!important;
+      padding-left:11px!important;
+      padding-right:11px!important;
+    }
+    .filters .input::placeholder,
+    .filters .filter-trigger .filter-label,
+    .filters .filter-trigger i{
+      font-size:.82rem!important;
+    }
+  }
+</style>
 </body>
 </html>
