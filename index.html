@@ -4380,6 +4380,982 @@ header *,
   }
 }
 
+
+
+/* ============================================================
+   FINAL BANK-STYLE FONT + BACKGROUND COLOR PATCH
+   Applies the clean white / light gray background and dark navy
+   typography from the reference image while preserving existing
+   icon colors, login button colors, links, layout, JS behavior,
+   video behavior, and responsive breakpoints.
+============================================================ */
+:root{
+  --bank-white:#ffffff;
+  --bank-soft:#f5f5f5;
+  --bank-soft-2:#f7f7f7;
+  --bank-line:#e6e8ec;
+  --bank-navy:#012169;
+  --bank-text:#1f2937;
+  --bank-muted:#4b5563;
+  --bank-link:#0057b8;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body{
+  background:var(--bank-white) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Header background and typography only */
+header{
+  background:var(--bank-white) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo img{
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--bank-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Preserve blue icon style in normal state; keep hover readable on white */
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  color:#070bee !important;
+  text-shadow:0 0 10px rgba(56,189,248,0.35) !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#000000 !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+.nav-dropdown-menu{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--bank-navy) !important;
+  background:var(--bank-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Mobile menu follows the same white / navy reference style */
+.mobile-panel{
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:var(--bank-navy) !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--bank-white) !important;
+}
+
+/* Main page background and content colors */
+.page-shell{
+  background:var(--bank-white) !important;
+}
+
+.portal-card,
+.video-card{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.08) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.portal-card::before,
+.portal-card::after{
+  display:none !important;
+  content:none !important;
+}
+
+.page-title h1,
+.video-info-panel h2,
+.logo-fallback .brand-main{
+  color:var(--bank-navy) !important;
+  font-weight:600 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+}
+
+.page-title p,
+.video-info-panel p,
+.video-benefits li,
+.logo-fallback .brand-sub{
+  color:var(--bank-text) !important;
+  font-weight:400 !important;
+  text-shadow:none !important;
+}
+
+.video-info-panel{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 8px 20px rgba(1,33,105,0.06) !important;
+}
+
+.video-kicker{
+  background:var(--bank-soft) !important;
+  border:1px solid var(--bank-line) !important;
+  color:var(--bank-navy) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.video-frame{
+  background:var(--bank-soft-2) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:0 10px 28px rgba(1,33,105,0.10) !important;
+}
+
+.video-frame::before{
+  background:linear-gradient(135deg, rgba(255,255,255,0.10), transparent 35%) !important;
+}
+
+.logo-center{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 10px 28px rgba(1,33,105,0.08) !important;
+}
+
+.logo-center::before{
+  border-color:var(--bank-line) !important;
+}
+
+.logo-img{
+  filter:none !important;
+}
+
+.skip-now-link{
+  color:var(--bank-link) !important;
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.skip-now-link:hover,
+.skip-now-link:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Keep the original portal and auth button colors/styles intact */
+.portal-button,
+header .auth-buttons a,
+header .auth-buttons a.login-auth{
+  text-decoration:none !important;
+}
+
+.portal-button,
+.portal-button span,
+.portal-button i,
+header .auth-buttons a,
+header .auth-buttons a .auth-text,
+header .auth-buttons a i,
+header .auth-buttons a.login-auth,
+header .auth-buttons a.login-auth .auth-text,
+header .auth-buttons a.login-auth i{
+  font-weight:700 !important;
+}
+
+
+/* ============================================================
+   FINAL MARKED ICON RESTORE PATCH
+   Restores the marked Font Awesome icons after the bank-style
+   font patch. Keeps the existing button colors/styles unchanged.
+============================================================ */
+
+/* Restore Font Awesome font so icons render as icons, not letters/boxes */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far{
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Restore the marked nav/info icons: solid cyan-blue, visible, no boxes */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i,
+.mobile-panel .mnav-left > i,
+.video-kicker > i,
+.video-benefits li > i,
+.skip-now-link > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  color:#360ee9 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:0 0 10px rgba(14,165,233,0.34) !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+/* Desktop header icons */
+header nav > a > i,
+header nav .nav-main-link > i{
+  width:18px !important;
+  min-width:18px !important;
+  height:18px !important;
+  font-size:1rem !important;
+  margin-right:4px !important;
+}
+
+/* Dropdown menu icons */
+.nav-dropdown-menu a > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  font-size:0.95rem !important;
+}
+
+/* Mobile menu icons */
+.mobile-panel .mnav-left > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  font-size:1rem !important;
+}
+
+/* Kicker and feature-list icons inside the video information card */
+.video-kicker > i{
+  width:16px !important;
+  min-width:16px !important;
+  height:16px !important;
+  font-size:0.86rem !important;
+  margin-right:2px !important;
+}
+
+.video-benefits li > i{
+  width:22px !important;
+  min-width:22px !important;
+  height:22px !important;
+  font-size:1rem !important;
+  margin-top:1px !important;
+}
+
+/* Keep requested hover behavior: text and icons turn black with underline */
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i,
+.skip-now-link:hover > i,
+.skip-now-link:focus-visible > i{
+  color:#000000 !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Restore visible caret/dropdown icons without changing the dropdown behavior */
+.nav-dropdown-toggle > i,
+.mobile-panel .mnav-toggle > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:1000 !important;
+  color:var(--bank-navy, #012169) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  opacity:1 !important;
+}
+
+/* Responsive icon sizes: keep them visible while preventing overlap */
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.86rem !important;
+    margin-right:3px !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.86rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:13px !important;
+    min-width:13px !important;
+    height:13px !important;
+    font-size:0.74rem !important;
+    margin-right:2px !important;
+  }
+
+  .video-kicker > i{
+    width:13px !important;
+    min-width:13px !important;
+    height:13px !important;
+    font-size:0.68rem !important;
+  }
+
+  .video-benefits li > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.72rem !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav-left > i{
+    width:19px !important;
+    min-width:19px !important;
+    height:19px !important;
+    font-size:0.96rem !important;
+  }
+
+  .video-kicker > i{
+    width:15px !important;
+    min-width:15px !important;
+    height:15px !important;
+    font-size:0.80rem !important;
+  }
+
+  .video-benefits li > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    font-size:0.92rem !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left > i{
+    width:17px !important;
+    min-width:17px !important;
+    height:17px !important;
+    font-size:0.88rem !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.82rem !important;
+  }
+}
+
+
+
+
+/* ============================================================
+   FINAL VISIBLE NAV + DROPDOWN ICON PATCH
+   Makes every marked Font Awesome icon render correctly and
+   visually stronger on the white header/background while keeping
+   the existing button colors, links, dropdown JS, video behavior,
+   and responsive layout unchanged.
+============================================================ */
+
+/* Font Awesome uses ::before. Restore the icon font on BOTH the
+   <i> element and its ::before glyph after the global font patch. */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Strong desktop navigation icons, styled like the second reference */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin:0 7px 0 0 !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.26) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.82),
+    0 0 12px rgba(14,165,233,0.30) !important;
+  text-shadow:0 0 10px rgba(14,165,233,0.46) !important;
+  opacity:1 !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+header nav > a > i::before,
+header nav .nav-main-link > i::before,
+.nav-dropdown-menu a > i::before{
+  display:block !important;
+  color:inherit !important;
+  font-size:1rem !important;
+  line-height:1 !important;
+}
+
+/* Give nav text a little more breathing room next to the stronger icons */
+header nav > a,
+header nav .nav-main-link{
+  gap:0 !important;
+  padding-left:7px !important;
+  padding-right:9px !important;
+  min-height:36px !important;
+}
+
+/* Visible About caret/dropdown toggle */
+.nav-dropdown-toggle{
+  width:30px !important;
+  height:30px !important;
+  min-width:30px !important;
+  border-radius:8px !important;
+  margin-left:2px !important;
+  color:#012169 !important;
+  background:rgba(14,165,233,0.06) !important;
+  border:1px solid rgba(14,165,233,0.18) !important;
+}
+
+.nav-dropdown-toggle > i,
+.nav-dropdown-toggle > i::before,
+.mobile-panel .mnav-toggle > i,
+.mobile-panel .mnav-toggle > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+  line-height:1 !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+}
+
+/* Dropdown menu icons match the stronger nav icon treatment */
+.nav-dropdown-menu a{
+  gap:0 !important;
+  padding:11px 14px !important;
+}
+
+.nav-dropdown-menu a > i{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin-right:10px !important;
+  font-size:1rem !important;
+}
+
+/* Video card mini icons, made clearer and easier to read */
+.video-kicker > i,
+.video-benefits li > i,
+.skip-now-link > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  border-radius:7px !important;
+  box-shadow:0 0 12px rgba(14,165,233,0.22) !important;
+  text-shadow:0 0 9px rgba(14,165,233,0.40) !important;
+  opacity:1 !important;
+  transform:none !important;
+}
+
+.video-kicker > i::before,
+.video-benefits li > i::before,
+.skip-now-link > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+}
+
+.video-kicker > i{
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  margin-right:6px !important;
+  font-size:0.86rem !important;
+}
+
+.video-benefits li > i{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin-top:0 !important;
+  font-size:0.95rem !important;
+}
+
+/* Mobile panel icons */
+.mobile-panel .mnav-left > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  border-radius:8px !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  box-shadow:0 0 12px rgba(14,165,233,0.22) !important;
+  text-shadow:0 0 9px rgba(14,165,233,0.36) !important;
+}
+
+.mobile-panel .mnav-left > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+  font-size:1rem !important;
+}
+
+/* Hover remains requested black + underline, but icon is still clear */
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i,
+.video-kicker:hover > i,
+.video-benefits li:hover > i,
+.skip-now-link:hover > i,
+.skip-now-link:focus-visible > i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Keep the login button icon exactly inside the existing blue/purple button style */
+header .auth-buttons a.login-auth > i,
+header .auth-buttons a.login-auth > i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:#ffffff !important;
+}
+
+header .auth-buttons a.login-auth > i{
+  width:18px !important;
+  min-width:18px !important;
+  height:18px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.18) !important;
+  border:0 !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.12) !important;
+  margin-right:0 !important;
+}
+
+/* Responsive tuning: icons stay visible without breaking the header */
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:5px !important;
+    padding-right:6px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    margin-right:5px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.86rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:25px !important;
+    min-width:25px !important;
+    height:25px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    padding-left:3px !important;
+    padding-right:4px !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    width:17px !important;
+    min-width:17px !important;
+    height:17px !important;
+    margin-right:3px !important;
+    border-radius:6px !important;
+  }
+
+  header nav > a > i::before,
+  header nav .nav-main-link > i::before{
+    font-size:0.72rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+    border-radius:6px !important;
+  }
+
+  .video-kicker > i{
+    width:16px !important;
+    min-width:16px !important;
+    height:16px !important;
+    font-size:0.68rem !important;
+  }
+
+  .video-benefits li > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+    font-size:0.72rem !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav-left > i{
+    width:23px !important;
+    min-width:23px !important;
+    height:23px !important;
+  }
+
+  .video-kicker > i{
+    width:18px !important;
+    min-width:18px !important;
+    height:18px !important;
+  }
+
+  .video-benefits li > i{
+    width:22px !important;
+    min-width:22px !important;
+    height:22px !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left > i{
+    width:21px !important;
+    min-width:21px !important;
+    height:21px !important;
+  }
+
+  .video-benefits li > i{
+    width:20px !important;
+    min-width:20px !important;
+    height:20px !important;
+  }
+}
+
+
+
+
+/* ============================================================
+   FINAL DARK-BLUE ICON COLOR PATCH
+   Changes all page Font Awesome icons to dark blue and removes
+   icon shadows only. Existing links, layout, buttons, dropdowns,
+   and behavior are preserved.
+============================================================ */
+:root{
+  --jsl-icon-dark-blue:#003a70;
+}
+
+i.fa-solid,
+i.fa-regular,
+i.fa-brands,
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i,
+.mobile-panel .mnav-main-link i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav-left i,
+.video-kicker i,
+.video-benefits i,
+.skip-now-link i,
+.portal-button i,
+header .auth-buttons a i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-toggle:hover i,
+.video-kicker:hover i,
+.video-benefits li:hover i,
+.skip-now-link:hover i,
+.skip-now-link:focus-visible i,
+.portal-button:hover i,
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header .auth-buttons a.login-auth i,
+header .auth-buttons a.login-auth:hover i,
+header .auth-buttons a.login-auth:focus-visible i{
+  color:var(--jsl-icon-dark-blue) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
 </style>
 </head>
 

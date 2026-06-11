@@ -2508,7 +2508,393 @@ header .auth-buttons .auth-text{
   }
 }
 
+/* ============================================================
+   FINAL REFINED CHOOSE PORTAL HEADER + ABOUT BACKGROUND PATCH
+   Applies the Choose Portal header, font family, text color, and
+   white/light background to the About page while restoring the
+   original About content and retaining existing non-header icon
+   styles, button styles, links, layout, and JavaScript behavior.
+============================================================ */
+:root{
+  --portal-white:#ffffff;
+  --portal-soft:#f5f5f5;
+  --portal-soft-2:#f7f7f7;
+  --portal-line:#e6e8ec;
+  --portal-navy:#012169;
+  --portal-text:#1f2937;
+  --portal-muted:#4b5563;
+  --portal-link:#0057b8;
+  --portal-header-icon:#003a70;
+}
 
+html,
+body{
+  background:var(--portal-white) !important;
+  color:var(--portal-text) !important;
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+body{
+  background:var(--portal-white) !important;
+  color:var(--portal-text) !important;
+}
+
+body *:not(i):not(.fa):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.fa-regular):not(.fa-brands){
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+/* Preserve Font Awesome rendering while changing the page font. */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Replace the About page dark/glow background with the Choose Portal light background. */
+body::before,
+.bg-workers,
+.bg-workers::before,
+.worker-float{
+  display:none !important;
+  content:none !important;
+  background:none !important;
+  filter:none !important;
+}
+
+main,
+section,
+footer,
+.section-wrap,
+.hero,
+.about-overview,
+.stats-strip,
+.story-section,
+.process-section,
+.audience-section,
+.cta-section{
+  background:transparent !important;
+  color:var(--portal-text) !important;
+}
+
+.hero::before,
+.hero::after{
+  display:none !important;
+  content:none !important;
+}
+
+/* Choose Portal header style on the About page. */
+body > header,
+header{
+  background:var(--portal-white) !important;
+  border-bottom:1px solid var(--portal-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header .logo img{
+  filter:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  color:var(--portal-navy) !important;
+  font-weight:500 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Header icons follow the Choose Portal header only; content icons keep their previous style. */
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i,
+.mobile-panel .mnav-main-link i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav-left i{
+  color:var(--portal-header-icon) !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-toggle:hover i{
+  color:#000000 !important;
+  text-shadow:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle i,
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:var(--portal-navy) !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+}
+
+.nav-dropdown-menu{
+  background:var(--portal-white) !important;
+  border:1px solid var(--portal-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--portal-navy) !important;
+  background:var(--portal-white) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--portal-white) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+/* Mobile header and dropdown match the Choose Portal light header. */
+.nav-toggle{
+  background:linear-gradient(135deg, rgba(0,198,255,0.92), rgba(139,92,246,0.92)) !important;
+  border:1px solid rgba(56,189,248,0.40) !important;
+  box-shadow:none !important;
+}
+
+.nav-toggle i,
+.nav-toggle:hover i,
+.nav-toggle:focus-visible i{
+  color:var(--portal-white) !important;
+}
+
+.mobile-panel{
+  background:var(--portal-white) !important;
+  border-top:1px solid var(--portal-line) !important;
+  border-bottom:1px solid var(--portal-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--portal-navy) !important;
+  background:var(--portal-soft) !important;
+  border-color:var(--portal-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  color:#000000 !important;
+  background:var(--portal-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:var(--portal-navy) !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:var(--portal-white) !important;
+}
+
+/* Light page typography/background while keeping existing icon and button styling. */
+.glass-card,
+.hero-panel,
+.about-card,
+.stat-box,
+.story-main,
+.story-side,
+.story-point,
+.process-card,
+.audience-card,
+.cta-box,
+.highlight-pill,
+.mini-stat{
+  background:var(--portal-white) !important;
+  border:1px solid var(--portal-line) !important;
+  box-shadow:0 10px 26px rgba(1,33,105,0.08) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.highlight-pill,
+.story-point,
+.mini-stat,
+.section-heading .eyebrow,
+.hero-badge,
+.panel-top .status-chip{
+  background:var(--portal-soft) !important;
+  border:1px solid var(--portal-line) !important;
+  color:var(--portal-navy) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.hero h1,
+.section-heading h2,
+.hero-panel h3,
+.about-card h3,
+.story-main h3,
+.story-side h3,
+.story-point h4,
+.process-card h3,
+.audience-card h3,
+.cta-box h2,
+.stat-box strong,
+.mini-stat strong{
+  color:var(--portal-navy) !important;
+  font-weight:600 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+}
+
+.hero h1 .gradient-text{
+  background:none !important;
+  -webkit-background-clip:initial !important;
+  background-clip:initial !important;
+  -webkit-text-fill-color:var(--portal-navy) !important;
+  color:var(--portal-navy) !important;
+  text-shadow:none !important;
+}
+
+.hero p,
+.section-heading p,
+.hero-panel p,
+.about-card p,
+.story-main p,
+.story-side p,
+.story-point p,
+.process-card p,
+.audience-card p,
+.audience-card li,
+.side-list li,
+.panel-points li,
+.highlight-pill,
+.stat-box span,
+.mini-stat span,
+.cta-box p{
+  color:var(--portal-text) !important;
+  font-weight:400 !important;
+  text-shadow:none !important;
+}
+
+.about-card:hover{
+  transform:translateY(-4px) !important;
+  border-color:var(--portal-line) !important;
+  box-shadow:0 14px 30px rgba(1,33,105,0.10) !important;
+}
+
+.footer-simple{
+  background:var(--portal-white) !important;
+  border-top:1px solid var(--portal-line) !important;
+  color:var(--portal-text) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.footer-simple .footer-logo img{
+  filter:none !important;
+}
+
+.footer-simple .footer-logo img:hover{
+  filter:none !important;
+}
+
+.footer-simple .footer-bottom{
+  color:var(--portal-muted) !important;
+}
 
 </style>
 </head>
@@ -2552,7 +2938,7 @@ header .auth-buttons .auth-text{
   </nav>
 
   <div class="auth-buttons">
-    <a href="index1.html" class="admin jobseeker-auth"><i class="fa-solid fa-right-to-bracket"></i><span class="auth-text">Login</span></a>
+    <a href="index1.html" class="admin jobseeker-auth login-auth"><i class="fa-solid fa-right-to-bracket"></i><span class="auth-text">Login</span></a>
   </div>
 
   <button
