@@ -21856,7 +21856,10 @@ window.addEventListener("DOMContentLoaded", async () => {
         event.preventDefault();
         event.stopPropagation();
         api.pendingValue = value;
-        renderEnhancedFilterOptions(api);
+        commitEnhancedFilterDropdown(api);
+        if (typeof window.__jslUpdateMobileFloatingFilterDropdowns === "function"){
+          try{ window.__jslUpdateMobileFloatingFilterDropdowns(); }catch(_err){}
+        }
       });
       api.optionsBox.appendChild(btn);
     });
@@ -29267,6 +29270,28 @@ window.addEventListener("DOMContentLoaded", async () => {
     return "";
   }
 
+  function getSalaryComparableAmount(item){
+    const min = toNumber(item?.salary_min);
+    const max = toNumber(item?.salary_max);
+    const values = [min, max].filter(Number.isFinite);
+    if (!values.length) return NaN;
+    return Math.max.apply(Math, values);
+  }
+
+  function itemMatchesSalaryPlusFilter(item, filterValue){
+    const raw = safeStr(filterValue).trim();
+    if (!raw) return true;
+
+    const threshold = toNumber(raw);
+    if (Number.isFinite(threshold)){
+      const amount = getSalaryComparableAmount(item);
+      return Number.isFinite(amount) && amount >= threshold;
+    }
+
+    // Backward-compatible fallback for older salary range keys.
+    return makeUniqueKey(buildSalaryRangeKey(item)) === makeUniqueKey(raw);
+  }
+
   function getCompanyFilterRawValue(item){
     if (!item) return "";
 
@@ -29319,10 +29344,16 @@ window.addEventListener("DOMContentLoaded", async () => {
     return makeUniqueKey(countrySelect?.value || "");
   }
 
+  const SALARY_PLUS_FILTER_OPTIONS = [
+    { value:"5000", label:"5000+" },
+    { value:"10000", label:"10000+" },
+    { value:"20000", label:"20000+" },
+    { value:"30000", label:"30000+" },
+    { value:"40000", label:"40000+" },
+    { value:"50000", label:"50000+" }
+  ];
+
   function getSalaryDefaultFilterLabel(){
-    const selectedCountryKey = getSelectedCountryFilterKeyForSalaryOptions();
-    if (selectedCountryKey === "usa") return "All USD Salaries";
-    if (selectedCountryKey === "philippines") return "All PHP Salaries";
     return "All Salaries";
   }
 
@@ -29358,6 +29389,13 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     if (field === "created_at"){
       POSTED_DATE_FILTER_OPTIONS.forEach(opt => {
+        options.set(opt.value, { value: opt.value, label: opt.label });
+      });
+      return options;
+    }
+
+    if (field === "salary_range"){
+      SALARY_PLUS_FILTER_OPTIONS.forEach(opt => {
         options.set(opt.value, { value: opt.value, label: opt.label });
       });
       return options;
@@ -29520,7 +29558,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (departmentFilter && makeUniqueKey(item.department) !== departmentFilter) return false;
     if (typeFilter && makeUniqueKey(item.employment_type) !== typeFilter) return false;
     if (countryFilter && makeUniqueKey(getCountryFilterKey(getCountryRawValue(item))) !== countryFilter) return false;
-    if (salaryFilter && makeUniqueKey(buildSalaryRangeKey(item)) !== salaryFilter) return false;
+    if (salaryFilter && !itemMatchesSalaryPlusFilter(item, salaryFilter)) return false;
     if (experienceFilter && makeUniqueKey(item.experience_level) !== experienceFilter) return false;
     if (locationFilter && makeUniqueKey(buildLocationSortKey(item)) !== locationFilter) return false;
     if (zipcodeFilter && makeUniqueKey(buildZipCodeSortKey(item)) !== zipcodeFilter) return false;
@@ -33145,6 +33183,987 @@ window.addEventListener("DOMContentLoaded", async () => {
   window.__jslUpdateMobileFloatingFilterDropdowns = scheduleFloatingMenus;
 })();
 </script>
+
+
+
+<style id="final-mobile-advanced-filters-one-row-autofilter-style">
+/* ============================================================
+   FINAL REQUEST PATCH 2026-06-11
+   - Mobile only: keep all advanced filters in one horizontal row
+     with horizontal scrolling so no filter gets hidden.
+   - All platforms: hide the dropdown Reset/Update action buttons;
+     choosing an option now auto-applies the filter immediately.
+============================================================ */
+.filter-dd-actions,
+.filter-dd-reset,
+.filter-dd-update{
+  display:none !important;
+  visibility:hidden !important;
+  width:0 !important;
+  height:0 !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  max-width:0 !important;
+  max-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  pointer-events:none !important;
+}
+
+.filter-dd-menu{
+  padding-bottom:10px !important;
+}
+
+.filter-dd-options{
+  padding-bottom:2px !important;
+}
+
+@media (max-width:768px){
+  .sticky-master,
+  .sticky-master-inner,
+  .topbar-row,
+  .controls-panel{
+    overflow:visible !important;
+  }
+
+  .advanced-filter-row,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+    grid-area:advanced-filters !important;
+    grid-column:1 / -1 !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:flex !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:8px !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior-x:contain !important;
+    scroll-snap-type:x proximity !important;
+    padding:10px 10px 14px !important;
+    margin-top:6px !important;
+    border-radius:16px !important;
+    border:1.5px solid rgba(96,165,250,.38) !important;
+    background:
+      radial-gradient(circle at 10% 12%, rgba(0,198,255,.14), rgba(0,0,0,0) 46%),
+      linear-gradient(180deg, rgba(15,23,42,.90), rgba(2,6,23,.84)) !important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.04), 0 10px 20px rgba(2,6,23,.20) !important;
+    position:relative !important;
+    z-index:270000 !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar{
+    height:10px !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar-track{
+    background:rgba(226,232,240,.18) !important;
+    border-radius:999px !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar-thumb{
+    background:linear-gradient(90deg,#00c6ff,#7c3aed) !important;
+    border-radius:999px !important;
+    border:2px solid rgba(2,6,23,.78) !important;
+  }
+
+  .advanced-filter-row::before,
+  .advanced-filter-row::after,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row::before,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row::after,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row::before,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row::after{
+    content:none !important;
+    display:none !important;
+  }
+
+  .advanced-filter-row > select.advanced-filter-input{
+    flex:0 0 178px !important;
+    width:178px !important;
+    min-width:178px !important;
+    max-width:178px !important;
+    height:42px !important;
+    min-height:42px !important;
+    font-size:.74rem !important;
+    white-space:nowrap !important;
+    scroll-snap-align:start !important;
+  }
+
+  .advanced-filter-row > select.enhanced-filter-native{
+    display:none !important;
+  }
+
+  .advanced-filter-row .filter-dd,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd{
+    flex:0 0 178px !important;
+    width:178px !important;
+    min-width:178px !important;
+    max-width:178px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:0 !important;
+    overflow:visible !important;
+    position:relative !important;
+    scroll-snap-align:start !important;
+    z-index:270010 !important;
+  }
+
+  .advanced-filter-row .filter-dd::before,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd::before,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd::before{
+    content:none !important;
+    display:none !important;
+  }
+
+  .advanced-filter-row .filter-dd-trigger,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd-trigger,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd-trigger{
+    width:178px !important;
+    min-width:178px !important;
+    max-width:178px !important;
+    min-height:42px !important;
+    height:42px !important;
+    padding:8px 10px !important;
+    border-radius:12px !important;
+    font-size:.74rem !important;
+    line-height:1.15 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    background:#ffffff !important;
+    color:#06245a !important;
+    border:1px solid rgba(2,43,92,.22) !important;
+    box-shadow:0 2px 8px rgba(15,23,42,.10) !important;
+  }
+
+  .advanced-filter-row .filter-dd-trigger:hover,
+  .advanced-filter-row .filter-dd.is-open .filter-dd-trigger,
+  .advanced-filter-row .filter-dd-trigger:focus,
+  .advanced-filter-row .filter-dd-trigger:focus-visible{
+    color:#000000 !important;
+    border-color:rgba(14,165,233,.72) !important;
+    box-shadow:0 0 0 3px rgba(14,165,233,.12), 0 4px 10px rgba(15,23,42,.14) !important;
+  }
+
+  .advanced-filter-row .filter-dd-trigger-text{
+    display:block !important;
+    min-width:0 !important;
+    max-width:calc(100% - 20px) !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+    font-size:.74rem !important;
+    font-weight:700 !important;
+    color:inherit !important;
+  }
+
+  .advanced-filter-row .filter-dd-caret{
+    color:inherit !important;
+    flex:0 0 auto !important;
+    font-size:.70rem !important;
+  }
+
+  body .filter-dd.is-open .filter-dd-menu.jsl-mobile-floating-filter-menu{
+    z-index:310000 !important;
+  }
+}
+
+@media (max-width:380px){
+  .advanced-filter-row > select.advanced-filter-input,
+  .advanced-filter-row .filter-dd,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd,
+  .advanced-filter-row .filter-dd-trigger,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row .filter-dd-trigger,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row .filter-dd-trigger{
+    flex-basis:166px !important;
+    width:166px !important;
+    min-width:166px !important;
+    max-width:166px !important;
+  }
+}
+</style>
+
+<script id="final-filter-dropdown-auto-apply-cleanup-script">
+/* Auto-apply dropdown filters on option click and keep Reset/Update buttons removed on every device. */
+(function(){
+  function hideDropdownActionButtons(){
+    document.querySelectorAll('.filter-dd-actions, .filter-dd-reset, .filter-dd-update').forEach(function(el){
+      el.style.setProperty('display', 'none', 'important');
+      el.style.setProperty('visibility', 'hidden', 'important');
+      el.setAttribute('aria-hidden', 'true');
+      if (/button/i.test(el.tagName || '')) el.setAttribute('tabindex', '-1');
+    });
+  }
+
+  document.addEventListener('click', function(event){
+    var option = event.target && event.target.closest ? event.target.closest('.filter-dd-option') : null;
+    if (!option) return;
+    hideDropdownActionButtons();
+  }, true);
+
+  ['DOMContentLoaded','load','pageshow'].forEach(function(evt){
+    window.addEventListener(evt, hideDropdownActionButtons, { passive:true });
+  });
+
+  try{
+    var mo = new MutationObserver(hideDropdownActionButtons);
+    mo.observe(document.documentElement, { childList:true, subtree:true });
+  }catch(_err){}
+
+  hideDropdownActionButtons();
+})();
+</script>
+
+
+<style id="final-tight-sticky-spacing-selected-filter-emphasis-style">
+/* ============================================================
+   FINAL REQUEST PATCH 2026-06-11
+   All devices:
+   - Remove the visual gap between the fixed header and the first
+     sticky control row while scrolling.
+   - Remove the visual gap between the second filter row and the
+     table header while scrolling.
+   - Add stronger border/outline emphasis to selected filter controls.
+   Functionality and JS hooks remain unchanged.
+============================================================ */
+:root{
+  --jsl-tight-header-h:78px;
+  --jsl-tight-master-h:0px;
+}
+
+/* Pull the dashboard board directly below the fixed main header. */
+.container{
+  margin-top:var(--jsl-tight-header-h) !important;
+  padding-top:4px !important;
+}
+
+/* Keep the control block tight to the bottom of the header while scrolling. */
+.sticky-master{
+  top:var(--jsl-tight-header-h) !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+.sticky-master-inner{
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+
+.topbar-row{
+  padding-top:6px !important;
+  padding-bottom:6px !important;
+  gap:6px !important;
+}
+
+.controls-panel{
+  gap:5px !important;
+  row-gap:5px !important;
+}
+
+.advanced-filter-row,
+.sticky-master-inner.logged-out-mode .advanced-filter-row,
+.sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+  margin-top:4px !important;
+  margin-bottom:0 !important;
+}
+
+/* Pull the table/grid content directly under the second filter row. */
+.table-section{
+  padding-top:0 !important;
+  margin-top:0 !important;
+}
+
+.table-header-sticky{
+  top:calc(var(--jsl-tight-header-h) + var(--jsl-tight-master-h)) !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+
+.table-head-shell,
+.table-head-scroll,
+.head-table{
+  margin-top:0 !important;
+}
+
+.board-scroll,
+.board-scroll.table-mode,
+.board-scroll.grid-only-mode{
+  padding-top:0 !important;
+}
+
+/* Keep dropdowns above the tightened layers. */
+.sticky-master{
+  z-index:50000 !important;
+}
+.sticky-master-inner{
+  z-index:50010 !important;
+}
+.filter-dd.is-open{
+  z-index:90000 !important;
+}
+.filter-dd.is-open .filter-dd-menu{
+  z-index:91000 !important;
+}
+.table-header-sticky{
+  z-index:1200 !important;
+}
+
+/* Strong selected/focused filter border emphasis for all platforms. */
+.filter-dd.jsl-filter-selected .filter-dd-trigger,
+.filter-dd.is-open .filter-dd-trigger,
+.filter-dd-trigger:focus-visible,
+select.advanced-filter-input.jsl-filter-selected,
+select.jsl-filter-selected,
+input.jsl-filter-selected,
+.search-wrapper.jsl-filter-selected input,
+.inline-industry-filter-field.jsl-filter-selected select,
+.inline-country-filter-field.jsl-filter-selected select,
+.favorite-filter-field.jsl-filter-selected select,
+.applied-filter-field.jsl-filter-selected select{
+  border:3px solid var(--bank-link, #0057b8) !important;
+  outline:2px solid rgba(0,87,184,.18) !important;
+  outline-offset:1px !important;
+  box-shadow:
+    0 0 0 4px rgba(0,87,184,.16),
+    0 0 18px rgba(0,87,184,.22) !important;
+  font-weight:800 !important;
+}
+
+/* Keep selected custom filter buttons readable on both white and dark themes. */
+.filter-dd.jsl-filter-selected .filter-dd-trigger,
+.search-wrapper.jsl-filter-selected input{
+  background:#ffffff !important;
+  color:var(--bank-navy, #012169) !important;
+}
+
+/* Emphasize the chosen dropdown option inside the option panel. */
+.filter-dd-option.is-active,
+.filter-dd-option.is-pending{
+  border:2px solid var(--bank-link, #0057b8) !important;
+  background:
+    linear-gradient(90deg, rgba(0,87,184,.16), rgba(14,165,233,.14)) !important;
+  color:var(--bank-navy, #012169) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.65) !important;
+  font-weight:800 !important;
+}
+
+/* Native select fallback selected state. */
+.advanced-filter-input.jsl-filter-selected,
+.inline-industry-filter-field select.jsl-filter-selected,
+.inline-country-filter-field select.jsl-filter-selected,
+.favorite-filter-field select.jsl-filter-selected,
+.applied-filter-field select.jsl-filter-selected{
+  background:#ffffff !important;
+  color:var(--bank-navy, #012169) !important;
+}
+
+/* Mobile keeps the same restored horizontal rows, just tighter vertically. */
+@media (max-width:768px){
+  .container{
+    margin-top:var(--jsl-tight-header-h) !important;
+    padding-top:3px !important;
+  }
+
+  .topbar-row{
+    padding:5px 6px !important;
+    gap:5px !important;
+  }
+
+  .controls-panel{
+    row-gap:5px !important;
+  }
+
+  .advanced-filter-row,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+    margin-top:3px !important;
+    margin-bottom:0 !important;
+    padding-top:8px !important;
+    padding-bottom:10px !important;
+  }
+
+  .table-section{
+    padding-top:0 !important;
+  }
+
+  .table-header-sticky{
+    top:calc(var(--jsl-tight-header-h) + var(--jsl-tight-master-h)) !important;
+  }
+
+  .filter-dd.jsl-filter-selected .filter-dd-trigger,
+  .filter-dd.is-open .filter-dd-trigger,
+  .advanced-filter-row .filter-dd.jsl-filter-selected .filter-dd-trigger,
+  .advanced-filter-row .filter-dd.is-open .filter-dd-trigger{
+    border-width:3px !important;
+    box-shadow:
+      0 0 0 3px rgba(0,87,184,.18),
+      0 0 14px rgba(0,87,184,.22) !important;
+  }
+}
+</style>
+
+<script id="final-tight-sticky-spacing-selected-filter-emphasis-script">
+/* Dynamically keeps sticky offsets tight and marks selected filters for stronger visual emphasis. */
+(function(){
+  var rafId = 0;
+
+  function getNumber(value, fallback){
+    var n = parseFloat(value);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function updateTightStickyOffsets(){
+    rafId = 0;
+    var root = document.documentElement;
+    var header = document.querySelector('header');
+    var master = document.querySelector('.sticky-master-inner') || document.querySelector('.sticky-master');
+
+    var headerH = header ? Math.ceil(header.getBoundingClientRect().height) : 78;
+    if (!headerH || headerH < 50) headerH = 78;
+
+    var masterH = master ? Math.ceil(master.getBoundingClientRect().height) : getNumber(getComputedStyle(root).getPropertyValue('--masterTopH'), 0);
+    if (!masterH || masterH < 0) masterH = 0;
+
+    root.style.setProperty('--jsl-tight-header-h', headerH + 'px');
+    root.style.setProperty('--jsl-tight-master-h', masterH + 'px');
+    root.style.setProperty('--siteHeaderOffset', headerH + 'px');
+    root.style.setProperty('--tableHeaderTop', (headerH + masterH) + 'px');
+  }
+
+  function scheduleOffsetUpdate(){
+    if (rafId) return;
+    rafId = requestAnimationFrame(updateTightStickyOffsets);
+  }
+
+  function hasSelectedValue(el){
+    if (!el) return false;
+    var tag = (el.tagName || '').toLowerCase();
+    var value = '';
+    if (tag === 'select' || tag === 'input' || tag === 'textarea'){
+      value = String(el.value || '').trim();
+    }else{
+      value = String(el.getAttribute('data-value') || '').trim();
+    }
+    if (!value) return false;
+    if (/^(all|any|default)$/i.test(value)) return false;
+    return true;
+  }
+
+  function markSelectedFilters(){
+    var filterSelectors = [
+      '.advanced-filter-input',
+      '.enhanced-filter-native',
+      '.inline-industry-filter-field select',
+      '.inline-country-filter-field select',
+      '.favorite-filter-field select',
+      '.applied-filter-field select',
+      '.search-wrapper input'
+    ].join(',');
+
+    document.querySelectorAll(filterSelectors).forEach(function(el){
+      var selected = hasSelectedValue(el);
+      el.classList.toggle('jsl-filter-selected', selected);
+
+      var wrapper = el.closest('.filter-dd') ||
+                    el.closest('.search-wrapper') ||
+                    el.closest('.inline-industry-filter-field') ||
+                    el.closest('.inline-country-filter-field') ||
+                    el.closest('.favorite-filter-field') ||
+                    el.closest('.applied-filter-field');
+
+      if (wrapper){
+        wrapper.classList.toggle('jsl-filter-selected', selected);
+      }
+
+      if (wrapper && wrapper.classList && wrapper.classList.contains('filter-dd')){
+        var trigger = wrapper.querySelector('.filter-dd-trigger');
+        if (trigger){
+          trigger.classList.toggle('jsl-filter-selected', selected);
+        }
+      }
+    });
+  }
+
+  function refreshVisualState(){
+    markSelectedFilters();
+    scheduleOffsetUpdate();
+  }
+
+  document.addEventListener('change', function(event){
+    if (event.target && event.target.matches && event.target.matches('select,input,textarea')){
+      refreshVisualState();
+    }
+  }, true);
+
+  document.addEventListener('input', function(event){
+    if (event.target && event.target.matches && event.target.matches('input,textarea')){
+      refreshVisualState();
+    }
+  }, true);
+
+  document.addEventListener('click', function(event){
+    if (!event.target || !event.target.closest) return;
+    if (event.target.closest('.filter-dd-option,.filter-dd-trigger,.reset-btn,.search-btn,#resetBtn')){
+      setTimeout(refreshVisualState, 0);
+      setTimeout(refreshVisualState, 80);
+      setTimeout(refreshVisualState, 240);
+    }
+  }, true);
+
+  ['DOMContentLoaded','load','pageshow','resize','orientationchange'].forEach(function(evt){
+    window.addEventListener(evt, refreshVisualState, { passive:true });
+  });
+
+  window.addEventListener('scroll', scheduleOffsetUpdate, { passive:true });
+
+  try{
+    var mo = new MutationObserver(function(){
+      refreshVisualState();
+    });
+    mo.observe(document.documentElement, {
+      childList:true,
+      subtree:true,
+      attributes:true,
+      attributeFilter:['class','style','value','disabled','aria-expanded']
+    });
+  }catch(_err){}
+
+  refreshVisualState();
+  setTimeout(refreshVisualState, 300);
+  setTimeout(refreshVisualState, 1000);
+
+  window.__jslRefreshTightStickySpacingAndSelectedFilters = refreshVisualState;
+})();
+</script>
+
+
+
+
+<style id="final-zero-gap-all-devices-tablet-filter-font-style">
+/* ============================================================
+   FINAL ZERO-GAP + TABLET FILTER READABILITY PATCH 2026-06-11
+   All devices:
+   - Fully remove visual space between the fixed main header and
+     the first-row controls.
+   - Fully remove visual space between the second-row filters and
+     the sticky table header during vertical scrolling.
+   Tablet only (769px - 1023px):
+   - Slightly reduce second-row filter text/padding so every filter
+     label displays cleanly.
+   Existing HTML, IDs, event handlers, and filtering behavior remain
+   unchanged.
+============================================================ */
+:root{
+  --jsl-zero-header-h:78px;
+  --jsl-zero-master-h:0px;
+}
+
+/* Main board begins exactly at the fixed header bottom. */
+body{
+  padding-top:0 !important;
+}
+
+.container{
+  margin-top:var(--jsl-zero-header-h) !important;
+  padding-top:0 !important;
+  border-top-width:0 !important;
+  border-top-left-radius:0 !important;
+  border-top-right-radius:0 !important;
+}
+
+.board-scroll,
+.board-scroll.table-mode,
+.board-scroll.grid-only-mode{
+  margin-top:0 !important;
+  padding-top:0 !important;
+}
+
+/* Sticky controls touch the header with no vertical seam. */
+.sticky-master{
+  top:var(--jsl-zero-header-h) !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+.sticky-master-inner{
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  border-top-width:0 !important;
+  border-top-left-radius:0 !important;
+  border-top-right-radius:0 !important;
+}
+
+.topbar-row,
+.sticky-master-inner.logged-out-mode .topbar-row,
+.sticky-master-inner:not(.logged-out-mode) .topbar-row{
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  gap:0 5px !important;
+}
+
+.controls-panel,
+.control-row-main,
+.control-row-sub{
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+.controls-panel{
+  row-gap:0 !important;
+  column-gap:5px !important;
+}
+
+/* Second-row controls directly meet the table header. */
+.advanced-filter-row,
+.sticky-master-inner.logged-out-mode .advanced-filter-row,
+.sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+.table-section,
+#tableSection{
+  margin-top:0 !important;
+  padding-top:0 !important;
+}
+
+.table-header-sticky,
+#tableHeaderSticky{
+  top:calc(var(--jsl-zero-header-h) + var(--jsl-zero-master-h) - 2px) !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+.table-head-shell,
+.table-head-scroll,
+.head-table,
+#staffHeadTable{
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+
+.table-head-shell{
+  border-top-left-radius:0 !important;
+  border-top-right-radius:0 !important;
+}
+
+.table-body-shell,
+.table-body-scroll{
+  margin-top:0 !important;
+}
+
+/* Keep the tightened layers stacked correctly. */
+header{z-index:150000 !important;}
+.mobile-panel{z-index:149000 !important;}
+.sticky-master{z-index:90000 !important;}
+.sticky-master-inner{z-index:90010 !important;}
+.filter-dd.is-open{z-index:140000 !important;}
+.filter-dd.is-open .filter-dd-menu{z-index:141000 !important;}
+.table-header-sticky{z-index:85000 !important;}
+
+/* Maintain strong selected-filter emphasis from previous update. */
+.filter-dd.jsl-filter-selected .filter-dd-trigger,
+.filter-dd.is-open .filter-dd-trigger,
+.filter-dd-trigger.jsl-filter-selected,
+.filter-dd-trigger:focus-visible,
+select.advanced-filter-input.jsl-filter-selected,
+select.jsl-filter-selected,
+input.jsl-filter-selected,
+.search-wrapper.jsl-filter-selected input,
+.inline-industry-filter-field.jsl-filter-selected select,
+.inline-country-filter-field.jsl-filter-selected select,
+.favorite-filter-field.jsl-filter-selected select,
+.applied-filter-field.jsl-filter-selected select{
+  border:3px solid var(--bank-link, #0057b8) !important;
+  outline:2px solid rgba(0,87,184,.18) !important;
+  outline-offset:1px !important;
+  box-shadow:
+    0 0 0 4px rgba(0,87,184,.16),
+    0 0 18px rgba(0,87,184,.22) !important;
+  font-weight:800 !important;
+}
+
+.filter-dd.jsl-filter-selected .filter-dd-trigger,
+.search-wrapper.jsl-filter-selected input,
+.advanced-filter-input.jsl-filter-selected,
+.inline-industry-filter-field select.jsl-filter-selected,
+.inline-country-filter-field select.jsl-filter-selected,
+.favorite-filter-field select.jsl-filter-selected,
+.applied-filter-field select.jsl-filter-selected{
+  background:#ffffff !important;
+  color:var(--bank-navy, #012169) !important;
+}
+
+/* Tablet only: make second-row filter labels fit better. */
+@media (min-width:769px) and (max-width:1023px){
+  .container{
+    margin-top:var(--jsl-zero-header-h) !important;
+    padding-top:0 !important;
+  }
+
+  .topbar-row,
+  .sticky-master-inner.logged-out-mode .topbar-row,
+  .sticky-master-inner:not(.logged-out-mode) .topbar-row{
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+  }
+
+  .advanced-filter-row,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+    grid-template-columns:repeat(9, minmax(0, 1fr)) !important;
+    gap:4px !important;
+    row-gap:0 !important;
+    margin-top:0 !important;
+    margin-bottom:0 !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+  }
+
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row .filter-dd-trigger,
+  .advanced-filter-row .filter-dd-trigger .filter-dd-label,
+  .advanced-filter-row .filter-dd-label,
+  .advanced-filter-row select,
+  .advanced-filter-row input{
+    font-size:.64rem !important;
+    line-height:1.05 !important;
+    letter-spacing:-.015em !important;
+  }
+
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row .filter-dd-trigger{
+    min-height:31px !important;
+    height:31px !important;
+    padding:5px 6px !important;
+    border-radius:9px !important;
+  }
+
+  .advanced-filter-row .filter-dd-trigger i,
+  .advanced-filter-row .filter-dd-caret,
+  .advanced-filter-row .fa-caret-down{
+    font-size:.56rem !important;
+    flex:0 0 auto !important;
+  }
+
+  .advanced-filter-row .filter-dd-trigger .filter-dd-label,
+  .advanced-filter-row .filter-dd-label{
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:clip !important;
+    white-space:nowrap !important;
+  }
+
+  .table-section,
+  #tableSection{
+    padding-top:0 !important;
+    margin-top:0 !important;
+  }
+
+  .table-header-sticky,
+  #tableHeaderSticky{
+    top:calc(var(--jsl-zero-header-h) + var(--jsl-zero-master-h) - 2px) !important;
+    margin-top:0 !important;
+  }
+}
+
+/* Mobile keeps restored horizontal rows but removes vertical seams. */
+@media (max-width:768px){
+  .container{
+    margin-top:var(--jsl-zero-header-h) !important;
+    padding-top:0 !important;
+  }
+
+  .topbar-row,
+  .sticky-master-inner.logged-out-mode .topbar-row,
+  .sticky-master-inner:not(.logged-out-mode) .topbar-row{
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+  }
+
+  .advanced-filter-row,
+  .sticky-master-inner.logged-out-mode .advanced-filter-row,
+  .sticky-master-inner:not(.logged-out-mode) .advanced-filter-row{
+    margin-top:0 !important;
+    margin-bottom:0 !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+  }
+
+  .table-header-sticky,
+  #tableHeaderSticky{
+    top:calc(var(--jsl-zero-header-h) + var(--jsl-zero-master-h) - 2px) !important;
+  }
+}
+</style>
+
+<script id="final-zero-gap-all-devices-tablet-filter-font-script">
+/* Final all-device zero-gap sticky offset controller. */
+(function(){
+  var rafId = 0;
+  var timers = [];
+
+  function px(n){ return Math.max(0, Math.ceil(n || 0)) + 'px'; }
+
+  function getRectHeight(el, fallback){
+    if (!el) return fallback || 0;
+    var rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+    return Math.ceil((rect && rect.height) || el.offsetHeight || fallback || 0);
+  }
+
+  function updateZeroGapOffsets(){
+    rafId = 0;
+    var root = document.documentElement;
+    var header = document.querySelector('header');
+    var master = document.getElementById('stickyMasterInner') || document.querySelector('.sticky-master-inner') || document.getElementById('stickyMaster') || document.querySelector('.sticky-master');
+
+    var headerH = getRectHeight(header, 78);
+    if (headerH < 48) headerH = 78;
+
+    var masterH = getRectHeight(master, 0);
+    if (masterH < 0) masterH = 0;
+
+    root.style.setProperty('--jsl-zero-header-h', px(headerH), 'important');
+    root.style.setProperty('--jsl-zero-master-h', px(masterH), 'important');
+    root.style.setProperty('--jsl-tight-header-h', px(headerH), 'important');
+    root.style.setProperty('--jsl-tight-master-h', px(masterH), 'important');
+    root.style.setProperty('--siteHeaderOffset', px(headerH), 'important');
+    root.style.setProperty('--masterTopH', px(masterH), 'important');
+    root.style.setProperty('--tableHeaderTop', px(headerH + masterH - 2), 'important');
+  }
+
+  function requestUpdate(){
+    if (rafId) return;
+    rafId = requestAnimationFrame(updateZeroGapOffsets);
+  }
+
+  function scheduleUpdate(){
+    requestUpdate();
+    timers.forEach(clearTimeout);
+    timers = [40, 120, 300, 700, 1200].map(function(delay){
+      return setTimeout(updateZeroGapOffsets, delay);
+    });
+  }
+
+  ['DOMContentLoaded','load','pageshow','resize','orientationchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, scheduleUpdate, { passive:true });
+  });
+  window.addEventListener('scroll', requestUpdate, { passive:true });
+
+  document.addEventListener('click', function(){
+    setTimeout(scheduleUpdate, 0);
+    setTimeout(scheduleUpdate, 180);
+  }, true);
+
+  if ('ResizeObserver' in window){
+    window.addEventListener('DOMContentLoaded', function(){
+      var ro = new ResizeObserver(scheduleUpdate);
+      [
+        document.querySelector('header'),
+        document.getElementById('stickyMaster'),
+        document.getElementById('stickyMasterInner'),
+        document.getElementById('topbarRow'),
+        document.getElementById('controlsPanel'),
+        document.getElementById('advancedFilterRow'),
+        document.getElementById('tableHeaderSticky')
+      ].forEach(function(el){ if (el) ro.observe(el); });
+      scheduleUpdate();
+    }, { once:true });
+  }
+
+  try{
+    var mo = new MutationObserver(function(){ scheduleUpdate(); });
+    mo.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:['class','style','hidden','aria-expanded'] });
+  }catch(_err){}
+
+  scheduleUpdate();
+  window.__jslFinalZeroGapStickyOffsets = scheduleUpdate;
+})();
+</script>
+
+
+
+<style id="final-tablet-second-row-filter-font-options-only-style">
+/* ============================================================
+   FINAL TABLET ONLY 2ND-ROW FILTER FONT READABILITY PATCH
+   Applies only at 769px-1023px.
+   Reduces second-row filter label/control text and dropdown option
+   text slightly so every filter label displays better.
+   No JavaScript or behavior changes.
+============================================================ */
+@media (min-width:769px) and (max-width:1023px){
+  #advancedFilterRow.advanced-filter-row .advanced-filter-input,
+  #advancedFilterRow.advanced-filter-row .advanced-filter-select,
+  #advancedFilterRow.advanced-filter-row select,
+  #advancedFilterRow.advanced-filter-row input,
+  #advancedFilterRow.advanced-filter-row .filter-dd-trigger,
+  #advancedFilterRow.advanced-filter-row .filter-dd-trigger-text,
+  #advancedFilterRow.advanced-filter-row .filter-dd-label,
+  #advancedFilterRow.advanced-filter-row .filter-dd-trigger .filter-dd-label,
+  body #advancedFilterRow.advanced-filter-row .filter-dd-trigger,
+  body #advancedFilterRow.advanced-filter-row .filter-dd-trigger-text,
+  body #advancedFilterRow.advanced-filter-row .filter-dd-label{
+    font-size:.58rem !important;
+    line-height:1.04 !important;
+    letter-spacing:-.025em !important;
+  }
+
+  #advancedFilterRow.advanced-filter-row .filter-dd-option,
+  #advancedFilterRow.advanced-filter-row .filter-dd-option-label,
+  #advancedFilterRow.advanced-filter-row option,
+  body #advancedFilterRow.advanced-filter-row .filter-dd-option,
+  body #advancedFilterRow.advanced-filter-row .filter-dd-option-label{
+    font-size:.58rem !important;
+    line-height:1.08 !important;
+    letter-spacing:-.015em !important;
+  }
+
+  #advancedFilterRow.advanced-filter-row .filter-dd-menu-title,
+  #advancedFilterRow.advanced-filter-row .filter-dd-pending-chip,
+  body #advancedFilterRow.advanced-filter-row .filter-dd-menu-title,
+  body #advancedFilterRow.advanced-filter-row .filter-dd-pending-chip{
+    font-size:.54rem !important;
+    line-height:1.05 !important;
+    letter-spacing:.025em !important;
+  }
+
+  #advancedFilterRow.advanced-filter-row .filter-dd-option{
+    min-height:28px !important;
+    padding:5px 7px !important;
+  }
+
+  #advancedFilterRow.advanced-filter-row .advanced-filter-input,
+  #advancedFilterRow.advanced-filter-row .filter-dd-trigger{
+    min-height:30px !important;
+    height:30px !important;
+    padding:5px 6px !important;
+  }
+
+  #advancedFilterRow.advanced-filter-row .filter-dd-caret,
+  #advancedFilterRow.advanced-filter-row .fa-caret-down{
+    font-size:.52rem !important;
+  }
+}
+</style>
 
 </body>
 </html>
