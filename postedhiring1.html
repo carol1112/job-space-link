@@ -17673,6 +17673,298 @@ header nav .nav-main-link:focus-visible > i,
   color:#ef4444 !important;
 }
 
+
+
+/* ============================================================
+   FINAL MOBILE HEADER + ADVANCED FILTER ROW UPDATE 2026-06-10
+   ✅ Mobile only: logo is locked to the left side of the header.
+   ✅ Mobile only: hamburger menu is locked to the right side of the header.
+   ✅ Mobile only: advanced filters stay in one horizontal row with a scrollbar.
+   ✅ Mobile only: All Salaries, All Companies, All Positions, All Departments,
+      All Types, All Experience, All Locations, All Zip Codes, and All Posted Dates
+      remain readable and scrollable without changing IDs or JavaScript behavior.
+============================================================ */
+@media (max-width:768px){
+  :root,
+  html.jobseeker-logged-in,
+  html.jobseeker-logged-out,
+  body.jobseeker-logged-in,
+  body.jobseeker-logged-out{
+    --header-h:70px !important;
+    --siteHeaderOffset:70px !important;
+  }
+
+  body{
+    padding-top:var(--header-h) !important;
+    overflow-x:hidden !important;
+  }
+
+  header{
+    height:var(--header-h) !important;
+    min-height:var(--header-h) !important;
+    width:100% !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:8px !important;
+    padding:5px 10px 5px 8px !important;
+    overflow:visible !important;
+    z-index:220000 !important;
+  }
+
+  header nav,
+  header .auth-buttons,
+  header .header-jobseeker-quick-icons,
+  header .jobseeker-quick-icons,
+  header .header-jobseeker-btn,
+  header .profile-icon-btn,
+  header .profile-photo-action,
+  header .jobseeker-account-button{
+    display:none !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:170px !important;
+    margin:0 !important;
+    padding:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+    transform:none !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+    max-height:58px !important;
+    width:auto !important;
+    max-width:158px !important;
+    object-fit:contain !important;
+    display:block !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle,
+  #navToggle.nav-toggle{
+    order:99 !important;
+    flex:0 0 42px !important;
+    width:42px !important;
+    min-width:42px !important;
+    height:42px !important;
+    min-height:42px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:12px !important;
+    border:1px solid rgba(255,255,255,0.16) !important;
+    background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+    color:#ffffff !important;
+    box-shadow:0 0 14px rgba(0,198,255,0.12) !important;
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+    transform:none !important;
+    z-index:220010 !important;
+  }
+
+  header .nav-toggle i,
+  header #navToggle i{
+    color:#ffffff !important;
+    font-size:1.02rem !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    z-index:219900 !important;
+  }
+
+  .sticky-master,
+  .sticky-master-inner,
+  .topbar-row,
+  .controls-panel,
+  .control-row-main,
+  .control-row-sub{
+    overflow:visible !important;
+  }
+
+  .advanced-filter-row{
+    grid-column:1 / -1 !important;
+    order:10 !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:flex !important;
+    grid-template-columns:none !important;
+    grid-auto-flow:unset !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:10px !important;
+    margin:7px 0 0 !important;
+    padding:8px 4px 12px !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior-x:contain !important;
+    scroll-snap-type:x proximity !important;
+    scrollbar-gutter:stable !important;
+    border-radius:14px !important;
+  }
+
+  .advanced-filter-row:has(.filter-dd.is-open){
+    overflow-x:visible !important;
+    overflow-y:visible !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar{
+    height:11px !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar-track{
+    background:rgba(226,232,240,0.30) !important;
+    border-radius:999px !important;
+  }
+
+  .advanced-filter-row::-webkit-scrollbar-thumb{
+    background:linear-gradient(90deg,#00c6ff,#8b5cf6) !important;
+    border-radius:999px !important;
+    border:2px solid rgba(15,23,42,0.65) !important;
+  }
+
+  .advanced-filter-row{
+    scrollbar-width:thin !important;
+    scrollbar-color:#00c6ff rgba(226,232,240,0.30) !important;
+  }
+
+  .advanced-filter-row > select,
+  .advanced-filter-row > input,
+  .advanced-filter-row > .advanced-filter-input,
+  .advanced-filter-row > .advanced-filter-select,
+  .advanced-filter-row > .filter-dd,
+  .advanced-filter-row .filter-dd{
+    flex:0 0 168px !important;
+    width:168px !important;
+    min-width:168px !important;
+    max-width:168px !important;
+    scroll-snap-align:start !important;
+  }
+
+  .advanced-filter-row .advanced-filter-input,
+  .advanced-filter-row .advanced-filter-select,
+  .advanced-filter-row select,
+  .advanced-filter-row input,
+  .advanced-filter-row .filter-dd-trigger,
+  body .advanced-filter-row .filter-dd-trigger{
+    min-height:42px !important;
+    height:42px !important;
+    padding:9px 11px !important;
+    border-radius:13px !important;
+    font-size:.82rem !important;
+    line-height:1.15 !important;
+    font-weight:700 !important;
+    letter-spacing:0 !important;
+    white-space:nowrap !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .advanced-filter-row .filter-dd-trigger-text{
+    font-size:.82rem !important;
+    line-height:1.15 !important;
+    font-weight:700 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .advanced-filter-row .filter-dd-caret{
+    font-size:.78rem !important;
+    flex:0 0 auto !important;
+  }
+
+  .advanced-filter-row .filter-dd.is-open{
+    z-index:240000 !important;
+  }
+
+  .advanced-filter-row .filter-dd-menu{
+    top:calc(100% + 8px) !important;
+    left:0 !important;
+    right:auto !important;
+    width:min(286px, calc(100vw - 28px)) !important;
+    min-width:min(286px, calc(100vw - 28px)) !important;
+    max-width:calc(100vw - 28px) !important;
+    z-index:240500 !important;
+  }
+
+  .advanced-filter-row .filter-dd-options{
+    max-height:235px !important;
+  }
+}
+
+@media (max-width:420px){
+  header .logo{
+    max-width:145px !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+    max-height:54px !important;
+    max-width:138px !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle,
+  #navToggle.nav-toggle{
+    flex-basis:40px !important;
+    width:40px !important;
+    min-width:40px !important;
+    height:40px !important;
+    min-height:40px !important;
+  }
+
+  .advanced-filter-row > select,
+  .advanced-filter-row > input,
+  .advanced-filter-row > .advanced-filter-input,
+  .advanced-filter-row > .advanced-filter-select,
+  .advanced-filter-row > .filter-dd,
+  .advanced-filter-row .filter-dd{
+    flex-basis:158px !important;
+    width:158px !important;
+    min-width:158px !important;
+    max-width:158px !important;
+  }
+}
+
+@media (max-width:360px){
+  header .logo{
+    max-width:128px !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+    max-height:50px !important;
+    max-width:122px !important;
+  }
+
+  header .nav-toggle,
+  header #navToggle,
+  #navToggle.nav-toggle{
+    flex-basis:38px !important;
+    width:38px !important;
+    min-width:38px !important;
+    height:38px !important;
+    min-height:38px !important;
+  }
+}
+
 </style>
 </head>
 
