@@ -6971,6 +6971,39 @@ header .auth-buttons a:hover,
     <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-user"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+
+    <div class="mnav-group mnav-login-group" id="mobileLoginGroup">
+      <div class="mnav-row">
+        <button
+          type="button"
+          class="mnav-main-link mnav-login-main"
+          id="mobileLoginMainBtn"
+          aria-expanded="false"
+          aria-controls="mobileLoginMenu"
+          aria-label="Toggle Login submenu"
+        >
+          <span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text" id="mobileLoginText">Login</span></span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <button
+          type="button"
+          class="mnav-toggle"
+          id="mobileLoginToggle"
+          aria-expanded="false"
+          aria-controls="mobileLoginMenu"
+          aria-label="Toggle Login submenu"
+        >
+          <i class="fa-solid fa-caret-down mnav-caret"></i>
+        </button>
+      </div>
+
+      <div class="mnav-submenu" id="mobileLoginMenu">
+        <a href="index1.html?from=applicantform1&source=applicantform1.html" id="mobileJobseekerLoginLink"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="profile.html?profile_mode=logged_out&logged_out=1&force_logged_out=1&clear_profile=1&clear_profile_data=1&clear_profile_picture=1&source=applicantform1.html" id="mobileLoginProfileLink"><span class="mnav-left"><i class="fa-solid fa-id-card"></i><span class="nav-text">View Profile</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="postedhiring1.html" id="mobileLoginJobHiringLink"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="#" id="mobileLoginLogoutLink"><span class="mnav-left"><i class="fa-solid fa-right-from-bracket"></i><span class="nav-text">Logout</span></span><i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
 </div>
 </div>
 
@@ -26745,6 +26778,320 @@ header .auth-buttons a.login-auth i::before{
     }
   }
 </style>
+
+
+
+<!-- ============================================================
+     FINAL MOBILE-ONLY HEADER + HAMBURGER LOGIN DROPDOWN PATCH
+     ✅ Mobile only: logo locked left inside header, hamburger locked right.
+     ✅ Mobile only: header login/account button hidden.
+     ✅ Mobile hamburger: Login dropdown added after Post Resume.
+     ✅ Existing applicant form logic and Supabase behavior are untouched.
+============================================================ -->
+<style id="final-mobile-logo-left-login-dropdown-patch">
+@media (max-width:768px){
+  header{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:center !important;
+    justify-content:normal !important;
+    gap:10px !important;
+    height:var(--hdrH, 70px) !important;
+    min-height:var(--hdrH, 70px) !important;
+    padding:0 10px 0 8px !important;
+    overflow:hidden !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    grid-row:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    width:auto !important;
+    max-width:calc(100vw - 76px) !important;
+    min-width:0 !important;
+    flex:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    width:auto !important;
+    height:54px !important;
+    max-width:min(172px, 56vw) !important;
+    margin:0 !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+  }
+
+  header nav,
+  header .auth-buttons,
+  header #jslHeaderLoggedOutLoginBtn,
+  header .jsl-header-login-button,
+  header .header-login-button,
+  header .login-button,
+  header .jsl-jobseeker-account-menu{
+    display:none !important;
+  }
+
+  .nav-toggle{
+    grid-column:2 !important;
+    grid-row:1 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    display:inline-flex !important;
+    position:relative !important;
+    top:auto !important;
+    right:auto !important;
+    left:auto !important;
+    transform:none !important;
+    margin:0 !important;
+    width:42px !important;
+    min-width:42px !important;
+    height:42px !important;
+    flex:none !important;
+    border-radius:10px !important;
+    z-index:4 !important;
+  }
+
+  .mobile-panel{
+    top:var(--hdrH, 70px) !important;
+    max-height:calc(100dvh - var(--hdrH, 70px)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+
+  .mobile-panel .mnav-login-group{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav-login-group .mnav-row{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) 48px !important;
+    align-items:stretch !important;
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav-login-main{
+    width:100% !important;
+    border-radius:11px !important;
+    border:1px solid var(--jsl-portal-border, #e5eaf3) !important;
+    background:#ffffff !important;
+    color:var(--jsl-portal-navy, #002766) !important;
+    cursor:pointer !important;
+    font:inherit !important;
+    text-align:left !important;
+    min-height:44px !important;
+  }
+
+  .mobile-panel .mnav-login-main:hover,
+  .mobile-panel .mnav-login-main:focus-visible{
+    color:#000000 !important;
+    background:#f5fbff !important;
+    outline:none !important;
+    transform:translateX(3px) !important;
+  }
+
+  .mobile-panel .mnav-login-group.open .mnav-login-main,
+  .mobile-panel .mnav-login-group.open .mnav-toggle{
+    color:#000000 !important;
+    border-color:#9bdfff !important;
+  }
+
+  .mobile-panel .mnav-login-group.open .mnav-caret{
+    transform:rotate(180deg) !important;
+  }
+
+  #mobileLoginLogoutLink{
+    display:none;
+  }
+
+  body.jsl-mobile-logged-in #mobileJobseekerLoginLink{
+    display:none !important;
+  }
+
+  body.jsl-mobile-logged-in #mobileLoginLogoutLink{
+    display:flex !important;
+  }
+
+  body.jsl-mobile-logged-out #mobileLoginJobHiringLink{
+    display:none !important;
+  }
+}
+
+@media (max-width:480px){
+  header{
+    padding-left:8px !important;
+    padding-right:8px !important;
+    gap:8px !important;
+  }
+
+  header .logo{
+    max-width:calc(100vw - 68px) !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+    max-width:min(160px, 54vw) !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    min-width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+  }
+
+  .mobile-panel .mnav-login-group .mnav-row{
+    grid-template-columns:minmax(0,1fr) 42px !important;
+    gap:7px !important;
+  }
+}
+</style>
+
+<script id="final-mobile-login-dropdown-patch-script">
+(function(){
+  "use strict";
+
+  function $(id){ return document.getElementById(id); }
+
+  function isLoggedIn(){
+    var accountMenu = $("jslJobseekerAccountMenu");
+    if (accountMenu && accountMenu.classList.contains("logged-in")) return true;
+    if (accountMenu && accountMenu.classList.contains("logged-out")) return false;
+
+    var keys = ["jsl_logged_in", "jobseeker_logged_in", "applicant_logged_in", "logged_in", "employee_logged_in"];
+    for (var i = 0; i < keys.length; i++){
+      var v = "";
+      try{ v = String(localStorage.getItem(keys[i]) || sessionStorage.getItem(keys[i]) || "").toLowerCase(); }catch(e){}
+      if (v === "1" || v === "true" || v === "logged_in") return true;
+    }
+    return false;
+  }
+
+  function setMobileLoginOpen(open){
+    var group = $("mobileLoginGroup");
+    var main = $("mobileLoginMainBtn");
+    var toggle = $("mobileLoginToggle");
+    if (!group) return;
+    group.classList.toggle("open", !!open);
+    if (main) main.setAttribute("aria-expanded", open ? "true" : "false");
+    if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function toggleMobileLogin(e){
+    if (e){
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var group = $("mobileLoginGroup");
+    if (!group) return;
+    setMobileLoginOpen(!group.classList.contains("open"));
+  }
+
+  function syncMobileLoginState(){
+    var logged = isLoggedIn();
+    document.body.classList.toggle("jsl-mobile-logged-in", logged);
+    document.body.classList.toggle("jsl-mobile-logged-out", !logged);
+
+    var label = $("mobileLoginText");
+    if (label) label.textContent = logged ? "Account" : "Login";
+
+    var profileLink = $("mobileLoginProfileLink");
+    if (profileLink){
+      profileLink.href = logged
+        ? "profile.html?load_logged_in_account=1&source=applicantform1.html"
+        : "profile.html?profile_mode=logged_out&logged_out=1&force_logged_out=1&clear_profile=1&clear_profile_data=1&clear_profile_picture=1&source=applicantform1.html";
+    }
+  }
+
+  function bindMobileLoginDropdown(){
+    var main = $("mobileLoginMainBtn");
+    var toggle = $("mobileLoginToggle");
+    var logout = $("mobileLoginLogoutLink");
+    var panel = $("mobilePanel");
+    var navToggle = $("navToggle");
+
+    if (main && main.getAttribute("data-mobile-login-bound") !== "1"){
+      main.setAttribute("data-mobile-login-bound", "1");
+      main.addEventListener("click", toggleMobileLogin);
+    }
+
+    if (toggle && toggle.getAttribute("data-mobile-login-bound") !== "1"){
+      toggle.setAttribute("data-mobile-login-bound", "1");
+      toggle.addEventListener("click", toggleMobileLogin);
+    }
+
+    if (logout && logout.getAttribute("data-mobile-login-bound") !== "1"){
+      logout.setAttribute("data-mobile-login-bound", "1");
+      logout.addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        setMobileLoginOpen(false);
+        if (panel){
+          panel.classList.remove("open");
+          panel.setAttribute("aria-hidden", "true");
+        }
+        if (navToggle) navToggle.setAttribute("aria-expanded", "false");
+
+        var headerLogout = $("jslAccountLogout");
+        if (headerLogout){
+          headerLogout.click();
+          return;
+        }
+
+        if (window.jslApplicantFormLoginSync && typeof window.jslApplicantFormLoginSync.logout === "function"){
+          try{ window.jslApplicantFormLoginSync.logout({ showPopup:true, reason:"mobile-login-dropdown-logout", message:"Successfully logged out." }); }catch(err){}
+        }
+      });
+    }
+
+    document.addEventListener("keydown", function(e){
+      if (e.key === "Escape") setMobileLoginOpen(false);
+    });
+
+    window.addEventListener("resize", function(){
+      if (window.innerWidth >= 769) setMobileLoginOpen(false);
+    }, { passive:true });
+
+    syncMobileLoginState();
+  }
+
+  function observeAccountState(){
+    var accountMenu = $("jslJobseekerAccountMenu");
+    if (!accountMenu || accountMenu.getAttribute("data-mobile-login-observed") === "1") return;
+    accountMenu.setAttribute("data-mobile-login-observed", "1");
+    try{
+      new MutationObserver(syncMobileLoginState).observe(accountMenu, { attributes:true, attributeFilter:["class"] });
+    }catch(e){}
+  }
+
+  function boot(){
+    bindMobileLoginDropdown();
+    observeAccountState();
+    syncMobileLoginState();
+  }
+
+  if (document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", boot);
+  }else{
+    boot();
+  }
+
+  setTimeout(boot, 250);
+  setTimeout(boot, 900);
+  setInterval(function(){
+    observeAccountState();
+    syncMobileLoginState();
+  }, 1500);
+})();
+</script>
 
 </body>
 </html>
