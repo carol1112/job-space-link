@@ -6853,6 +6853,226 @@ body.employer-logged-out .heart-btn.locked i::before,
   }
 }
 
+
+/* ============================================================
+   FINAL MOBILE PHONE FILTER ROW PATCH 2026-06-10
+   Mobile-only: advanced filters stay in one readable horizontal row
+   with horizontal scrolling. Desktop and tablet layouts are untouched.
+============================================================ */
+@media (max-width: 768px){
+  .dashboard-sticky-top{
+    overflow:visible!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"]{
+    width:100%!important;
+    max-width:100%!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    grid-template-columns:none!important;
+    grid-auto-flow:column!important;
+    margin:8px 0 12px!important;
+    padding:8px 8px 10px!important;
+    border-radius:14px!important;
+    border:1px solid rgba(56,189,248,.32)!important;
+    background:rgba(2,8,23,.46)!important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.035),
+      0 8px 20px rgba(2,6,23,.18)!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:thin!important;
+    scrollbar-color:#38bdf8 rgba(15,23,42,.48)!important;
+    scroll-snap-type:x proximity!important;
+    position:relative!important;
+    z-index:13000!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"]::-webkit-scrollbar{
+    height:10px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"]::-webkit-scrollbar-track{
+    background:rgba(15,23,42,.55)!important;
+    border-radius:999px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"]::-webkit-scrollbar-thumb{
+    background:linear-gradient(90deg,#0ea5e9,#7c3aed)!important;
+    border-radius:999px!important;
+    border:2px solid rgba(3,9,22,.92)!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"]::after{
+    content:"";
+    flex:0 0 4px;
+    width:4px;
+    height:1px;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] > .input,
+  .filters[aria-label="Advanced applicant filters"] > .filter-unit{
+    flex:0 0 142px!important;
+    width:142px!important;
+    min-width:142px!important;
+    max-width:142px!important;
+    margin:0!important;
+    scroll-snap-align:start!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] > #nameFilter{
+    flex-basis:150px!important;
+    width:150px!important;
+    min-width:150px!important;
+    max-width:150px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] > #zipcodeFilter{
+    flex-basis:136px!important;
+    width:136px!important;
+    min-width:136px!important;
+    max-width:136px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .filter-trigger,
+  .filters[aria-label="Advanced applicant filters"] .input,
+  .filters[aria-label="Advanced applicant filters"] .select,
+  .filters[aria-label="Advanced applicant filters"] .date-input{
+    width:100%!important;
+    height:40px!important;
+    min-height:40px!important;
+    max-height:40px!important;
+    padding:0 10px!important;
+    border-radius:11px!important;
+    border:1px solid rgba(56,189,248,.45)!important;
+    background:#050b1d!important;
+    color:#eaf6ff!important;
+    font-size:.76rem!important;
+    line-height:1!important;
+    font-weight:800!important;
+    white-space:nowrap!important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.04),
+      0 2px 8px rgba(2,6,23,.18)!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .input::placeholder,
+  .filters[aria-label="Advanced applicant filters"] .date-input::placeholder{
+    color:#b7c9e6!important;
+    opacity:1!important;
+    font-size:.76rem!important;
+    font-weight:800!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .filter-trigger{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:7px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .filter-trigger .filter-label{
+    display:block!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    color:#eaf6ff!important;
+    font-size:.76rem!important;
+    line-height:1!important;
+    font-weight:800!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .filter-trigger i{
+    flex:0 0 auto!important;
+    color:#38dfff!important;
+    font-size:.72rem!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .filter-unit.open{
+    z-index:99999!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .filter-panel{
+    min-width:220px!important;
+    width:max-content!important;
+    max-width:min(320px, calc(100vw - 28px))!important;
+    left:0!important;
+    right:auto!important;
+    top:calc(100% + 8px)!important;
+    z-index:100000!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .filter-options{
+    max-height:250px!important;
+  }
+
+  /* Give dropdown panels vertical room while open, without changing any JS behavior. */
+  .filters[aria-label="Advanced applicant filters"]:has(.filter-unit.open){
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    padding-bottom:278px!important;
+    margin-bottom:-254px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .date-filter-panel{
+    min-width:246px!important;
+    max-width:min(330px, calc(100vw - 28px))!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] #dateFilter.specific-date-input{
+    height:40px!important;
+    min-height:40px!important;
+    max-height:none!important;
+    margin-top:8px!important;
+    font-size:.82rem!important;
+    letter-spacing:.02em!important;
+  }
+}
+
+@media (max-width: 420px){
+  .filters[aria-label="Advanced applicant filters"]{
+    gap:7px!important;
+    padding:7px 7px 9px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] > .input,
+  .filters[aria-label="Advanced applicant filters"] > .filter-unit{
+    flex-basis:132px!important;
+    width:132px!important;
+    min-width:132px!important;
+    max-width:132px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] > #nameFilter{
+    flex-basis:142px!important;
+    width:142px!important;
+    min-width:142px!important;
+    max-width:142px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] > #zipcodeFilter{
+    flex-basis:126px!important;
+    width:126px!important;
+    min-width:126px!important;
+    max-width:126px!important;
+  }
+
+  .filters[aria-label="Advanced applicant filters"] .filter-trigger,
+  .filters[aria-label="Advanced applicant filters"] .input,
+  .filters[aria-label="Advanced applicant filters"] .select,
+  .filters[aria-label="Advanced applicant filters"] .date-input,
+  .filters[aria-label="Advanced applicant filters"] .filter-trigger .filter-label,
+  .filters[aria-label="Advanced applicant filters"] .input::placeholder,
+  .filters[aria-label="Advanced applicant filters"] .date-input::placeholder{
+    font-size:.72rem!important;
+  }
+}
+
 </style>
 </head>
 <body class="employer-logged-out view-table-active">
