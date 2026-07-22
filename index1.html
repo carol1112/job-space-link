@@ -3074,7 +3074,7 @@ header .auth-buttons a.login-auth:focus-visible i{
 
     <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
@@ -3273,6 +3273,327 @@ header .auth-buttons a.login-auth:focus-visible i{
   }, { passive:true });
 })();
 </script>
+
+
+<!-- ============================================================
+     FINAL NAV LINK ICON BACKGROUND REMOVAL PATCH 2026-06-12
+     Removes only the background/box color behind header nav icons.
+     Keeps all links, dropdowns, login button, mobile menu behavior,
+     responsive layout, and existing JavaScript unchanged.
+============================================================ -->
+<style id="final-nav-link-icon-bg-remove-2026-06-12">
+/* Desktop header nav icons: no background box/color */
+header nav > a > i,
+header nav .nav-main-link > i,
+header nav > a i,
+header nav .nav-main-link i{
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  outline:0 !important;
+  border-radius:0 !important;
+  filter:none !important;
+}
+
+/* Remove nav-link hover background/glow while preserving underline feedback */
+header nav > a,
+header nav .nav-main-link,
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before,
+header nav > a:hover::before,
+header nav > a:focus-visible::before,
+header nav .nav-main-link:hover::before,
+header nav .nav-main-link:focus-visible::before,
+.nav-dropdown.open .nav-main-link::before{
+  opacity:0 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+}
+
+/* Dropdown nav icons: keep icon color but no icon background */
+.nav-dropdown-menu a > i,
+.nav-dropdown-menu a i{
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  outline:0 !important;
+  border-radius:0 !important;
+  filter:none !important;
+}
+
+/* Mobile nav icons: no background box/color */
+.mobile-panel .mnav a i,
+.mobile-panel .mnav-main-link i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav-left i{
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  outline:0 !important;
+  border-radius:0 !important;
+  filter:none !important;
+}
+
+/* Keep requested readable hover behavior */
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link,
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav-main-link:hover i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Do not affect the actual Login/auth button style; only its icon box is flattened if present */
+header .auth-buttons a i{
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+}
+</style>
+
+
+
+<!-- ============================================================
+     FINAL ONE BLACK UNDERLINE NAV HOVER PATCH 2026-06-12
+     Applies the same single black underline hover effect to every
+     desktop header nav link, the About dropdown nav header, and
+     dropdown menu links. Existing links, IDs, JavaScript dropdown
+     behavior, responsive behavior, and page functionality remain unchanged.
+============================================================ -->
+<style id="final-one-black-underline-nav-hover-2026-06-12">
+/* Reset old glowing/background hover effects only for header/dropdown navigation */
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown-menu a{
+  position:relative !important;
+  color:var(--bank-navy, #012169) !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  overflow:visible !important;
+  isolation:auto !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  display:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+  transform:none !important;
+}
+
+/* One clean black underline for normal header links and the About dropdown header */
+header nav > a::after,
+header nav .nav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:4px !important;
+  right:4px !important;
+  bottom:2px !important;
+  height:2px !important;
+  background:#000000 !important;
+  border-radius:999px !important;
+  opacity:0 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:opacity 0.18s ease, transform 0.18s ease !important;
+  pointer-events:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown:hover .nav-main-link,
+.nav-dropdown:focus-within .nav-main-link,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown:hover .nav-main-link::after,
+.nav-dropdown:focus-within .nav-main-link::after,
+.nav-dropdown.open .nav-main-link::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown:hover .nav-main-link > i,
+.nav-dropdown:focus-within .nav-main-link > i,
+.nav-dropdown.open .nav-main-link > i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Keep the caret aligned, but make it black when About is hovered/open */
+.nav-dropdown:hover .nav-dropdown-toggle,
+.nav-dropdown:hover .nav-dropdown-toggle i,
+.nav-dropdown:focus-within .nav-dropdown-toggle,
+.nav-dropdown:focus-within .nav-dropdown-toggle i,
+.nav-dropdown.open .nav-dropdown-toggle,
+.nav-dropdown.open .nav-dropdown-toggle i,
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Dropdown option links use the same one black underline and no background block */
+.nav-dropdown-menu a{
+  border:1px solid transparent !important;
+  margin:0 8px !important;
+  border-radius:10px !important;
+}
+
+.nav-dropdown-menu a::after{
+  content:"" !important;
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:7px !important;
+  height:2px !important;
+  background:#000000 !important;
+  border-radius:999px !important;
+  opacity:0 !important;
+  transform:scaleX(0) !important;
+  transform-origin:left center !important;
+  transition:opacity 0.18s ease, transform 0.18s ease !important;
+  pointer-events:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Mobile menu gets the same black underline feel without changing hamburger behavior */
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:underline !important;
+  text-decoration-color:#000000 !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav a:focus-visible i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-main-link:focus-visible i,
+.mobile-panel .mnav-toggle:hover i,
+.mobile-panel .mnav-toggle:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+</style>
 
 </body>
 </html>

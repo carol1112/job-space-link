@@ -3350,6 +3350,386 @@ input:focus{
   .login-box{ width:min(350px, 100%) !important; }
 }
 
+
+/* ============================================================
+   FINAL SINGLE BLACK UNDERLINE NAV HOVER PATCH
+   Applies the same clean black underline hover effect to:
+   - all desktop header nav links
+   - the About dropdown header link/caret
+   - About dropdown option links
+   - mobile menu links
+   Functionality, links, dropdown JS, and behavior are unchanged.
+============================================================ */
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown-trigger,
+.nav-dropdown-toggle,
+.nav-dropdown-menu a,
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  border-color:transparent !important;
+  transform:none !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  color:var(--choose-navy, #012169) !important;
+  text-decoration:none !important;
+  text-decoration-color:transparent !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+  border-radius:0 !important;
+  overflow:visible !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  display:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown:hover .nav-main-link,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration-line:underline !important;
+  text-decoration-color:#000000 !important;
+  text-decoration-style:solid !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i{
+  color:var(--choose-icon, #003a70) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown:hover .nav-main-link i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown:hover .nav-dropdown-toggle i,
+.nav-dropdown.open .nav-dropdown-toggle i,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle{
+  color:var(--choose-navy, #012169) !important;
+  border:0 !important;
+  outline:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu{
+  background:#ffffff !important;
+  border:1px solid var(--choose-line, #e6e8ec) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  z-index:99999 !important;
+}
+
+.nav-dropdown-menu a{
+  color:var(--choose-navy, #012169) !important;
+  background:#ffffff !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration:none !important;
+  text-decoration-color:transparent !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:#ffffff !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration-line:underline !important;
+  text-decoration-color:#000000 !important;
+  text-decoration-style:solid !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--choose-navy, #012169) !important;
+  text-decoration:none !important;
+  text-decoration-color:transparent !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:#ffffff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration-line:underline !important;
+  text-decoration-color:#000000 !important;
+  text-decoration-style:solid !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+}
+
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav a:focus-visible i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-main-link:focus-visible i,
+.mobile-panel .mnav-toggle:hover i,
+.mobile-panel .mnav-toggle:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+
+
+
+/* ============================================================
+   FINAL REFINED SINGLE BLACK UNDERLINE NAV HOVER PATCH
+   One clean black underline only. No hover box, no glow, no shadow,
+   no transform. Applies to header nav links, About dropdown header,
+   dropdown options, and mobile nav while preserving all behavior.
+============================================================ */
+
+/* Keep every header nav link clean and ready for a text-only underline */
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown-menu a,
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  position:relative !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+/* Remove older background/box hover pseudo effects */
+header nav > a::before,
+header nav > a::after,
+header nav .nav-main-link::before,
+header nav .nav-main-link::after,
+.nav-dropdown-menu a::before,
+.nav-dropdown-menu a::after,
+.mobile-panel .mnav a::before,
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::before,
+.mobile-panel .mnav-main-link::after,
+.mobile-panel .mnav-toggle::before,
+.mobile-panel .mnav-toggle::after{
+  content:none !important;
+  display:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+/* Make the underline belong to the text span only, matching the reference */
+header nav > a .nav-text,
+header nav .nav-main-link .nav-text,
+.nav-dropdown-menu a .nav-text,
+.mobile-panel .mnav a .nav-text,
+.mobile-panel .mnav-main-link .nav-text,
+.mobile-panel .mnav-toggle .nav-text{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  line-height:1.15 !important;
+  text-decoration:none !important;
+  padding-bottom:5px !important;
+}
+
+/* Hidden underline state */
+header nav > a .nav-text::after,
+header nav .nav-main-link .nav-text::after,
+.nav-dropdown-menu a .nav-text::after,
+.mobile-panel .mnav a .nav-text::after,
+.mobile-panel .mnav-main-link .nav-text::after,
+.mobile-panel .mnav-toggle .nav-text::after{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  height:2px !important;
+  background:#000000 !important;
+  border-radius:999px !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:transform 0.18s ease !important;
+  display:block !important;
+  opacity:1 !important;
+  box-shadow:none !important;
+}
+
+/* Header hover/open state: text and icon become black, underline appears once */
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown:hover .nav-main-link,
+.nav-dropdown.open .nav-main-link,
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover .nav-text::after,
+header nav > a:focus-visible .nav-text::after,
+header nav .nav-main-link:hover .nav-text::after,
+header nav .nav-main-link:focus-visible .nav-text::after,
+.nav-dropdown:hover .nav-main-link .nav-text::after,
+.nav-dropdown.open .nav-main-link .nav-text::after,
+.nav-dropdown-menu a:hover .nav-text::after,
+.nav-dropdown-menu a:focus-visible .nav-text::after{
+  transform:scaleX(1) !important;
+}
+
+/* Icons and caret follow the same black hover state */
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown:hover .nav-main-link i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown:hover .nav-dropdown-toggle i,
+.nav-dropdown.open .nav-dropdown-toggle i,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Dropdown stays visually clean; only the link text gets the underline */
+.nav-dropdown-menu{
+  background:#ffffff !important;
+  border:1px solid #e6e8ec !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  z-index:99999 !important;
+}
+
+.nav-dropdown-menu a{
+  background:#ffffff !important;
+  border:0 !important;
+  margin:0 8px !important;
+  border-radius:0 !important;
+}
+
+/* Mobile menu uses the same one-underline behavior */
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:#ffffff !important;
+  border-color:#e6e8ec !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a:hover .nav-text::after,
+.mobile-panel .mnav a:focus-visible .nav-text::after,
+.mobile-panel .mnav-main-link:hover .nav-text::after,
+.mobile-panel .mnav-main-link:focus-visible .nav-text::after,
+.mobile-panel .mnav-toggle:hover .nav-text::after,
+.mobile-panel .mnav-toggle:focus-visible .nav-text::after{
+  transform:scaleX(1) !important;
+}
+
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav a:focus-visible i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-main-link:focus-visible i,
+.mobile-panel .mnav-toggle:hover i,
+.mobile-panel .mnav-toggle:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
 </style>
 </head>
 
@@ -3704,6 +4084,33 @@ input:focus{
   const INACTIVE_SUBSCRIPTION_STATUS = "not active";
   const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "paid", "approved", "current"];
 
+  /*
+   * These are the same employer-session keys read by the employer
+   * dashboard, employer settings, and employer profile pages.
+   *
+   * Supabase Auth remains the secure source of truth. These browser
+   * records contain only non-secret identity/display information and
+   * the authenticated user UUID. Access and refresh tokens are NOT
+   * copied into these custom keys.
+   */
+  const EMPLOYER_SESSION_STORAGE_KEYS = [
+    "jobSpaceLink_employer_session",
+    "jobSpaceLink_logged_in_employer",
+    "jobSpaceLink_employer_login",
+    "jobSpaceLink_employer_identity",
+    "loggedInEmployer",
+    "employerSession",
+    "jobSpaceLink_login_identity"
+  ];
+
+  /*
+   * Temporary recovery payload used only when another page created its
+   * Supabase client with a different storage key. The profile page removes
+   * this value immediately after restoring the official Supabase session.
+   */
+  const SUPABASE_AUTH_HANDOFF_KEY =
+    "jobSpaceLink_supabase_auth_handoff_v1";
+
   let currentEmployerUserId = null;
   let currentEmployerEmail = "";
   let currentSubscriptionInfo = {
@@ -3735,26 +4142,310 @@ input:focus{
   }
 
   function getSafeSupabaseUrl(){
-    return window.SUPABASE_URL || (typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : "");
+    const lexicalUrl =
+      typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : "";
+
+    return String(
+      window.SUPABASE_URL ||
+      window.supabaseUrl ||
+      lexicalUrl ||
+      localStorage.getItem("SUPABASE_URL") ||
+      ""
+    ).trim();
   }
 
   function getSafeSupabaseAnonKey(){
-    return window.SUPABASE_ANON_KEY || (typeof SUPABASE_ANON_KEY !== "undefined" ? SUPABASE_ANON_KEY : "");
+    const lexicalKey =
+      typeof SUPABASE_ANON_KEY !== "undefined"
+        ? SUPABASE_ANON_KEY
+        : "";
+
+    return String(
+      window.SUPABASE_ANON_KEY ||
+      window.SUPABASE_KEY ||
+      window.supabaseAnonKey ||
+      lexicalKey ||
+      localStorage.getItem("SUPABASE_ANON_KEY") ||
+      ""
+    ).trim();
   }
 
   function getSupabaseClient(){
-    if(isSupabaseClient(window.supabase)) return window.supabase;
-    if(isSupabaseClient(window.supabaseClient)) return window.supabaseClient;
+    /*
+     * supabase_config.js may expose the client as window.supabaseClient,
+     * window.supabase, or a classic-script lexical variable.
+     */
+    const lexicalClient =
+      typeof supabaseClient !== "undefined" ? supabaseClient : null;
+    const lexicalSupabase =
+      typeof supabase !== "undefined" ? supabase : null;
+
+    const candidates = [
+      window.supabaseClient,
+      lexicalClient,
+      lexicalSupabase,
+      window.supabase
+    ];
+
+    for(const candidate of candidates){
+      if(isSupabaseClient(candidate)){
+        window.supabaseClient = candidate;
+        return candidate;
+      }
+    }
 
     const url = getSafeSupabaseUrl();
     const anonKey = getSafeSupabaseAnonKey();
+    const namespace = isSupabaseNamespace(window.supabase)
+      ? window.supabase
+      : isSupabaseNamespace(lexicalSupabase)
+        ? lexicalSupabase
+        : null;
 
-    if(isSupabaseNamespace(window.supabase) && url && anonKey){
-      window.supabaseClient = window.supabase.createClient(url, anonKey);
+    if(namespace && url && anonKey){
+      window.supabaseClient = namespace.createClient(url, anonKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          storage: window.localStorage
+        }
+      });
+
       return window.supabaseClient;
     }
 
     return null;
+  }
+
+  function saveSupabaseAuthHandoff(session){
+    if(
+      !session?.access_token ||
+      !session?.refresh_token ||
+      !session?.user?.id
+    ){
+      return;
+    }
+
+    const handoff = JSON.stringify({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+      expires_at: session.expires_at || null,
+      user_id: session.user.id,
+      email: session.user.email || "",
+      created_at: Date.now(),
+      origin: window.location.origin
+    });
+
+    /*
+     * sessionStorage covers normal same-tab redirects. localStorage also
+     * covers Employer Profile opened in another tab. The profile page
+     * deletes both copies after successful restoration.
+     */
+    sessionStorage.setItem(SUPABASE_AUTH_HANDOFF_KEY, handoff);
+    localStorage.setItem(SUPABASE_AUTH_HANDOFF_KEY, handoff);
+  }
+
+  function clearSupabaseAuthHandoff(){
+    sessionStorage.removeItem(SUPABASE_AUTH_HANDOFF_KEY);
+    localStorage.removeItem(SUPABASE_AUTH_HANDOFF_KEY);
+  }
+
+  function getFirstValue(source, keys, fallback = ""){
+    if(!source || typeof source !== "object") return fallback;
+
+    for(const key of keys){
+      const value = source[key];
+      if(value !== undefined && value !== null && String(value).trim() !== ""){
+        return value;
+      }
+    }
+
+    return fallback;
+  }
+
+  function clearStoredEmployerIdentity(){
+    for(const storage of [localStorage, sessionStorage]){
+      for(const key of EMPLOYER_SESSION_STORAGE_KEYS){
+        try{
+          storage.removeItem(key);
+        }catch(err){
+          console.warn(`Unable to clear employer session key "${key}":`, err);
+        }
+      }
+    }
+
+    try{
+      localStorage.removeItem("jobSpaceLink_employer_user_id");
+      localStorage.removeItem("jobSpaceLink_employer_email");
+      localStorage.removeItem("jobSpaceLink_employer_company_name");
+      localStorage.removeItem("jobSpaceLink_employer_logo_url");
+      localStorage.removeItem("jobSpaceLink_employer_auth_origin");
+      clearSupabaseAuthHandoff();
+    }catch(err){
+      console.warn("Unable to clear supplementary employer identity values:", err);
+    }
+  }
+
+  async function ensurePersistedSupabaseSession(client, signInData){
+    if(!client?.auth){
+      throw new Error("Supabase Auth is unavailable.");
+    }
+
+    let session = signInData?.session || null;
+
+    let sessionResult = await client.auth.getSession();
+    if(sessionResult.error){
+      throw sessionResult.error;
+    }
+
+    if(!sessionResult.data?.session && session?.access_token && session?.refresh_token){
+      const restored = await client.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token
+      });
+
+      if(restored.error){
+        throw restored.error;
+      }
+
+      session = restored.data?.session || session;
+      sessionResult = await client.auth.getSession();
+
+      if(sessionResult.error){
+        throw sessionResult.error;
+      }
+    }
+
+    const persistedSession = sessionResult.data?.session || session;
+
+    if(!persistedSession?.user?.id){
+      throw new Error(
+        "Supabase did not create a persistent authenticated employer session."
+      );
+    }
+
+    saveSupabaseAuthHandoff(persistedSession);
+    return persistedSession;
+  }
+
+  function buildEmployerBrowserSession(user, authSession, employerRow = {}){
+    const companyName = String(
+      getFirstValue(
+        employerRow,
+        ["company_name", "companyName", "company", "organization_name", "name"],
+        ""
+      )
+    ).trim();
+
+    const email = String(
+      user?.email ||
+      getFirstValue(
+        employerRow,
+        ["email", "company_email", "employer_email", "contact_email"],
+        ""
+      )
+    ).trim().toLowerCase();
+
+    const logoUrl = String(
+      getFirstValue(
+        employerRow,
+        [
+          "company_logo_url",
+          "company_profile_url",
+          "logo_url",
+          "profile_picture_url"
+        ],
+        ""
+      )
+    ).trim();
+
+    return {
+      loggedIn: true,
+      isLoggedIn: true,
+      authenticated: true,
+      role: "employer",
+      account_type: "employer",
+      type: "employer",
+
+      user_id: user.id,
+      userId: user.id,
+      uid: user.id,
+      auth_user_id: user.id,
+
+      email,
+      company_email: email,
+      employer_email: email,
+
+      company_name: companyName,
+      companyName,
+      company: companyName,
+
+      company_logo_url: logoUrl,
+      company_profile_url: logoUrl,
+      logo_url: logoUrl,
+
+      auth_provider: user?.app_metadata?.provider || "email",
+      authenticated_at: new Date().toISOString(),
+      expires_at: authSession?.expires_at || null,
+      origin: window.location.origin
+    };
+  }
+
+  function persistEmployerBrowserSession(user, authSession, employerRow = {}){
+    if(!user?.id){
+      throw new Error("Cannot save employer identity without an authenticated user UUID.");
+    }
+
+    const employerSession = buildEmployerBrowserSession(
+      user,
+      authSession,
+      employerRow
+    );
+
+    const serialized = JSON.stringify(employerSession);
+
+    for(const key of EMPLOYER_SESSION_STORAGE_KEYS){
+      localStorage.setItem(key, serialized);
+    }
+
+    sessionStorage.setItem(
+      "jobSpaceLink_employer_session",
+      serialized
+    );
+
+    localStorage.setItem(
+      "jobSpaceLink_employer_user_id",
+      employerSession.user_id
+    );
+    localStorage.setItem(
+      "jobSpaceLink_employer_email",
+      employerSession.email || ""
+    );
+    localStorage.setItem(
+      "jobSpaceLink_employer_company_name",
+      employerSession.company_name || ""
+    );
+    localStorage.setItem(
+      "jobSpaceLink_employer_logo_url",
+      employerSession.company_logo_url || ""
+    );
+    localStorage.setItem(
+      "jobSpaceLink_employer_auth_origin",
+      window.location.origin
+    );
+
+    try{
+      window.dispatchEvent(
+        new CustomEvent("jobSpaceLinkEmployerAuthChanged", {
+          detail: employerSession
+        })
+      );
+    }catch(err){
+      console.warn("Unable to dispatch employer auth event:", err);
+    }
+
+    return employerSession;
   }
 
   async function getCurrentAccessToken(){
@@ -3827,6 +4518,8 @@ input:focus{
       }
     }catch(err){
       console.warn("Employer sign-out skipped:", err);
+    }finally{
+      clearStoredEmployerIdentity();
     }
   }
 
@@ -4245,22 +4938,26 @@ input:focus{
   /* ============================================================
      DATABASE QUERIES
   ============================================================ */
-  async function employerProfileExists(userId){
+  async function fetchEmployerAccountRecord(userId){
     const client = getSupabaseClient();
-    if(!client || !userId) return false;
+    if(!client || !userId) return null;
 
     const { data, error } = await client
       .from("employers")
-      .select("user_id")
+      .select("*")
       .eq("user_id", userId)
       .maybeSingle();
 
     if(error){
       console.error("Employers lookup error:", error);
-      return false;
+      return null;
     }
 
-    return !!data;
+    return data || null;
+  }
+
+  async function employerProfileExists(userId){
+    return !!(await fetchEmployerAccountRecord(userId));
   }
 
   async function addUniqueRows(target, seen, rows){
@@ -4607,16 +5304,20 @@ input:focus{
   /* ============================================================
      LOGIN FLOW
   ============================================================ */
-  async function processEmployerLoginSuccess(user){
+  async function processEmployerLoginSuccess(user, authSession){
     const client = getSupabaseClient();
     currentEmployerUserId = user.id;
-    currentEmployerEmail = String(user.email || emailInput.value || "").trim().toLowerCase();
+    currentEmployerEmail = String(
+      user.email || emailInput.value || ""
+    ).trim().toLowerCase();
 
     setLoginButtonLoading(true, "Checking profile...");
 
-    const isSignedUp = await employerProfileExists(user.id);
-    if(!isSignedUp){
+    const employerRecord = await fetchEmployerAccountRecord(user.id);
+
+    if(!employerRecord){
       if(client?.auth?.signOut) await client.auth.signOut();
+      clearStoredEmployerIdentity();
 
       currentEmployerUserId = null;
       currentEmployerEmail = "";
@@ -4627,9 +5328,20 @@ input:focus{
         remaining: 0
       };
 
-      openModal("Sign up first before you can login to employer portal.");
+      openModal(
+        "This Supabase Auth account is not connected to an employers-table record. Sign up first or update employers.user_id with this Auth user UUID."
+      );
       return;
     }
+
+    const browserSession = persistEmployerBrowserSession(
+      user,
+      authSession,
+      employerRecord
+    );
+
+    currentEmployerUserId = browserSession.user_id;
+    currentEmployerEmail = browserSession.email || currentEmployerEmail;
 
     setLoginButtonLoading(true, "Checking subscription...");
 
@@ -4743,28 +5455,66 @@ input:focus{
     const client = getSupabaseClient();
 
     if(!client){
-      openModal("Supabase client not found. Please check supabase_config.js.");
+      openModal(
+        "Supabase client not found. Please check supabase_config.js."
+      );
       return;
     }
 
     const email = emailInput.value.trim().toLowerCase();
     const password = passwordInput.value;
 
-    setLoginButtonLoading(true, "Logging in...");
+    if(!email || !password){
+      openModal("Enter both the employer email address and password.");
+      return;
+    }
+
+    setLoginButtonLoading(true, "Signing in securely...");
 
     try{
-      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password
+      });
 
-      if(error || !data?.user){
-        openModal("Invalid login credentials. Please try again.");
+      if(error){
+        console.error("Supabase employer sign-in failed:", error);
+
+        const message = /email not confirmed/i.test(error.message || "")
+          ? "Confirm this employer email address before logging in."
+          : /invalid login credentials/i.test(error.message || "")
+            ? "Invalid employer email or password."
+            : error.message || "Unable to authenticate this employer.";
+
+        openModal(message);
         return;
       }
 
-      await processEmployerLoginSuccess(data.user);
+      if(!data?.user || !data?.session){
+        openModal(
+          "Supabase accepted the request but did not return an authenticated session."
+        );
+        return;
+      }
+
+      setLoginButtonLoading(true, "Verifying Auth session...");
+
+      const persistedSession = await ensurePersistedSupabaseSession(
+        client,
+        data
+      );
+
+      await processEmployerLoginSuccess(
+        persistedSession.user,
+        persistedSession
+      );
 
     }catch(err){
-      console.error(err);
-      openModal("Unable to login right now. Please try again.");
+      console.error("Employer login error:", err);
+      openModal(
+        err?.message ||
+        "Unable to login right now. Please try again."
+      );
     }finally{
       setLoginButtonLoading(false);
     }

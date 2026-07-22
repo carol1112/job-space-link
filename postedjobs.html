@@ -1,0 +1,2449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Job Space Link employer posted jobs with grid, table, and interactive location map views" />
+  <title>Posted Jobs | Job Space Link</title>
+
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase_config.js"></script>
+
+  <style>
+    :root{
+      --navy:#0f172a;
+      --navy-2:#172554;
+      --blue:#0b5cff;
+      --blue-dark:#0847c2;
+      --cyan:#38bdf8;
+      --ink:#172033;
+      --muted:#667085;
+      --line:#dbe2ea;
+      --soft:#f5f7fb;
+      --white:#ffffff;
+      --success:#15803d;
+      --danger:#b42318;
+      --warning:#b54708;
+      --shadow:0 16px 38px rgba(15,23,42,.10);
+      --header-h:84px;
+      --radius:16px;
+      /* Match the main content edges to the desktop header:
+         14px from the left logo edge and 30px from the account edge. */
+      --content-left-edge:14px;
+      --content-right-edge:30px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      padding-top:var(--header-h);
+      font-family:Inter,Arial,Helvetica,sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#f8faff 0,#f4f6fa 38%,#fff 100%);
+    }
+    body.modal-open{overflow:hidden}
+    a{color:inherit;text-decoration:none}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{
+      outline:3px solid rgba(11,92,255,.18);
+      outline-offset:2px;
+    }
+    [hidden]{display:none!important}
+
+    /* Header */
+    .topbar{
+      position:fixed;
+      inset:0 0 auto;
+      z-index:1000;
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:0 30px 0 14px;
+      color:#063f73;
+      background:#fff;
+      border-bottom:1px solid #dfe6ef;
+      box-shadow:0 2px 10px rgba(15,23,42,.06);
+    }
+    .topbar-left,.topbar-right,.nav-links{display:flex;align-items:center}
+    .topbar-left{min-width:0;height:100%;gap:34px}
+    .brand{
+      height:100%;
+      min-width:150px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+    }
+    .brand img{display:block;width:auto;height:72px;max-width:155px;object-fit:contain}
+    .brand-text-fallback{display:none;color:#043e73;font-weight:900;letter-spacing:.02em;text-transform:uppercase}
+    .brand img.logo-broken{display:none}
+    .brand img.logo-broken+.brand-text-fallback{display:inline}
+
+    .nav-links{height:100%;gap:34px;color:#063f73;font-size:.96rem;font-weight:700}
+    .nav-item,.nav-menu-btn{
+      position:relative;
+      min-height:48px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      padding:0 3px;
+      border:0;
+      color:#063f73;
+      background:transparent;
+      white-space:nowrap;
+      transition:color .18s ease,transform .18s ease;
+    }
+    .nav-item i,.nav-menu-btn i{color:#06477f;font-size:1.02rem}
+    .nav-item::after,.nav-menu-btn::after{
+      content:"";
+      position:absolute;
+      left:3px;
+      right:3px;
+      bottom:5px;
+      height:2px;
+      border-radius:999px;
+      background:#0b5cff;
+      opacity:0;
+      transform:scaleX(.35);
+      transition:opacity .18s ease,transform .18s ease;
+    }
+    .nav-item:hover,.nav-menu-btn:hover,.nav-menu.open>.nav-menu-btn,.nav-item.active{
+      color:#0b5cff;
+      transform:translateY(-1px);
+    }
+    .nav-item:hover i,.nav-menu-btn:hover i,.nav-menu.open>.nav-menu-btn i,.nav-item.active i{color:#0b5cff}
+    .nav-item:hover::after,.nav-menu-btn:hover::after,.nav-menu.open>.nav-menu-btn::after,.nav-item.active::after{
+      opacity:1;
+      transform:scaleX(1);
+    }
+    .nav-menu{position:relative;height:100%;display:flex;align-items:center}
+    .nav-dropdown-toggle{
+      width:28px;
+      height:48px;
+      display:inline-grid;
+      place-items:center;
+      flex:0 0 28px;
+      margin-left:-3px;
+      padding:0;
+      border:0;
+      border-radius:8px;
+      color:#063f73;
+      background:transparent;
+      transition:.18s ease;
+    }
+    .nav-dropdown-toggle:hover,.nav-menu.open>.nav-dropdown-toggle{color:#0b5cff;background:#eef6ff}
+    .nav-caret{font-size:.7rem!important;color:currentColor!important;transition:transform .2s ease}
+    .nav-menu.open .nav-caret{transform:rotate(180deg)}
+    .nav-dropdown{
+      position:absolute;
+      top:calc(100% - 5px);
+      left:-12px;
+      z-index:1300;
+      min-width:245px;
+      display:none;
+      padding:9px;
+      border:1px solid #d9e2ee;
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 18px 42px rgba(15,23,42,.16);
+    }
+    .nav-menu.open .nav-dropdown{display:grid;gap:3px}
+    .nav-dropdown a{
+      display:flex;
+      align-items:center;
+      gap:11px;
+      padding:12px 13px;
+      border-radius:9px;
+      color:#063f73;
+      font-size:.9rem;
+      font-weight:700;
+    }
+    .nav-dropdown a i{width:19px;color:#0b5cff;text-align:center}
+    .nav-dropdown a:hover{color:#0b5cff;background:#eef6ff;transform:translateX(2px)}
+
+    .topbar-right{gap:10px;flex:0 0 auto}
+    .header-action{
+      width:46px;
+      height:46px;
+      display:grid;
+      place-items:center;
+      border:1px solid #b9def2;
+      border-radius:13px;
+      color:#06477f;
+      background:#eef9ff;
+      transition:.18s ease;
+    }
+    .header-action:hover{border-color:#70c7ee;color:#0b5cff;background:#dff5ff;transform:translateY(-1px)}
+    .header-action:disabled,
+    .header-action.disabled{
+      opacity:.48;
+      cursor:not-allowed;
+      pointer-events:none;
+      border-color:#d5dde7;
+      color:#8b98aa;
+      background:#f2f5f8;
+      box-shadow:none;
+      transform:none;
+    }
+    .header-action:disabled:hover,
+    .header-action.disabled:hover{
+      border-color:#d5dde7;
+      color:#8b98aa;
+      background:#f2f5f8;
+      transform:none;
+    }
+    .account-menu{position:relative}
+    .account-trigger{
+      width:min(220px,22vw);
+      min-width:178px;
+      min-height:46px;
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:4px 11px 4px 6px;
+      border:0;
+      border-radius:12px;
+      color:#fff;
+      background:linear-gradient(105deg,#16b8e9 0%,#2f83f4 48%,#7350f6 100%);
+      box-shadow:0 6px 16px rgba(47,111,238,.23);
+    }
+    .account-trigger:hover{filter:saturate(1.08) brightness(1.03);transform:translateY(-1px)}
+    .header-logo{
+      width:38px;
+      height:38px;
+      flex:0 0 38px;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.72);
+      border-radius:10px;
+      background:#0f172a;
+      color:#fff;
+      font-weight:900;
+      font-size:.7rem;
+    }
+    .header-logo img{width:100%;height:100%;object-fit:cover;display:none}
+    .header-logo.has-image img{display:block}
+    .header-logo.has-image span{display:none}
+    .account-copy{min-width:0;flex:1;display:grid;text-align:left;line-height:1.15}
+    .account-copy strong,.account-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .account-copy strong{font-size:.82rem;color:#fff;font-weight:850}
+    .account-copy small{display:none;font-size:.66rem;color:rgba(255,255,255,.82)}
+    .account-caret{font-size:.7rem;color:#fff;transition:transform .2s ease}
+    .account-menu.open .account-caret{transform:rotate(180deg)}
+    .account-dropdown{
+      position:absolute;
+      right:0;
+      top:calc(100% + 10px);
+      z-index:1300;
+      width:255px;
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(-6px);
+      padding:8px;
+      border:1px solid #d9e2ee;
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 18px 42px rgba(15,23,42,.18);
+      transition:.18s ease;
+    }
+    .account-menu.open .account-dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+    .dropdown-profile{padding:12px;border-bottom:1px solid #e5eaf1;margin-bottom:5px;background:#f8fbff;border-radius:9px 9px 5px 5px}
+    .dropdown-profile strong,.dropdown-profile span{display:block;overflow-wrap:anywhere}
+    .dropdown-profile strong{color:#063f73;font-size:.9rem;margin-bottom:4px}
+    .dropdown-profile span{color:#667085;font-size:.75rem}
+    .dropdown-link{
+      width:100%;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:11px 12px;
+      border:0;
+      border-radius:9px;
+      color:#063f73;
+      background:transparent;
+      text-align:left;
+      font-size:.84rem;
+      font-weight:750;
+    }
+    .dropdown-link i{width:18px;color:#0b5cff;text-align:center}
+    .dropdown-link:hover{color:#0b5cff;background:#eef6ff}
+    .mobile-menu-btn{
+      display:none;
+      width:42px;
+      height:42px;
+      border:1px solid #b9def2;
+      border-radius:10px;
+      color:#06477f;
+      background:#eef9ff;
+    }
+    .mobile-menu-btn:hover{color:#0b5cff;background:#dff5ff}
+    .mobile-drawer{
+      position:fixed;
+      top:var(--header-h);
+      left:0;
+      right:0;
+      z-index:999;
+      display:none;
+      padding:12px 16px 18px;
+      border-bottom:1px solid #dfe6ef;
+      background:#fff;
+      box-shadow:0 18px 34px rgba(15,23,42,.14);
+    }
+    .mobile-drawer.open{display:grid;gap:3px}
+    .mobile-drawer a,.mobile-drawer button{
+      width:100%;
+      display:flex;
+      align-items:center;
+      gap:11px;
+      padding:13px 12px;
+      border:0;
+      border-bottom:1px solid #edf1f6;
+      border-radius:9px;
+      color:#063f73;
+      background:transparent;
+      text-align:left;
+      font-weight:750;
+    }
+    .mobile-drawer i{width:20px;color:#0b5cff;text-align:center}
+    .mobile-drawer a:hover,.mobile-drawer button:hover{color:#0b5cff;background:#eef6ff}
+
+    /* Page */
+    .page-shell{
+      width:auto;
+      max-width:none;
+      margin:0 var(--content-right-edge) 0 var(--content-left-edge);
+      padding:18px 0 56px;
+    }
+    .page-head{
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:start;
+      gap:7px 16px;
+      padding:10px 14px 9px;
+      border:1px solid rgba(11,92,255,.16);
+      border-radius:22px;
+      background:
+        radial-gradient(circle at 92% 15%,rgba(56,189,248,.22),transparent 27%),
+        linear-gradient(135deg,#fff 0%,#eef4ff 100%);
+      box-shadow:var(--shadow);
+    }
+    .page-head::after{content:"";position:absolute;right:-75px;bottom:-115px;width:260px;height:260px;border:35px solid rgba(11,92,255,.06);border-radius:50%}
+    .page-head-copy,.page-head-actions,.page-head .stats-grid{position:relative;z-index:1}
+    .page-head-copy{display:flex;align-items:center;min-height:34px}
+    .page-head h1{
+      margin:0;
+      color:#101828;
+      font-size:clamp(1.25rem,2.15vw,1.62rem);
+      line-height:1.05;
+      letter-spacing:-.025em;
+    }
+    .page-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+    .page-head-actions .primary-btn,.page-head-actions .secondary-btn{
+      min-height:34px;
+      padding:6px 10px;
+      border-radius:8px;
+      font-size:.7rem;
+    }
+
+    .primary-btn,.secondary-btn,.view-btn,.pagination-btn{
+      min-height:42px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:10px;
+      font-size:.8rem;
+      font-weight:850;
+      transition:.18s ease;
+    }
+    .primary-btn{border:1px solid var(--blue);color:#fff;background:var(--blue)}
+    .primary-btn:hover{border-color:var(--blue-dark);background:var(--blue-dark);transform:translateY(-1px)}
+    .secondary-btn{border:1px solid #c8d2e1;color:var(--blue-dark);background:#fff}
+    .secondary-btn:hover{border-color:var(--blue);background:#f8fbff;transform:translateY(-1px)}
+    .secondary-btn:disabled,.pagination-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .refresh-btn.is-loading i{animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .stats-grid{
+      grid-column:1/-1;
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:5px;
+      margin:0;
+      padding-top:7px;
+      border-top:1px solid rgba(148,163,184,.22);
+    }
+    .stat-card{
+      position:relative;
+      width:100%;
+      min-width:0;
+      min-height:40px;
+      display:grid;
+      grid-template-columns:18px minmax(0,1fr) auto;
+      align-items:center;
+      gap:5px;
+      padding:5px 7px;
+      border:1px solid #d5deea;
+      border-radius:7px;
+      color:#26334b;
+      background:transparent;
+      text-align:left;
+      overflow:hidden;
+      transition:border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease;
+    }
+    button.stat-card{appearance:none;cursor:pointer}
+    button.stat-card::after{content:"";position:absolute;left:5px;right:5px;bottom:2px;height:2px;border-radius:999px;background:transparent}
+    button.stat-card:hover{
+      border-color:#8fb4ff;
+      color:#0b5cff;
+      box-shadow:0 5px 13px rgba(15,23,42,.07);
+      transform:translateY(-1px);
+    }
+    button.stat-card.active{
+      border-color:#6f9fff;
+      color:#0847c2;
+      background:transparent;
+      box-shadow:0 5px 13px rgba(11,92,255,.10);
+    }
+    button.stat-card.active::after{background:var(--blue)}
+    button.stat-card[data-filter="open"].active{border-color:#70c88b;color:#15803d;background:transparent}
+    button.stat-card[data-filter="open"].active::after{background:#16a34a}
+    button.stat-card[data-filter="close"].active{border-color:#e58e86;color:#b42318;background:transparent}
+    button.stat-card[data-filter="close"].active::after{background:#dc2626}
+    button.stat-card[data-filter="cancel"].active{border-color:#e5b960;color:#b45309;background:transparent}
+    button.stat-card[data-filter="cancel"].active::after{background:#d97706}
+    button.stat-card[data-filter="responses"].active{border-color:#7ea7f7;color:#1d4ed8;background:transparent}
+    button.stat-card[data-filter="responses"].active::after{background:#2563eb}
+    .stat-icon{
+      width:18px;
+      height:18px;
+      display:grid;
+      place-items:center;
+      margin:0;
+      border:0;
+      border-radius:0;
+      color:currentColor;
+      background:transparent;
+      font-size:.7rem;
+    }
+    .stat-card strong{
+      display:block;
+      min-width:24px;
+      margin:0;
+      color:currentColor;
+      font-size:.94rem;
+      line-height:1;
+      text-align:right;
+      font-variant-numeric:tabular-nums;
+    }
+    .stat-card .filter-label{
+      min-width:0;
+      color:currentColor;
+      font-size:.68rem;
+      font-weight:900;
+      line-height:1.12;
+      letter-spacing:0;
+      white-space:normal;
+      overflow-wrap:anywhere;
+    }
+    .applications-card{border-color:#c9d7ee;background:transparent}
+
+    .jobs-panel{border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:0 10px 28px rgba(15,23,42,.06);overflow:hidden}
+    .toolbar{
+      display:grid;
+      grid-template-columns:minmax(240px,1fr) auto auto;
+      gap:12px;
+      align-items:center;
+      padding:16px;
+      border-bottom:1px solid var(--line);
+      background:#fbfcfe;
+    }
+    .search-wrap{position:relative;min-width:0}
+    .search-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#64748b}
+    .search-input{
+      width:100%;
+      min-height:44px;
+      padding:10px 42px 10px 41px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      color:#1f2937;
+      background:#fff;
+      outline:none;
+    }
+    .search-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,92,255,.10)}
+    .clear-search{
+      position:absolute;
+      right:6px;
+      top:50%;
+      width:32px;
+      height:32px;
+      display:grid;
+      place-items:center;
+      transform:translateY(-50%);
+      border:0;
+      border-radius:8px;
+      color:#667085;
+      background:transparent;
+    }
+    .clear-search:hover{color:var(--danger);background:#fff1f2}
+    .view-switch{display:flex;align-items:center;gap:6px;padding:4px;border:1px solid #d7e0ec;border-radius:12px;background:#f8fafc;flex-wrap:wrap}
+    .view-btn{min-width:88px;border:1px solid transparent;color:#536078;background:transparent}
+    .view-btn:hover{color:var(--blue);background:#eef4ff}
+    .view-btn.active{border-color:#b8cced;color:#fff;background:linear-gradient(135deg,var(--navy-2),var(--blue));box-shadow:0 5px 13px rgba(11,92,255,.18)}
+    .toolbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+
+    .results-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:#667085;background:#fff;font-size:.74rem;font-weight:750}
+    .results-meta strong{color:#26334b}
+    .per-page-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;color:#0847c2;background:#eaf1ff;font-size:.68rem;font-weight:850}
+
+    .content-area{min-height:320px;padding:16px}
+    .loading-state,.empty-state,.auth-state{
+      min-height:300px;
+      display:grid;
+      place-items:center;
+      padding:30px;
+      text-align:center;
+    }
+    .state-box{max-width:560px}
+    .state-icon{width:66px;height:66px;display:grid;place-items:center;margin:0 auto 16px;border-radius:18px;color:var(--blue);background:#eaf1ff;font-size:1.6rem}
+    .loading-state .state-icon i{animation:spin .8s linear infinite}
+    .state-box h2{margin:0 0 8px;color:#1f2937;font-size:1.2rem}
+    .state-box p{margin:0 0 17px;color:#667085;font-size:.82rem;line-height:1.55}
+
+    .jobs-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    .job-card{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      padding:13px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      background:#fff;
+      box-shadow:0 5px 15px rgba(15,23,42,.04);
+      transition:.18s ease;
+    }
+    .job-card:hover{border-color:#9bbcff;box-shadow:0 12px 26px rgba(15,23,42,.09);transform:translateY(-2px)}
+    .job-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:9px}
+    .job-card-icon{
+      width:36px;
+      height:36px;
+      display:grid;
+      place-items:center;
+      flex:0 0 36px;
+      border-radius:9px;
+      color:#fff;
+      background:linear-gradient(135deg,var(--navy-2),var(--blue));
+      box-shadow:0 5px 12px rgba(15,23,42,.12);
+      font-size:.88rem;
+    }
+    .job-card-icon.open{background:linear-gradient(135deg,#15803d,#22c55e)}
+    .job-card-icon.close{background:linear-gradient(135deg,#991b1b,#ef4444)}
+    .job-card-icon.cancel{background:linear-gradient(135deg,#b45309,#f59e0b)}
+    .job-card-icon i{color:#fff;font-size:.9rem;line-height:1}
+    .status-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border-radius:999px;font-size:.58rem;font-weight:900;text-transform:uppercase;white-space:nowrap}
+    .status-pill.open{color:#166534;background:#dcfce7}
+    .status-pill.cancel{color:#92400e;background:#fef3c7}
+    .status-pill.close{color:#991b1b;background:#fee2e2}
+    .status-pill i{color:currentColor;font-size:.62rem;line-height:1}
+    .job-card h3{margin:0 0 4px;color:#1f2937;font-size:.9rem;line-height:1.28;overflow-wrap:anywhere}
+    .company-name{margin:0 0 9px;color:#0b5cff;font-size:.68rem;font-weight:850;overflow-wrap:anywhere}
+    .job-details{display:grid;gap:6px;margin-bottom:10px;color:#536078;font-size:.65rem;line-height:1.32}
+    .job-details span{display:flex;align-items:flex-start;gap:8px;min-width:0}
+    .job-details i{width:15px;flex:0 0 15px;margin-top:2px;color:var(--blue);text-align:center}
+    .job-detail-text{min-width:0;overflow-wrap:anywhere}
+    .job-card-footer{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:auto;padding-top:9px;border-top:1px solid #edf1f6}
+    .application-count{display:inline-flex;align-items:center;gap:6px;color:#5d6b82;font-size:.68rem;font-weight:800}
+    .application-count i{
+      color:var(--blue);
+      font-size:.76rem;
+      line-height:1;
+    }
+    .edit-btn{
+      min-height:34px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      padding:7px 11px;
+      border:1px solid #bfd0e7;
+      border-radius:9px;
+      color:#0847c2;
+      background:#f8fbff;
+      font-size:.69rem;
+      font-weight:850;
+    }
+    .edit-btn:hover{border-color:var(--blue);color:#fff;background:var(--blue);transform:translateY(-1px)}
+
+    .table-wrap{width:100%;overflow:auto;border:1px solid var(--line);border-radius:12px}
+    .jobs-table{width:100%;min-width:1180px;border-collapse:collapse;background:#fff}
+    .jobs-table th{
+      position:sticky;
+      top:0;
+      z-index:2;
+      padding:12px 13px;
+      border-bottom:1px solid #cfd8e5;
+      color:#354258;
+      background:#f5f8fc;
+      text-align:left;
+      font-size:.69rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.035em;
+      white-space:nowrap;
+    }
+    .jobs-table td{padding:13px;border-bottom:1px solid #e7ecf2;color:#4b5870;font-size:.72rem;vertical-align:middle}
+    .jobs-table tbody tr:hover{background:#f8fbff}
+    .jobs-table tbody tr:last-child td{border-bottom:0}
+    .table-title{min-width:210px}
+    .table-title strong{display:block;margin-bottom:4px;color:#1f2937;font-size:.79rem;overflow-wrap:anywhere}
+    .table-title span{display:block;color:#667085;font-size:.67rem;overflow-wrap:anywhere}
+    .table-actions{white-space:nowrap;text-align:right}
+
+    /* Interactive Location view: vertical job cards on the left and map on the right. */
+    .location-view{
+      min-height:650px;
+      display:grid;
+      grid-template-columns:minmax(320px,.82fr) minmax(520px,1.35fr);
+      gap:16px;
+      align-items:stretch;
+    }
+    .location-list-panel,.location-map-panel{
+      min-width:0;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+    }
+    .location-list-panel{display:flex;flex-direction:column;background:#f8fafc}
+    .location-list-head{
+      flex:0 0 auto;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 15px;
+      border-bottom:1px solid var(--line);
+      background:#fff;
+    }
+    .location-list-head strong{display:block;color:#172033;font-size:.84rem;margin-bottom:4px}
+    .location-list-head span{display:block;color:#667085;font-size:.68rem;line-height:1.4}
+    .location-count-pill{
+      flex:0 0 auto;
+      display:inline-flex!important;
+      align-items:center;
+      gap:6px;
+      padding:6px 9px;
+      border-radius:999px;
+      color:#0847c2!important;
+      background:#eaf1ff;
+      font-size:.64rem!important;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .location-cards-scroll{
+      flex:1 1 auto;
+      min-height:0;
+      max-height:650px;
+      display:grid;
+      align-content:start;
+      gap:10px;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding:12px 14px 14px 12px;
+      scrollbar-gutter:stable;
+      scrollbar-width:thin;
+      scrollbar-color:#77a8ff #e9eef6;
+    }
+    .location-cards-scroll::-webkit-scrollbar{width:12px}
+    .location-cards-scroll::-webkit-scrollbar-track{background:#e9eef6;border-radius:999px}
+    .location-cards-scroll::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#38bdf8,#0b5cff);border:3px solid #e9eef6;border-radius:999px}
+    .location-job-card{
+      width:100%;
+      min-width:0;
+      display:grid;
+      gap:9px;
+      padding:14px;
+      border:1px solid #d7e0ec;
+      border-radius:13px;
+      color:inherit;
+      background:#fff;
+      box-shadow:0 4px 12px rgba(15,23,42,.04);
+      text-align:left;
+      cursor:pointer;
+      transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease,background .18s ease;
+    }
+    .location-job-card:hover{border-color:#8db4ff;box-shadow:0 10px 22px rgba(15,23,42,.09);transform:translateY(-1px)}
+    .location-job-card.active{
+      border-color:#0b5cff;
+      background:linear-gradient(145deg,#fff,#edf4ff);
+      box-shadow:0 0 0 2px rgba(11,92,255,.10),0 12px 24px rgba(11,92,255,.12);
+    }
+    .location-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .location-card-title{min-width:0}
+    .location-card-title strong{display:block;color:#1f2937;font-size:.84rem;line-height:1.35;overflow-wrap:anywhere}
+    .location-card-title span{display:block;margin-top:3px;color:#0b5cff;font-size:.68rem;font-weight:850;overflow-wrap:anywhere}
+    .location-card-details{display:grid;gap:6px;color:#536078;font-size:.68rem;line-height:1.4}
+    .location-card-details span{display:flex;align-items:flex-start;gap:7px;min-width:0}
+    .location-card-details i{width:14px;flex:0 0 14px;margin-top:2px;color:var(--blue);text-align:center}
+    .location-card-details em{min-width:0;color:inherit;font-style:normal;overflow-wrap:anywhere}
+    .location-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:9px;border-top:1px solid #edf1f6}
+    .location-map-panel{position:relative;display:flex;flex-direction:column;min-height:650px;background:#eef3f9}
+    .location-map-head{
+      flex:0 0 auto;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#fff;
+    }
+    .location-map-head strong{display:block;color:#172033;font-size:.86rem;margin-bottom:4px}
+    .location-map-head span{display:block;color:#667085;font-size:.69rem;line-height:1.4;overflow-wrap:anywhere}
+    .location-map-head i{width:38px;height:38px;display:grid;place-items:center;flex:0 0 38px;border-radius:10px;color:#0b5cff;background:#eaf1ff}
+    .location-map-frame{width:100%;min-height:560px;flex:1 1 auto;border:0;background:#dfe7f1;display:block}
+    .location-map-caption{
+      position:absolute;
+      left:14px;
+      right:14px;
+      bottom:14px;
+      z-index:2;
+      padding:11px 13px;
+      border:1px solid rgba(255,255,255,.55);
+      border-radius:12px;
+      color:#fff;
+      background:rgba(15,23,42,.80);
+      box-shadow:0 12px 28px rgba(15,23,42,.24);
+      backdrop-filter:blur(8px);
+      pointer-events:none;
+    }
+    .location-map-caption strong,.location-map-caption span{display:block;overflow-wrap:anywhere}
+    .location-map-caption strong{font-size:.78rem;margin-bottom:4px}
+    .location-map-caption span{color:#d8e4f4;font-size:.68rem;line-height:1.4}
+
+    .pagination{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      flex-wrap:wrap;
+      padding:16px;
+      border-top:1px solid var(--line);
+      background:#fbfcfe;
+    }
+    .pagination-btn{min-width:40px;padding:8px 11px;border:1px solid #cbd5e1;color:#42526b;background:#fff}
+    .pagination-btn:hover:not(:disabled){border-color:var(--blue);color:var(--blue);background:#eef4ff}
+    .pagination-btn.active{border-color:var(--blue);color:#fff;background:var(--blue)}
+    .pagination-ellipsis{padding:0 4px;color:#98a2b3;font-weight:850}
+
+    .footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:20px var(--content-right-edge) 20px var(--content-left-edge);
+      border-top:1px solid var(--line);
+      color:#7a8496;
+      background:#fff;
+      font-size:.72rem;
+    }
+    .footer-links{display:flex;flex-wrap:wrap;gap:14px}
+    .footer a:hover{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+
+    .modal-backdrop{position:fixed;inset:0;z-index:2500;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.52)}
+    .modal-backdrop.open{display:flex}
+    .modal{width:min(100%,540px);overflow:hidden;border-radius:16px;background:#fff;box-shadow:0 26px 80px rgba(15,23,42,.35)}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:18px 20px;border-bottom:1px solid var(--line)}
+    .modal-header h2{margin:0;font-size:1.12rem}
+    .modal-close{width:36px;height:36px;display:grid;place-items:center;border:0;border-radius:50%;color:#344054;background:#f3f4f6;font-size:1.2rem}
+    .modal-body{padding:20px;color:#4b5563;line-height:1.6;font-size:.84rem}
+    .modal-footer{display:flex;justify-content:flex-end;gap:10px;padding:15px 20px;border-top:1px solid var(--line)}
+    .danger-btn{min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;border:1px solid #e7857d;border-radius:10px;color:#fff;background:#b42318;font-size:.8rem;font-weight:850}
+    .danger-btn:hover{background:#912018}
+
+    .toast{position:fixed;right:22px;bottom:22px;z-index:3000;max-width:410px;display:flex;align-items:flex-start;gap:11px;padding:14px 16px;border-radius:12px;color:#166534;background:#ecfdf3;border:1px solid #bbf7d0;box-shadow:var(--shadow);opacity:0;visibility:hidden;transform:translateY(12px);transition:.2s ease;font-size:.79rem;font-weight:780;line-height:1.45}
+    .toast.show{opacity:1;visibility:visible;transform:translateY(0)}
+    .toast.error{color:#991b1b;background:#fff1f2;border-color:#fecdd3}
+    .toast.info{color:#1e40af;background:#eff6ff;border-color:#bfdbfe}
+
+    /* Active header filters for applicant responses and favorites. */
+    .header-action.active{
+      border-color:#0b5cff;
+      color:#fff;
+      background:linear-gradient(135deg,#172554,#0b5cff);
+      box-shadow:0 8px 18px rgba(11,92,255,.24);
+      transform:translateY(-1px);
+    }
+    .header-action.active:hover{border-color:#38bdf8;color:#fff;background:linear-gradient(135deg,#172554,#0847c2)}
+
+    /* Database marks loaded directly from staff_requirements. */
+    .job-card-statuses,.location-card-statuses{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+    .job-record-flags{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:0 0 13px}
+    .record-mark{
+      min-height:27px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 8px;
+      border:1px solid #d5deea;
+      border-radius:999px;
+      color:#69758a;
+      background:#f8fafc;
+      font-size:.63rem;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .record-mark i{font-size:.72rem}
+    .record-mark.favorite.yes{border-color:#f6b7ca;color:#be185d;background:#fdf2f8}
+    .record-mark.applied.yes{border-color:#9bbcff;color:#1d4ed8;background:#eff6ff}
+    .record-mark.no{color:#7a8496;background:#f8fafc}
+    .record-mark-value{font-weight:950}
+    .table-record-mark{display:inline-flex;min-width:82px;justify-content:center}
+    .jobs-table{min-width:1340px}
+
+    @media(max-width:1180px){
+      .nav-links{gap:14px;font-size:.8rem}
+      .brand{min-width:120px}.brand img{height:66px;max-width:130px}
+      .jobs-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .stats-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+      .location-view{grid-template-columns:minmax(290px,.78fr) minmax(430px,1.22fr)}
+    }
+    @media(max-width:900px){
+      :root{
+        --header-h:72px;
+        --content-left-edge:8px;
+        --content-right-edge:12px;
+      }
+      .topbar{padding:0 12px 0 8px}.nav-links,.header-action,.account-menu{display:none}.mobile-menu-btn{display:grid}.brand{min-width:0}.brand img{height:62px;max-width:132px}
+      .page-shell{width:auto;max-width:none;margin-left:var(--content-left-edge);margin-right:var(--content-right-edge);padding-top:14px}
+      .page-head{grid-template-columns:1fr;padding:10px}
+      .page-head-actions{justify-content:flex-start}
+      .page-head .stats-grid{grid-column:1;grid-template-columns:repeat(3,minmax(0,1fr))}
+      .toolbar{grid-template-columns:1fr auto}
+      .toolbar-actions{grid-column:1/-1;justify-content:flex-start}
+      .jobs-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .location-view{grid-template-columns:1fr;min-height:0}
+      .location-cards-scroll{max-height:520px}
+      .location-map-panel{min-height:520px}
+      .location-map-frame{min-height:440px}
+    }
+    @media(max-width:620px){
+      .page-head-actions{width:100%}.page-head-actions>*{flex:1 1 150px}
+      .page-head .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .toolbar{grid-template-columns:1fr}
+      .view-switch{width:100%}.view-btn{flex:1}
+      .toolbar-actions{grid-column:auto;width:100%}.toolbar-actions>*{flex:1}
+      .results-meta{align-items:flex-start;flex-direction:column}
+      .jobs-grid{grid-template-columns:1fr}
+      .content-area{padding:12px}
+      .job-card-footer{align-items:stretch;flex-direction:column}.edit-btn{width:100%}
+      .location-card-footer{align-items:stretch;flex-direction:column}.location-card-footer .edit-btn{width:100%}
+      .location-list-head,.location-map-head{align-items:flex-start}
+      .location-map-caption{left:9px;right:9px;bottom:9px}
+      .footer{align-items:flex-start;flex-direction:column}
+      .modal-backdrop{align-items:flex-end;padding:0}.modal{width:100%;border-radius:18px 18px 0 0}.modal-footer{flex-direction:column}.modal-footer>*{width:100%}
+    }
+    @media(max-width:420px){
+      :root{--header-h:66px}.brand img{height:56px;max-width:116px}.mobile-menu-btn{width:40px;height:40px}
+      .page-head{padding:9px}.page-head h1{font-size:1.2rem}
+      .page-head .stats-grid{grid-template-columns:1fr}
+      .toast{left:12px;right:12px;bottom:12px;max-width:none}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar" aria-label="Job Space Link navigation">
+    <div class="topbar-left">
+      <a class="brand" href="home.html" aria-label="Job Space Link home">
+        <img src="JOBSPACELINK.png" alt="Job Space Link" onerror="this.classList.add('logo-broken')" />
+        <span class="brand-text-fallback">Job Space Link</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a class="nav-item" href="home.html"><i class="fa-solid fa-house"></i> Home</a>
+        <div class="nav-menu" id="employerNavMenu">
+          <a class="nav-menu-btn" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+          <button class="nav-dropdown-toggle" id="aboutDropdownToggle" type="button" aria-label="Open About dropdown menu" aria-expanded="false">
+            <i class="fa-solid fa-caret-down nav-caret"></i>
+          </button>
+          <div class="nav-dropdown">
+            <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+            <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+          </div>
+        </div>
+        <a class="nav-item" href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i> Job Hiring</a>
+        <a class="nav-item" href="dashboard1.html"><i class="fa-solid fa-users"></i> Jobseeker</a>
+        <a class="nav-item" href="postjob1.html"><i class="fa-solid fa-square-plus"></i> Post Jobs</a>
+        <a class="nav-item" href="applicantform1.html"><i class="fa-solid fa-file-arrow-up"></i> Post Resume</a>
+      </nav>
+    </div>
+
+    <div class="topbar-right">
+      <button
+        class="header-action"
+        id="appliedFilterButton"
+        type="button"
+        aria-pressed="false"
+        aria-label="Filter applicant response positions"
+        title="Show positions with applicant responses"
+      >
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+      <button
+        class="header-action"
+        id="favoritesFilterButton"
+        type="button"
+        aria-pressed="false"
+        aria-label="Filter favorite positions"
+        title="Show favorite positions"
+      >
+        <i class="fa-regular fa-heart"></i>
+      </button>
+
+      <div class="account-menu" id="accountMenu">
+        <button class="account-trigger" id="accountTrigger" type="button" aria-expanded="false">
+          <span class="header-logo" id="headerLogo"><img id="headerLogoImage" alt="Company logo" /><span id="headerInitials">EP</span></span>
+          <span class="account-copy"><strong id="headerCompanyName">Employer Account</strong><small id="headerCompanyEmail">employer@jobspacelink.com</small></span>
+          <i class="fa-solid fa-chevron-down account-caret"></i>
+        </button>
+        <div class="account-dropdown">
+          <div class="dropdown-profile"><strong id="dropdownCompanyName">Employer Account</strong><span id="dropdownCompanyEmail">employer@jobspacelink.com</span></div>
+          <a class="dropdown-link" href="employerprofile.html"><i class="fa-regular fa-address-card"></i> View company profile</a>
+          <a class="dropdown-link" href="postedjobs.html"><i class="fa-solid fa-list-check"></i> Posted Jobs</a>
+          <button class="dropdown-link" id="logoutButton" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</button>
+        </div>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuButton" type="button" aria-expanded="false" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer">
+    <a href="home.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+    <a href="employerprofile.html"><i class="fa-solid fa-building-user"></i> Employer profile</a>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i> Job Hiring</a>
+    <a href="dashboard1.html"><i class="fa-solid fa-users"></i> Jobseeker</a>
+    <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i> Post Jobs</a>
+    <a href="applicantform1.html"><i class="fa-solid fa-file-arrow-up"></i> Post Resume</a>
+    <button id="mobileLogoutButton" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</button>
+  </div>
+
+  <main class="page-shell">
+    <section class="page-head">
+      <div class="page-head-copy">
+        <h1>Posted Jobs</h1>
+      </div>
+
+      <div class="page-head-actions">
+        <a class="secondary-btn" href="employerprofile.html"><i class="fa-solid fa-arrow-left"></i> Employer Profile</a>
+        <a class="primary-btn" href="postjob1.html"><i class="fa-solid fa-circle-plus"></i> Post New Job</a>
+      </div>
+
+      <section class="stats-grid" aria-label="Posted job status and applicant response filters">
+        <button class="stat-card active" type="button" data-filter="all" aria-pressed="true">
+          <span class="stat-icon"><i class="fa-solid fa-list"></i></span>
+          <span class="filter-label">Total Jobs</span>
+          <strong id="totalJobs">0</strong>
+        </button>
+
+        <button class="stat-card" type="button" data-filter="open" aria-pressed="false">
+          <span class="stat-icon"><i class="fa-solid fa-door-open"></i></span>
+          <span class="filter-label">Open Position</span>
+          <strong id="openJobs">0</strong>
+        </button>
+
+        <button class="stat-card" type="button" data-filter="close" aria-pressed="false">
+          <span class="stat-icon"><i class="fa-solid fa-lock"></i></span>
+          <span class="filter-label">Close Position</span>
+          <strong id="closedJobs">0</strong>
+        </button>
+
+        <button class="stat-card" type="button" data-filter="cancel" aria-pressed="false">
+          <span class="stat-icon"><i class="fa-solid fa-ban"></i></span>
+          <span class="filter-label">Cancel Position</span>
+          <strong id="cancelJobs">0</strong>
+        </button>
+
+        <button class="stat-card applications-card" type="button" data-filter="responses" aria-pressed="false">
+          <span class="stat-icon"><i class="fa-solid fa-file-circle-check"></i></span>
+          <span class="filter-label">Applicant Response</span>
+          <strong id="applicationTotal">0</strong>
+        </button>
+      </section>
+    </section>
+
+    <section class="jobs-panel" aria-labelledby="jobsPanelTitle">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input class="search-input" id="jobSearch" type="search" placeholder="Search position, company, department, location..." autocomplete="off" aria-label="Search posted jobs" />
+          <button class="clear-search" id="clearSearchButton" type="button" aria-label="Clear search" hidden><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="view-switch" role="group" aria-label="Choose posted jobs display">
+          <button class="view-btn active" id="gridViewButton" type="button" data-view="grid" aria-pressed="true"><i class="fa-solid fa-grip"></i> Grid</button>
+          <button class="view-btn" id="tableViewButton" type="button" data-view="table" aria-pressed="false"><i class="fa-solid fa-table-list"></i> Table</button>
+          <button class="view-btn" id="locationViewButton" type="button" data-view="location" aria-pressed="false"><i class="fa-solid fa-location-dot"></i> Location</button>
+        </div>
+
+        <div class="toolbar-actions">
+          <button class="secondary-btn refresh-btn" id="refreshButton" type="button"><i class="fa-solid fa-rotate"></i> Refresh</button>
+          <a class="primary-btn" href="postjob1.html"><i class="fa-solid fa-plus"></i> Add Job</a>
+        </div>
+      </div>
+
+      <div class="results-meta">
+        <span id="resultsText"><strong>0</strong> posted jobs found.</span>
+        <span class="per-page-pill"><i class="fa-solid fa-layer-group"></i> <span id="perPageText">20 jobs per page</span></span>
+      </div>
+
+      <div class="content-area" id="contentArea">
+        <div class="loading-state" id="loadingState">
+          <div class="state-box"><span class="state-icon"><i class="fa-solid fa-spinner"></i></span><h2 id="jobsPanelTitle">Loading posted jobs</h2><p>Connecting to Supabase and loading staff_requirements records for this employer.</p></div>
+        </div>
+
+        <div class="auth-state" id="authState" hidden>
+          <div class="state-box"><span class="state-icon"><i class="fa-solid fa-user-lock"></i></span><h2>Employer login required</h2><p id="authMessage">Sign in with an employer account to view and manage posted jobs.</p><a class="primary-btn" href="loginemployer.html"><i class="fa-solid fa-right-to-bracket"></i> Employer Login</a></div>
+        </div>
+
+        <div class="empty-state" id="emptyState" hidden>
+          <div class="state-box"><span class="state-icon"><i class="fa-solid fa-briefcase"></i></span><h2>No posted jobs found</h2><p id="emptyMessage">Post a new job or change the active filters.</p><a class="primary-btn" href="postjob1.html"><i class="fa-solid fa-circle-plus"></i> Post New Job</a></div>
+        </div>
+
+        <div class="jobs-grid" id="jobsGrid" hidden></div>
+
+        <div class="table-wrap" id="jobsTableWrap" hidden>
+          <table class="jobs-table">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Department</th>
+                <th>Employment Type</th>
+                <th>Experience</th>
+                <th>Location</th>
+                <th>Salary</th>
+                <th>Posted</th>
+                <th>Status</th>
+                <th>Favorite</th>
+                <th>Applied</th>
+                <th>Applicant Responses</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="jobsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="location-view" id="locationView" hidden>
+          <section class="location-list-panel" aria-label="Posted jobs location cards">
+            <div class="location-list-head">
+              <div><strong>Jobs by location</strong><span>Click a job card to show its location on the map.</span></div>
+              <span class="location-count-pill"><i class="fa-solid fa-layer-group"></i> 10 per page</span>
+            </div>
+            <div class="location-cards-scroll" id="locationCards"></div>
+          </section>
+
+          <section class="location-map-panel" aria-label="Selected posted job map">
+            <div class="location-map-head">
+              <div><strong id="locationMapTitle">Select a posted job</strong><span id="locationMapAddress">The selected job location will appear here.</span></div>
+              <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+            </div>
+            <iframe
+              class="location-map-frame"
+              id="locationMapFrame"
+              title="Posted job location map"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+            ></iframe>
+            <div class="location-map-caption" id="locationMapCaption">
+              <strong id="locationMapCaptionTitle">Choose a job card</strong>
+              <span id="locationMapCaptionAddress">Its location will be focused automatically.</span>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <nav class="pagination" id="pagination" aria-label="Posted jobs pagination" hidden></nav>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© <span id="currentYear"></span> Job Space Link. Employer posted jobs.</span>
+    <div class="footer-links"><a href="home.html">Home</a><a href="employerprofile.html">Employer Profile</a><a href="dashboard1.html">Dashboard</a></div>
+  </footer>
+
+  <div class="modal-backdrop" id="logoutModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="logoutModalTitle">
+      <div class="modal-header"><h2 id="logoutModalTitle">Log out of employer account</h2><button class="modal-close" id="logoutModalClose" type="button" aria-label="Close">×</button></div>
+      <div class="modal-body">This will clear the current employer session on this browser and return to the login page.</div>
+      <div class="modal-footer"><button class="secondary-btn" id="logoutCancelButton" type="button">Cancel</button><button class="danger-btn" id="logoutConfirmButton" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"><i id="toastIcon" class="fa-solid fa-circle-check"></i><span id="toastMessage">Done.</span></div>
+
+  <script>
+    "use strict";
+
+    const EMPLOYER_TABLE = "employer_company_profiles";
+    const JOB_TABLE = "staff_requirements";
+    const PROFILE_STORAGE_KEY = "jobSpaceLink_employer_profile";
+    const SUPABASE_AUTH_HANDOFF_KEY = "jobSpaceLink_supabase_auth_handoff_v1";
+    const VIEW_STORAGE_KEY = "jobSpaceLink_employer_posted_jobs_view";
+    const JOBS_PER_PAGE = 20;
+    const LOCATION_JOBS_PER_PAGE = 10;
+    const STORED_VIEW = localStorage.getItem(VIEW_STORAGE_KEY);
+    const SESSION_KEYS = [
+      "jobSpaceLink_employer_session",
+      "jobSpaceLink_logged_in_employer",
+      "jobSpaceLink_employer_login",
+      "jobSpaceLink_employer_identity",
+      "loggedInEmployer",
+      "employerSession",
+      "jobSpaceLink_login_identity"
+    ];
+
+    const state = {
+      supabase: null,
+      authUser: null,
+      session: null,
+      profile: {},
+      jobs: [],
+      applicationRows: [],
+      applicationTotal: 0,
+      filter: "all",
+      search: "",
+      view: ["grid", "table", "location"].includes(STORED_VIEW) ? STORED_VIEW : "grid",
+      page: 1,
+      selectedLocationIndex: null,
+      loading: false
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+    const clean = value => String(value == null ? "" : value).trim();
+    const safeJson = value => { try { return JSON.parse(value); } catch { return null; } };
+    const unique = values => [...new Set(values.map(clean).filter(Boolean))];
+    const escapeHtml = value => clean(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
+
+    function pick(source, keys, fallback = "") {
+      if (!source || typeof source !== "object") return fallback;
+      for (const key of keys) {
+        const value = source[key];
+        if (value !== undefined && value !== null && clean(value) !== "") return value;
+      }
+      return fallback;
+    }
+
+    function parseSessionValue(value) {
+      if (!value) return null;
+      const parsed = safeJson(value);
+      if (parsed && typeof parsed === "object") return parsed;
+      if (String(value).includes("@")) return { email: clean(value), loggedIn: true, role: "employer" };
+      return null;
+    }
+
+    function readEmployerSession() {
+      const candidates = [];
+      for (const storage of [localStorage, sessionStorage]) {
+        for (const key of SESSION_KEYS) {
+          const parsed = parseSessionValue(storage.getItem(key));
+          if (parsed) candidates.push(parsed);
+        }
+      }
+
+      const employer = candidates.find(item => {
+        const role = clean(pick(item, ["role", "account_type", "type"])).toLowerCase();
+        return role.includes("employer") || Boolean(pick(item, ["company_name", "companyName", "company", "company_email", "employer_email"]));
+      }) || {};
+
+      return {
+        raw: employer,
+        userId: clean(pick(employer, ["user_id", "userId", "uid", "id", "auth_user_id"])),
+        email: clean(pick(employer, ["email", "company_email", "employer_email", "contact_email"])),
+        companyName: clean(pick(employer, ["company_name", "companyName", "company", "organization_name", "name"])),
+        logoUrl: clean(pick(employer, ["company_logo_url", "company_profile_url", "logo_url", "logoUrl", "profile_picture_url"])),
+        role: clean(pick(employer, ["role", "account_type", "type"])).toLowerCase(),
+        loggedIn: employer.loggedIn !== false && employer.isLoggedIn !== false
+      };
+    }
+
+    function isSupabaseClient(candidate) {
+      return Boolean(candidate && typeof candidate.from === "function" && candidate.auth && typeof candidate.auth.getSession === "function");
+    }
+
+    function isSupabaseNamespace(candidate) {
+      return Boolean(candidate && typeof candidate.createClient === "function");
+    }
+
+    function configuredSupabaseUrl() {
+      const lexicalUrl = typeof SUPABASE_URL !== "undefined" ? SUPABASE_URL : "";
+      return clean(window.SUPABASE_URL || window.supabaseUrl || lexicalUrl || localStorage.getItem("SUPABASE_URL"));
+    }
+
+    function configuredSupabaseKey() {
+      const lexicalKey = typeof SUPABASE_ANON_KEY !== "undefined" ? SUPABASE_ANON_KEY : "";
+      return clean(window.SUPABASE_ANON_KEY || window.SUPABASE_KEY || window.supabaseAnonKey || lexicalKey || localStorage.getItem("SUPABASE_ANON_KEY"));
+    }
+
+    function initSupabase() {
+      const lexicalClient = typeof supabaseClient !== "undefined" ? supabaseClient : null;
+      const lexicalSupabase = typeof supabase !== "undefined" ? supabase : null;
+      const candidates = [window.supabaseClient, lexicalClient, lexicalSupabase, window.supabase];
+
+      for (const candidate of candidates) {
+        if (isSupabaseClient(candidate)) {
+          window.supabaseClient = candidate;
+          return candidate;
+        }
+      }
+
+      const namespace = isSupabaseNamespace(window.supabase)
+        ? window.supabase
+        : (isSupabaseNamespace(lexicalSupabase) ? lexicalSupabase : null);
+      const url = configuredSupabaseUrl();
+      const key = configuredSupabaseKey();
+      if (!namespace || !url || !key) return null;
+
+      try {
+        window.supabaseClient = namespace.createClient(url, key, {
+          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storage: window.localStorage }
+        });
+        return window.supabaseClient;
+      } catch (error) {
+        console.warn("Supabase initialization failed:", error);
+        return null;
+      }
+    }
+
+    function readSupabaseAuthHandoff() {
+      const candidates = [sessionStorage.getItem(SUPABASE_AUTH_HANDOFF_KEY), localStorage.getItem(SUPABASE_AUTH_HANDOFF_KEY)];
+      for (const raw of candidates) {
+        const parsed = safeJson(raw);
+        if (parsed?.access_token && parsed?.refresh_token && (!parsed.origin || parsed.origin === window.location.origin)) return parsed;
+      }
+      return null;
+    }
+
+    function clearSupabaseAuthHandoff() {
+      sessionStorage.removeItem(SUPABASE_AUTH_HANDOFF_KEY);
+      localStorage.removeItem(SUPABASE_AUTH_HANDOFF_KEY);
+    }
+
+    async function restoreSupabaseSessionFromHandoff() {
+      if (!state.supabase?.auth) return null;
+      const handoff = readSupabaseAuthHandoff();
+      if (!handoff) return null;
+      if (handoff.created_at && Date.now() - Number(handoff.created_at) > 7 * 24 * 60 * 60 * 1000) {
+        clearSupabaseAuthHandoff();
+        return null;
+      }
+      try {
+        const { data, error } = await state.supabase.auth.setSession({ access_token: handoff.access_token, refresh_token: handoff.refresh_token });
+        if (error) throw error;
+        if (data?.session?.user?.id) {
+          clearSupabaseAuthHandoff();
+          return data.session;
+        }
+      } catch (error) {
+        console.warn("Supabase Auth handoff restoration failed:", error);
+      }
+      return null;
+    }
+
+    function synchronizeEmployerIdentity(user) {
+      if (!user?.id) return;
+      const current = readEmployerSession();
+      const identity = {
+        ...(current.raw || {}),
+        loggedIn: true,
+        isLoggedIn: true,
+        authenticated: true,
+        role: "employer",
+        account_type: "employer",
+        type: "employer",
+        user_id: user.id,
+        userId: user.id,
+        uid: user.id,
+        auth_user_id: user.id,
+        email: clean(current.email || user.email),
+        employer_email: clean(user.email || current.email),
+        company_email: clean(current.email || user.email),
+        company_name: clean(current.companyName || state.profile.company_name),
+        companyName: clean(current.companyName || state.profile.company_name),
+        company_logo_url: clean(current.logoUrl || state.profile.company_logo_url),
+        origin: window.location.origin,
+        authenticated_at: new Date().toISOString()
+      };
+      const serialized = JSON.stringify(identity);
+      for (const key of SESSION_KEYS) localStorage.setItem(key, serialized);
+      sessionStorage.setItem("jobSpaceLink_employer_session", serialized);
+      localStorage.setItem("jobSpaceLink_employer_user_id", user.id);
+    }
+
+    async function loadAuthenticatedUser() {
+      if (!state.supabase?.auth) return null;
+      try {
+        let { data, error } = await state.supabase.auth.getSession();
+        if (error) console.warn("Unable to read the stored Supabase session:", error);
+        let authSession = data?.session || null;
+        if (!authSession?.user?.id) authSession = await restoreSupabaseSessionFromHandoff();
+        if (authSession?.expires_at && authSession.expires_at * 1000 <= Date.now() + 30000) {
+          const refreshed = await state.supabase.auth.refreshSession();
+          if (!refreshed.error && refreshed.data?.session) authSession = refreshed.data.session;
+        }
+        if (!authSession?.user?.id) return null;
+
+        let user = authSession.user;
+        const validated = await state.supabase.auth.getUser();
+        if (!validated.error && validated.data?.user) user = validated.data.user;
+        state.authUser = user;
+        synchronizeEmployerIdentity(user);
+        return user;
+      } catch (error) {
+        console.warn("Unable to restore the Supabase Auth user:", error);
+        return null;
+      }
+    }
+
+    function loadLocalProfile() {
+      return safeJson(localStorage.getItem(PROFILE_STORAGE_KEY)) || {};
+    }
+
+    async function fetchEmployerProfile() {
+      if (!state.supabase || !state.authUser?.id) return null;
+      try {
+        const { data, error } = await state.supabase.from(EMPLOYER_TABLE).select("*").eq("user_id", state.authUser.id).maybeSingle();
+        if (error) throw error;
+        return data || null;
+      } catch (error) {
+        console.warn("Employer profile lookup failed:", error);
+        return null;
+      }
+    }
+
+    function jobTitle(job) {
+      return clean(pick(job, ["position", "job_title", "title", "position_title"], "Untitled position"));
+    }
+
+    function jobStatus(job) {
+      return clean(pick(job, ["job_status", "status"], "Open"));
+    }
+
+    function normalizedJobStatus(value) {
+      const status = clean(value).toLowerCase();
+      if (["pause", "paused", "cancel", "cancelled", "canceled"].includes(status)) return "cancel";
+      if (["close", "closed"].includes(status)) return "close";
+      return "open";
+    }
+
+    function statusLabel(job) {
+      const normalized = normalizedJobStatus(jobStatus(job));
+      return normalized === "cancel" ? "Cancel" : (normalized === "close" ? "Close" : "Open");
+    }
+
+    function gridStatusIconClass(statusValue) {
+      const normalized = normalizedJobStatus(statusValue);
+
+      if (normalized === "close") return "fa-solid fa-lock";
+      if (normalized === "cancel") return "fa-solid fa-ban";
+      return "fa-solid fa-door-open";
+    }
+
+    function jobIdentifierEntries(job = {}) {
+      return [
+        ["id", pick(job, ["id"])],
+        ["requirement_id", pick(job, ["requirement_id"])],
+        ["staff_requirement_id", pick(job, ["staff_requirement_id"])],
+        ["record_id", pick(job, ["record_id"])],
+        ["row_id", pick(job, ["row_id"])]
+      ].filter(([, value]) => clean(value));
+    }
+
+    function jobIdentityKey(job = {}, fallbackIndex = 0) {
+      const identifier = jobIdentifierEntries(job)[0];
+      if (identifier) return `${identifier[0]}:${clean(identifier[1]).toLowerCase()}`;
+      return [
+        clean(jobTitle(job)).toLowerCase(),
+        clean(pick(job, ["company_name"])).toLowerCase(),
+        clean(pick(job, ["company_email", "contact_email", "email"])).toLowerCase(),
+        clean(pick(job, ["created_at", "posted_date", "date_posted"])),
+        clean(pick(job, ["city"])).toLowerCase(),
+        String(fallbackIndex)
+      ].join("|");
+    }
+
+    function jobTimestamp(job = {}) {
+      const raw = clean(pick(job, ["updated_at", "created_at", "posted_date", "date_posted"]));
+      const timestamp = raw ? Date.parse(raw) : NaN;
+      return Number.isFinite(timestamp) ? timestamp : 0;
+    }
+
+    function normalizedAppliedMarker(value) {
+      if (value === true || value === 1) return true;
+      if (value === false || value === 0 || value == null) return false;
+      const marker = clean(value).toLowerCase();
+      if (!marker) return false;
+      return ["1", "true", "yes", "applied", "apply", "submitted", "application submitted", "application sent", "completed", "complete"].includes(marker)
+        || marker.startsWith("applied")
+        || marker.includes("application submitted");
+    }
+
+    function normalizedFavoriteMarker(value) {
+      if (value === true || value === 1) return true;
+      if (value === false || value === 0 || value == null) return false;
+      const marker = clean(value).toLowerCase();
+      if (!marker) return false;
+      return ["1", "true", "yes", "favorite", "favourite", "saved", "added", "heart", "hearted"].includes(marker)
+        || marker.startsWith("favorite")
+        || marker.startsWith("favourite");
+    }
+
+    function hasFavoriteMarker(row = {}) {
+      const fields = [
+        "favorite_heart_status", "favourite_heart_status", "favorite_status", "favourite_status",
+        "is_favorite", "is_favourite", "favorited", "favourited", "saved", "heart_status"
+      ];
+      let explicitStatusFound = false;
+      for (const field of fields) {
+        if (!Object.prototype.hasOwnProperty.call(row, field)) continue;
+        const raw = row[field];
+        if (clean(raw) !== "" || typeof raw === "boolean" || typeof raw === "number") explicitStatusFound = true;
+        if (normalizedFavoriteMarker(raw)) return true;
+      }
+      if (explicitStatusFound) return false;
+      return Boolean(clean(pick(row, ["favorite_email_address", "favourite_email_address", "favorite_email", "favorited_by_email"])));
+    }
+
+    function jobIsFavorite(job = {}) {
+      return hasFavoriteMarker(job);
+    }
+
+    function jobHasAppliedMark(job = {}) {
+      return hasAppliedMarker(job) || applicationCountForJob(job) > 0;
+    }
+
+    // A job counts as an applicant response when a jobseeker either applied
+    // to the position or added it to favorites. Each position is counted once,
+    // even when both database marks are present.
+    function jobHasApplicantResponse(job = {}) {
+      return jobHasAppliedMark(job) || jobIsFavorite(job);
+    }
+
+    function applicantResponseTotal() {
+      return state.jobs.filter(jobHasApplicantResponse).length;
+    }
+
+    function recordMarkHtml(type, active) {
+      const isFavorite = type === "favorite";
+      const icon = isFavorite ? (active ? "fa-solid fa-heart" : "fa-regular fa-heart") : "fa-solid fa-paper-plane";
+      const label = isFavorite ? "Favorite" : "Applied";
+      const value = active ? "Yes" : "No";
+      return `<span class="record-mark ${type} ${active ? "yes" : "no"}" title="${label}: ${value}"><i class="${icon}"></i><span>${label}:</span><span class="record-mark-value">${value}</span></span>`;
+    }
+
+    function jobRecordFlagsHtml(job = {}) {
+      return `${recordMarkHtml("favorite", jobIsFavorite(job))}${recordMarkHtml("applied", jobHasAppliedMark(job))}`;
+    }
+
+    function isAppliedSourceRow(row = {}) {
+      const source = clean(pick(row, ["source_type", "source", "record_type", "entry_type", "history_type", "activity_type"])).toLowerCase();
+      return source === "applied" || source === "application" || source === "job application" || source.includes("applied history") || source.includes("application history");
+    }
+
+    function hasAppliedMarker(row = {}) {
+      const fields = ["applied", "is_applied", "applied_status", "application_status", "apply_status", "application_state", "application_submitted", "application_sent", "has_applied"];
+      return fields.some(field => Object.prototype.hasOwnProperty.call(row, field) && normalizedAppliedMarker(row[field]));
+    }
+
+    function isAppliedRow(row = {}) {
+      return isAppliedSourceRow(row) || hasAppliedMarker(row);
+    }
+
+    function applicationOwnerIdentity(row = {}) {
+      return clean(pick(row, [
+        "applied_email_address", "applied_email", "applied_by_email", "applied_user_email", "applied_jobseeker_email",
+        "application_email", "application_user_email", "applicant_email", "candidate_email", "jobseeker_email",
+        "applied_master_id", "application_master_id", "applicant_master_id", "jobseeker_master_id",
+        "applied_user_id", "application_user_id", "applicant_user_id", "jobseeker_user_id"
+      ])).toLowerCase();
+    }
+
+    function applicationJobReference(row = {}) {
+      return clean(pick(row, ["original_staff_requirement_id", "parent_job_id", "staff_requirement_id", "posted_job_id", "job_id", "requirement_id", "original_job_id"])).toLowerCase();
+    }
+
+    function applicationRecordKey(row = {}, fallbackIndex = 0) {
+      const jobReference = applicationJobReference(row);
+      const owner = applicationOwnerIdentity(row);
+      if (jobReference && owner) return `application:${jobReference}:${owner}`;
+      const rowId = clean(pick(row, ["id", "record_id", "row_id", "application_id"])).toLowerCase();
+      if (rowId) return `row:${rowId}`;
+      return ["application", jobReference, owner, clean(pick(row, ["created_at", "applied_at", "application_date"])).toLowerCase(), clean(jobTitle(row)).toLowerCase(), String(fallbackIndex)].join(":");
+    }
+
+    function countUniqueApplications(rows = []) {
+      const markedRows = rows.filter(isAppliedRow);
+      const historyRows = markedRows.filter(isAppliedSourceRow);
+      const candidates = historyRows.length ? historyRows : markedRows;
+      return new Set(candidates.map((row, index) => applicationRecordKey(row, index))).size;
+    }
+
+    async function fetchJobPages(column, value, comparison = "eq") {
+      const rows = [];
+      const pageSize = 1000;
+      let from = 0;
+      while (true) {
+        let query = state.supabase.from(JOB_TABLE).select("*");
+        query = comparison === "ilike" ? query.ilike(column, value) : query.eq(column, value);
+        const { data, error } = await query.range(from, from + pageSize - 1);
+        if (error) throw error;
+        const page = Array.isArray(data) ? data : [];
+        rows.push(...page);
+        if (page.length < pageSize) break;
+        from += pageSize;
+      }
+      return rows;
+    }
+
+    async function fetchRowsByReferences(column, values = []) {
+      const referenceValues = unique(values);
+      if (!referenceValues.length) return [];
+      const rows = [];
+      const chunkSize = 80;
+      const pageSize = 1000;
+
+      for (let start = 0; start < referenceValues.length; start += chunkSize) {
+        const chunk = referenceValues.slice(start, start + chunkSize);
+        let from = 0;
+        while (true) {
+          const { data, error } = await state.supabase.from(JOB_TABLE).select("*").in(column, chunk).range(from, from + pageSize - 1);
+          if (error) throw error;
+          const page = Array.isArray(data) ? data : [];
+          rows.push(...page);
+          if (page.length < pageSize) break;
+          from += pageSize;
+        }
+      }
+      return rows;
+    }
+
+    async function fetchLinkedApplications(postedJobs = []) {
+      if (!state.supabase || !postedJobs.length) return [];
+      const postedIds = unique(postedJobs.flatMap(job => jobIdentifierEntries(job).map(([, value]) => value)));
+      if (!postedIds.length) return [];
+
+      const referenceColumns = ["original_staff_requirement_id", "parent_job_id", "staff_requirement_id", "posted_job_id", "job_id", "original_job_id"];
+      const rows = [];
+      const seen = new Set();
+
+      for (const column of referenceColumns) {
+        try {
+          const matches = await fetchRowsByReferences(column, postedIds);
+          matches.filter(isAppliedRow).forEach((row, index) => {
+            const key = applicationRecordKey(row, index);
+            if (seen.has(key)) return;
+            seen.add(key);
+            rows.push(row);
+          });
+        } catch (error) {
+          console.warn(`Applications lookup by ${column} failed:`, error);
+        }
+      }
+      return rows;
+    }
+
+    async function fetchPostedJobs() {
+      const fallbackRows = Array.isArray(state.profile.posted_jobs) ? state.profile.posted_jobs : [];
+      if (!state.supabase || !state.authUser?.id) {
+        state.applicationRows = fallbackRows.filter(isAppliedRow);
+        state.applicationTotal = countUniqueApplications(state.applicationRows);
+        return fallbackRows.filter(row => !isAppliedSourceRow(row)).sort((a, b) => jobTimestamp(b) - jobTimestamp(a));
+      }
+
+      const accountEmail = clean(state.authUser.email || state.profile.employer_email || state.session?.email).toLowerCase();
+      const companyEmail = clean(state.profile.email || state.session?.email || state.authUser.email).toLowerCase();
+      const companyName = clean(state.profile.company_name || state.session?.companyName);
+      const filters = [{ column: "user_id", value: state.authUser.id, comparison: "eq" }];
+
+      unique([accountEmail, companyEmail]).forEach(email => {
+        filters.push(
+          { column: "company_email", value: email, comparison: "ilike" },
+          { column: "contact_email", value: email, comparison: "ilike" },
+          { column: "email", value: email, comparison: "ilike" }
+        );
+      });
+      if (companyName) filters.push({ column: "company_name", value: companyName, comparison: "ilike" });
+
+      const merged = [];
+      const seen = new Set();
+      let successfulQueries = 0;
+
+      for (const filter of filters) {
+        if (!clean(filter.value)) continue;
+        try {
+          const rows = await fetchJobPages(filter.column, filter.value, filter.comparison);
+          successfulQueries += 1;
+          rows.forEach((job, index) => {
+            const key = jobIdentityKey(job, index);
+            if (seen.has(key)) return;
+            seen.add(key);
+            merged.push(job);
+          });
+        } catch (error) {
+          console.warn(`Jobs lookup by ${filter.column} failed:`, error);
+        }
+      }
+
+      if (!successfulQueries) {
+        state.applicationRows = fallbackRows.filter(isAppliedRow);
+        state.applicationTotal = countUniqueApplications(state.applicationRows);
+        return fallbackRows.filter(row => !isAppliedSourceRow(row)).sort((a, b) => jobTimestamp(b) - jobTimestamp(a));
+      }
+
+      const sortedRows = merged.sort((a, b) => jobTimestamp(b) - jobTimestamp(a));
+      const postedRows = sortedRows.filter(row => !isAppliedSourceRow(row));
+      const directlyMatchedApplications = sortedRows.filter(isAppliedRow);
+      const linkedApplications = await fetchLinkedApplications(postedRows);
+      const applicationRows = [];
+      const applicationSeen = new Set();
+
+      [...directlyMatchedApplications, ...linkedApplications].forEach((row, index) => {
+        const key = applicationRecordKey(row, index);
+        if (applicationSeen.has(key)) return;
+        applicationSeen.add(key);
+        applicationRows.push(row);
+      });
+
+      state.applicationRows = applicationRows;
+      state.applicationTotal = countUniqueApplications(applicationRows);
+      return postedRows.sort((a, b) => jobTimestamp(b) - jobTimestamp(a));
+    }
+
+    function applicationCountForJob(job) {
+      const identifiers = new Set(jobIdentifierEntries(job).map(([, value]) => clean(value).toLowerCase()));
+      if (!identifiers.size) return 0;
+      const matching = state.applicationRows.filter(row => {
+        const reference = applicationJobReference(row);
+        if (reference && identifiers.has(reference)) return true;
+        return jobIdentifierEntries(row).some(([, value]) => identifiers.has(clean(value).toLowerCase()));
+      });
+      return countUniqueApplications(matching);
+    }
+
+    function jobLocation(job) {
+      return unique([pick(job, ["city"]), pick(job, ["state", "province", "region"]), pick(job, ["country"])]).join(", ")
+        || clean(pick(job, ["address", "location"], "Location not specified"));
+    }
+
+    function formatJobDate(job) {
+      const raw = clean(pick(job, ["created_at", "posted_date", "date_posted"]));
+      if (!raw) return "Not recorded";
+      const date = new Date(raw);
+      return Number.isNaN(date.getTime()) ? raw : date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function formatSalary(job) {
+      const display = clean(pick(job, ["salary_range_display"]));
+      if (display) return display;
+      const minimum = pick(job, ["salary_min", "min_salary"], "");
+      const maximum = pick(job, ["salary_max", "max_salary"], "");
+      if (clean(minimum) === "" && clean(maximum) === "") return "Not specified";
+      const symbol = clean(pick(job, ["salary_currency_symbol", "currency_symbol"], ""));
+      const period = clean(pick(job, ["salary_pay_period", "pay_period", "salary_period"], ""));
+      const formatNumber = value => {
+        const number = Number(value);
+        return Number.isFinite(number) ? number.toLocaleString(undefined, { maximumFractionDigits: 2 }) : clean(value);
+      };
+      let result = "";
+      if (clean(minimum) !== "" && clean(maximum) !== "") result = `${symbol}${formatNumber(minimum)} – ${symbol}${formatNumber(maximum)}`;
+      else result = `${symbol}${formatNumber(clean(minimum) !== "" ? minimum : maximum)}`;
+      return period ? `${result} / ${period}` : result;
+    }
+
+    function jobSearchText(job) {
+      return [
+        jobTitle(job), pick(job, ["company_name", "company"]), pick(job, ["department", "division", "team"]),
+        pick(job, ["employment_type", "job_type", "work_type", "type"]), pick(job, ["experience_level", "experience"]),
+        pick(job, ["industry", "job_industry"]), jobLocation(job), formatSalary(job), jobStatus(job),
+        jobIsFavorite(job) ? "favorite yes saved heart" : "favorite no",
+        jobHasAppliedMark(job) ? "applied yes applicant response" : "applied no"
+      ].map(clean).join(" ").toLowerCase();
+    }
+
+    function postedJobHasApplications(job) {
+      return applicationCountForJob(job) > 0 || isAppliedRow(job);
+    }
+
+    function filteredJobs() {
+      const query = state.search.toLowerCase();
+      return state.jobs.filter(job => {
+        const filterMatches = state.filter === "all"
+          || (state.filter === "responses"
+            ? jobHasApplicantResponse(job)
+            : state.filter === "applied"
+              ? jobHasAppliedMark(job)
+              : state.filter === "favorites"
+                ? jobIsFavorite(job)
+                : normalizedJobStatus(jobStatus(job)) === state.filter);
+        const searchMatches = !query || jobSearchText(job).includes(query);
+        return filterMatches && searchMatches;
+      });
+    }
+
+    function jobsPerPage() {
+      return state.view === "location" ? LOCATION_JOBS_PER_PAGE : JOBS_PER_PAGE;
+    }
+
+    function currentPageJobs() {
+      const list = filteredJobs();
+      const pageSize = jobsPerPage();
+      const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+      if (state.page > totalPages) state.page = totalPages;
+      const start = (state.page - 1) * pageSize;
+      return list.slice(start, start + pageSize);
+    }
+
+    function setText(selector, value, fallback = "") {
+      const element = $(selector);
+      if (element) element.textContent = clean(value) || fallback;
+    }
+
+    function initials(name) {
+      const words = clean(name).split(/\s+/).filter(Boolean).slice(0, 2);
+      return words.map(word => word[0]).join("").toUpperCase() || "EP";
+    }
+
+    function setHeaderIdentity() {
+      const companyName = clean(state.profile.company_name || state.session?.companyName || "Employer Account");
+      const email = clean(state.profile.email || state.profile.employer_email || state.session?.email || state.authUser?.email || "employer@jobspacelink.com");
+      const logoUrl = clean(state.profile.company_logo_url || state.session?.logoUrl);
+      setText("#headerCompanyName", companyName);
+      setText("#headerCompanyEmail", email);
+      setText("#dropdownCompanyName", companyName);
+      setText("#dropdownCompanyEmail", email);
+      setText("#headerInitials", initials(companyName));
+      const container = $("#headerLogo");
+      const image = $("#headerLogoImage");
+      if (logoUrl) {
+        image.src = logoUrl;
+        image.onload = () => container.classList.add("has-image");
+        image.onerror = () => container.classList.remove("has-image");
+      } else {
+        image.removeAttribute("src");
+        container.classList.remove("has-image");
+      }
+    }
+
+    function renderStats() {
+      const open = state.jobs.filter(job => normalizedJobStatus(jobStatus(job)) === "open").length;
+      const cancel = state.jobs.filter(job => normalizedJobStatus(jobStatus(job)) === "cancel").length;
+      const close = state.jobs.filter(job => normalizedJobStatus(jobStatus(job)) === "close").length;
+      setText("#totalJobs", state.jobs.length);
+      setText("#openJobs", open);
+      setText("#cancelJobs", cancel);
+      setText("#closedJobs", close);
+      setText("#applicationTotal", applicantResponseTotal());
+      $$('[data-filter]').forEach(button => {
+        const active = button.dataset.filter === state.filter;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+
+      const appliedPositions = state.jobs.filter(jobHasAppliedMark).length;
+      const favoritePositions = state.jobs.filter(jobIsFavorite).length;
+      const appliedButton = $("#appliedFilterButton");
+      const favoritesButton = $("#favoritesFilterButton");
+      if (appliedButton) {
+        const active = state.filter === "applied";
+        appliedButton.classList.toggle("active", active);
+        appliedButton.setAttribute("aria-pressed", String(active));
+        appliedButton.title = `${active ? "Show all positions" : "Show applicant response positions"} (${appliedPositions})`;
+      }
+      if (favoritesButton) {
+        const active = state.filter === "favorites";
+        favoritesButton.classList.toggle("active", active);
+        favoritesButton.setAttribute("aria-pressed", String(active));
+        favoritesButton.title = `${active ? "Show all positions" : "Show favorite positions"} (${favoritePositions})`;
+        const icon = $("i", favoritesButton);
+        if (icon) icon.className = active ? "fa-solid fa-heart" : "fa-regular fa-heart";
+      }
+    }
+
+    function renderViewButtons() {
+      $$('[data-view]').forEach(button => {
+        const active = button.dataset.view === state.view;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    function jobCardHtml(job) {
+      const originalIndex = state.jobs.indexOf(job);
+      const status = normalizedJobStatus(jobStatus(job));
+      const statusIconClass = gridStatusIconClass(status);
+      const applicantResponseIconClass = "fa-solid fa-file-circle-check";
+      const company = clean(pick(job, ["company_name", "company"], state.profile.company_name || "Company not specified"));
+      const department = clean(pick(job, ["department", "division", "team"], "Department not specified"));
+      const type = clean(pick(job, ["employment_type", "job_type", "work_type", "type"], "Employment type not specified"));
+      const experience = clean(pick(job, ["experience_level", "experience", "years_experience"], "Experience not specified"));
+      const applications = applicationCountForJob(job);
+
+      return `
+        <article class="job-card">
+          <div class="job-card-head">
+            <span class="job-card-icon ${status}" title="${escapeHtml(statusLabel(job))} position" aria-label="${escapeHtml(statusLabel(job))} position">
+              <i class="${statusIconClass}" aria-hidden="true"></i>
+            </span>
+            <div class="job-card-statuses">
+              <span class="status-pill ${status}">
+                <i class="${statusIconClass}" aria-hidden="true"></i>${escapeHtml(statusLabel(job))}
+              </span>
+            </div>
+          </div>
+          <h3>${escapeHtml(jobTitle(job))}</h3>
+          <p class="company-name">${escapeHtml(company)}</p>
+          <div class="job-record-flags">${jobRecordFlagsHtml(job)}</div>
+          <div class="job-details">
+            <span><i class="fa-solid fa-sitemap"></i><span class="job-detail-text">${escapeHtml(department)}</span></span>
+            <span><i class="fa-solid fa-clock"></i><span class="job-detail-text">${escapeHtml(type)}</span></span>
+            <span><i class="fa-solid fa-layer-group"></i><span class="job-detail-text">${escapeHtml(experience)}</span></span>
+            <span><i class="fa-solid fa-location-dot"></i><span class="job-detail-text">${escapeHtml(jobLocation(job))}</span></span>
+            <span><i class="fa-solid fa-money-bill-wave"></i><span class="job-detail-text">${escapeHtml(formatSalary(job))}</span></span>
+            <span><i class="fa-regular fa-calendar"></i><span class="job-detail-text">Posted ${escapeHtml(formatJobDate(job))}</span></span>
+          </div>
+          <div class="job-card-footer">
+            <span class="application-count" title="Applicant response">
+              <i class="${applicantResponseIconClass}" aria-hidden="true"></i>${applications} application${applications === 1 ? "" : "s"}
+            </span>
+            <button class="edit-btn" type="button" data-edit-index="${originalIndex}"><i class="fa-solid fa-pen-to-square"></i> Edit & Update</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function jobMapQuery(job) {
+      return unique([
+        pick(job, ["address", "street_address", "company_address", "location_address"]),
+        pick(job, ["city"]),
+        pick(job, ["state", "province", "region"]),
+        pick(job, ["zip_code", "zipcode", "postal_code", "zip"]),
+        pick(job, ["country"])
+      ]).join(", ") || jobLocation(job);
+    }
+
+    function jobMapEmbedUrl(job) {
+      const query = jobMapQuery(job);
+      return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+    }
+
+    function locationJobCardHtml(job) {
+      const originalIndex = state.jobs.indexOf(job);
+      const active = originalIndex === state.selectedLocationIndex;
+      const status = normalizedJobStatus(jobStatus(job));
+      const company = clean(pick(job, ["company_name", "company"], state.profile.company_name || "Company not specified"));
+      const type = clean(pick(job, ["employment_type", "job_type", "work_type", "type"], "Employment type not specified"));
+      const applications = applicationCountForJob(job);
+
+      return `
+        <article
+          class="location-job-card ${active ? "active" : ""}"
+          data-location-index="${originalIndex}"
+          tabindex="0"
+          role="button"
+          aria-pressed="${active}"
+          aria-label="Show ${escapeHtml(jobTitle(job))} on the location map"
+        >
+          <div class="location-card-head">
+            <div class="location-card-title"><strong>${escapeHtml(jobTitle(job))}</strong><span>${escapeHtml(company)}</span></div>
+            <div class="location-card-statuses"><span class="status-pill ${status}"><i class="fa-solid fa-circle"></i>${escapeHtml(statusLabel(job))}</span></div>
+          </div>
+          <div class="job-record-flags">${jobRecordFlagsHtml(job)}</div>
+          <div class="location-card-details">
+            <span><i class="fa-solid fa-location-dot"></i><em>${escapeHtml(jobLocation(job))}</em></span>
+            <span><i class="fa-solid fa-clock"></i><em>${escapeHtml(type)}</em></span>
+            <span><i class="fa-solid fa-money-bill-wave"></i><em>${escapeHtml(formatSalary(job))}</em></span>
+          </div>
+          <div class="location-card-footer">
+            <span class="application-count"><i class="fa-solid fa-file-circle-check"></i>${applications} application${applications === 1 ? "" : "s"}</span>
+            <button class="edit-btn" type="button" data-edit-index="${originalIndex}"><i class="fa-solid fa-pen-to-square"></i> Edit & Update</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function selectLocationJob(index, options = {}) {
+      const job = state.jobs[index];
+      if (!job) return;
+      state.selectedLocationIndex = index;
+
+      $$("[data-location-index]").forEach(card => {
+        const active = Number(card.dataset.locationIndex) === index;
+        card.classList.toggle("active", active);
+        card.setAttribute("aria-pressed", String(active));
+      });
+
+      const title = jobTitle(job);
+      const address = jobMapQuery(job);
+      setText("#locationMapTitle", title);
+      setText("#locationMapAddress", address, "Location not specified");
+      setText("#locationMapCaptionTitle", title);
+      setText("#locationMapCaptionAddress", address, "Location not specified");
+
+      const frame = $("#locationMapFrame");
+      const mapUrl = jobMapEmbedUrl(job);
+      if (frame.dataset.mapUrl !== mapUrl) {
+        frame.dataset.mapUrl = mapUrl;
+        frame.src = mapUrl;
+      }
+
+      if (options.scrollIntoView) {
+        const selectedCard = $(`[data-location-index="${index}"]`);
+        selectedCard?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
+    function renderLocationView(pageJobs) {
+      const pageIndices = pageJobs.map(job => state.jobs.indexOf(job));
+      if (!pageIndices.includes(state.selectedLocationIndex)) state.selectedLocationIndex = pageIndices[0] ?? null;
+      $("#locationCards").innerHTML = pageJobs.map(locationJobCardHtml).join("");
+      $("#locationView").hidden = false;
+      if (state.selectedLocationIndex !== null) {
+        window.requestAnimationFrame(() => selectLocationJob(state.selectedLocationIndex));
+      }
+    }
+
+    function jobTableRowHtml(job) {
+      const originalIndex = state.jobs.indexOf(job);
+      const status = normalizedJobStatus(jobStatus(job));
+      const company = clean(pick(job, ["company_name", "company"], state.profile.company_name || "Company not specified"));
+      const department = clean(pick(job, ["department", "division", "team"], "Not specified"));
+      const type = clean(pick(job, ["employment_type", "job_type", "work_type", "type"], "Not specified"));
+      const experience = clean(pick(job, ["experience_level", "experience", "years_experience"], "Not specified"));
+      const applications = applicationCountForJob(job);
+
+      return `
+        <tr>
+          <td class="table-title"><strong>${escapeHtml(jobTitle(job))}</strong><span>${escapeHtml(company)}</span></td>
+          <td>${escapeHtml(department)}</td>
+          <td>${escapeHtml(type)}</td>
+          <td>${escapeHtml(experience)}</td>
+          <td>${escapeHtml(jobLocation(job))}</td>
+          <td>${escapeHtml(formatSalary(job))}</td>
+          <td>${escapeHtml(formatJobDate(job))}</td>
+          <td><span class="status-pill ${status}"><i class="fa-solid fa-circle"></i>${escapeHtml(statusLabel(job))}</span></td>
+          <td><span class="table-record-mark">${recordMarkHtml("favorite", jobIsFavorite(job))}</span></td>
+          <td><span class="table-record-mark">${recordMarkHtml("applied", jobHasAppliedMark(job))}</span></td>
+          <td>${applications}</td>
+          <td class="table-actions"><button class="edit-btn" type="button" data-edit-index="${originalIndex}"><i class="fa-solid fa-pen-to-square"></i> Edit & Update</button></td>
+        </tr>
+      `;
+    }
+
+    function pageItems(totalPages, currentPage) {
+      if (totalPages <= 7) return Array.from({ length: totalPages }, (_, index) => index + 1);
+      const items = [1];
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      if (start > 2) items.push("ellipsis-left");
+      for (let page = start; page <= end; page += 1) items.push(page);
+      if (end < totalPages - 1) items.push("ellipsis-right");
+      items.push(totalPages);
+      return items;
+    }
+
+    function renderPagination(totalRecords) {
+      const pagination = $("#pagination");
+      const totalPages = Math.ceil(totalRecords / jobsPerPage());
+      if (totalPages <= 1) {
+        pagination.hidden = true;
+        pagination.innerHTML = "";
+        return;
+      }
+
+      pagination.hidden = false;
+      const items = pageItems(totalPages, state.page);
+      pagination.innerHTML = `
+        <button class="pagination-btn" type="button" data-page="${state.page - 1}" ${state.page === 1 ? "disabled" : ""}><i class="fa-solid fa-chevron-left"></i> Prev</button>
+        ${items.map(item => typeof item === "number"
+          ? `<button class="pagination-btn ${item === state.page ? "active" : ""}" type="button" data-page="${item}" aria-current="${item === state.page ? "page" : "false"}">${item}</button>`
+          : '<span class="pagination-ellipsis">…</span>').join("")}
+        <button class="pagination-btn" type="button" data-page="${state.page + 1}" ${state.page === totalPages ? "disabled" : ""}>Next <i class="fa-solid fa-chevron-right"></i></button>
+      `;
+    }
+
+    function renderJobs() {
+      renderStats();
+      renderViewButtons();
+
+      const filtered = filteredJobs();
+      const pageJobs = currentPageJobs();
+      const pageSize = jobsPerPage();
+      const start = filtered.length ? (state.page - 1) * pageSize + 1 : 0;
+      const end = Math.min(state.page * pageSize, filtered.length);
+      setText("#perPageText", `${pageSize} jobs per page`);
+      $("#resultsText").innerHTML = filtered.length
+        ? `Showing <strong>${start}–${end}</strong> of <strong>${filtered.length}</strong> matching job${filtered.length === 1 ? "" : "s"}.`
+        : `<strong>0</strong> matching posted jobs.`;
+
+      $("#loadingState").hidden = true;
+      $("#authState").hidden = true;
+      $("#emptyState").hidden = pageJobs.length > 0;
+      $("#jobsGrid").hidden = true;
+      $("#jobsTableWrap").hidden = true;
+      $("#locationView").hidden = true;
+
+      if (!pageJobs.length) {
+        const filterName = state.filter === "all"
+          ? ""
+          : state.filter === "responses"
+            ? "applied or favorite positions"
+            : state.filter === "applied"
+              ? "positions with applications"
+              : state.filter === "favorites"
+                ? "favorite positions"
+                : `${state.filter === "cancel" ? "cancelled" : state.filter === "close" ? "closed" : "open"} posted jobs`;
+        setText("#emptyMessage", state.search
+          ? `No ${filterName || "posted jobs"} match “${state.search}”. Clear the search or change the active filter.`
+          : state.filter === "responses"
+            ? "No applied or favorite positions were found for this employer."
+            : state.filter === "applied"
+              ? "No positions with applications were found for this employer."
+              : state.filter === "favorites"
+                ? "No positions marked as favorite were found for this employer."
+                : `No ${filterName || "posted jobs"} were found for this employer.`);
+        renderPagination(0);
+        return;
+      }
+
+      if (state.view === "table") {
+        $("#jobsTableBody").innerHTML = pageJobs.map(jobTableRowHtml).join("");
+        $("#jobsTableWrap").hidden = false;
+      } else if (state.view === "location") {
+        renderLocationView(pageJobs);
+      } else {
+        $("#jobsGrid").innerHTML = pageJobs.map(jobCardHtml).join("");
+        $("#jobsGrid").hidden = false;
+      }
+
+      renderPagination(filtered.length);
+    }
+
+    function showLoading(loading) {
+      state.loading = Boolean(loading);
+      const refresh = $("#refreshButton");
+      refresh.disabled = state.loading;
+      refresh.classList.toggle("is-loading", state.loading);
+      if (state.loading) {
+        $("#loadingState").hidden = false;
+        $("#authState").hidden = true;
+        $("#emptyState").hidden = true;
+        $("#jobsGrid").hidden = true;
+        $("#jobsTableWrap").hidden = true;
+        $("#locationView").hidden = true;
+        $("#pagination").hidden = true;
+      }
+    }
+
+    function showAuthState(message) {
+      showLoading(false);
+      $("#loadingState").hidden = true;
+      $("#authState").hidden = false;
+      $("#emptyState").hidden = true;
+      $("#jobsGrid").hidden = true;
+      $("#jobsTableWrap").hidden = true;
+      $("#locationView").hidden = true;
+      $("#pagination").hidden = true;
+      setText("#authMessage", message);
+      $("#resultsText").innerHTML = "<strong>0</strong> posted jobs loaded.";
+    }
+
+    function showToast(message, type = "success") {
+      const toast = $("#toast");
+      const icon = $("#toastIcon");
+      setText("#toastMessage", message);
+      toast.className = `toast show ${type === "success" ? "" : type}`.trim();
+      icon.className = type === "error" ? "fa-solid fa-circle-exclamation" : (type === "info" ? "fa-solid fa-circle-info" : "fa-solid fa-circle-check");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 4300);
+    }
+
+    function cloneJob(job) {
+      try { return JSON.parse(JSON.stringify(job || {})); }
+      catch { return { ...(job || {}) }; }
+    }
+
+    function savePostJobEditContext(job) {
+      const rawRecord = cloneJob(job);
+      const identifierMap = Object.fromEntries(jobIdentifierEntries(rawRecord).map(([column, value]) => [column, clean(value)]));
+      const recordId = clean(identifierMap.id || identifierMap.record_id || identifierMap.row_id || pick(rawRecord, ["id", "record_id", "row_id", "job_id", "post_id"]));
+      const requirementId = clean(identifierMap.requirement_id || identifierMap.staff_requirement_id || pick(rawRecord, ["requirement_id", "staff_requirement_id", "job_requirement_id"]));
+      const companyName = clean(pick(rawRecord, ["company_name", "company", "business_name", "employer_name"]));
+      const companyEmail = clean(pick(rawRecord, ["company_email", "contact_email", "email"])).toLowerCase();
+      const position = clean(pick(rawRecord, ["position", "job_title", "title", "position_title"]));
+
+      const normalized = {
+        id: recordId,
+        record_id: clean(identifierMap.record_id || pick(rawRecord, ["record_id"])),
+        row_id: clean(identifierMap.row_id || pick(rawRecord, ["row_id"])),
+        requirement_id: requirementId,
+        staff_requirement_id: clean(identifierMap.staff_requirement_id || pick(rawRecord, ["staff_requirement_id"])),
+        company_name: companyName,
+        company_email: companyEmail,
+        contact_email: companyEmail,
+        position,
+        department: clean(pick(rawRecord, ["department", "division", "team"])),
+        employment_type: clean(pick(rawRecord, ["employment_type", "job_type", "work_type", "type"])),
+        industry: clean(pick(rawRecord, ["industry", "job_industry", "industry_category", "category"])),
+        country: clean(pick(rawRecord, ["country"])),
+        city: clean(pick(rawRecord, ["city"])),
+        state: clean(pick(rawRecord, ["state", "province", "region"])),
+        zipcode: clean(pick(rawRecord, ["zipcode", "zip_code", "postal_code"])),
+        address: clean(pick(rawRecord, ["address", "street_address", "location"])),
+        salary_min: pick(rawRecord, ["salary_min", "min_salary"], ""),
+        salary_max: pick(rawRecord, ["salary_max", "max_salary"], ""),
+        experience_level: clean(pick(rawRecord, ["experience_level", "experience", "years_experience"])),
+        job_status: normalizedJobStatus(jobStatus(rawRecord)),
+        source_type: clean(pick(rawRecord, ["source_type", "source"])),
+        skills: clean(pick(rawRecord, ["skills", "required_skills", "job_skills", "notes", "requirements"])),
+        pdf_url: clean(pick(rawRecord, ["pdf_url", "job_description_url"])),
+        pdf_urls: pick(rawRecord, ["pdf_urls", "job_description_urls", "job_description_files"], []),
+        company_profile_url: clean(pick(rawRecord, ["company_profile_url", "company_logo_url", "logo_url"])),
+        company_profile_urls: pick(rawRecord, ["company_profile_urls", "company_logo_urls", "logo_urls"], [])
+      };
+
+      const payload = {
+        type: "staff-requirement-edit",
+        action: "edit",
+        mode: "edit",
+        source: "employerpostedjobs.html",
+        target: "postjob1.html",
+        table: JOB_TABLE,
+        target_table: JOB_TABLE,
+        identifiers: identifierMap,
+        jobId: recordId,
+        recordId,
+        rowId: normalized.row_id,
+        requirementId,
+        staffRequirementId: normalized.staff_requirement_id || requirementId,
+        companyName,
+        contactEmail: companyEmail,
+        position,
+        normalized,
+        prefill: normalized,
+        raw: rawRecord,
+        returnUrl: `${window.location.pathname}${window.location.search || ""}`,
+        createdAt: new Date().toISOString(),
+        timestamp: Date.now()
+      };
+
+      const payloadText = JSON.stringify(payload);
+      const recordText = JSON.stringify(rawRecord);
+      const values = {
+        jobspacelink_postjob_edit_payload: payloadText,
+        jobspacelink_postjob_prefill: payloadText,
+        jobspacelink_postjob_edit_record: recordText,
+        jobspacelink_postjob_mode: "edit",
+        jobspacelink_postjob_autoload: "1",
+        postjob_edit_mode: "edit",
+        postjob_edit_payload: payloadText,
+        postjob_edit_record: recordText,
+        selectedJobForEdit: payloadText,
+        currentEditJob: payloadText,
+        staff_requirement_edit_payload: payloadText,
+        staff_requirement_edit_record: recordText,
+        selected_staff_requirement: recordText,
+        selected_staff_requirement_payload: payloadText,
+        jobspacelink_postjob_edit_id: recordId,
+        jobspacelink_postjob_selected_job_id: recordId,
+        jobspacelink_edit_job_id: recordId,
+        selected_staff_requirement_id: requirementId || recordId,
+        jobspacelink_postjob_edit_requirement_id: requirementId,
+        jobspacelink_postjob_selected_requirement_id: requirementId,
+        jobspacelink_edit_job_requirement_id: requirementId,
+        jobspacelink_postjob_return_url: payload.returnUrl
+      };
+
+      [sessionStorage, localStorage].forEach(storage => {
+        try { storage.removeItem("jobspacelink_postjob_force_new"); } catch {}
+        Object.entries(values).forEach(([key, value]) => {
+          if (value === null || value === undefined || String(value) === "") return;
+          try { storage.setItem(key, String(value)); } catch {}
+        });
+      });
+      try { window.name = `JOBSPACELINK_EDIT_JOB::${payloadText}`; } catch {}
+      return { recordId, requirementId, companyName, companyEmail, position };
+    }
+
+    function openJobEditor(index) {
+      const job = state.jobs[index];
+      if (!job) return;
+      const context = savePostJobEditContext(job);
+      if (!context.recordId && !context.requirementId) {
+        showToast("This staff_requirements record has no ID and cannot be opened for editing.", "error");
+        return;
+      }
+
+      const params = new URLSearchParams();
+      params.set("edit", "1");
+      params.set("mode", "edit");
+      params.set("autoload", "1");
+      params.set("table", JOB_TABLE);
+      params.set("target_table", JOB_TABLE);
+      params.set("from", "employerpostedjobs");
+      params.set("require_exact_row", "1");
+      if (context.recordId) {
+        params.set("id", context.recordId);
+        params.set("record_id", context.recordId);
+        params.set("job_id", context.recordId);
+      }
+      if (context.requirementId) {
+        params.set("requirement_id", context.requirementId);
+        params.set("staff_requirement_id", context.requirementId);
+      }
+      if (context.companyName) params.set("company_name", context.companyName);
+      if (context.companyEmail) params.set("company_email", context.companyEmail);
+      if (context.position) params.set("position", context.position);
+
+      showToast(`Opening “${context.position || jobTitle(job)}” in postjob1.html...`, "info");
+      window.setTimeout(() => window.location.assign(`postjob1.html?${params.toString()}`), 120);
+    }
+
+    async function reloadJobs(showMessage = true) {
+      if (state.loading || !state.authUser?.id) return;
+      showLoading(true);
+      try {
+        state.jobs = await fetchPostedJobs();
+        state.page = 1;
+        renderJobs();
+        if (showMessage) showToast(`${state.jobs.length} posted job record${state.jobs.length === 1 ? "" : "s"} loaded from staff_requirements.`);
+      } catch (error) {
+        console.error("Posted jobs loading failed:", error);
+        showLoading(false);
+        renderJobs();
+        showToast(`Unable to load posted jobs: ${clean(error?.message || error)}`, "error");
+      } finally {
+        state.loading = false;
+        $("#refreshButton").disabled = false;
+        $("#refreshButton").classList.remove("is-loading");
+      }
+    }
+
+    function clearEmployerSession() {
+      for (const storage of [localStorage, sessionStorage]) SESSION_KEYS.forEach(key => storage.removeItem(key));
+      localStorage.removeItem(PROFILE_STORAGE_KEY);
+      sessionStorage.removeItem(PROFILE_STORAGE_KEY);
+      clearSupabaseAuthHandoff();
+    }
+
+    function openLogoutModal() {
+      $("#logoutModal").classList.add("open");
+      $("#logoutModal").setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    }
+
+    function closeLogoutModal() {
+      $("#logoutModal").classList.remove("open");
+      $("#logoutModal").setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    }
+
+    async function confirmLogout() {
+      try { if (state.supabase?.auth) await state.supabase.auth.signOut(); }
+      catch (error) { console.warn("Supabase sign out failed:", error); }
+      clearEmployerSession();
+      window.location.href = "index.html";
+    }
+
+    function activateJobFilter(filterName, toggleToAll = false) {
+      const nextFilter = toggleToAll && state.filter === filterName ? "all" : filterName;
+      state.filter = nextFilter;
+      state.page = 1;
+      if (state.view === "location") state.selectedLocationIndex = null;
+      renderJobs();
+      const panel = $(".jobs-panel");
+      panel?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function bindEvents() {
+      $("#aboutDropdownToggle").addEventListener("click", event => {
+        event.stopPropagation();
+        const menu = $("#employerNavMenu");
+        const open = menu.classList.toggle("open");
+        event.currentTarget.setAttribute("aria-expanded", String(open));
+      });
+
+      $("#accountTrigger").addEventListener("click", event => {
+        event.stopPropagation();
+        const menu = $("#accountMenu");
+        menu.classList.toggle("open");
+        event.currentTarget.setAttribute("aria-expanded", String(menu.classList.contains("open")));
+      });
+
+      $("#mobileMenuButton").addEventListener("click", event => {
+        event.stopPropagation();
+        const drawer = $("#mobileDrawer");
+        drawer.classList.toggle("open");
+        const open = drawer.classList.contains("open");
+        event.currentTarget.setAttribute("aria-expanded", String(open));
+        event.currentTarget.innerHTML = open ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+      });
+
+      document.addEventListener("click", event => {
+        if (!event.target.closest("#employerNavMenu")) {
+          $("#employerNavMenu").classList.remove("open");
+          $("#aboutDropdownToggle").setAttribute("aria-expanded", "false");
+        }
+        if (!event.target.closest("#accountMenu")) $("#accountMenu").classList.remove("open");
+        if (!event.target.closest("#mobileDrawer") && !event.target.closest("#mobileMenuButton")) {
+          $("#mobileDrawer").classList.remove("open");
+          $("#mobileMenuButton").setAttribute("aria-expanded", "false");
+          $("#mobileMenuButton").innerHTML = '<i class="fa-solid fa-bars"></i>';
+        }
+      });
+
+      $$('[data-filter]').forEach(button => button.addEventListener("click", () => {
+        activateJobFilter(button.dataset.filter);
+      }));
+
+      $("#appliedFilterButton").addEventListener("click", () => activateJobFilter("applied", true));
+      $("#favoritesFilterButton").addEventListener("click", () => activateJobFilter("favorites", true));
+
+      $$('[data-view]').forEach(button => button.addEventListener("click", () => {
+        const requestedView = button.dataset.view;
+        state.view = ["grid", "table", "location"].includes(requestedView) ? requestedView : "grid";
+        state.page = 1;
+        if (state.view !== "location") state.selectedLocationIndex = null;
+        localStorage.setItem(VIEW_STORAGE_KEY, state.view);
+        renderJobs();
+      }));
+
+      $("#jobSearch").addEventListener("input", event => {
+        state.search = clean(event.currentTarget.value);
+        state.page = 1;
+        $("#clearSearchButton").hidden = !state.search;
+        renderJobs();
+      });
+
+      $("#clearSearchButton").addEventListener("click", () => {
+        $("#jobSearch").value = "";
+        state.search = "";
+        state.page = 1;
+        $("#clearSearchButton").hidden = true;
+        renderJobs();
+        $("#jobSearch").focus();
+      });
+
+      $("#refreshButton").addEventListener("click", () => reloadJobs(true));
+
+      $("#contentArea").addEventListener("click", event => {
+        const editButton = event.target.closest("[data-edit-index]");
+        if (editButton) {
+          const index = Number(editButton.dataset.editIndex);
+          if (Number.isInteger(index) && index >= 0) openJobEditor(index);
+          return;
+        }
+
+        const locationCard = event.target.closest("[data-location-index]");
+        if (!locationCard) return;
+        const index = Number(locationCard.dataset.locationIndex);
+        if (Number.isInteger(index) && index >= 0) selectLocationJob(index);
+      });
+
+      $("#contentArea").addEventListener("keydown", event => {
+        if (!["Enter", " "].includes(event.key)) return;
+        if (event.target.closest("[data-edit-index]")) return;
+        const locationCard = event.target.closest("[data-location-index]");
+        if (!locationCard) return;
+        event.preventDefault();
+        const index = Number(locationCard.dataset.locationIndex);
+        if (Number.isInteger(index) && index >= 0) selectLocationJob(index);
+      });
+
+      $("#pagination").addEventListener("click", event => {
+        const button = event.target.closest("[data-page]");
+        if (!button || button.disabled) return;
+        const page = Number(button.dataset.page);
+        const totalPages = Math.max(1, Math.ceil(filteredJobs().length / jobsPerPage()));
+        if (!Number.isInteger(page) || page < 1 || page > totalPages) return;
+        state.page = page;
+        if (state.view === "location") state.selectedLocationIndex = null;
+        renderJobs();
+        $(".jobs-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      $("#logoutButton").addEventListener("click", openLogoutModal);
+      $("#mobileLogoutButton").addEventListener("click", openLogoutModal);
+      $("#logoutModalClose").addEventListener("click", closeLogoutModal);
+      $("#logoutCancelButton").addEventListener("click", closeLogoutModal);
+      $("#logoutConfirmButton").addEventListener("click", confirmLogout);
+      $("#logoutModal").addEventListener("click", event => { if (event.target === event.currentTarget) closeLogoutModal(); });
+      document.addEventListener("keydown", event => { if (event.key === "Escape") closeLogoutModal(); });
+
+      window.addEventListener("storage", event => {
+        if (SESSION_KEYS.includes(event.key) || event.key === PROFILE_STORAGE_KEY) {
+          state.session = readEmployerSession();
+          state.profile = { ...state.profile, ...loadLocalProfile(), ...(state.session.raw || {}) };
+          setHeaderIdentity();
+        }
+      });
+    }
+
+    async function initialize() {
+      setText("#currentYear", new Date().getFullYear());
+      bindEvents();
+      renderViewButtons();
+      state.session = readEmployerSession();
+      state.profile = { ...loadLocalProfile(), ...(state.session.raw || {}) };
+      setHeaderIdentity();
+      state.supabase = initSupabase();
+
+      if (!state.supabase) {
+        showAuthState("Supabase is not configured. Add SUPABASE_URL and SUPABASE_ANON_KEY to supabase_config.js.");
+        showToast("Supabase configuration was not found.", "error");
+        return;
+      }
+
+      if (state.supabase.auth?.onAuthStateChange) {
+        state.supabase.auth.onAuthStateChange((_event, authSession) => {
+          state.authUser = authSession?.user || null;
+          if (state.authUser?.id) synchronizeEmployerIdentity(state.authUser);
+        });
+      }
+
+      const authUser = await loadAuthenticatedUser();
+      if (!authUser?.id) {
+        showAuthState("Your employer login session could not be restored. Sign in through loginemployer.html and return to this page.");
+        return;
+      }
+
+      const remoteProfile = await fetchEmployerProfile();
+      state.profile = {
+        ...state.profile,
+        ...(remoteProfile || {}),
+        user_id: authUser.id,
+        employer_email: clean(authUser.email || state.profile.employer_email),
+        email: clean(state.profile.email || state.session?.email || authUser.email)
+      };
+      state.session = { ...state.session, userId: authUser.id, email: clean(state.session?.email || authUser.email), loggedIn: true };
+      setHeaderIdentity();
+      await reloadJobs(false);
+    }
+
+    document.addEventListener("DOMContentLoaded", initialize);
+  </script>
+</body>
+</html>

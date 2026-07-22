@@ -2260,901 +2260,6 @@ header nav .nav-dropdown .nav-dropdown-menu a i{
   }
 }
 
-
-
-/* ============================================================
-   EXACT LATEST INDEX HEADER OVERRIDE - APPLIED TO VIEW PROFILE
-   Matches the latest Index header: nav icons, dropdown hover effects,
-   refined Employer/Jobseeker icons, desktop no-overlap sizing,
-   and mobile logo-left / hamburger-right layout.
-============================================================ */
-/* ============================================================
-   VIEW PROFILE HEADER HEIGHT SYNC
-   Keeps this page layout aligned with the exact Index header height.
-============================================================ */
-:root{
-  --header-h:78px;
-  --hdrH:var(--header-h) !important;
-}
-
-.mobile-panel{
-  top:var(--header-h) !important;
-}
-
-/* ============================================================
-   FINAL HEADER RESPONSIVE PATCH
-   Exact requested breakpoints
-============================================================ */
-
-/* ===== 1800px and above ===== */
-@media (min-width: 1800px){
-  :root{ --header-h:84px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:18px !important;
-    padding:0 24px 0 14px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:88px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:20px !important;
-    margin-left:10px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:38px !important;
-    padding:0 5px !important;
-    font-size:0.94rem !important;
-  }
-
-  .nav-dropdown{
-    height:38px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:2px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:24px !important;
-    height:24px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.92rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:10px !important;
-  }
-
-  header .auth-buttons a{
-    height:38px !important;
-    padding:0 14px !important;
-    font-size:0.86rem !important;
-    border-radius:10px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
-/* ===== 1440px to 1799px ===== */
-@media (min-width: 1440px) and (max-width: 1799px){
-  :root{ --header-h:78px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:14px !important;
-    padding:0 18px 0 10px !important;
-  }
-
-  header .logo{
-    margin-left:-3px !important;
-  }
-
-  header .logo img{
-    height:80px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:15px !important;
-    margin-left:7px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:36px !important;
-    padding:0 4px !important;
-    font-size:0.84rem !important;
-  }
-
-  .nav-dropdown{
-    height:36px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:24px !important;
-    height:24px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.88rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:7px !important;
-  }
-
-  header .auth-buttons a{
-    height:36px !important;
-    padding:0 11px !important;
-    font-size:0.79rem !important;
-    border-radius:10px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
-/* ===== 1024px to 1439px ===== */
-@media (min-width: 1024px) and (max-width: 1439px){
-  :root{ --header-h:76px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:9px !important;
-    padding:0 12px 0 6px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:66px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:9px !important;
-    margin-left:3px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:34px !important;
-    padding:0 2px !important;
-    font-size:0.75rem !important;
-  }
-
-  .nav-dropdown{
-    height:34px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:1px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:20px !important;
-    height:20px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.74rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:5px !important;
-  }
-
-  header .auth-buttons a{
-    height:32px !important;
-    padding:0 8px !important;
-    font-size:0.70rem !important;
-    border-radius:8px !important;
-    gap:5px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
-/* ===== 769px to 1023px ===== */
-@media (min-width: 769px) and (max-width: 1023px){
-  :root{ --header-h:74px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:7px !important;
-    padding:0 8px 0 5px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:58px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:7px !important;
-    margin-left:2px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:31px !important;
-    padding:0 2px !important;
-    font-size:0.66rem !important;
-  }
-
-  .nav-dropdown{
-    height:31px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:1px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:18px !important;
-    height:18px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.68rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:4px !important;
-  }
-
-  header .auth-buttons a{
-    height:30px !important;
-    padding:0 6px !important;
-    font-size:0.61rem !important;
-    border-radius:8px !important;
-    gap:4px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
-/* ===== 481px to 768px ===== */
-@media (min-width: 481px) and (max-width: 768px){
-  :root{ --header-h:72px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:8px !important;
-    padding:0 12px 0 8px !important;
-    justify-content:space-between !important;
-    align-items:center !important;
-  }
-
-  header .logo{
-    order:1 !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-    flex:0 0 auto !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-  }
-
-  header .logo img{
-    height:54px !important;
-  }
-
-  header nav{ display:none !important; }
-  header .auth-buttons{ display:none !important; }
-
-  .nav-toggle{
-    order:2 !important;
-    display:inline-flex !important;
-    width:40px !important;
-    height:40px !important;
-    border-radius:10px !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
-    flex:0 0 auto !important;
-    align-self:center !important;
-  }
-
-  .mobile-panel{
-    top:var(--header-h) !important;
-    padding:12px 14px 16px !important;
-  }
-
-  .mobile-panel .mnav{
-    gap:8px !important;
-  }
-
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link,
-  .mobile-panel .mnav-toggle{
-    padding:11px 12px !important;
-    border-radius:11px !important;
-    font-size:0.88rem !important;
-  }
-
-  .mobile-panel .mnav-submenu{
-    padding-left:12px !important;
-  }
-
-  .why-grid,
-  .steps{
-    grid-template-columns:1fr !important;
-  }
-}
-
-/* ===== 480px and below ===== */
-@media (max-width: 480px){
-  :root{ --header-h:70px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:8px !important;
-    padding:0 10px 0 8px !important;
-    justify-content:space-between !important;
-    align-items:center !important;
-  }
-
-  header .logo{
-    order:1 !important;
-    flex:0 0 auto !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-  }
-
-  header .logo img{
-    height:50px !important;
-  }
-
-  header nav{ display:none !important; }
-  header .auth-buttons{ display:none !important; }
-
-  .nav-toggle{
-    order:2 !important;
-    display:inline-flex !important;
-    width:38px !important;
-    height:38px !important;
-    border-radius:9px !important;
-    margin-left:auto !important;
-    margin-right:0 !important;
-    flex:0 0 auto !important;
-    align-self:center !important;
-  }
-
-  .mobile-panel{
-    top:var(--header-h) !important;
-    padding:12px 12px 14px !important;
-  }
-
-  .mobile-panel .mnav{
-    gap:7px !important;
-  }
-
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link,
-  .mobile-panel .mnav-toggle{
-    padding:10px 11px !important;
-    border-radius:10px !important;
-    font-size:0.84rem !important;
-  }
-
-  .mobile-panel .mnav-submenu{
-    padding-left:10px !important;
-  }
-
-  .why-grid,
-  .steps{
-    grid-template-columns:1fr !important;
-  }
-}
-
-
-/* ============================================================
-   FINAL MOBILE HEADER LOCK
-   Force logo left + hamburger right inside header
-============================================================ */
-@media (max-width: 768px){
-  header{
-    display:grid !important;
-    grid-template-columns:auto 1fr auto !important;
-    align-items:center !important;
-    column-gap:10px !important;
-    justify-content:unset !important;
-  }
-
-  header .logo{
-    grid-column:1 !important;
-    justify-self:start !important;
-    align-self:center !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-    padding-left:0 !important;
-    min-width:0 !important;
-  }
-
-  header .logo img{
-    display:block !important;
-    margin:0 !important;
-  }
-
-  .nav-toggle{
-    grid-column:3 !important;
-    justify-self:end !important;
-    align-self:center !important;
-    margin:0 !important;
-  }
-
-  header nav,
-  header .auth-buttons{
-    display:none !important;
-  }
-}
-
-@media (max-width: 480px){
-  header{
-    padding-left:8px !important;
-    padding-right:8px !important;
-  }
-
-  header .logo img{
-    height:48px !important;
-  }
-
-  .nav-toggle{
-    width:38px !important;
-    height:38px !important;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px){
-  header{
-    padding-left:8px !important;
-    padding-right:10px !important;
-  }
-
-  header .logo img{
-    height:52px !important;
-  }
-
-  .nav-toggle{
-    width:40px !important;
-    height:40px !important;
-  }
-}
-
-
-
-/* ============================================================
-   NAV ICON + NO-OVERLAP HEADER PATCH
-   Adds icons to every nav item and compresses safely by screen size.
-============================================================ */
-header nav > a,
-header nav .nav-main-link{
-  gap:7px !important;
-  min-width:0 !important;
-  overflow:visible !important;
-}
-
-header nav > a i,
-header nav .nav-main-link i,
-.nav-dropdown-menu a i,
-.mobile-panel .mnav a i:not(.fa-arrow-right),
-.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
-.mobile-panel .mnav-toggle i:not(.mnav-caret){
-  flex:0 0 auto;
-  color:#38bdf8;
-  text-shadow:0 0 10px rgba(56,189,248,0.35);
-}
-
-header nav > a i,
-header nav .nav-main-link i{
-  width:16px;
-  min-width:16px;
-  text-align:center;
-  font-size:0.92em;
-}
-
-header nav .nav-text,
-.mobile-panel .nav-text{
-  display:inline-block;
-  min-width:0;
-}
-
-.nav-dropdown-trigger{
-  gap:2px !important;
-}
-
-.nav-dropdown-toggle{
-  flex:0 0 auto !important;
-}
-
-.nav-dropdown-menu{
-  min-width:238px !important;
-}
-
-.nav-dropdown-menu a{
-  gap:11px !important;
-  font-size:0.88rem !important;
-}
-
-.nav-dropdown-menu a i{
-  width:20px !important;
-  min-width:20px !important;
-  text-align:center !important;
-}
-
-.mobile-panel .mnav a,
-.mobile-panel .mnav-main-link{
-  min-width:0 !important;
-}
-
-.mobile-panel .mnav-left{
-  display:inline-flex;
-  align-items:center;
-  gap:11px;
-  min-width:0;
-}
-
-.mobile-panel .mnav-left i{
-  width:18px;
-  min-width:18px;
-  text-align:center;
-}
-
-.mobile-panel .mnav a .fa-arrow-right,
-.mobile-panel .mnav-main-link .fa-arrow-right{
-  flex:0 0 auto;
-  color:#93c5fd;
-}
-
-.mobile-panel .mnav-row{
-  display:grid !important;
-  grid-template-columns:minmax(0, 1fr) 46px !important;
-  align-items:center !important;
-  gap:8px !important;
-}
-
-.mobile-panel .mnav-toggle{
-  width:46px !important;
-  min-width:46px !important;
-  max-width:46px !important;
-  height:auto !important;
-  align-self:stretch !important;
-  justify-content:center !important;
-  padding:0 !important;
-  flex:0 0 46px !important;
-}
-
-.mobile-panel .mnav-toggle .mnav-caret{
-  color:#e5e7eb !important;
-}
-
-@media (min-width:1800px){
-  header nav > a,
-  header nav .nav-main-link{ gap:8px !important; }
-  header nav > a i,
-  header nav .nav-main-link i{ width:17px !important; min-width:17px !important; }
-}
-
-@media (min-width:1440px) and (max-width:1799px){
-  header nav{ gap:13px !important; }
-  header nav > a,
-  header nav .nav-main-link{ gap:6px !important; }
-  header nav > a i,
-  header nav .nav-main-link i{ width:15px !important; min-width:15px !important; }
-}
-
-@media (min-width:1024px) and (max-width:1439px){
-  header{ gap:8px !important; padding-left:6px !important; padding-right:10px !important; }
-  header nav{ gap:6px !important; margin-left:2px !important; }
-  header nav > a,
-  header nav .nav-main-link{
-    gap:4px !important;
-    padding:0 1px !important;
-    font-size:0.69rem !important;
-    letter-spacing:-0.01em !important;
-  }
-  header nav > a i,
-  header nav .nav-main-link i{
-    width:12px !important;
-    min-width:12px !important;
-    font-size:0.82em !important;
-  }
-  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
-  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
-  header .auth-buttons{ gap:4px !important; }
-  header .auth-buttons a{ padding:0 6px !important; font-size:0.66rem !important; }
-}
-
-@media (min-width:769px) and (max-width:1023px){
-  header{ gap:5px !important; padding-left:4px !important; padding-right:6px !important; }
-  header .logo img{ height:54px !important; }
-  header nav{ gap:4px !important; margin-left:1px !important; }
-  header nav > a,
-  header nav .nav-main-link{
-    gap:3px !important;
-    padding:0 1px !important;
-    font-size:0.58rem !important;
-    letter-spacing:-0.03em !important;
-  }
-  header nav > a i,
-  header nav .nav-main-link i{
-    width:10px !important;
-    min-width:10px !important;
-    font-size:0.78em !important;
-  }
-  .nav-dropdown-toggle{ width:15px !important; height:15px !important; }
-  .nav-dropdown-toggle i{ font-size:0.58rem !important; }
-  header .auth-buttons{ gap:3px !important; }
-  header .auth-buttons a{
-    height:28px !important;
-    padding:0 4px !important;
-    font-size:0.56rem !important;
-    gap:3px !important;
-  }
-  header .auth-buttons a i{ font-size:0.70em !important; }
-}
-
-@media (max-width:768px){
-  .mobile-panel{
-    max-height:calc(100vh - var(--header-h)) !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-  }
-  .mobile-panel .mnav a,
-  .mobile-panel .mnav-main-link{
-    justify-content:space-between !important;
-  }
-}
-
-@media (max-width:480px){
-  .mobile-panel .mnav-left{ gap:9px !important; }
-  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
-  .mobile-panel .mnav-row{ grid-template-columns:minmax(0, 1fr) 42px !important; gap:7px !important; }
-  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
-}
-
-
-/* ============================================================
-   FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
-   Applies dropdown-style hover to desktop nav links and refines
-   Employer / Jobseeker button icons without causing overlap.
-============================================================ */
-header nav > a,
-header nav .nav-main-link{
-  position:relative !important;
-  border-radius:12px !important;
-  border:1px solid transparent !important;
-  background:transparent !important;
-  overflow:hidden !important;
-  isolation:isolate !important;
-  transition:
-    background 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease,
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    text-shadow 0.25s ease !important;
-}
-
-header nav > a::before,
-header nav .nav-main-link::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12));
-  opacity:0;
-  transform:scaleX(0.72);
-  transform-origin:center;
-  transition:opacity 0.25s ease, transform 0.25s ease;
-  z-index:-1;
-}
-
-header nav > a:hover,
-header nav > a:focus-visible,
-header nav .nav-main-link:hover,
-header nav .nav-main-link:focus-visible,
-.nav-dropdown.open .nav-main-link{
-  color:#ffffff !important;
-  background:rgba(0,198,255,0.12) !important;
-  border-color:rgba(56,189,248,0.28) !important;
-  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
-  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
-  transform:translateY(-1px) !important;
-}
-
-header nav > a:hover::before,
-header nav > a:focus-visible::before,
-header nav .nav-main-link:hover::before,
-header nav .nav-main-link:focus-visible::before,
-.nav-dropdown.open .nav-main-link::before{
-  opacity:1;
-  transform:scaleX(1);
-}
-
-header nav > a:hover i,
-header nav > a:focus-visible i,
-header nav .nav-main-link:hover i,
-header nav .nav-main-link:focus-visible i,
-.nav-dropdown.open .nav-main-link i{
-  color:#ffffff !important;
-  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
-  transform:scale(1.08);
-}
-
-header nav > a i,
-header nav .nav-main-link i{
-  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
-}
-
-.nav-dropdown-menu a{
-  border:1px solid transparent !important;
-  border-radius:10px !important;
-  margin:0 8px !important;
-  padding:12px 12px !important;
-}
-
-.nav-dropdown-menu a:hover,
-.nav-dropdown-menu a:focus-visible{
-  background:rgba(0,198,255,0.12) !important;
-  border-color:rgba(56,189,248,0.24) !important;
-  color:#ffffff !important;
-  transform:translateX(3px);
-  box-shadow:0 0 14px rgba(0,198,255,0.12);
-}
-
-.nav-dropdown-menu a:hover i,
-.nav-dropdown-menu a:focus-visible i{
-  color:#ffffff !important;
-  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
-}
-
-header .auth-buttons a{
-  position:relative !important;
-  overflow:hidden !important;
-  isolation:isolate !important;
-  gap:7px !important;
-}
-
-header .auth-buttons a::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  opacity:0;
-  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
-  transition:opacity 0.25s ease;
-  z-index:-1;
-}
-
-header .auth-buttons a:hover::before,
-header .auth-buttons a:focus-visible::before{
-  opacity:1;
-}
-
-header .auth-buttons a i{
-  width:18px !important;
-  height:18px !important;
-  min-width:18px !important;
-  display:inline-grid !important;
-  place-items:center !important;
-  border-radius:999px !important;
-  font-size:0.85rem !important;
-  line-height:1 !important;
-  color:#ffffff !important;
-  background:rgba(255,255,255,0.16) !important;
-  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
-  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
-}
-
-header .auth-buttons a.employer-auth i{
-  background:rgba(56,189,248,0.22) !important;
-  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
-}
-
-header .auth-buttons a.jobseeker-auth i{
-  background:rgba(167,139,250,0.22) !important;
-  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
-}
-
-header .auth-buttons a:hover i,
-header .auth-buttons a:focus-visible i{
-  transform:scale(1.10) rotate(-3deg);
-  background:rgba(255,255,255,0.24) !important;
-  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
-}
-
-header .auth-buttons .auth-text{
-  display:inline-block;
-  min-width:0;
-}
-
-.mobile-panel .mnav a:hover .mnav-left i,
-.mobile-panel .mnav-main-link:hover .mnav-left i{
-  color:#ffffff !important;
-  transform:scale(1.08);
-  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
-}
-
-.mobile-panel .mnav-left i{
-  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
-}
-
-@media (min-width:1024px) and (max-width:1439px){
-  header nav > a,
-  header nav .nav-main-link{
-    border-radius:9px !important;
-  }
-  header .auth-buttons a i{
-    width:15px !important;
-    height:15px !important;
-    min-width:15px !important;
-    font-size:0.68rem !important;
-  }
-}
-
-@media (min-width:769px) and (max-width:1023px){
-  header nav > a,
-  header nav .nav-main-link{
-    border-radius:8px !important;
-  }
-  header .auth-buttons a i{
-    width:13px !important;
-    height:13px !important;
-    min-width:13px !important;
-    font-size:0.58rem !important;
-  }
-}
-
 </style>
 
 <style id="pages-mode-sticky-final-override">
@@ -6787,30 +5892,1384 @@ header .auth-buttons a:hover{
 }
 </style>
 
+
+<style id="index-header-style-applied-to-view-profile-final">
+/* ============================================================
+   FINAL: INDEX HEADER STYLE / DISPLAY / BEHAVIOR FOR VIEW PROFILE
+   Replaces conflicting View Profile header overrides.
+============================================================ */
+:root{
+  --header-h:78px;
+  --hdrH:var(--header-h);
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 16px);
+}
+
+body{
+  padding-top:0 !important;
+}
+
+/* ============================================================
+   HEADER - COMPRESSED
+=========================================================== */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,0.92);
+  border-bottom:1px solid rgba(59,130,246,0.28);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  z-index:1500;
+}
+
+header .logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  margin-left:-4px;
+}
+
+header .logo img{
+  height:80px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,0.35));
+}
+
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 4px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:0.88rem;
+  font-weight:600;
+  transition:color 0.25s ease, text-shadow 0.25s ease;
+}
+
+header nav > a:hover,
+header nav .nav-main-link:hover{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,0.55);
+}
+
+header .auth-buttons{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  white-space:nowrap;
+}
+
+header .auth-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:36px;
+  padding:0 11px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:700;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+header .auth-buttons a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(0,198,255,0.22);
+  border-color:rgba(0,198,255,0.35);
+}
+
+.nav-toggle{
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 0 14px rgba(0,198,255,0.10);
+}
+
+.nav-toggle i{
+  font-size:1rem;
+}
+
+/* Mobile panel */
+.mobile-panel{
+  position:fixed;
+  top:var(--header-h);
+  left:0;
+  right:0;
+  background:rgba(15,23,42,0.97);
+  border-top:1px solid rgba(59,130,246,0.25);
+  border-bottom:1px solid rgba(59,130,246,0.25);
+  box-shadow:0 10px 28px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+  padding:14px 16px 18px;
+  transform:translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:1400;
+}
+
+.mobile-panel.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.mobile-panel .mnav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mobile-panel .mnav-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.mobile-panel .mnav-main-link{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-main-link:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:#e5e7eb;
+  font-weight:600;
+  font-size:0.96rem;
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-panel .mnav-toggle:hover{
+  background:rgba(0,198,255,0.12);
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.mobile-panel .mnav-toggle .mnav-toggle-left{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  transition:transform 0.25s ease;
+}
+
+.mobile-panel .mnav-group.open .mnav-toggle .mnav-caret{
+  transform:rotate(180deg);
+}
+
+.mobile-panel .mnav-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+
+.mobile-panel .mnav-group.open .mnav-submenu{
+  display:flex;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:rgba(255,255,255,0.03);
+}
+
+/* ============================================================
+   ABOUT NAV FIX
+=========================================================== */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:36px;
+  flex:0 0 auto;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:100%;
+}
+
+.nav-main-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.nav-dropdown-toggle{
+  appearance:none;
+  -webkit-appearance:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  line-height:1;
+}
+
+.nav-dropdown-toggle i{
+  pointer-events:none;
+  color:#ffffff;
+  font-size:0.9rem;
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  min-width:220px;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  padding:10px 0;
+  border-radius:14px;
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(59,130,246,0.35);
+  box-shadow:0 12px 34px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  z-index:1200;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#e5e7eb;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,0.12);
+  color:#ffffff;
+}
+
+.nav-dropdown-menu i{
+  width:18px;
+  text-align:center;
+}
+
+
+/* ============================================================
+   FINAL HEADER RESPONSIVE PATCH
+   Exact requested breakpoints
+============================================================ */
+
+/* ===== 1800px and above ===== */
+@media (min-width: 1800px){
+  :root{ --header-h:84px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:18px !important;
+    padding:0 24px 0 14px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:88px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:20px !important;
+    margin-left:10px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:38px !important;
+    padding:0 5px !important;
+    font-size:0.94rem !important;
+  }
+
+  .nav-dropdown{
+    height:38px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:2px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.92rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:10px !important;
+  }
+
+  header .auth-buttons a{
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:0.86rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1440px to 1799px ===== */
+@media (min-width: 1440px) and (max-width: 1799px){
+  :root{ --header-h:78px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:14px !important;
+    padding:0 18px 0 10px !important;
+  }
+
+  header .logo{
+    margin-left:-3px !important;
+  }
+
+  header .logo img{
+    height:80px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:15px !important;
+    margin-left:7px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:36px !important;
+    padding:0 4px !important;
+    font-size:0.84rem !important;
+  }
+
+  .nav-dropdown{
+    height:36px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    height:24px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.88rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:7px !important;
+  }
+
+  header .auth-buttons a{
+    height:36px !important;
+    padding:0 11px !important;
+    font-size:0.79rem !important;
+    border-radius:10px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 1024px to 1439px ===== */
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{ --header-h:76px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:9px !important;
+    padding:0 12px 0 6px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:66px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:9px !important;
+    margin-left:3px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:34px !important;
+    padding:0 2px !important;
+    font-size:0.75rem !important;
+  }
+
+  .nav-dropdown{
+    height:34px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:20px !important;
+    height:20px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.74rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:5px !important;
+  }
+
+  header .auth-buttons a{
+    height:32px !important;
+    padding:0 8px !important;
+    font-size:0.70rem !important;
+    border-radius:8px !important;
+    gap:5px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 769px to 1023px ===== */
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{ --header-h:74px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:7px !important;
+    padding:0 8px 0 5px !important;
+  }
+
+  header .logo{
+    margin-left:-2px !important;
+  }
+
+  header .logo img{
+    height:58px !important;
+  }
+
+  header nav{
+    display:flex !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    margin-left:2px !important;
+    white-space:nowrap !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    height:31px !important;
+    padding:0 2px !important;
+    font-size:0.66rem !important;
+  }
+
+  .nav-dropdown{
+    height:31px !important;
+  }
+
+  .nav-dropdown-trigger{
+    gap:1px !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:18px !important;
+    height:18px !important;
+  }
+
+  .nav-dropdown-toggle i{
+    font-size:0.68rem !important;
+  }
+
+  header .auth-buttons{
+    display:flex !important;
+    gap:4px !important;
+  }
+
+  header .auth-buttons a{
+    height:30px !important;
+    padding:0 6px !important;
+    font-size:0.61rem !important;
+    border-radius:8px !important;
+    gap:4px !important;
+  }
+
+  .nav-toggle{ display:none !important; }
+  .mobile-panel{ display:none !important; }
+}
+
+/* ===== 481px to 768px ===== */
+@media (min-width: 481px) and (max-width: 768px){
+  :root{ --header-h:72px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 12px 0 8px !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  header .logo img{
+    height:54px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:40px !important;
+    height:40px !important;
+    border-radius:10px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 14px 16px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:8px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 12px !important;
+    border-radius:11px !important;
+    font-size:0.88rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:12px !important;
+  }
+
+}
+
+/* ===== 480px and below ===== */
+@media (max-width: 480px){
+  :root{ --header-h:70px !important; }
+
+  header{
+    height:var(--header-h) !important;
+    gap:8px !important;
+    padding:0 10px 0 8px !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+
+  header .logo img{
+    height:50px !important;
+  }
+
+  header nav{ display:none !important; }
+  header .auth-buttons{ display:none !important; }
+
+  .nav-toggle{
+    order:2 !important;
+    display:inline-flex !important;
+    width:38px !important;
+    height:38px !important;
+    border-radius:9px !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  .mobile-panel{
+    top:var(--header-h) !important;
+    padding:12px 12px 14px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:7px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:10px 11px !important;
+    border-radius:10px !important;
+    font-size:0.84rem !important;
+  }
+
+  .mobile-panel .mnav-submenu{
+    padding-left:10px !important;
+  }
+
+}
+
+
+/* ============================================================
+   FINAL MOBILE HEADER LOCK
+   Force logo left + hamburger right inside header
+============================================================ */
+@media (max-width: 768px){
+  header{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto !important;
+    align-items:center !important;
+    column-gap:10px !important;
+    justify-content:unset !important;
+  }
+
+  header .logo{
+    grid-column:1 !important;
+    justify-self:start !important;
+    align-self:center !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    min-width:0 !important;
+  }
+
+  header .logo img{
+    display:block !important;
+    margin:0 !important;
+  }
+
+  .nav-toggle{
+    grid-column:3 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    margin:0 !important;
+  }
+
+  header nav,
+  header .auth-buttons{
+    display:none !important;
+  }
+}
+
+@media (max-width: 480px){
+  header{
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+
+  header .logo img{
+    height:48px !important;
+  }
+
+  .nav-toggle{
+    width:38px !important;
+    height:38px !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px){
+  header{
+    padding-left:8px !important;
+    padding-right:10px !important;
+  }
+
+  header .logo img{
+    height:52px !important;
+  }
+
+  .nav-toggle{
+    width:40px !important;
+    height:40px !important;
+  }
+}
+
+
+
+
+/* ============================================================
+   NAV ICON + NO-OVERLAP HEADER PATCH
+   Adds icons to every nav item and compresses safely by screen size.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  gap:7px !important;
+  min-width:0 !important;
+  overflow:visible !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  flex:0 0 auto;
+  color:#38bdf8;
+  text-shadow:0 0 10px rgba(56,189,248,0.35);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  width:16px;
+  min-width:16px;
+  text-align:center;
+  font-size:0.92em;
+}
+
+header nav .nav-text,
+.mobile-panel .nav-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.nav-dropdown-trigger{
+  gap:2px !important;
+}
+
+.nav-dropdown-toggle{
+  flex:0 0 auto !important;
+}
+
+.nav-dropdown-menu{
+  min-width:238px !important;
+}
+
+.nav-dropdown-menu a{
+  gap:11px !important;
+  font-size:0.88rem !important;
+}
+
+.nav-dropdown-menu a i{
+  width:20px !important;
+  min-width:20px !important;
+  text-align:center !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link{
+  min-width:0 !important;
+}
+
+.mobile-panel .mnav-left{
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+
+.mobile-panel .mnav-left i{
+  width:18px;
+  min-width:18px;
+  text-align:center;
+}
+
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  flex:0 0 auto;
+  color:#93c5fd;
+}
+
+.mobile-panel .mnav-row{
+  display:grid !important;
+  grid-template-columns:minmax(0, 1fr) 46px !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+.mobile-panel .mnav-toggle{
+  width:46px !important;
+  min-width:46px !important;
+  max-width:46px !important;
+  height:auto !important;
+  align-self:stretch !important;
+  justify-content:center !important;
+  padding:0 !important;
+  flex:0 0 46px !important;
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:#e5e7eb !important;
+}
+
+@media (min-width:1800px){
+  header nav > a,
+  header nav .nav-main-link{ gap:8px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:17px !important; min-width:17px !important; }
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  header nav{ gap:13px !important; }
+  header nav > a,
+  header nav .nav-main-link{ gap:6px !important; }
+  header nav > a i,
+  header nav .nav-main-link i{ width:15px !important; min-width:15px !important; }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header{ gap:8px !important; padding-left:6px !important; padding-right:10px !important; }
+  header nav{ gap:6px !important; margin-left:2px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:4px !important;
+    padding:0 1px !important;
+    font-size:0.69rem !important;
+    letter-spacing:-0.01em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:12px !important;
+    min-width:12px !important;
+    font-size:0.82em !important;
+  }
+  .nav-dropdown-toggle{ width:18px !important; height:18px !important; }
+  .nav-dropdown-toggle i{ font-size:0.68rem !important; }
+  header .auth-buttons{ gap:4px !important; }
+  header .auth-buttons a{ padding:0 6px !important; font-size:0.66rem !important; }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header{ gap:5px !important; padding-left:4px !important; padding-right:6px !important; }
+  header .logo img{ height:54px !important; }
+  header nav{ gap:4px !important; margin-left:1px !important; }
+  header nav > a,
+  header nav .nav-main-link{
+    gap:3px !important;
+    padding:0 1px !important;
+    font-size:0.58rem !important;
+    letter-spacing:-0.03em !important;
+  }
+  header nav > a i,
+  header nav .nav-main-link i{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:0.78em !important;
+  }
+  .nav-dropdown-toggle{ width:15px !important; height:15px !important; }
+  .nav-dropdown-toggle i{ font-size:0.58rem !important; }
+  header .auth-buttons{ gap:3px !important; }
+  header .auth-buttons a{
+    height:28px !important;
+    padding:0 4px !important;
+    font-size:0.56rem !important;
+    gap:3px !important;
+  }
+  header .auth-buttons a i{ font-size:0.70em !important; }
+}
+
+@media (max-width:768px){
+  .mobile-panel{
+    max-height:calc(100vh - var(--header-h)) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link{
+    justify-content:space-between !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav-left{ gap:9px !important; }
+  .mobile-panel .mnav-left i{ width:16px !important; min-width:16px !important; }
+  .mobile-panel .mnav-row{ grid-template-columns:minmax(0, 1fr) 42px !important; gap:7px !important; }
+  .mobile-panel .mnav-toggle{ width:42px !important; min-width:42px !important; max-width:42px !important; }
+}
+
+
+/* ============================================================
+   FINAL NAV HOVER + AUTH ICON REFINEMENT PATCH
+   Applies dropdown-style hover to desktop nav links and refines
+   Employer / Jobseeker button icons without causing overlap.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  border-radius:12px !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    text-shadow 0.25s ease !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(135deg, rgba(0,198,255,0.14), rgba(139,92,246,0.12));
+  opacity:0;
+  transform:scaleX(0.72);
+  transform-origin:center;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:-1;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#ffffff !important;
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.28) !important;
+  box-shadow:0 0 16px rgba(0,198,255,0.16) !important;
+  text-shadow:0 0 12px rgba(0,198,255,0.55) !important;
+  transform:translateY(-1px) !important;
+}
+
+header nav > a:hover::before,
+header nav > a:focus-visible::before,
+header nav .nav-main-link:hover::before,
+header nav .nav-main-link:focus-visible::before,
+.nav-dropdown.open .nav-main-link::before{
+  opacity:1;
+  transform:scaleX(1);
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.75) !important;
+  transform:scale(1.08);
+}
+
+header nav > a i,
+header nav .nav-main-link i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+.nav-dropdown-menu a{
+  border:1px solid transparent !important;
+  border-radius:10px !important;
+  margin:0 8px !important;
+  padding:12px 12px !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:rgba(0,198,255,0.12) !important;
+  border-color:rgba(56,189,248,0.24) !important;
+  color:#ffffff !important;
+  transform:translateX(3px);
+  box-shadow:0 0 14px rgba(0,198,255,0.12);
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#ffffff !important;
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+header .auth-buttons a{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate !important;
+  gap:7px !important;
+}
+
+header .auth-buttons a::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  opacity:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+  transition:opacity 0.25s ease;
+  z-index:-1;
+}
+
+header .auth-buttons a:hover::before,
+header .auth-buttons a:focus-visible::before{
+  opacity:1;
+}
+
+header .auth-buttons a i{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  font-size:0.85rem !important;
+  line-height:1 !important;
+  color:#ffffff !important;
+  background:rgba(255,255,255,0.16) !important;
+  box-shadow:0 0 10px rgba(255,255,255,0.10) !important;
+  transition:transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+header .auth-buttons a.employer-auth i{
+  background:rgba(56,189,248,0.22) !important;
+  box-shadow:0 0 12px rgba(56,189,248,0.18) !important;
+}
+
+header .auth-buttons a.jobseeker-auth i{
+  background:rgba(167,139,250,0.22) !important;
+  box-shadow:0 0 12px rgba(167,139,250,0.18) !important;
+}
+
+header .auth-buttons a:hover i,
+header .auth-buttons a:focus-visible i{
+  transform:scale(1.10) rotate(-3deg);
+  background:rgba(255,255,255,0.24) !important;
+  box-shadow:0 0 16px rgba(255,255,255,0.20) !important;
+}
+
+header .auth-buttons .auth-text{
+  display:inline-block;
+  min-width:0;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#ffffff !important;
+  transform:scale(1.08);
+  text-shadow:0 0 12px rgba(56,189,248,0.70) !important;
+}
+
+.mobile-panel .mnav-left i{
+  transition:color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease !important;
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:9px !important;
+  }
+  header .auth-buttons a i{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    font-size:0.68rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    border-radius:8px !important;
+  }
+  header .auth-buttons a i{
+    width:13px !important;
+    height:13px !important;
+    min-width:13px !important;
+    font-size:0.58rem !important;
+  }
+}
+
+
+
+/* Keep View Profile content aligned below the fixed index-style header. */
+:root{ --hdrH:var(--header-h); }
+.page{ margin:calc(var(--hdrH) + 18px) auto 0 !important; }
+.profile-card{ top:calc(var(--hdrH) + 14px) !important; }
+</style>
+
+
+
+<style id="logged-jobseeker-header-account-final-v1">
+/* ============================================================
+   FINAL: Logged-in jobseeker account icon in header
+   - Employer Login removed
+   - Jobseeker Login becomes profile/account icon
+============================================================ */
+header .auth-buttons{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+}
+header .auth-buttons .employer-auth{
+  display:none !important;
+}
+header .auth-buttons .header-jobseeker-account-btn{
+  width:auto !important;
+  min-width:44px !important;
+  height:42px !important;
+  min-height:42px !important;
+  padding:0 11px !important;
+  border-radius:999px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:9px !important;
+  color:#ffffff !important;
+  text-decoration:none !important;
+  border:1px solid rgba(125,211,252,0.34) !important;
+  background:
+    radial-gradient(circle at 25% 25%, rgba(34,211,238,0.34), rgba(0,0,0,0) 48%),
+    linear-gradient(135deg, rgba(8,47,73,0.95), rgba(59,7,100,0.92)) !important;
+  box-shadow:0 0 18px rgba(34,211,238,0.16), 0 10px 22px rgba(2,6,23,0.20) !important;
+  overflow:hidden !important;
+}
+header .auth-buttons .header-jobseeker-account-btn:hover,
+header .auth-buttons .header-jobseeker-account-btn:focus-visible{
+  transform:translateY(-1px) !important;
+  border-color:rgba(125,211,252,0.66) !important;
+  box-shadow:0 0 24px rgba(34,211,238,0.26), 0 12px 26px rgba(2,6,23,0.24) !important;
+}
+.header-account-avatar{
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  border-radius:999px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  background:rgba(255,255,255,0.08) !important;
+  border:1px solid rgba(255,255,255,0.18) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04) !important;
+}
+.header-account-avatar img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  display:none;
+}
+.header-account-avatar i{
+  font-size:0.95rem !important;
+  color:#e0f2fe !important;
+}
+.header-account-avatar.has-image img{
+  display:block !important;
+}
+.header-account-avatar.has-image i{
+  display:none !important;
+}
+header .auth-buttons .header-jobseeker-account-btn .auth-text{
+  display:inline-block !important;
+  max-width:150px !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+  font-size:0.80rem !important;
+  font-weight:900 !important;
+  letter-spacing:0.01em !important;
+}
+header .auth-buttons .header-jobseeker-account-btn.logged-in .auth-text{
+  color:#e0f2fe !important;
+}
+@media (max-width:1180px){
+  header .auth-buttons .header-jobseeker-account-btn{
+    width:42px !important;
+    min-width:42px !important;
+    padding:0 !important;
+  }
+  header .auth-buttons .header-jobseeker-account-btn .auth-text{
+    display:none !important;
+  }
+}
+@media (max-width:860px){
+  header .auth-buttons{
+    display:flex !important;
+  }
+  header .auth-buttons .header-jobseeker-account-btn{
+    width:40px !important;
+    min-width:40px !important;
+    height:40px !important;
+    min-height:40px !important;
+  }
+  .header-account-avatar{
+    width:30px !important;
+    height:30px !important;
+    min-width:30px !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
 
-<!-- HEADER -->
+<!-- HEADER - INDEX STYLE APPLIED -->
 <header>
   <div class="logo">
     <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
   </div>
 
   <nav>
-    <a href="index.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
+    <a href="home1.html"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></a>
 
     <div class="nav-dropdown" id="aboutNavDropdown">
       <div class="nav-dropdown-trigger">
         <a href="about.html" id="aboutNavLink" class="nav-main-link"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></a>
-        <button
-          type="button"
-          class="nav-dropdown-toggle"
-          id="aboutNavToggle"
-          aria-expanded="false"
-          aria-controls="aboutNavMenu"
-          aria-label="Toggle About menu"
-        >
+        <button type="button" class="nav-dropdown-toggle" id="aboutNavToggle" aria-expanded="false" aria-controls="aboutNavMenu" aria-label="Toggle About menu">
           <i class="fa-solid fa-caret-down nav-caret"></i>
         </button>
       </div>
@@ -6822,44 +7281,23 @@ header .auth-buttons a:hover{
     </div>
 
     <a href="postedhiring.html"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></a>
-    <a href="dashboard.html"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></a>
-    <a href="postjob.html"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></a>
-    <a href="applicantform.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
+    <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></a>
   </nav>
 
-  <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin employer-auth"><i class="fa-solid fa-building-user"></i><span class="auth-text">Employer</span></a>
-    <a href="loginjobseeker.html" class="admin jobseeker-auth"><i class="fa-solid fa-user-tie"></i><span class="auth-text">Jobseeker</span></a>
-  
-  </div>
-
-  <button
-    type="button"
-    class="nav-toggle"
-    id="navToggle"
-    aria-label="Open mobile menu"
-    aria-expanded="false"
-  >
+  <button type="button" class="nav-toggle" id="navToggle" aria-label="Open mobile menu" aria-expanded="false">
     <i class="fa-solid fa-bars"></i>
   </button>
 </header>
 
-<!-- Mobile panel -->
+<!-- Mobile panel - INDEX STYLE APPLIED -->
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
-    <a href="index.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="home1.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
         <a href="about.html" class="mnav-main-link"><span class="mnav-left"><i class="fa-solid fa-circle-info"></i><span class="nav-text">About</span></span><i class="fa-solid fa-arrow-right"></i></a>
-        <button
-          type="button"
-          class="mnav-toggle"
-          id="mobileAboutToggle"
-          aria-expanded="false"
-          aria-controls="mobileAboutMenu"
-          aria-label="Toggle About submenu"
-        >
+        <button type="button" class="mnav-toggle" id="mobileAboutToggle" aria-expanded="false" aria-controls="mobileAboutMenu" aria-label="Toggle About submenu">
           <i class="fa-solid fa-caret-down mnav-caret"></i>
         </button>
       </div>
@@ -6870,15 +7308,228 @@ header .auth-buttons a:hover{
       </div>
     </div>
 
-    <a href="postjob.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginjobseeker.html"><span class="mnav-left"><i class="fa-solid fa-user-tie"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>
 
+<!-- ✅ SAVE / INFO POPUP -->
+<div id="screenPopup" class="success">
+  <div class="screenPopupBox">
+    <div class="screenPopupIcon" id="screenPopupIcon">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="screenPopupText" id="screenPopupText">Changes successfully saved.</div>
+  </div>
+</div>
+
+<!-- ✅ DEACTIVATED POPUP (REPLACES BANNER) -->
+<div id="deactPopup">
+  <div class="deactBox">
+    <div class="deactIcon"><i class="fa-solid fa-ban"></i></div>
+    <div class="deactTitle">Your profile is deactivated.</div>
+    <div class="deactSub">
+      Do you want to activate profile?<br/>
+      <span class="deactSub2">While deactivated, this profile is view-only (cannot edit / cannot replace files / cannot save).</span>
+    </div>
+    <div class="deactActions">
+      <button class="deactBtn yes" id="deactYes" type="button"><i class="fa-solid fa-circle-check"></i> Yes</button>
+      <button class="deactBtn no" id="deactNo" type="button"><i class="fa-solid fa-xmark"></i> No</button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ LOGOUT PROMPT FOR UNSAVED CHANGES -->
+<div id="logoutPromptPopup">
+  <div class="logoutPromptBox">
+    <div class="logoutPromptIcon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <div class="logoutPromptTitle">You have unsaved changes.</div>
+    <div class="logoutPromptSub">
+      Do you want to save changes before logging out?
+      <span class="logoutPromptNote">Choose <b>Save & Logout</b> to save first, or <b>Logout Without Saving</b> to continue without saving.</span>
+    </div>
+    <div class="logoutPromptActions">
+      <button class="logoutPromptBtn save" id="btnPromptSaveLogout" type="button">
+        <i class="fa-solid fa-floppy-disk"></i> Save & Logout
+      </button>
+      <button class="logoutPromptBtn discard" id="btnPromptDiscardLogout" type="button">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout Without Saving
+      </button>
+      <button class="logoutPromptBtn cancel" id="btnPromptCancelLogout" type="button">
+        <i class="fa-solid fa-xmark"></i> Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH POPUP -->
+<div id="authPopup">
+  <div id="authBox">
+    <p>
+      ✅ Your profile was saved.<br>
+      You can login using <b>Email only</b> anytime.<br>
+      If you want password login, set a password now (optional).
+    </p>
+    <div class="auth-grid">
+      <div class="auth-field">
+        <label>Email</label>
+        <input id="authEmail" type="email" readonly />
+      </div>
+      <div class="auth-field">
+        <label>Password (Optional)</label>
+        <input id="authPassword" type="password" placeholder="Leave blank to use Email-only login" />
+      </div>
+    </div>
+    <div id="authError"></div>
+    <div class="auth-actions">
+      <button class="auth-btn" id="authSaveBtn" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div id="loadingBox">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <div style="font-weight:1100;">Loading profile…</div>
+    <div style="opacity:.9;font-size:.9rem;margin-top:6px;">Please wait</div>
+  </div>
+</div>
+
+<!-- HIDDEN INPUTS -->
+<input type="file" id="inpProfilePic" class="hidden-input" accept="image/*,.heic,.heif,.tif,.tiff" />
+<input type="file" id="inpResume" class="hidden-input" accept=".pdf,.doc,.docx,.rtf,.odt,.txt,.png,.jpg,.jpeg,.webp,.xlsx,.xls,.csv,.heic,.heif,.tif,.tiff" />
+<input type="file" id="inpDocs" class="hidden-input" multiple accept=".pdf,.doc,.docx,.rtf,.odt,.txt,.png,.jpg,.jpeg,.webp,.xlsx,.xls,.csv,.heic,.heif,.tif,.tiff" />
+
+<!-- FILE VIEWER MODAL -->
+<div id="viewerModal">
+  <div class="viewer-wrap" id="viewerWrap">
+    <div class="viewer-left">
+      <div class="viewer-left-top">
+        <div class="viewer-left-avatar" id="viewerLeftAvatarWrap">
+          <img id="viewerLeftAvatar" alt="Applicant" style="display:none;" />
+          <i id="viewerLeftAvatarIcon" class="fa-solid fa-user"></i>
+        </div>
+        <div>
+          <div class="viewer-left-name" id="viewerLeftName">Applicant</div>
+          <div class="viewer-left-sub" id="viewerLeftSub">Resume</div>
+        </div>
+      </div>
+
+      <div class="viewer-tabbar" id="viewerTabsBar">
+        <button class="viewer-tabbtn active" type="button" id="viewerTabFiles"><i class="fa-solid fa-folder-open"></i><span>Files</span></button>
+        <button class="viewer-tabbtn" type="button" id="viewerTabPages"><i class="fa-solid fa-file-lines"></i><span>Pages</span></button>
+      </div>
+
+      <div class="viewer-sidebody" id="viewerSidebarList"></div>
+    </div>
+
+    <div class="viewer-right">
+      <div class="viewer-right-top">
+        <div></div>
+        <div class="viewer-header-title" id="viewerHeaderTitle">Viewer</div>
+        <div class="viewer-close-slot">
+          <div class="viewer-top-actions">
+            <button class="viewer-top-action viewer-contents-toggle" type="button" id="viewerBtnToggleContents" aria-pressed="true" title="Hide contents">
+              <i class="fa-solid fa-eye-slash"></i><span>Hide Contents</span>
+            </button>
+            <button class="viewer-top-close" type="button" id="viewerBtnClose"><i class="fa-solid fa-xmark"></i> Close</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="viewer-right-main" id="viewerCanvasWrap">
+        <div class="viewer-stage" id="viewerStage">
+          <div class="viewer-stage-inner" id="viewerStageInner">
+            <div class="viewer-empty">No file selected.<small>Open Resume or Supporting Documents to preview.</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="viewer-pdf-pager" id="viewerPdfPager">
+        <button class="viewer-pager-btn" type="button" id="viewerBtnPagePrev" title="Previous page"><i class="fa-solid fa-angle-left"></i> Prev Page</button>
+        <div class="viewer-page-indicator" id="viewerPageIndicator">Page 1 / 1</div>
+        <button class="viewer-pager-btn" type="button" id="viewerBtnPageNext" title="Next page">Next Page <i class="fa-solid fa-angle-right"></i></button>
+      </div>
+
+      <div class="viewer-bottombar" id="viewerBottomBar">
+        <button class="viewer-footer-nav prev" type="button" id="viewerBtnPrev" title="Previous file"><i class="fa-solid fa-arrow-left"></i> <span class="btn-text">Prev File</span></button>
+
+        <div class="viewer-footer-center" id="viewerFooterCenter">
+          <button class="viewer-round-btn" type="button" id="viewerBtnZoomOut" title="Zoom out"><i class="fa-solid fa-magnifying-glass-minus"></i><span class="btn-text">Zoom Out</span></button>
+          <div class="viewer-zoom-label" id="viewerZoomPct">100%</div>
+          <button class="viewer-round-btn" type="button" id="viewerBtnZoomIn" title="Zoom in"><i class="fa-solid fa-magnifying-glass-plus"></i><span class="btn-text">Zoom In</span></button>
+          <button class="viewer-round-btn" type="button" id="viewerBtnReset" title="Zoom reset"><i class="fa-solid fa-rotate-right"></i><span class="btn-text">Reset</span></button>
+          <button class="viewer-round-btn fit" type="button" id="viewerBtnFit" title="Fit page"><i class="fa-solid fa-left-right"></i><span class="btn-text">Fit Page</span></button>
+          <button class="viewer-round-btn full compact" type="button" id="viewerBtnFull" title="Full page"><i class="fa-solid fa-expand"></i><span class="btn-text">Full Page</span></button>
+          <button class="viewer-round-btn download compact" type="button" id="viewerBtnDownload" title="Download file"><i class="fa-solid fa-download"></i><span class="btn-text">Download</span></button>
+        </div>
+
+        <button class="viewer-footer-nav next" type="button" id="viewerBtnNext" title="Next file"><span class="btn-text">Next File</span> <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+
+      <div id="viewerToast">Ready</div>
+    </div>
+  </div>
+</div>
+
+<!-- PDF PREVIEW MODAL -->
+
+<div id="pdfPreviewModal">
+  <div class="pdfPrev-wrap">
+    <div class="pdfPrev-top">
+      <div class="pdfPrev-top-left">
+        <div class="pdfPrev-avatar-wrap" id="pdfPrevAvatarWrap">
+          <img id="pdfPrevAvatar" alt="Applicant" style="display:none;" />
+          <i id="pdfPrevAvatarIcon" class="fa-solid fa-user"></i>
+        </div>
+        <div class="pdfPrev-title">
+          <i class="fa-solid fa-file-pdf pdfPrev-title-icon"></i>
+          <div class="pdfPrev-title-text">
+            <span class="pdfPrev-title-main" id="pdfPrevTitle">Applicant Profile PDF Preview</span>
+            <div class="pdfPrev-title-user" id="pdfPrevLoggedUserName">&nbsp;</div>
+          </div>
+        </div>
+      </div>
+      <div class="pdfPrev-actions">
+        <button class="pdfPrev-head-btn toc" type="button" id="btnPdfPrevToc"><i class="fa-solid fa-eye-slash"></i><span>Hide Contents</span></button>
+        <button class="pdfPrev-head-btn" type="button" id="btnPdfPrevDownload"><i class="fa-solid fa-download"></i><span>Download</span></button>
+        <button class="pdfPrev-head-btn" type="button" id="btnPdfPrevClose"><i class="fa-solid fa-xmark"></i><span>Close</span></button>
+      </div>
+    </div>
+    <div class="pdfPrev-body">
+      <div class="pdfPrev-layout" id="pdfPrevLayout">
+        <aside class="pdfPrev-sidebar" id="pdfPrevSidebar">
+          <div class="pdfPrev-sidebar-head">
+            <div class="pdfPrev-sidebar-title"><i class="fa-solid fa-file-lines"></i><span>Pages</span></div>
+          </div>
+          <div class="pdfPrev-sidebar-list" id="pdfPrevSidebarList"></div>
+        </aside>
+        <div class="pdfPrev-viewcol">
+          <div class="pdfPrev-main" id="pdfPrevCanvasWrap">
+            <div class="pdfPrev-stage">
+              <div class="pdfPrev-stage-inner" id="pdfPrevStageInner">
+                <div class="viewer-empty">No PDF preview yet.<small>Click View PDF to generate one.</small></div>
+              </div>
+            </div>
+          </div>
+          <div class="pdfPrev-toolbar" id="pdfPrevToolbar">
+            <button class="pdfPrev-btn prev" type="button" id="btnPdfPrevPagePrev" title="Previous page"><i class="fa-solid fa-angle-left"></i> <span class="btn-text">Prev Page</span></button>
+            <div class="pdfPrev-label" id="pdfPrevPageIndicator">Page 1 / 1</div>
+            <button class="pdfPrev-btn next" type="button" id="btnPdfPrevPageNext" title="Next page"><span class="btn-text">Next Page</span> <i class="fa-solid fa-angle-right"></i></button>
+            <button class="pdfPrev-btn" type="button" id="btnPdfPrevZoomOut" title="Zoom out"><i class="fa-solid fa-magnifying-glass-minus"></i><span class="btn-text">Zoom Out</span></button>
+            <div class="pdfPrev-label" id="pdfPrevZoomPct">100%</div>
+            <button class="pdfPrev-btn" type="button" id="btnPdfPrevZoomIn" title="Zoom in"><i class="fa-solid fa-magnifying-glass-plus"></i><span class="btn-text">Zoom In</span></button>
+            <button class="pdfPrev-btn" type="button" id="btnPdfPrevReset" title="Reset zoom"><i class="fa-solid fa-rotate-right"></i><span class="btn-text">Reset</span></button>
+            <button class="pdfPrev-btn fit" type="button" id="btnPdfPrevFit" title="Fit page"><i class="fa-solid fa-left-right"></i><span class="btn-text">Fit Page</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN PAGE -->
 <div class="page">
   <div class="shell">
     <div class="shell-inner">
@@ -7074,119 +7725,118 @@ header .auth-buttons a:hover{
 <script>
 /* ================= HEADER MENUS ================= */
 (function(){
-  const aboutNavDropdown = document.getElementById("aboutNavDropdown");
-  const aboutNavToggle = document.getElementById("aboutNavToggle");
-  const aboutNavMenu = document.getElementById("aboutNavMenu");
-  const navToggle = document.getElementById("navToggle");
-  const mobilePanel = document.getElementById("mobilePanel");
-  const mobileAboutGroup = document.getElementById("mobileAboutGroup");
-  const mobileAboutToggle = document.getElementById("mobileAboutToggle");
-  const aboutLinks = aboutNavMenu ? Array.from(aboutNavMenu.querySelectorAll("a")) : [];
-  const mobileLinks = mobilePanel ? Array.from(mobilePanel.querySelectorAll("a")) : [];
+  const dd = document.getElementById("aboutNavDropdown");
+  const toggle = document.getElementById("aboutNavToggle");
+  const menu = document.getElementById("aboutNavMenu");
 
-  function setAboutOpen(isOpen){
-    if(!aboutNavDropdown || !aboutNavToggle) return;
-    aboutNavDropdown.classList.toggle("open", !!isOpen);
-    aboutNavToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-  }
-
-  function closeMobileAbout(){
-    if(!mobileAboutGroup || !mobileAboutToggle) return;
-    mobileAboutGroup.classList.remove("open");
-    mobileAboutToggle.setAttribute("aria-expanded", "false");
-  }
-
-  function toggleMobileAbout(){
-    if(!mobileAboutGroup || !mobileAboutToggle) return;
-    const willOpen = !mobileAboutGroup.classList.contains("open");
-    mobileAboutGroup.classList.toggle("open", willOpen);
-    mobileAboutToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
-  }
-
-  function closeMobilePanel(){
-    if(!mobilePanel || !navToggle) return;
-    mobilePanel.classList.remove("open");
-    mobilePanel.setAttribute("aria-hidden", "true");
-    navToggle.setAttribute("aria-expanded", "false");
-    closeMobileAbout();
-  }
-
-  if(aboutNavToggle){
-    aboutNavToggle.addEventListener("click", function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      const willOpen = !aboutNavDropdown.classList.contains("open");
-      setAboutOpen(willOpen);
-    });
-  }
-
-  if(aboutNavDropdown){
-    aboutNavDropdown.addEventListener("mouseenter", function(){
-      if(window.matchMedia("(min-width: 769px)").matches){
-        setAboutOpen(true);
-      }
-    });
-    aboutNavDropdown.addEventListener("mouseleave", function(){
-      if(window.matchMedia("(min-width: 769px)").matches){
-        setAboutOpen(false);
-      }
-    });
-  }
-
-  aboutLinks.forEach(function(link){
-    link.addEventListener("click", function(){
-      setAboutOpen(false);
-    });
-  });
-
-  if(navToggle && mobilePanel){
-    navToggle.addEventListener("click", function(){
-      const isOpen = mobilePanel.classList.toggle("open");
-      mobilePanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
-      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      if(isOpen) setAboutOpen(false);
-      if(!isOpen) closeMobileAbout();
-    });
-  }
-
-  if(mobileAboutToggle){
-    mobileAboutToggle.addEventListener("click", function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      toggleMobileAbout();
-    });
-  }
-
-  mobileLinks.forEach(function(link){
-    link.addEventListener("click", function(){
-      closeMobilePanel();
-    });
-  });
-
-  document.addEventListener("click", function(e){
-    if(aboutNavDropdown && !aboutNavDropdown.contains(e.target)){
-      setAboutOpen(false);
+  if(dd && toggle && menu){
+    function closeAboutMenu(){
+      dd.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
     }
 
-    if(mobilePanel && mobilePanel.classList.contains("open")){
+    function openAboutMenu(){
+      dd.classList.add("open");
+      toggle.setAttribute("aria-expanded", "true");
+    }
+
+    toggle.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const isOpen = dd.classList.contains("open");
+      if(isOpen){
+        closeAboutMenu();
+      }else{
+        openAboutMenu();
+      }
+    });
+
+    document.addEventListener("click", function(e){
+      if(!dd.contains(e.target)){
+        closeAboutMenu();
+      }
+    });
+
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape"){
+        closeAboutMenu();
+      }
+    });
+
+    const aboutLink = document.getElementById("aboutNavLink");
+    if(aboutLink){
+      aboutLink.addEventListener("click", function(){
+        closeAboutMenu();
+      });
+    }
+
+    menu.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click", function(){
+        closeAboutMenu();
+      });
+    });
+  }
+})();
+
+/* ================= MOBILE MENU ================= */
+(function(){
+  const btn = document.getElementById("navToggle");
+  const panel = document.getElementById("mobilePanel");
+  const aboutGroup = document.getElementById("mobileAboutGroup");
+  const aboutToggle = document.getElementById("mobileAboutToggle");
+  if(!btn || !panel) return;
+
+  function closeAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    aboutGroup.classList.remove("open");
+    aboutToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleAbout(){
+    if(!aboutGroup || !aboutToggle) return;
+    const open = aboutGroup.classList.toggle("open");
+    aboutToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function close(){
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden","true");
+    btn.setAttribute("aria-expanded","false");
+    closeAbout();
+  }
+
+  btn.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(!open) closeAbout();
+  });
+
+  if(aboutToggle){
+    aboutToggle.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAbout();
+    });
+  }
+
+  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") close();
+  });
+
+  document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("open")){
       const header = document.querySelector("header");
       if(header && header.contains(e.target)) return;
-      if(mobilePanel.contains(e.target)) return;
-      closeMobilePanel();
+      if(panel.contains(e.target)) return;
+      close();
     }
   });
 
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape"){
-      setAboutOpen(false);
-      closeMobilePanel();
-    }
-  });
-
-  window.addEventListener("resize", function(){
-    if(window.innerWidth >= 769){
-      closeMobilePanel();
-    }
+  window.addEventListener("resize", ()=>{
+    if(window.innerWidth >= 769) close();
   }, { passive:true });
 })();
 
@@ -7416,8 +8066,15 @@ async function tryEnsureAuthSession(){
 
 /* ================= PARAMS / ELEMENTS / STATE ================= */
 const qs = new URLSearchParams(location.search);
-const pageMasterId = qs.get("master_id") || "";
+let pageMasterId = qs.get("master_id") || "";
 const sourceParam = qs.get("source") || "Job Space Link";
+const pageRequestsLoggedInProfile = (
+  qs.get("load_latest") === "1" ||
+  qs.get("mode") === "edit" ||
+  qs.get("edit") === "1" ||
+  qs.get("edit_mode") === "1" ||
+  qs.get("auto_edit") === "1"
+);
 
 const btnReloadProfile = document.getElementById("btnReloadProfile");
 const btnViewPdf = document.getElementById("btnViewPdf");
@@ -8159,6 +8816,249 @@ async function fetchMasterAndLatest(master_id, opts){
     throw err;
   }
 }
+
+
+/* ================= LOGGED-IN APPLICANT RESOLUTION =================
+   Loads the active logged-in jobseeker from:
+   - applicant_master_table
+   - applicant_transaction_table
+   This allows view_profile.html?load_latest=1&mode=edit to open the logged-in
+   account without requiring master_id in the URL.
+=============================================================== */
+const LOGGED_JOBSEEKER_EMAIL_KEYS = [
+  "jobseeker_email","jobseeker_login_email","applicant_email","employee_email","email",
+  "login_email","user_email","jsl_login_email","jsl_email","logged_in_email",
+  "remember_email","remembered_email","saved_email","saved_login_email",
+  "jobseeker_remember_email","jobseeker_saved_email","jsl_saved_login_email"
+];
+const LOGGED_JOBSEEKER_MASTER_KEYS = [
+  "jobseeker_master_id","applicant_master_id","employee_master_id","jsl_master_id",
+  "master_id","user_master_id","profile_master_id","current_master_id"
+];
+const PROFILE_EMAIL_COLUMNS = [
+  "email","employee_email","applicant_email","jobseeker_email","user_email",
+  "login_email","email_address","contact_email"
+];
+
+function readStorageFirst(keys){
+  for(const key of keys){
+    try{
+      const s = String(sessionStorage.getItem(key) || "").trim();
+      if(s) return s;
+    }catch(e){}
+    try{
+      const l = String(localStorage.getItem(key) || "").trim();
+      if(l) return l;
+    }catch(e){}
+  }
+  return "";
+}
+function cleanEmailValue(v){
+  return String(v || "").trim().toLowerCase();
+}
+async function getLoggedInJobseekerIdentity(){
+  const db = getDb();
+  let email = cleanEmailValue(readStorageFirst(LOGGED_JOBSEEKER_EMAIL_KEYS));
+  let userId = readStorageFirst(["jsl_user_id","user_id","auth_uid","auth_id","uid"]);
+  let masterId = readStorageFirst(LOGGED_JOBSEEKER_MASTER_KEYS);
+
+  if(db?.auth?.getSession){
+    try{
+      const res = await db.auth.getSession();
+      const user = res?.data?.session?.user || null;
+      if(user){
+        email = email || cleanEmailValue(user.email);
+        userId = userId || String(user.id || "").trim();
+      }
+    }catch(e){}
+  }
+
+  return { email, userId, masterId };
+}
+async function safeQueryRows(table, column, value, opts){
+  opts = opts || {};
+  const db = getDb();
+  if(!db || !column || !value) return [];
+  try{
+    let query = db.from(table).select("*");
+    query = opts.ilike ? query.ilike(column, value) : query.eq(column, value);
+    if(opts.orderCreated){
+      query = query.order("created_at", { ascending:false });
+    }
+    query = query.limit(opts.limit || 20);
+    const res = await query;
+    if(res.error) throw res.error;
+    return Array.isArray(res.data) ? res.data : [];
+  }catch(err){
+    console.warn("Skipped", table + "." + column, "while resolving logged-in applicant:", err?.message || err);
+    return [];
+  }
+}
+function rowHasEmail(row, email){
+  const em = cleanEmailValue(email);
+  if(!row || !em) return false;
+  return PROFILE_EMAIL_COLUMNS.some(function(col){
+    return cleanEmailValue(row[col]) === em;
+  });
+}
+function pickLatestRow(rows){
+  const arr = Array.isArray(rows) ? rows.filter(Boolean) : [];
+  if(!arr.length) return null;
+  return arr.slice().sort(function(a,b){
+    const ad = Date.parse(a?.created_at || a?.updated_at || a?.date_created || "") || 0;
+    const bd = Date.parse(b?.created_at || b?.updated_at || b?.date_created || "") || 0;
+    if(bd !== ad) return bd - ad;
+    return Number(b?.id || 0) - Number(a?.id || 0);
+  })[0];
+}
+function persistLoggedInProfileIdentity(master, trans, identity){
+  const email = cleanEmailValue(
+    identity?.email || trans?.email || trans?.employee_email || master?.email || master?.employee_email || master?.applicant_email || ""
+  );
+  const masterId = String(master?.id || trans?.master_id || identity?.masterId || "").trim();
+  const userId = String(identity?.userId || "").trim();
+
+  try{
+    if(email){
+      localStorage.setItem("jobseeker_email", email);
+      localStorage.setItem("applicant_email", email);
+      sessionStorage.setItem("jobseeker_email", email);
+    }
+    if(masterId){
+      localStorage.setItem("jobseeker_master_id", masterId);
+      localStorage.setItem("applicant_master_id", masterId);
+      sessionStorage.setItem("jobseeker_master_id", masterId);
+    }
+    if(userId){
+      localStorage.setItem("jsl_user_id", userId);
+      sessionStorage.setItem("jsl_user_id", userId);
+    }
+  }catch(e){}
+}
+async function fetchLoggedInApplicantProfile(){
+  const identity = await getLoggedInJobseekerIdentity();
+  const email = cleanEmailValue(identity.email);
+  let masterId = String(identity.masterId || "").trim();
+  let master = null;
+  let trans = null;
+
+  if(masterId){
+    try{
+      const direct = await fetchMasterAndLatest(masterId, { tryAuthFallback:true });
+      if(direct?.master){
+        master = direct.master;
+        trans = direct.trans || null;
+        persistLoggedInProfileIdentity(master, trans, identity);
+        return { master, trans, masterId:String(master.id || masterId), email, identity };
+      }
+    }catch(err){
+      console.warn("Stored master_id could not be loaded; resolving by email instead:", err?.message || err);
+    }
+  }
+
+  if(email){
+    for(const col of PROFILE_EMAIL_COLUMNS){
+      const rows = await safeQueryRows("applicant_master_table", col, email, { ilike:true, limit:10 });
+      const match = rows.find(row => rowHasEmail(row, email)) || rows[0];
+      if(match){
+        master = match;
+        masterId = String(master.id || master.master_id || "").trim();
+        break;
+      }
+    }
+
+    const txMatches = [];
+    for(const col of PROFILE_EMAIL_COLUMNS){
+      const rows = await safeQueryRows("applicant_transaction_table", col, email, { ilike:true, orderCreated:true, limit:25 });
+      txMatches.push(...rows.filter(row => rowHasEmail(row, email)));
+    }
+    const latestByEmailTx = pickLatestRow(txMatches);
+    if(latestByEmailTx){
+      trans = latestByEmailTx;
+      masterId = masterId || String(trans.master_id || trans.applicant_master_id || "").trim();
+    }
+  }
+
+  if(!master && masterId){
+    try{
+      const direct = await fetchMasterAndLatest(masterId, { tryAuthFallback:true });
+      master = direct?.master || null;
+      trans = trans || direct?.trans || null;
+    }catch(err){
+      console.warn("Could not load master by resolved master_id:", err?.message || err);
+    }
+  }
+
+  if(master && !trans){
+    const resolvedId = String(master.id || master.master_id || masterId || "").trim();
+    const txRows = await safeQueryRows("applicant_transaction_table", "master_id", resolvedId, { orderCreated:true, limit:1 });
+    trans = txRows[0] || null;
+    masterId = resolvedId || masterId;
+  }
+
+  if(master){
+    persistLoggedInProfileIdentity(master, trans, identity);
+  }
+
+  return { master, trans, masterId:String(master?.id || masterId || "").trim(), email, identity };
+}
+async function resolvePageMasterIdFromLoggedInApplicant(){
+  const shouldUseLoggedIn = pageRequestsLoggedInProfile || !pageMasterId;
+  if(!shouldUseLoggedIn) return null;
+
+  const resolved = await fetchLoggedInApplicantProfile();
+  if(resolved?.master){
+    pageMasterId = String(resolved.master.id || resolved.masterId || "").trim();
+    return resolved;
+  }
+  return resolved || null;
+}
+function setHeaderJobseekerAccountStateFromProfile(master, trans, identity){
+  const btn = document.getElementById("headerJobseekerAccountBtn");
+  const textEl = document.getElementById("headerJobseekerAccountText");
+  const avatarWrap = document.getElementById("headerJobseekerAvatarWrap");
+  const avatarImg = document.getElementById("headerJobseekerAvatarImg");
+  const mobileLink = document.getElementById("mobileJobseekerAccountLink");
+  const mobileText = document.getElementById("mobileJobseekerAccountText");
+
+  const email = cleanEmailValue(identity?.email || trans?.email || trans?.employee_email || master?.email || master?.employee_email || master?.applicant_email || "");
+  const masterId = String(master?.id || trans?.master_id || identity?.masterId || pageMasterId || "").trim();
+  const logged = !!(email || masterId);
+  const fullName = buildFullName(master || {});
+  const displayName = logged ? (fullName && fullName !== "Applicant" ? fullName : (email || "Jobseeker Account")) : "Jobseeker";
+  const pictureUrl = String(trans?.pictures || trans?.picture || trans?.profile_picture || master?.pictures || master?.picture || "").trim();
+  const editUrl = logged
+    ? `view_profile.html?master_id=${encodeURIComponent(masterId)}&load_latest=1&mode=edit&edit=1&edit_mode=1&auto_edit=1`
+    : "loginjobseeker.html";
+
+  if(btn){
+    btn.href = editUrl;
+    btn.title = logged ? `${displayName}${email ? " - " + email : ""}` : "Login Jobseeker";
+    btn.setAttribute("aria-label", logged ? "Logged-in Jobseeker Account" : "Login Jobseeker");
+    btn.classList.toggle("logged-in", logged);
+  }
+  if(textEl){
+    textEl.textContent = logged ? displayName : "Jobseeker";
+  }
+  if(mobileLink){
+    mobileLink.href = editUrl;
+  }
+  if(mobileText){
+    mobileText.textContent = logged ? "My Jobseeker Account" : "Jobseeker Account";
+  }
+  if(avatarWrap){
+    avatarWrap.classList.toggle("has-image", !!(logged && pictureUrl));
+  }
+  if(avatarImg){
+    avatarImg.removeAttribute("src");
+    if(logged && pictureUrl){
+      avatarImg.src = pictureUrl;
+      avatarImg.onerror = function(){
+        if(avatarWrap) avatarWrap.classList.remove("has-image");
+      };
+    }
+  }
+}
 function normalizeSetupValue(v){
   const s = normalizeText(v);
   const low = s.toLowerCase();
@@ -8286,6 +9186,9 @@ async function renderProfile(master, trans){
   applyLockFromTransactionStatus(trans?.status);
 
   profileData.loadedComparable = buildComparableStateFromCurrentForm();
+  try{
+    setHeaderJobseekerAccountStateFromProfile(master || {}, trans || {}, { email:(trans?.email || trans?.employee_email || master?.email || master?.employee_email || ""), masterId:(master?.id || pageMasterId || "") });
+  }catch(e){}
 }
 
 /* ================= LIVE EVENTS ================= */
@@ -8641,6 +9544,7 @@ async function logoutNow(){
     localStorage.removeItem("employee_logged_in");
     localStorage.removeItem("employee_email");
     localStorage.removeItem("employee_name");
+    try{ setHeaderJobseekerAccountStateFromProfile(null, null, null); }catch(e){}
     showStatus("Logged out.", "success");
   } finally {
     showLoading(false, "Loading profile…");
@@ -8698,7 +9602,9 @@ if(btnPromptSaveLogout){
 
 /* ================= INIT PAGE LOAD ================= */
 function validateBeforeLoad(){
-  if(!pageMasterId) throw new Error("Missing master_id in URL. Example: view_profile.html?master_id=123");
+  if(!pageMasterId){
+    throw new Error("Missing master_id and no logged-in applicant record was found. Please log in as a jobseeker first.");
+  }
 }
 
 (async function initPage(){
@@ -8708,18 +9614,26 @@ function validateBeforeLoad(){
   setGlobalSupabaseClientRef();
 
   try{
+    showLoading(true, "Loading logged-in profile…");
+    showStatus("Loading logged-in account record…", "warn");
+
+    const loggedResolved = await resolvePageMasterIdFromLoggedInApplicant();
     validateBeforeLoad();
-    showLoading(true, "Loading profile…");
-    showStatus("Loading profile…", "warn");
 
     await ensureLocationDatasetReady();
     applySalaryCurrencyFromCountry();
 
-    const res = await fetchMasterAndLatest(pageMasterId, { tryAuthFallback:true });
+    let res = null;
+    if(loggedResolved?.master && String(loggedResolved.master.id || loggedResolved.masterId || "").trim() === String(pageMasterId || "").trim()){
+      res = { master: loggedResolved.master, trans: loggedResolved.trans || {} };
+    }else{
+      res = await fetchMasterAndLatest(pageMasterId, { tryAuthFallback:true });
+    }
     if(!res?.master) throw new Error("Applicant master record not found.");
 
     await renderProfile(res.master, res.trans || {});
-    showStatus("Profile loaded successfully.", "success");
+    setHeaderJobseekerAccountStateFromProfile(res.master, res.trans || {}, loggedResolved?.identity || await getLoggedInJobseekerIdentity());
+    showStatus("Logged-in profile loaded successfully.", "success");
   }catch(err){
     console.error(err);
     showStatus("Load failed: " + (err?.message || err), "error");

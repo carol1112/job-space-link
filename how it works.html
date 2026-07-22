@@ -5681,6 +5681,260 @@ header .auth-buttons a.login-auth i{
   transform:translateY(-2px) scale(1.04) !important;
 }
 
+
+
+/* ============================================================
+   FINAL BLACK UNDERLINE NAV HOVER + TRANSPARENT ICON PATCH
+   - Header nav links: icon + label stay on one line.
+   - Hover/focus/open state: black underline only.
+   - Dropdown options: same underline-only hover.
+   - Removes icon background boxes/glow from header nav and dropdown links.
+   - Preserves existing links, dropdown JS, mobile menu JS, login behavior,
+     layout breakpoints, and all page functionality.
+============================================================ */
+body > header nav > a,
+body > header nav .nav-main-link,
+body > header .nav-dropdown-trigger > .nav-main-link{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-wrap:nowrap !important;
+  white-space:nowrap !important;
+  gap:6px !important;
+  overflow:visible !important;
+  color:var(--portal-navy, var(--choose-navy, #012169)) !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  isolation:isolate !important;
+}
+
+body > header nav > a::before,
+body > header nav .nav-main-link::before,
+body > header .nav-dropdown-trigger > .nav-main-link::before{
+  display:none !important;
+  content:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+body > header nav > a::after,
+body > header nav .nav-main-link::after,
+body > header .nav-dropdown-trigger > .nav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:2px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#000000 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  opacity:0 !important;
+  transition:transform .18s ease, opacity .18s ease !important;
+  pointer-events:none !important;
+}
+
+body > header nav > a:hover,
+body > header nav > a:focus-visible,
+body > header nav .nav-main-link:hover,
+body > header nav .nav-main-link:focus-visible,
+body > header .nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+body > header nav > a:hover::after,
+body > header nav > a:focus-visible::after,
+body > header nav .nav-main-link:hover::after,
+body > header nav .nav-main-link:focus-visible::after,
+body > header .nav-dropdown.open .nav-main-link::after{
+  transform:scaleX(1) !important;
+  opacity:1 !important;
+}
+
+/* Header nav and dropdown icons: visible, but no background box/color. */
+body > header nav > a > i,
+body > header nav .nav-main-link > i,
+body > header .nav-dropdown-menu a > i,
+body > header .nav-dropdown-toggle > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  color:var(--portal-header-icon, var(--choose-icon, #003a70)) !important;
+  background:transparent !important;
+  border:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+  border-radius:0 !important;
+  opacity:1 !important;
+}
+
+body > header nav > a:hover > i,
+body > header nav > a:focus-visible > i,
+body > header nav .nav-main-link:hover > i,
+body > header nav .nav-main-link:focus-visible > i,
+body > header .nav-dropdown.open .nav-main-link > i,
+body > header .nav-dropdown-menu a:hover > i,
+body > header .nav-dropdown-menu a:focus-visible > i,
+body > header .nav-dropdown-toggle:hover > i,
+body > header .nav-dropdown-toggle:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Keep About text/link + caret one row with no icon box. */
+body > header .nav-dropdown-trigger{
+  display:inline-flex !important;
+  align-items:center !important;
+  flex-wrap:nowrap !important;
+  white-space:nowrap !important;
+  gap:2px !important;
+  overflow:visible !important;
+}
+
+body > header .nav-dropdown-toggle{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+/* Dropdown menu options use the same clean underline-only hover. */
+body > header .nav-dropdown-menu a{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  flex-wrap:nowrap !important;
+  white-space:nowrap !important;
+  gap:10px !important;
+  color:var(--portal-navy, var(--choose-navy, #012169)) !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+body > header .nav-dropdown-menu a::after{
+  content:"" !important;
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:7px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#000000 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  opacity:0 !important;
+  transition:transform .18s ease, opacity .18s ease !important;
+  pointer-events:none !important;
+}
+
+body > header .nav-dropdown-menu a:hover,
+body > header .nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+body > header .nav-dropdown-menu a:hover::after,
+body > header .nav-dropdown-menu a:focus-visible::after{
+  transform:scaleX(1) !important;
+  opacity:1 !important;
+}
+
+/* Mobile nav follows the same icon-transparent / black underline hover style. */
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  position:relative !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::after,
+.mobile-panel .mnav-toggle::after{
+  content:"" !important;
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:7px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#000000 !important;
+  transform:scaleX(0) !important;
+  opacity:0 !important;
+  transition:transform .18s ease, opacity .18s ease !important;
+  pointer-events:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a:hover::after,
+.mobile-panel .mnav a:focus-visible::after,
+.mobile-panel .mnav-main-link:hover::after,
+.mobile-panel .mnav-main-link:focus-visible::after,
+.mobile-panel .mnav-toggle:hover::after,
+.mobile-panel .mnav-toggle:focus-visible::after{
+  transform:scaleX(1) !important;
+  opacity:1 !important;
+}
+
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
 </style>
 </head>
 
@@ -5767,7 +6021,7 @@ header .auth-buttons a.login-auth i{
 
     <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform1.html"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </div>

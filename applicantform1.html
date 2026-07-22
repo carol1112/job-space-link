@@ -10,6 +10,9 @@
 <!-- ✅ ENHANCED POST-SAVE LOGOUT CLEAR: After saving a new record/password, Logout fully clears the form and blocks delayed restore/session reloading. -->
 <!-- ✅ ENHANCED EXISTING-RECORD AUTO LOGIN SYNC: Loading an existing record now publishes a Jobseeker logged-in session and syncs login/logout with postedhiring1.html. -->
 <!-- ✅ PROFILES ROLE FIX: New applicant saves/password setup now force public.profiles.role = applicant, not employer. -->
+<!-- ✅ EMPLOYMENT STATUS UI FIX: Employment Status dropdown is now visible under Ready to Work and saves to applicant_transaction_table.employment_status. -->
+<!-- ✅ QUALIFICATION PLAIN DB SAVE FIX: Qualification JSON envelopes are converted to readable plain text before saving to applicant_transaction_table. -->
+<!-- ✅ RELOCATION PLAIN DB SAVE FIX: Job preference relocation JSON envelope is converted to readable plain text before saving to applicant_transaction_table.job_pref_relocation. -->
 
 <!-- ICONS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
@@ -1185,6 +1188,29 @@ body.jsl-modal-open{overflow:hidden;}
   line-height:1.35;
   font-weight:850;
 }
+.ready-work-employment-row{
+  margin-top:16px;
+  max-width:440px;
+}
+.ready-work-employment-card{
+  background:linear-gradient(180deg,#ffffff,#fbfdff);
+  border:1px solid rgba(15,23,42,0.12);
+  box-shadow:0 2px 10px rgba(2,6,23,0.05);
+}
+.ready-work-employment-card .lbl{
+  color:#334155;
+  font-size:.84rem;
+  font-weight:900;
+}
+.ready-work-employment-card select{
+  min-height:34px;
+  cursor:pointer;
+}
+body.jsl-existing-section-locked #employment_status{
+  pointer-events:none !important;
+  opacity:.60 !important;
+  cursor:not-allowed !important;
+}
 .ready-work-actions{
   margin-top:24px;
   display:flex;
@@ -1201,6 +1227,7 @@ body.jsl-modal-open{overflow:hidden;}
   .ready-work-card{padding:16px 14px;}
   .ready-work-title{font-size:1.24rem;}
   .ready-work-status{margin-left:0;}
+  .ready-work-employment-row{max-width:100%;}
   .ready-work-actions{margin-top:18px;}
   .ready-work-actions .primary-btn,
   .ready-work-actions .ghost-btn{flex:1 1 auto;}
@@ -7672,7 +7699,6 @@ header .auth-buttons a:hover,
                 <div id="salaryError"></div>
                 <input id="position" type="hidden" />
                 <input id="preferred_work_setup" type="hidden" />
-                <select id="employment_status"><option value="" selected>—</option><option value="Employed">Employed</option><option value="Unemployed">Unemployed</option></select>
               </div>
             </div>
 
@@ -7718,6 +7744,17 @@ header .auth-buttons a:hover,
                   <span>I'm available to start immediately</span>
                 </label>
                 <p class="ready-work-status" id="ready_to_work_status">Available to start immediately</p>
+
+                <div class="ready-work-employment-row">
+                  <div class="field-card ready-work-employment-card">
+                    <div class="lbl"><i class="fa-solid fa-briefcase"></i> Employment Status</div>
+                    <select id="employment_status" name="employment_status" autocomplete="off">
+                      <option value="" selected>Select employment status</option>
+                      <option value="Employed">Employed</option>
+                      <option value="Unemployed">Unemployed</option>
+                    </select>
+                  </div>
+                </div>
 
 
                 <div class="job-pref-hidden-fields" aria-hidden="true">
@@ -8022,7 +8059,15 @@ function parseApplicantWorkExperienceValue(raw){
     return { job_title:safeTrim(parsed.job_title||parsed.title||""), company:safeTrim(parsed.company||"") };
   }
   var lines=txt.split(/\r?\n/).map(function(line){return safeTrim(line);}).filter(Boolean);
-  return { job_title:lines[0]||"", company:lines[1]||"" };
+  if(lines.length>=2){
+    return { job_title:lines[0]||"", company:lines[1]||"" };
+  }
+  var single=lines[0]||txt;
+  var parts=single.split(/\s*[,|]\s*/).map(function(part){return safeTrim(part);}).filter(Boolean);
+  if(parts.length>=2){
+    return { job_title:parts[0]||"", company:parts.slice(1).join(", ")||"" };
+  }
+  return { job_title:single||"", company:"" };
 }
 function buildApplicantWorkExperienceValue(data){
   data=data||{};
@@ -8042,10 +8087,11 @@ function parseApplicantEducationValue(raw){
   }else if(Array.isArray(parsed)){
     items=parsed;
   }else if(txt){
-    var lines=txt.split(/\r?\n/).map(function(line){return safeTrim(line);}).filter(Boolean);
+    var lines=txt.split(/\r?\n|\s+\|\s+/).map(function(line){return safeTrim(line);}).filter(Boolean);
     items=lines.map(function(line){
-      var parts=line.split(/\s+[|—-]\s+/);
-      return { level:safeTrim(parts[0]||line), field:safeTrim(parts.slice(1).join(" - ")) };
+      var parts=line.split(/\s*,\s*/).map(function(part){return safeTrim(part);}).filter(Boolean);
+      if(parts.length<2)parts=line.split(/\s+[|—–-]\s+/).map(function(part){return safeTrim(part);}).filter(Boolean);
+      return { level:safeTrim(parts[0]||line), field:safeTrim(parts.slice(1).join(", ")) };
     });
   }
   return items.map(function(item){
@@ -8093,8 +8139,9 @@ function normalizeApplicantLanguageItem(item){
   }
   var raw=safeTrim(item||"");
   if(!raw)return {language:"",proficiency:""};
-  var parts=raw.split(/\s+[|—–-]\s+/).map(function(part){return safeTrim(part);}).filter(Boolean);
-  return {language:parts[0]||raw,proficiency:parts.slice(1).join(" ")};
+  var parts=raw.split(/\s*,\s*/).map(function(part){return safeTrim(part);}).filter(Boolean);
+  if(parts.length<2)parts=raw.split(/\s+[|—–-]\s+/).map(function(part){return safeTrim(part);}).filter(Boolean);
+  return {language:parts[0]||raw,proficiency:parts.slice(1).join(", ")};
 }
 function parseApplicantLanguagesValue(raw){
   var txt=safeTrim(raw||"");
@@ -8107,7 +8154,7 @@ function parseApplicantLanguagesValue(raw){
   }else if(Array.isArray(parsed)){
     items=parsed;
   }else if(txt){
-    items=txt.split(/\r?\n/).map(function(line){return safeTrim(line);}).filter(Boolean);
+    items=txt.split(/\r?\n|\s+\|\s+/).map(function(line){return safeTrim(line);}).filter(Boolean);
   }
   return items.map(normalizeApplicantLanguageItem).filter(function(item){return !!(item.language||item.proficiency);});
 }
@@ -8173,7 +8220,8 @@ function normalizeApplicantCredentialItem(item){
   }
   var raw=safeTrim(item||"");
   if(!raw)return {name:"",month:"",year:"",no_expire:false};
-  var parts=raw.split(/\s+[|—–-]\s+/).map(function(part){return safeTrim(part);}).filter(Boolean);
+  var parts=raw.split(/\s*,\s*/).map(function(part){return safeTrim(part);}).filter(Boolean);
+  if(parts.length<2)parts=raw.split(/\s+[|—–-]\s+/).map(function(part){return safeTrim(part);}).filter(Boolean);
   var name=parts[0]||raw;
   var exp=parts.slice(1).join(" ");
   var month="";
@@ -8196,7 +8244,7 @@ function parseApplicantCredentialValue(fieldId, raw){
   }else if(Array.isArray(parsed)){
     items=parsed;
   }else if(txt){
-    items=txt.split(/\r?\n/).map(function(line){return safeTrim(line);}).filter(Boolean);
+    items=txt.split(/\r?\n|\s+\|\s+/).map(function(line){return safeTrim(line);}).filter(Boolean);
   }
   return items.map(normalizeApplicantCredentialItem).filter(function(item){return !!(item.name||item.month||item.year||item.no_expire);});
 }
@@ -8322,6 +8370,99 @@ function buildApplicantNotesForDB(){
   return normalizeApplicantNoteOnly(noteInput?noteInput.value:"");
 }
 
+function textOrNullForDB(value){
+  var clean=safeTrim(value||"");
+  return clean || null;
+}
+function formatApplicantPartsForDB(parts){
+  return (parts||[]).map(function(part){return safeTrim(part||"");}).filter(Boolean).join(", ");
+}
+function formatApplicantWorkExperienceForDB(value){
+  var work=parseApplicantWorkExperienceValue(value);
+  var text=formatApplicantPartsForDB([work.job_title, work.company]);
+  return textOrNullForDB(text || value);
+}
+function formatApplicantEducationForDB(value){
+  var items=parseApplicantEducationValue(value);
+  var text=items.map(function(item){
+    return formatApplicantPartsForDB([item.level, item.field]);
+  }).filter(Boolean).join(" | ");
+  return textOrNullForDB(text || value);
+}
+function formatApplicantSkillsForDB(value){
+  var items=parseApplicantSkillsValue(value);
+  var text=items.map(function(skill){return safeTrim(skill||"");}).filter(Boolean).join(", ");
+  return textOrNullForDB(text || value);
+}
+function formatApplicantLanguagesForDB(value){
+  var items=parseApplicantLanguagesValue(value);
+  var text=items.map(function(item){
+    return formatApplicantPartsForDB([item.language, item.proficiency]);
+  }).filter(Boolean).join(" | ");
+  return textOrNullForDB(text || value);
+}
+function formatApplicantCredentialForDB(fieldId,value){
+  var items=parseApplicantCredentialValue(fieldId,value);
+  var text=items.map(function(item){
+    return formatApplicantPartsForDB([item.name, formatApplicantCredentialExpiration(item)]);
+  }).filter(Boolean).join(" | ");
+  return textOrNullForDB(text || value);
+}
+function formatApplicantQualificationForDB(fieldId,value){
+  if(fieldId==="qualification_work_experience")return formatApplicantWorkExperienceForDB(value);
+  if(fieldId==="qualification_education")return formatApplicantEducationForDB(value);
+  if(fieldId==="qualification_skills")return formatApplicantSkillsForDB(value);
+  if(fieldId==="qualification_languages")return formatApplicantLanguagesForDB(value);
+  if(fieldId==="qualification_licenses"||fieldId==="qualification_certifications")return formatApplicantCredentialForDB(fieldId,value);
+  return textOrNullForDB(value);
+}
+function normalizeJobPreferenceRelocationValue(value){
+  var raw=safeTrim(value||"");
+  var parsed=safeJsonParse(raw,null);
+  var out={willing_anywhere:false,not_willing:false,locations:""};
+
+  if(parsed && typeof parsed==="object" && !Array.isArray(parsed)){
+    out.willing_anywhere=!!parsed.willing_anywhere;
+    out.not_willing=!!parsed.not_willing;
+    out.locations=safeTrim(parsed.locations||"");
+    return out;
+  }
+
+  if(!raw)return out;
+
+  var locationLines=[];
+  raw.split(/\r?\n|\s+\|\s+/).map(function(line){
+    return safeTrim(line);
+  }).filter(Boolean).forEach(function(line){
+    if(/^willing\s+to\s+relocate\s+anywhere$/i.test(line)){
+      out.willing_anywhere=true;
+    }else if(/^not\s+willing\s+to\s+relocate$/i.test(line)){
+      out.not_willing=true;
+    }else{
+      locationLines.push(line);
+    }
+  });
+
+  out.locations=locationLines.join("\n");
+  return out;
+}
+function formatJobPreferenceRelocationForDB(value){
+  var relocation=normalizeJobPreferenceRelocationValue(value);
+  var lines=[];
+  if(relocation.willing_anywhere)lines.push("Willing to relocate anywhere");
+  if(relocation.not_willing)lines.push("Not willing to relocate");
+  if(safeTrim(relocation.locations||""))lines.push(safeTrim(relocation.locations));
+  return textOrNullForDB(lines.join("\n") || value);
+}
+function formatJobPreferenceRelocationForSummary(value){
+  var relocation=normalizeJobPreferenceRelocationValue(value);
+  var lines=[];
+  if(relocation.willing_anywhere)lines.push("Willing to relocate anywhere");
+  if(relocation.not_willing)lines.push("Not willing to relocate");
+  if(safeTrim(relocation.locations||""))lines.push(safeTrim(relocation.locations));
+  return safeTrim(lines.join("\n"));
+}
+
 function buildApplicantTransactionDetailColumns(){
   var qualifications=collectApplicantQualifications();
   var jobPreferences=collectJobPreferences();
@@ -8337,14 +8478,14 @@ function buildApplicantTransactionDetailColumns(){
   return cleanObjectForSupabase({
     notes: buildApplicantNotesForDB() || null,
 
-    qualification_work_experience: safeTrim(qualifications.work_experience||"") || null,
-    qualification_education: safeTrim(qualifications.education||"") || null,
-    qualification_skills: safeTrim(qualifications.skills||"") || null,
-    qualification_licenses: safeTrim(qualifications.licenses||"") || null,
-    qualification_certifications: safeTrim(qualifications.certifications||"") || null,
-    qualification_languages: safeTrim(qualifications.languages||"") || null,
+    qualification_work_experience: formatApplicantQualificationForDB("qualification_work_experience", qualifications.work_experience),
+    qualification_education: formatApplicantQualificationForDB("qualification_education", qualifications.education),
+    qualification_skills: formatApplicantQualificationForDB("qualification_skills", qualifications.skills),
+    qualification_licenses: formatApplicantQualificationForDB("qualification_licenses", qualifications.licenses),
+    qualification_certifications: formatApplicantQualificationForDB("qualification_certifications", qualifications.certifications),
+    qualification_languages: formatApplicantQualificationForDB("qualification_languages", qualifications.languages),
 
-    job_pref_relocation: safeTrim(jobPreferences.relocation||"") || null,
+    job_pref_relocation: formatJobPreferenceRelocationForDB(jobPreferences.relocation),
     job_pref_job_titles: safeTrim(jobPreferences.job_titles||"") || null,
     job_pref_work_areas: safeTrim(jobPreferences.work_areas||"") || null,
     job_pref_job_types: safeTrim(jobPreferences.job_types||"") || null,
@@ -9157,16 +9298,8 @@ function summarizeListForJobPreference(value, limit){
   return shown.join("\n");
 }
 function summarizeRelocationPreference(){
-  var raw=getJobPreferenceValue("relocation");
-  var parsed=safeJsonParse(raw,null);
-  if(parsed && parsed.__jsl_relocation_v1){
-    var lines=[];
-    if(parsed.willing_anywhere) lines.push("Willing to relocate anywhere");
-    if(parsed.not_willing) lines.push("Not willing to relocate");
-    if(parsed.locations) lines.push(parsed.locations);
-    return lines.join("\n") || "Not added yet";
-  }
-  return safeTrim(raw)||"Not added yet";
+  var summary=formatJobPreferenceRelocationForSummary(getJobPreferenceValue("relocation"));
+  return summary || "Not added yet";
 }
 function summarizePayPreference(){
   var desired=document.getElementById("desired_salary");
@@ -9354,10 +9487,7 @@ function closeJobPreferenceModal(){
 }
 function renderRelocationModal(){
   var body=document.getElementById("jobPrefModalBody");
-  var parsed=safeJsonParse(getJobPreferenceValue("relocation"),null)||{};
-  if(!parsed.__jsl_relocation_v1 && safeTrim(getJobPreferenceValue("relocation"))){
-    parsed={locations:getJobPreferenceValue("relocation")};
-  }
+  var parsed=normalizeJobPreferenceRelocationValue(getJobPreferenceValue("relocation"));
   body.innerHTML=''
     +'<label class="job-pref-modal-title-label">Relocation preference</label>'
     +'<p class="job-pref-modal-help">Choose whether the applicant is willing to relocate and add preferred locations if needed.</p>'
@@ -9718,6 +9848,26 @@ function bindBlockEmployerUI(){
    READY TO WORK INLINE BOX HELPERS
    Stores availability in a separate transaction-table column.
 ========================================================== */
+function getEmploymentStatusElement(){
+  return document.getElementById("employment_status");
+}
+function normalizeEmploymentStatusValue(value){
+  var txt = safeTrim(value || "").toLowerCase();
+  if (txt === "employed") return "Employed";
+  if (txt === "unemployed" || txt === "un-employed") return "Unemployed";
+  return "";
+}
+function getEmploymentStatusValue(){
+  var el = getEmploymentStatusElement();
+  return normalizeEmploymentStatusValue(el ? el.value : "");
+}
+function setEmploymentStatusValue(value){
+  var normalized = normalizeEmploymentStatusValue(value || "");
+  var el = getEmploymentStatusElement();
+  if (el) el.value = normalized;
+  return normalized;
+}
+
 function getReadyToWorkElement(){
   return document.getElementById("ready_to_work");
 }
@@ -9779,6 +9929,18 @@ function bindReadyToWorkUI(){
       try{persistApplicantRestoreState({reason:"ready-to-work-toggle-updated"});}catch(e){}
     });
   }
+  var employmentSelect=document.getElementById("employment_status");
+  if(employmentSelect&&!employmentSelect.__readyToWorkBound){
+    employmentSelect.__readyToWorkBound=true;
+    employmentSelect.addEventListener("change",function(){
+      if(blockExistingRecordDetailSectionEdit("Ready To Work")){
+        setEmploymentStatusValue(getEmploymentStatusValue());
+        return;
+      }
+      setEmploymentStatusValue(employmentSelect.value);
+      try{persistApplicantRestoreState({reason:"employment-status-updated"});}catch(e){}
+    });
+  }
   renderReadyToWorkBox();
   try{ refreshExistingRecordDetailSectionLocks(); }catch(e){}
 }
@@ -9838,7 +10000,7 @@ function buildCurrentFormValueSnapshot(){
     province: safeTrim(document.getElementById("province").value),
     zipcode: safeTrim(document.getElementById("zipcode").value),
     desired_salary: safeTrim(document.getElementById("desired_salary").value),
-    employment_status: safeTrim(document.getElementById("employment_status").value),
+    employment_status: getEmploymentStatusValue(),
     position: safeTrim(document.getElementById("position").value),
     preferred_work_setup: safeTrim(document.getElementById("preferred_work_setup").value),
     notes: buildApplicantNotesForDB(),
@@ -9929,7 +10091,7 @@ function restorePrimitiveFormValuesOnly(snapshot){
   document.getElementById("address").value = v.address || "";
 
   document.getElementById("desired_salary").value = v.desired_salary || "";
-  document.getElementById("employment_status").value = v.employment_status || "";
+  setEmploymentStatusValue(v.employment_status || "");
   document.getElementById("position").value = v.position || "";
   document.getElementById("preferred_work_setup").value = v.preferred_work_setup || "";
   document.getElementById("notes").value = normalizeApplicantNoteOnly(v.notes || "");
@@ -13432,7 +13594,7 @@ function applyLoadedRecordFromBackend(masterRow, lastTrans, sourceMode, preferre
     document.getElementById("address").value = lastTrans.address || "";
     document.getElementById("gender").value = lastTrans.gender || "";
     document.getElementById("preferred_work_setup").value = lastTrans.preferred_work_setup || "";
-    document.getElementById("employment_status").value = lastTrans.employment_status || "";
+    setEmploymentStatusValue(lastTrans.employment_status || "");
     applyApplicantTransactionDetailsFromDB(lastTrans || {});
 
     desiredSalaryEl.value = extractSalaryNumber(lastTrans.desired_salary);
@@ -13595,6 +13757,7 @@ function refreshExistingRecordDetailSectionLocks(){
     "[data-job-pref-edit]",
     "[data-block-employer-edit]",
     "#ready_to_work_checkbox",
+    "#employment_status",
     "#qualificationModalSave",
     "#qualificationModalSaveAddAnother",
     "#qualificationModalDelete",
@@ -14320,7 +14483,7 @@ function buildCurrentSnapshot(){
       zipcode: safeTrim(zipcode.value),
       position: safeTrim(document.getElementById("position").value),
       preferred_work_setup: safeTrim(document.getElementById("preferred_work_setup").value),
-      employment_status: safeTrim(document.getElementById("employment_status").value),
+      employment_status: getEmploymentStatusValue(),
       notes: buildApplicantNotesForDB(),
       applicant_details: buildApplicantTransactionDetailColumns(),
       desired_salary: safeTrim(formatSalaryForDB(desiredSalaryEl.value, country.value)),
@@ -14514,7 +14677,7 @@ function buildTransactionPayloadForStatus(master_id, statusValue, computedAge){
     age: computedAge,
     source: detectSource(),
     preferred_work_setup: safeTrim(document.getElementById("preferred_work_setup").value) || null,
-    employment_status: safeTrim(document.getElementById("employment_status").value) || null,
+    employment_status: getEmploymentStatusValue() || null,
     status: statusValue,
 
     /* notes column stores only the applicant note text. Other details use separate columns. */
@@ -14672,6 +14835,9 @@ function buildProfileLanguagesJson(){
 function buildProfileJobPreferencesJson(){
   var prefs=collectJobPreferences();
   var relocationParsed=safeJsonParse(prefs.relocation,null);
+  if(!relocationParsed && safeTrim(prefs.relocation||"")){
+    relocationParsed=normalizeJobPreferenceRelocationValue(prefs.relocation);
+  }
   var pay={};
   if(safeTrim(prefs.pay_amount)) pay.amount=safeTrim(prefs.pay_amount);
   if(safeTrim(prefs.pay_period)) pay.period=safeTrim(prefs.pay_period);
@@ -14756,7 +14922,7 @@ function buildApplicantProfileTablePayload(masterId, transactionId, transactionP
       gender:safeTrim(transactionPayload.gender || document.getElementById("gender").value),
       age:transactionPayload.age || calculateAge(birthdayEl.value) || null,
       desired_salary:transactionPayload.desired_salary || formatSalaryForDBOrNull(desiredSalaryEl.value, country.value),
-      employment_status:transactionPayload.employment_status || safeTrim(document.getElementById("employment_status").value) || null,
+      employment_status:transactionPayload.employment_status || getEmploymentStatusValue() || null,
       preferred_work_setup:transactionPayload.preferred_work_setup || safeTrim(document.getElementById("preferred_work_setup").value) || null,
       status:transactionPayload.status || getStatusDisplay(),
       source:transactionPayload.source || detectSource()
@@ -15258,7 +15424,7 @@ async function doLogoutCleanup(options){
     try{
       ["qualification_work_experience","qualification_education","qualification_skills","qualification_licenses","qualification_certifications","qualification_languages",
        "job_pref_relocation","job_pref_job_titles","job_pref_work_areas","job_pref_job_types","job_pref_pay","job_pref_pay_period","job_pref_commute_time","job_pref_remote",
-       "block_employers","notes","position","preferred_work_setup","ready_to_work"].forEach(function(id){
+       "block_employers","notes","position","preferred_work_setup","employment_status","ready_to_work"].forEach(function(id){
         var el=document.getElementById(id);
         if (!el) return;
         if (el.type === "checkbox") el.checked = false;
@@ -15461,7 +15627,7 @@ function getAllFieldValues(){
     zipcode: safeTrim(zipcode.value),
     position: safeTrim(document.getElementById("position").value),
     workSetup: safeTrim(document.getElementById("preferred_work_setup").value),
-    employmentStatus: safeTrim(document.getElementById("employment_status").value),
+    employmentStatus: getEmploymentStatusValue(),
     desiredSalary: salaryStr ? salaryStr : "—",
     notes: buildApplicantNotesForDB(),
     jobPreferences: collectJobPreferences(),
@@ -16281,7 +16447,7 @@ appForm.addEventListener("submit", async function(e){
       age: computedAge,
       source: detectSource(),
       preferred_work_setup: safeTrim(document.getElementById("preferred_work_setup").value) || null,
-      employment_status: safeTrim(document.getElementById("employment_status").value) || null,
+      employment_status: getEmploymentStatusValue() || null,
       status: statusValue,
       /* notes column stores only the applicant free-text note. */
       notes: buildApplicantNotesForDB() || null,
@@ -27092,6 +27258,1566 @@ header .auth-buttons a.login-auth i::before{
   }, 1500);
 })();
 </script>
+
+
+
+<!-- ============================================================
+     FINAL HEADER NAV BLACK UNDERLINE HOVER PATCH 2026-06-12
+     CSS-only: preserves all links, dropdown toggles, mobile menu,
+     login/session handling, form behavior, Supabase logic, and modals.
+============================================================ -->
+<style id="final-header-nav-one-black-underline-hover-2026-06-12">
+/* ============================================================
+   FINAL HEADER NAV: SINGLE BLACK UNDERLINE HOVER EFFECT
+   CSS-only patch. Keeps all hrefs, dropdown toggles, mobile menu,
+   login/session handling, Supabase logic, modals, and page behavior.
+============================================================ */
+:root{
+  --jsl-nav-normal:#003366;
+  --jsl-nav-hover:#000000;
+  --jsl-nav-underline:#000000;
+  --jsl-nav-menu-bg:#ffffff;
+}
+
+/* Desktop nav links: remove glow/background and keep only one underline. */
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  height:36px !important;
+  min-height:36px !important;
+  gap:7px !important;
+  padding:0 7px !important;
+  color:var(--jsl-nav-normal) !important;
+  background:transparent !important;
+  border:none !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  overflow:visible !important;
+  white-space:nowrap !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  display:none !important;
+  content:none !important;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:7px !important;
+  right:7px !important;
+  bottom:2px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:var(--jsl-nav-underline) !important;
+  opacity:0 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:opacity .18s ease, transform .18s ease !important;
+  pointer-events:none !important;
+}
+
+header nav > a > i,
+header nav .nav-main-link > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:18px !important;
+  min-width:18px !important;
+  height:18px !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:currentColor !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown:hover > .nav-dropdown-trigger > .nav-main-link,
+.nav-dropdown.open > .nav-dropdown-trigger > .nav-main-link{
+  color:var(--jsl-nav-hover) !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border:none !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown:hover > .nav-dropdown-trigger > .nav-main-link::after,
+.nav-dropdown.open > .nav-dropdown-trigger > .nav-main-link::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown:hover > .nav-dropdown-trigger > .nav-main-link > i,
+.nav-dropdown.open > .nav-dropdown-trigger > .nav-main-link > i{
+  color:var(--jsl-nav-hover) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* About dropdown header/caret: hover keeps the same black text + one underline on the About link only. */
+.nav-dropdown,
+.nav-dropdown-trigger{
+  overflow:visible !important;
+}
+
+.nav-dropdown-trigger::before,
+.nav-dropdown-trigger::after{
+  display:none !important;
+  content:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.about-dropdown-btn,
+.about-dropdown-btn:hover,
+.about-dropdown-btn:focus-visible{
+  color:var(--jsl-nav-normal) !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+.nav-dropdown:hover .nav-dropdown-toggle,
+.nav-dropdown.open .nav-dropdown-toggle,
+.nav-dropdown:hover .nav-dropdown-toggle i,
+.nav-dropdown.open .nav-dropdown-toggle i,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i{
+  color:var(--jsl-nav-hover) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Dropdown menu links: same single black underline, no hover background/glow. */
+.nav-dropdown-menu{
+  background:var(--jsl-nav-menu-bg) !important;
+  border:1px solid var(--bank-line, #e6e8ec) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+}
+
+.nav-dropdown-menu a{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:10px !important;
+  min-height:38px !important;
+  padding:12px 16px !important;
+  color:var(--jsl-nav-normal) !important;
+  background:transparent !important;
+  border:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  overflow:visible !important;
+  white-space:nowrap !important;
+}
+
+.nav-dropdown-menu a::before{
+  display:none !important;
+  content:none !important;
+}
+
+.nav-dropdown-menu a::after{
+  content:"" !important;
+  position:absolute !important;
+  left:16px !important;
+  right:16px !important;
+  bottom:7px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:var(--jsl-nav-underline) !important;
+  opacity:0 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:opacity .18s ease, transform .18s ease !important;
+  pointer-events:none !important;
+}
+
+.nav-dropdown-menu a > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:20px !important;
+  min-width:20px !important;
+  height:20px !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:currentColor !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:var(--jsl-nav-hover) !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:var(--jsl-nav-hover) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Mobile menu: same one-black-underline hover while preserving menu behavior. */
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-submenu a{
+  position:relative !important;
+  color:var(--jsl-nav-normal) !important;
+  background:var(--bank-soft-2, #f7f7f7) !important;
+  border-color:var(--bank-line, #e6e8ec) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  overflow:visible !important;
+}
+
+.mobile-panel .mnav a::before,
+.mobile-panel .mnav-main-link::before,
+.mobile-panel .mnav-submenu a::before{
+  display:none !important;
+  content:none !important;
+}
+
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::after,
+.mobile-panel .mnav-submenu a::after{
+  content:"" !important;
+  position:absolute !important;
+  left:14px !important;
+  right:14px !important;
+  bottom:7px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:var(--jsl-nav-underline) !important;
+  opacity:0 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:opacity .18s ease, transform .18s ease !important;
+  pointer-events:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-submenu a:hover,
+.mobile-panel .mnav-submenu a:focus-visible{
+  color:var(--jsl-nav-hover) !important;
+  background:var(--bank-soft-2, #f7f7f7) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+.mobile-panel .mnav a:hover::after,
+.mobile-panel .mnav a:focus-visible::after,
+.mobile-panel .mnav-main-link:hover::after,
+.mobile-panel .mnav-main-link:focus-visible::after,
+.mobile-panel .mnav-submenu a:hover::after,
+.mobile-panel .mnav-submenu a:focus-visible::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav a:focus-visible i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-main-link:focus-visible i,
+.mobile-panel .mnav-submenu a:hover i,
+.mobile-panel .mnav-submenu a:focus-visible i{
+  color:var(--jsl-nav-hover) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+</style>
+
+
+<!-- ============================================================
+     FINAL PATCH: APPLICANTFORM1 LOGGED-IN ACCOUNT DROPDOWN
+     Matches the postedhiring1.html marked reference:
+     - white logged-in account card
+     - profile photo + JOBSEEKER ACCOUNT + name + blue email pill
+     - blue View Profile action
+     - Favorite Job / Applied Job dropdown rows
+     - clean Logout button
+     - white/blue heart + paper-plane quick icons
+     Existing session, View Profile, Logout, form, and sync behavior preserved.
+============================================================ -->
+<style id="final-applicantform1-postedhiring-account-dropdown-reference-style">
+  header .jsl-jobseeker-account-menu{
+    position:relative !important;
+    overflow:visible !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:8px !important;
+    z-index:32000 !important;
+  }
+
+  .jsl-jobseeker-account-menu.logged-in .jsl-header-quick-icons{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:8px !important;
+  }
+
+  .jsl-jobseeker-account-menu.logged-out .jsl-header-quick-icons{
+    display:none !important;
+  }
+
+  .jsl-header-quick-btn{
+    width:38px !important;
+    height:38px !important;
+    min-width:38px !important;
+    border-radius:999px !important;
+    display:inline-grid !important;
+    place-items:center !important;
+    border:1px solid #bfe7ff !important;
+    background:linear-gradient(180deg,#f6fcff,#dff3ff) !important;
+    color:#063a6b !important;
+    box-shadow:0 8px 22px rgba(14,165,233,.18) !important;
+    opacity:1 !important;
+    cursor:default !important;
+    pointer-events:none !important;
+    transform:none !important;
+    transition:box-shadow .18s ease, border-color .18s ease !important;
+  }
+
+  .jsl-header-quick-btn i,
+  .jsl-header-quick-btn.favorite i,
+  .jsl-header-quick-btn.applied i{
+    color:#063a6b !important;
+    font-size:1rem !important;
+    text-shadow:none !important;
+    filter:none !important;
+  }
+
+  .jsl-header-quick-btn.favorite.active i,
+  .jsl-header-quick-btn.favorite.is-active i{
+    color:#ef4444 !important;
+  }
+
+  .jsl-header-quick-btn.applied.active i,
+  .jsl-header-quick-btn.applied.is-active i{
+    color:#0ea5e9 !important;
+  }
+
+  .jsl-jobseeker-account-btn{
+    width:58px !important;
+    height:58px !important;
+    min-width:58px !important;
+    border-radius:999px !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    display:inline-grid !important;
+    place-items:center !important;
+    background:#ffffff !important;
+    border:3px solid rgba(186,230,253,.95) !important;
+    box-shadow:0 12px 30px rgba(14,165,233,.25), 0 0 0 6px rgba(14,165,233,.08) !important;
+    color:#063a6b !important;
+    cursor:pointer !important;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+  }
+
+  .jsl-jobseeker-account-btn:hover,
+  .jsl-jobseeker-account-menu.open .jsl-jobseeker-account-btn{
+    transform:translateY(-1px) scale(1.04) !important;
+    border-color:#7dd3fc !important;
+    box-shadow:0 14px 34px rgba(14,165,233,.34), 0 0 0 7px rgba(14,165,233,.10) !important;
+  }
+
+  .jsl-jobseeker-account-btn img{
+    width:100% !important;
+    height:100% !important;
+    display:none;
+    object-fit:cover !important;
+    object-position:center top !important;
+    border-radius:999px !important;
+  }
+
+  .jsl-jobseeker-account-btn.has-profile-photo img{
+    display:block !important;
+  }
+
+  .jsl-jobseeker-account-btn.has-profile-photo i{
+    display:none !important;
+  }
+
+  .jsl-jobseeker-account-btn i{
+    display:inline-grid !important;
+    place-items:center !important;
+    font-size:1.25rem !important;
+    color:#063a6b !important;
+  }
+
+  .jsl-jobseeker-account-menu.open .jsl-jobseeker-dropdown{
+    display:block !important;
+  }
+
+  .jsl-jobseeker-dropdown{
+    display:none;
+    position:absolute !important;
+    right:0 !important;
+    top:calc(100% + 12px) !important;
+    width:min(318px, calc(100vw - 22px)) !important;
+    padding:13px !important;
+    border-radius:18px !important;
+    background:#ffffff !important;
+    color:#0b2a5b !important;
+    border:1px solid #c7efff !important;
+    box-shadow:0 22px 54px rgba(15,23,42,.18), 0 0 0 1px rgba(14,165,233,.06) inset !important;
+    backdrop-filter:none !important;
+    z-index:36000 !important;
+  }
+
+  .jsl-jobseeker-dropdown::before{
+    display:none !important;
+  }
+
+  .jsl-account-top{
+    min-height:76px !important;
+    display:grid !important;
+    grid-template-columns:62px minmax(0,1fr) !important;
+    align-items:center !important;
+    gap:11px !important;
+    padding:10px !important;
+    border-radius:16px !important;
+    background:linear-gradient(135deg,#ffffff,#f3fbff) !important;
+    border:1px solid #d9f2ff !important;
+    box-shadow:0 10px 24px rgba(14,165,233,.12) !important;
+  }
+
+  .jsl-account-logo-wrap{
+    width:58px !important;
+    height:58px !important;
+    border-radius:999px !important;
+    display:grid !important;
+    place-items:center !important;
+    overflow:hidden !important;
+    background:#ffffff !important;
+    border:3px solid rgba(186,230,253,.92) !important;
+    box-shadow:0 8px 18px rgba(14,165,233,.17) !important;
+  }
+
+  .jsl-account-logo-wrap img{
+    width:100% !important;
+    height:100% !important;
+    display:block !important;
+    object-fit:cover !important;
+    object-position:center top !important;
+    border-radius:999px !important;
+  }
+
+  .jsl-account-logo-wrap.loggedout-icon img{
+    display:none !important;
+  }
+
+  .jsl-account-logo-wrap.loggedout-icon::before{
+    content:"\f007" !important;
+    font-family:"Font Awesome 6 Free" !important;
+    font-weight:900 !important;
+    color:#063a6b !important;
+    font-size:1.18rem !important;
+  }
+
+  .jsl-account-text{
+    min-width:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    gap:0 !important;
+  }
+
+  .jsl-account-title{
+    order:1 !important;
+    font-size:.70rem !important;
+    line-height:1.05 !important;
+    font-weight:950 !important;
+    letter-spacing:.045em !important;
+    color:#0b3d91 !important;
+    text-transform:uppercase !important;
+    margin:0 !important;
+  }
+
+  .jsl-account-status{
+    order:2 !important;
+    margin:3px 0 0 !important;
+    max-width:100% !important;
+    color:#0b2a5b !important;
+    font-size:.86rem !important;
+    font-weight:900 !important;
+    line-height:1.15 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .jsl-account-email{
+    order:3 !important;
+    width:max-content !important;
+    max-width:100% !important;
+    min-height:32px !important;
+    margin-top:8px !important;
+    padding:7px 12px !important;
+    border-radius:10px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:linear-gradient(90deg,#22b8ff,#5b6df6) !important;
+    color:#ffffff !important;
+    border:0 !important;
+    box-shadow:0 8px 18px rgba(37,99,235,.22) !important;
+    font-size:.78rem !important;
+    font-weight:850 !important;
+    line-height:1.05 !important;
+    text-decoration:none !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .jsl-account-actions{
+    display:grid !important;
+    gap:8px !important;
+    margin-top:9px !important;
+  }
+
+  .jsl-account-action{
+    min-height:40px !important;
+    width:100% !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+    padding:9px 12px !important;
+    border-radius:12px !important;
+    border:1px solid #e5eaf2 !important;
+    background:#ffffff !important;
+    color:#0b2a5b !important;
+    text-decoration:none !important;
+    box-shadow:none !important;
+    font-size:.80rem !important;
+    font-weight:900 !important;
+    cursor:pointer !important;
+    transition:background .18s ease, transform .18s ease, color .18s ease, border-color .18s ease !important;
+  }
+
+  .jsl-account-action:hover{
+    background:#f8fbff !important;
+    color:#061f45 !important;
+    border-color:#bfe7ff !important;
+    transform:none !important;
+    box-shadow:none !important;
+  }
+
+  #jslAccountViewProfile.jsl-account-action{
+    min-height:42px !important;
+    margin-top:9px !important;
+    background:linear-gradient(90deg,#22b8ff,#5b6df6) !important;
+    color:#ffffff !important;
+    border-color:transparent !important;
+    box-shadow:0 8px 18px rgba(37,99,235,.20) !important;
+  }
+
+  #jslAccountViewProfile.jsl-account-action:hover{
+    background:linear-gradient(90deg,#12a8ee,#4f5bea) !important;
+    color:#ffffff !important;
+    transform:none !important;
+  }
+
+  .jsl-account-action .left{
+    display:flex !important;
+    align-items:center !important;
+    gap:9px !important;
+    min-width:0 !important;
+  }
+
+  .jsl-account-action .left i{
+    width:18px !important;
+    text-align:center !important;
+    color:inherit !important;
+    text-shadow:none !important;
+  }
+
+  .jsl-account-filter-list{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:8px !important;
+    margin-top:9px !important;
+  }
+
+  .jsl-jobseeker-account-menu.logged-in .jsl-account-filter-list{
+    display:flex !important;
+  }
+
+  .jsl-account-filter{
+    width:100% !important;
+    display:grid !important;
+    gap:5px !important;
+    color:#0b3d91 !important;
+    font-size:.72rem !important;
+    font-weight:900 !important;
+    line-height:1.15 !important;
+    cursor:default !important;
+    user-select:none !important;
+  }
+
+  .jsl-account-filter span{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:6px !important;
+    color:#0b3d91 !important;
+  }
+
+  .jsl-account-filter span i,
+  .jsl-account-filter.favorite span i,
+  .jsl-account-filter.applied span i{
+    display:none !important;
+  }
+
+  .jsl-account-filter select{
+    width:100% !important;
+    min-height:38px !important;
+    border-radius:10px !important;
+    border:1px solid #e5eaf2 !important;
+    background:#ffffff !important;
+    color:#0b2a5b !important;
+    padding:8px 30px 8px 10px !important;
+    outline:none !important;
+    font-size:.78rem !important;
+    font-weight:800 !important;
+    opacity:1 !important;
+    cursor:default !important;
+    box-shadow:0 4px 12px rgba(15,23,42,.04) !important;
+  }
+
+  .jsl-account-filter select:disabled{
+    color:#0b2a5b !important;
+    -webkit-text-fill-color:#0b2a5b !important;
+    opacity:1 !important;
+    background:#ffffff !important;
+  }
+
+  .jsl-account-filter select option{
+    background:#ffffff !important;
+    color:#0b2a5b !important;
+  }
+
+  #jslAccountLogin.jsl-account-action.login{
+    background:linear-gradient(90deg,#22b8ff,#5b6df6) !important;
+    color:#ffffff !important;
+    border-color:transparent !important;
+    justify-content:center !important;
+  }
+
+  #jslAccountLogout.jsl-account-action.logout{
+    min-height:40px !important;
+    margin-top:0 !important;
+    justify-content:center !important;
+    background:#ffffff !important;
+    color:#0b2a5b !important;
+    border:1px solid #e5eaf2 !important;
+    box-shadow:0 4px 12px rgba(15,23,42,.04) !important;
+  }
+
+  #jslAccountLogout.jsl-account-action.logout:hover{
+    background:#f8fbff !important;
+    border-color:#bfe7ff !important;
+    color:#061f45 !important;
+  }
+
+  #jslAccountLogout .left{
+    justify-content:center !important;
+  }
+
+  .jsl-account-sync-note{
+    display:none !important;
+  }
+
+  .jsl-jobseeker-account-menu.logged-in #jslAccountLogin,
+  .jsl-jobseeker-account-menu.logged-in #jslAccountJobHiring{
+    display:none !important;
+  }
+
+  .jsl-jobseeker-account-menu.logged-in #jslAccountViewProfile,
+  .jsl-jobseeker-account-menu.logged-in #jslAccountLogout{
+    display:flex !important;
+  }
+
+  .jsl-jobseeker-account-menu.logged-out #jslAccountJobHiring,
+  .jsl-jobseeker-account-menu.logged-out #jslAccountLogout{
+    display:none !important;
+  }
+
+  .jsl-jobseeker-account-menu.logged-out #jslAccountViewProfile,
+  .jsl-jobseeker-account-menu.logged-out #jslAccountLogin{
+    display:flex !important;
+  }
+
+  .jsl-jobseeker-account-menu.logged-out .jsl-account-filter-list{
+    display:flex !important;
+  }
+
+  @media (max-width:768px){
+    header .jsl-jobseeker-account-menu{
+      gap:6px !important;
+    }
+
+    .jsl-header-quick-icons{
+      gap:5px !important;
+    }
+
+    .jsl-header-quick-btn{
+      width:34px !important;
+      height:34px !important;
+      min-width:34px !important;
+    }
+
+    .jsl-jobseeker-account-btn{
+      width:50px !important;
+      height:50px !important;
+      min-width:50px !important;
+    }
+
+    .jsl-jobseeker-dropdown{
+      right:-8px !important;
+      width:min(314px, calc(100vw - 18px)) !important;
+    }
+  }
+</style>
+
+<script id="final-applicantform1-postedhiring-account-dropdown-reference-script">
+(function(){
+  "use strict";
+
+  var NAME_KEYS = [
+    "employee_name","jsl_login_name","jsl_last_login_name","jobseeker_name","jobseeker_full_name",
+    "applicant_name","applicant_full_name","logged_in_name","loggedInName","full_name","name",
+    "profile_name","view_profile_name","current_applicant_name"
+  ];
+  var EMAIL_KEYS = [
+    "jsl_login_email","jobseeker_email","employee_email","applicant_email","logged_in_email",
+    "loggedInEmail","user_email","email","login_email","jsl_last_login_email"
+  ];
+
+  function trim(v){ return (v === null || v === undefined) ? "" : String(v).trim(); }
+
+  function getKey(k){
+    var v = "";
+    try{ v = trim(localStorage.getItem(k)); }catch(_e){}
+    if (v) return v;
+    try{ v = trim(sessionStorage.getItem(k)); }catch(_e){}
+    return v;
+  }
+
+  function firstKey(keys){
+    for (var i=0; i<keys.length; i++){
+      var v = getKey(keys[i]);
+      if (v && v !== "0" && v !== "false" && v !== "null" && v !== "undefined") return v;
+    }
+    return "";
+  }
+
+  function fieldValue(ids){
+    for (var i=0; i<ids.length; i++){
+      var el = document.getElementById(ids[i]);
+      if (el && trim(el.value)) return trim(el.value);
+    }
+    return "";
+  }
+
+  function toTitleCase(s){
+    s = trim(s).replace(/[._-]+/g, " ").replace(/\s+/g, " ");
+    if (!s) return "";
+    return s.split(" ").map(function(part){
+      return part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : "";
+    }).join(" ");
+  }
+
+  function emailPrefixName(email){
+    email = trim(email);
+    if (!email || email.indexOf("@") < 0) return "";
+    return toTitleCase(email.split("@")[0]);
+  }
+
+  function detectEmail(){
+    var el = document.getElementById("jslAccountEmail");
+    var current = el ? trim(el.textContent) : "";
+    if (current && current !== "Not logged in" && current.indexOf("@") > 0) return current;
+    return firstKey(EMAIL_KEYS);
+  }
+
+  function detectName(email){
+    var stored = firstKey(NAME_KEYS);
+    if (stored && stored.indexOf("@") < 0) return toTitleCase(stored);
+
+    var first = fieldValue(["firstName","firstname","first_name","applicant_first_name","givenName"]);
+    var middle = fieldValue(["middleName","middlename","middle_name"]);
+    var last = fieldValue(["lastName","lastname","last_name","applicant_last_name","familyName"]);
+    var full = trim([first, middle, last].filter(Boolean).join(" "));
+    if (full) return toTitleCase(full);
+
+    var profileText = trim((document.querySelector(".profile-name") || {}).textContent || "");
+    if (profileText && profileText.indexOf("@") < 0 && !/^job\s*space\s*link$/i.test(profileText)) return toTitleCase(profileText);
+
+    return emailPrefixName(email) || "Jobseeker";
+  }
+
+  function ensureFilterOptions(){
+    var fav = document.getElementById("jslFavoriteStatusFilter");
+    var app = document.getElementById("jslAppliedStatusFilter");
+
+    if (fav && !fav.options.length){
+      fav.innerHTML = '<option value="">All Favorite Status</option>';
+    }
+    if (fav && fav.options.length && fav.options[0].textContent.trim() !== "All Favorite Status"){
+      fav.options[0].textContent = "All Favorite Status";
+    }
+
+    if (app && !app.options.length){
+      app.innerHTML = '<option value="">All Applied Status</option>';
+    }
+    if (app && app.options.length && app.options[0].textContent.trim() !== "All Applied Status"){
+      app.options[0].textContent = "All Applied Status";
+    }
+
+    [fav, app].forEach(function(sel){
+      if (!sel) return;
+      sel.disabled = true;
+      sel.setAttribute("aria-disabled", "true");
+      sel.tabIndex = -1;
+    });
+  }
+
+  function moveDropdownPieces(){
+    var dropdown = document.getElementById("jslJobseekerDropdown");
+    var top = document.querySelector(".jsl-account-top");
+    var mainActions = document.getElementById("jslAccountMainActions") || (document.getElementById("jslAccountViewProfile") || {}).parentNode;
+    var filters = document.getElementById("jslAccountFilterList");
+    var logoutActions = document.getElementById("jslAccountLoggedOutActions") || (document.getElementById("jslAccountLogout") || {}).parentNode;
+
+    if (!dropdown || !top || !mainActions) return;
+
+    if (top.nextElementSibling !== mainActions) dropdown.insertBefore(mainActions, top.nextSibling);
+    if (filters && mainActions.nextElementSibling !== filters) dropdown.insertBefore(filters, mainActions.nextSibling);
+    if (logoutActions && filters && filters.nextElementSibling !== logoutActions) dropdown.insertBefore(logoutActions, filters.nextSibling);
+  }
+
+  function applyReferenceDropdown(){
+    var menu = document.getElementById("jslJobseekerAccountMenu");
+    if (!menu) return;
+
+    var logged = menu.classList.contains("logged-in") && !menu.classList.contains("logged-out");
+    var email = detectEmail();
+    if (!email || email === "Not logged in") logged = false;
+
+    var title = document.getElementById("jslAccountTitle");
+    var status = document.getElementById("jslAccountStatus");
+    var emailEl = document.getElementById("jslAccountEmail");
+    var login = document.getElementById("jslAccountLogin");
+    var logout = document.getElementById("jslAccountLogout");
+    var jobHiring = document.getElementById("jslAccountJobHiring");
+    var viewProfile = document.getElementById("jslAccountViewProfile");
+    var filters = document.getElementById("jslAccountFilterList");
+    var note = document.getElementById("jslAccountSyncNote");
+
+    var displayName = logged ? detectName(email) : "Logged out";
+
+    if (title) title.textContent = "JOBSEEKER ACCOUNT";
+    if (status) status.textContent = displayName;
+
+    if (emailEl){
+      emailEl.textContent = logged ? email : "Not logged in";
+      emailEl.title = logged ? email : "Not logged in";
+      emailEl.href = logged ? "mailto:" + email : "javascript:void(0)";
+    }
+
+    if (viewProfile) viewProfile.style.display = "flex";
+    if (login) login.style.display = logged ? "none" : "flex";
+    if (logout) logout.style.display = logged ? "flex" : "none";
+    if (jobHiring) jobHiring.style.display = "none";
+    if (filters) filters.style.display = "flex";
+    if (note) note.style.display = "none";
+
+    ensureFilterOptions();
+    moveDropdownPieces();
+
+    var logoWrap = document.getElementById("jslAccountLogoWrap");
+    var logo = document.getElementById("jslAccountLogo");
+    var avatar = document.getElementById("jslJobseekerAccountAvatar");
+    var btn = document.getElementById("jslJobseekerAccountBtn");
+    var icon = document.getElementById("jslJobseekerAccountIcon");
+    var avatarUrl = "";
+    if (avatar && avatar.style.display !== "none") avatarUrl = trim(avatar.getAttribute("src"));
+    if (!avatarUrl && logo && logo.style.display !== "none") avatarUrl = trim(logo.getAttribute("src"));
+    if (avatarUrl && avatarUrl !== "JOBSPACELINK.png"){
+      if (logo){
+        logo.style.display = "block";
+        if (logo.getAttribute("src") !== avatarUrl) logo.src = avatarUrl;
+        logo.alt = "Logged-in Jobseeker Profile Picture";
+      }
+      if (logoWrap){
+        logoWrap.classList.remove("loggedout-icon");
+        logoWrap.classList.add("profile-photo");
+      }
+    }
+    if (btn && logged){
+      btn.title = "Jobseeker Account: " + email;
+      btn.setAttribute("aria-label", "Open Jobseeker account menu for " + email);
+    }
+    if (icon && !avatarUrl){
+      icon.className = logged ? "fa-solid fa-user-check" : "fa-solid fa-user-tie";
+    }
+  }
+
+  function scheduleApply(){
+    clearTimeout(scheduleApply._t);
+    scheduleApply._t = setTimeout(applyReferenceDropdown, 30);
+  }
+
+  function start(){
+    applyReferenceDropdown();
+    [120, 350, 750, 1400, 2500].forEach(function(ms){ setTimeout(applyReferenceDropdown, ms); });
+
+    try{
+      var observer = new MutationObserver(function(){ scheduleApply(); });
+      observer.observe(document.documentElement, {
+        childList:true,
+        subtree:true,
+        attributes:true,
+        characterData:true,
+        attributeFilter:["class","style","src","href","disabled","aria-disabled"]
+      });
+    }catch(_e){}
+
+    setInterval(applyReferenceDropdown, 300);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+
+  window.jslApplicantFormPostedHiringDropdownStyle = {
+    refresh: applyReferenceDropdown
+  };
+})();
+</script>
+
+
+
+<!-- ============================================================
+     FINAL UI REFINEMENT PATCH:
+     Wider applicant form container + darker section borders only.
+     Keeps all existing HTML, JavaScript, Supabase, upload, modal,
+     save, login/logout, and responsive behavior intact.
+=============================================================== -->
+<style id="jsl-wide-form-dark-section-borders">
+/* Wider main applicant form container on desktop/laptop while preserving responsive behavior. */
+@media (min-width: 1180px){
+  .page{
+    width:min(1560px, calc(100vw - 32px)) !important;
+    max-width:min(1560px, calc(100vw - 32px)) !important;
+  }
+  .shell{
+    padding:20px !important;
+  }
+  .shell-inner{
+    padding:20px !important;
+  }
+  .grid{
+    grid-template-columns:340px minmax(0, 1fr) !important;
+    gap:18px !important;
+  }
+}
+
+@media (min-width: 1600px){
+  .page{
+    width:min(1680px, calc(100vw - 34px)) !important;
+    max-width:min(1680px, calc(100vw - 34px)) !important;
+  }
+  .grid{
+    grid-template-columns:350px minmax(0, 1fr) !important;
+    gap:20px !important;
+  }
+}
+
+/* Keep smaller screens using the existing stacked/responsive layout. */
+@media (max-width: 1179px){
+  .page{
+    max-width:calc(100% - 20px) !important;
+  }
+}
+
+/* Darker, more visible borders for the requested form sections. */
+.section,
+.section.qualification-section,
+.section.job-preferences-section,
+.section.block-employer-section,
+.section.ready-to-work-section{
+  border:2px solid rgba(8, 26, 62, 0.46) !important;
+  box-shadow:
+    0 14px 28px rgba(2, 6, 23, 0.18),
+    inset 0 0 0 1px rgba(15, 23, 42, 0.08) !important;
+}
+
+.section-head{
+  border-bottom:1.5px solid rgba(8, 26, 62, 0.30) !important;
+}
+
+/* Personal Information inner field borders. */
+.field-card{
+  border:1.5px solid rgba(8, 26, 62, 0.24) !important;
+}
+
+/* Qualifications, Job Preferences, Block Employer, Ready To Work, and Resume/Documents inner panels. */
+.qualification-card-list,
+.qualification-job-preferences,
+.job-pref-card-list,
+.ready-work-card,
+.doc-row{
+  border:1.5px solid rgba(8, 26, 62, 0.26) !important;
+}
+
+.qualification-list-row,
+.job-pref-list-row{
+  border-bottom:1.5px solid rgba(8, 26, 62, 0.18) !important;
+}
+
+.qualification-list-row:last-child,
+.job-pref-list-row:last-child{
+  border-bottom:0 !important;
+}
+
+/* Slightly stronger section header mini badges without changing behavior. */
+.section-head .mini{
+  border:1.5px solid rgba(8, 26, 62, 0.18) !important;
+}
+</style>
+
+
+
+<!-- ============================================================
+     FINAL LAYOUT PATCH:
+     Wider main form container + header edge alignment.
+     Logo/nav align to the right edge of the widened form container.
+     Login/account control aligns to the left edge of the widened form container.
+     Visual-only CSS override; existing JavaScript/functionality remains unchanged.
+=============================================================== -->
+<style id="jsl-more-wide-form-header-edge-align-final">
+/* Main form container widened more for desktop/laptop while staying responsive. */
+@media (min-width: 1180px){
+  .page{
+    width:min(1840px, calc(100vw - 18px)) !important;
+    max-width:min(1840px, calc(100vw - 18px)) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+
+  .shell{
+    padding:22px !important;
+  }
+
+  .shell-inner{
+    padding:22px !important;
+  }
+
+  .grid{
+    grid-template-columns:355px minmax(0, 1fr) !important;
+    gap:22px !important;
+  }
+}
+
+@media (min-width: 1600px){
+  .page{
+    width:min(1900px, calc(100vw - 14px)) !important;
+    max-width:min(1900px, calc(100vw - 14px)) !important;
+  }
+
+  .shell{
+    padding:24px !important;
+  }
+
+  .shell-inner{
+    padding:24px !important;
+  }
+
+  .grid{
+    grid-template-columns:365px minmax(0, 1fr) !important;
+    gap:24px !important;
+  }
+}
+
+/* Tablet/laptop width keeps the form wider without breaking the existing layout. */
+@media (min-width: 769px) and (max-width: 1179px){
+  .page{
+    width:calc(100vw - 14px) !important;
+    max-width:calc(100vw - 14px) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+}
+
+/* Header content is aligned with the same left/right edges as the widened form container. */
+@media (min-width: 769px){
+  header{
+    padding-left:max(7px, calc((100vw - min(1900px, calc(100vw - 14px))) / 2)) !important;
+    padding-right:max(7px, calc((100vw - min(1900px, calc(100vw - 14px))) / 2)) !important;
+    gap:12px !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+    overflow:visible !important;
+  }
+
+  /* Logged-out Login button / logged-in account menu stays at the left edge of the form container. */
+  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button,
+  header .jsl-jobseeker-account-menu{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+  }
+
+  /* When the logged-in dropdown opens from the left edge, keep it inside the page instead of hanging off-screen. */
+  header .jsl-jobseeker-account-menu .jsl-jobseeker-dropdown{
+    left:0 !important;
+    right:auto !important;
+  }
+
+  /* Logo and nav links move together to the right edge of the form container. */
+  header .logo{
+    order:2 !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    justify-content:flex-end !important;
+  }
+
+  header nav{
+    order:3 !important;
+    flex:0 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    margin-left:12px !important;
+    margin-right:0 !important;
+    justify-content:flex-end !important;
+    gap:clamp(8px, 1vw, 18px) !important;
+  }
+
+  header .nav-toggle{
+    order:4 !important;
+  }
+}
+
+/* Keep desktop/laptop nav from crowding after moving it to the right side. */
+@media (min-width: 1024px) and (max-width: 1439px){
+  header nav{
+    gap:8px !important;
+    margin-left:8px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:.74rem !important;
+    padding-left:2px !important;
+    padding-right:2px !important;
+  }
+
+  header .logo img{
+    max-width:150px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px){
+  header nav{
+    gap:6px !important;
+    margin-left:6px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:.70rem !important;
+  }
+
+  header .logo img{
+    max-width:132px !important;
+  }
+
+  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button{
+    min-width:78px !important;
+    padding-left:10px !important;
+    padding-right:10px !important;
+    font-size:.78rem !important;
+  }
+}
+
+/* Mobile keeps the original hamburger/header behavior. */
+@media (max-width: 768px){
+  .page{
+    width:calc(100% - 16px) !important;
+    max-width:calc(100% - 16px) !important;
+  }
+}
+</style>
+
+
+
+<!-- ============================================================
+     FINAL HEADER PLACEMENT PATCH:
+     Logo and nav links stay on the left side of the header.
+     Login / logged-in account control moves to the right side.
+     Keeps widened form container, dark section borders, and all
+     existing JavaScript/functionality unchanged.
+=============================================================== -->
+<style id="jsl-header-left-logo-nav-right-login-final">
+/* Desktop/tablet header: logo + nav on the left, login/account on the right. */
+@media (min-width: 769px){
+  header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:12px !important;
+    overflow:visible !important;
+  }
+
+  header .logo{
+    order:1 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    justify-content:flex-start !important;
+  }
+
+  header nav{
+    order:2 !important;
+    flex:0 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    margin-left:10px !important;
+    margin-right:auto !important;
+    justify-content:flex-start !important;
+    gap:clamp(8px, 1vw, 18px) !important;
+  }
+
+  header .auth-buttons,
+  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button,
+  header .jsl-jobseeker-account-menu{
+    order:20 !important;
+    margin-left:auto !important;
+    margin-right:0 !important;
+    flex:0 0 auto !important;
+    align-self:center !important;
+    justify-content:flex-end !important;
+  }
+
+  header .nav-toggle{
+    order:30 !important;
+    flex:0 0 auto !important;
+  }
+
+  /* Dropdown opens from the right-side account/login area and stays inside viewport. */
+  header .jsl-jobseeker-account-menu .jsl-jobseeker-dropdown{
+    right:0 !important;
+    left:auto !important;
+  }
+}
+
+/* Keep mid-sized screens from crowding after restoring left logo/nav + right login. */
+@media (min-width: 1024px) and (max-width: 1439px){
+  header nav{
+    gap:8px !important;
+    margin-left:8px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:.74rem !important;
+    padding-left:2px !important;
+    padding-right:2px !important;
+  }
+
+  header .logo img{
+    max-width:150px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px){
+  header nav{
+    gap:6px !important;
+    margin-left:6px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    font-size:.70rem !important;
+  }
+
+  header .logo img{
+    max-width:132px !important;
+  }
+
+  #jslHeaderLoggedOutLoginBtn.jsl-header-login-button{
+    min-width:78px !important;
+    padding-left:10px !important;
+    padding-right:10px !important;
+    font-size:.78rem !important;
+  }
+}
+
+/* Mobile keeps existing hamburger behavior. */
+@media (max-width: 768px){
+  header .logo{
+    order:1 !important;
+  }
+
+  header .nav-toggle{
+    order:30 !important;
+  }
+}
+
+
+/* ============================================================
+   FINAL SECTION TITLE + HELPER READABILITY UPDATE 2026-06-23
+   Applies Ready to work title typography to all major section titles
+   and enlarges helper labels/badges only. No JS or form behavior changed.
+============================================================ */
+.section-head,
+.section-head .left,
+.section-head .left span,
+.section-head .left strong,
+.section-head .left b,
+.section-head .left h2,
+.section-head .left h3,
+.section-head .left h4,
+.personal-information-section .section-head .left,
+.qualification-section .section-head .left,
+.job-preferences-section .section-head .left,
+.block-employer-section .section-head .left,
+.resume-documents-section .section-head .left,
+.documents-section .section-head .left,
+.ready-to-work-section .section-head .left{
+  color:#07142e !important;
+  font-size:1.45rem !important;
+  line-height:1.15 !important;
+  font-weight:1200 !important;
+  letter-spacing:0 !important;
+}
+
+.section-head{
+  align-items:center !important;
+}
+
+.section-head .left{
+  min-width:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+
+.section-head .left i,
+.personal-information-section .section-head .left i,
+.qualification-section .section-head .left i,
+.job-preferences-section .section-head .left i,
+.block-employer-section .section-head .left i,
+.resume-documents-section .section-head .left i,
+.documents-section .section-head .left i{
+  color:#07142e !important;
+  font-size:1.32rem !important;
+  line-height:1 !important;
+  flex:0 0 auto !important;
+}
+
+/* Keep Ready to work as the source style and ensure it remains consistent. */
+.ready-work-title{
+  color:#07142e !important;
+  font-size:1.45rem !important;
+  line-height:1.15 !important;
+  font-weight:1200 !important;
+  letter-spacing:0 !important;
+}
+
+/* Helper labels / badges: larger and clearer, without changing behavior. */
+.section-head .mini,
+.page-title .hint,
+.qualification-info-banner,
+.job-preference-info-banner,
+.qualification-subtitle,
+.job-preference-subtitle,
+.ready-work-subtitle,
+.doc-file,
+.profile-sub,
+.field-card .lbl{
+  font-size:.98rem !important;
+  line-height:1.35 !important;
+}
+
+.section-head .mini{
+  font-weight:1100 !important;
+  padding:9px 14px !important;
+  color:#475569 !important;
+  background:rgba(2,6,23,0.045) !important;
+  border:1px solid rgba(15,23,42,0.10) !important;
+  border-radius:999px !important;
+  white-space:normal !important;
+}
+
+.qualification-info-banner,
+.job-preference-info-banner{
+  font-weight:850 !important;
+  padding:13px 15px !important;
+}
+
+.qualification-subtitle,
+.job-preference-subtitle,
+.ready-work-subtitle{
+  font-weight:760 !important;
+}
+
+@media (max-width:780px){
+  .section-head{
+    align-items:flex-start !important;
+    flex-wrap:wrap !important;
+  }
+  .section-head,
+  .section-head .left,
+  .section-head .left span,
+  .section-head .left strong,
+  .section-head .left b,
+  .section-head .left h2,
+  .section-head .left h3,
+  .section-head .left h4,
+  .ready-work-title{
+    font-size:1.30rem !important;
+    line-height:1.18 !important;
+  }
+  .section-head .left i{
+    font-size:1.18rem !important;
+  }
+  .section-head .mini,
+  .page-title .hint,
+  .qualification-info-banner,
+  .job-preference-info-banner,
+  .qualification-subtitle,
+  .job-preference-subtitle,
+  .ready-work-subtitle,
+  .doc-file,
+  .profile-sub,
+  .field-card .lbl{
+    font-size:.92rem !important;
+  }
+}
+
+@media (max-width:560px){
+  .section-head,
+  .section-head .left,
+  .section-head .left span,
+  .section-head .left strong,
+  .section-head .left b,
+  .section-head .left h2,
+  .section-head .left h3,
+  .section-head .left h4,
+  .ready-work-title{
+    font-size:1.22rem !important;
+  }
+  .section-head .mini{
+    width:100% !important;
+    justify-content:center !important;
+    text-align:center !important;
+    font-size:.88rem !important;
+    padding:8px 12px !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL READY TO WORK TITLE UNBOLD UPDATE 2026-06-23
+   Removes bold weight from the Ready to work title only.
+   No JavaScript, form, upload, save, logout, or Supabase behavior changed.
+============================================================ */
+.ready-to-work-section .ready-work-title,
+.ready-work-card .ready-work-title,
+.ready-work-title{
+  font-weight:400 !important;
+}
+
+</style>
 
 </body>
 </html>

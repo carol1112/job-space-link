@@ -5418,7 +5418,6 @@ header .auth-buttons a.login-auth:focus-visible i{
 <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
   <div class="mnav">
     <a href="home.html"><span class="mnav-left"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="index1.html" class="mobile-login-link"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
 
     <div class="mnav-group" id="mobileAboutGroup">
       <div class="mnav-row">
@@ -5443,8 +5442,10 @@ header .auth-buttons a.login-auth:focus-visible i{
 
     <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform1.html"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
+      <a href="index1.html" class="mobile-login-link"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
+
   </div>
 </div>
 
@@ -5685,6 +5686,361 @@ header .auth-buttons a.login-auth:focus-visible i{
 })();
 
 </script>
+
+
+
+<style id="final-remove-header-nav-icon-background-2026-06-12">
+/* ============================================================
+   FINAL HEADER NAV ICON BACKGROUND REMOVAL PATCH 2026-06-12
+   - Removes background color/box behind header nav-link icons.
+   - Removes nav-link hover background glow while keeping icon/text hover feedback.
+   - Does not change links, dropdown JS, mobile menu JS, login behavior, or page content.
+============================================================ */
+header nav > a,
+header nav .nav-main-link{
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  border-color:transparent !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  display:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  color:#000000 !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:5px !important;
+  transform:none !important;
+}
+
+header nav > a i,
+header nav .nav-main-link i,
+.nav-dropdown-toggle i,
+.nav-dropdown-menu a i,
+.mobile-panel .mnav a i:not(.fa-arrow-right),
+.mobile-panel .mnav-main-link i:not(.fa-arrow-right),
+.mobile-panel .mnav-toggle i:not(.mnav-caret){
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  border:none !important;
+  outline:none !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown.open .nav-main-link i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  border-color:transparent !important;
+  color:#000000 !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-toggle:hover{
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  color:#000000 !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+</style>
+
+
+<style id="final-one-black-underline-nav-hover-2026-06-12">
+/* ============================================================
+   FINAL ONE-BLACK-UNDERLINE HEADER NAV HOVER PATCH 2026-06-12
+   Applies the same single black underline hover effect to:
+   - regular desktop nav links
+   - the About dropdown header link/caret area
+   - dropdown option links
+   - mobile menu links
+   Keeps all existing links, IDs, JavaScript, dropdown behavior,
+   login behavior, page layout, and functionality unchanged.
+============================================================ */
+
+/* Desktop nav links: no hover background, no glow, one clean underline */
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  overflow:visible !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  display:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#000000 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:transform 0.18s ease !important;
+  pointer-events:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown:hover .nav-main-link,
+.nav-dropdown:focus-within .nav-main-link,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown:hover .nav-main-link::after,
+.nav-dropdown:focus-within .nav-main-link::after,
+.nav-dropdown.open .nav-main-link::after{
+  transform:scaleX(1) !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown:hover .nav-main-link i,
+.nav-dropdown:focus-within .nav-main-link i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown:hover .nav-dropdown-toggle i,
+.nav-dropdown:focus-within .nav-dropdown-toggle i,
+.nav-dropdown.open .nav-dropdown-toggle i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Keep the About dropdown header vertically aligned while using the same underline style */
+.nav-dropdown,
+.nav-dropdown-trigger{
+  align-items:center !important;
+  overflow:visible !important;
+}
+
+.nav-dropdown-toggle{
+  align-self:center !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  color:#000000 !important;
+  transform:none !important;
+}
+
+/* Dropdown menu options: same clean black underline, no background block */
+.nav-dropdown-menu{
+  z-index:99999 !important;
+}
+
+.nav-dropdown-menu a{
+  position:relative !important;
+  overflow:visible !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a::after{
+  content:"" !important;
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:6px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#000000 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:transform 0.18s ease !important;
+  pointer-events:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after{
+  transform:scaleX(1) !important;
+}
+
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Mobile menu: same underline-only hover effect, no background block */
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  position:relative !important;
+  overflow:visible !important;
+  text-decoration:none !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:14px !important;
+  right:14px !important;
+  bottom:8px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#000000 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:transform 0.18s ease !important;
+  pointer-events:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a:hover::after,
+.mobile-panel .mnav a:focus-visible::after,
+.mobile-panel .mnav-main-link:hover::after,
+.mobile-panel .mnav-main-link:focus-visible::after{
+  transform:scaleX(1) !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left i,
+.mobile-panel .mnav a:focus-visible .mnav-left i,
+.mobile-panel .mnav-main-link:hover .mnav-left i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left i,
+.mobile-panel .mnav-toggle:hover i,
+.mobile-panel .mnav-toggle:focus-visible i{
+  color:#000000 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+</style>
+
 
 </body>
 </html>

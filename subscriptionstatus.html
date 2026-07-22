@@ -2499,7 +2499,7 @@ header .auth-buttons .auth-text{
 /* ============================================================
    FINAL ACCOUNT DROPDOWN STATE PATCH
    Logged out: employer icon opens Job Space Link logo + No login account.
-   Logged in: company logo opens company details; Posted Jobs goes to dashboard; no logout item is shown.
+   Logged in: company logo opens company details; the account menu excludes Posted Jobs.
 ============================================================ */
 .account-trigger .account-text,
 .account-trigger .account-caret{
@@ -2565,7 +2565,7 @@ header .auth-buttons .auth-text{
 /* ============================================================
    COMPACT LOGGED-OUT ACCOUNT DROPDOWN OVERRIDE
    Desktop logged-out dropdown uses a smaller dark panel:
-   compact logo/name card, boxed Subscribe/Posted Jobs,
+   compact logo/name card, boxed Subscribe,
    and green Employer Login action.
 ============================================================ */
 .account-dropdown:not(.is-logged-in){
@@ -4220,6 +4220,52 @@ header nav .nav-main-link:focus-visible > i,
   }
 }
 
+
+/* ============================================================
+   FINAL SUBSCRIPTION TEXT COLOR + SECTION HEADING PATCH
+   Dark navy provides strong contrast against the white page/cards.
+============================================================ */
+.subscription-section-heading{
+  margin-top:14px !important;
+  margin-bottom:0 !important;
+  color:#001f5b !important;
+  font-weight:800 !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+.account-subscription-heading{
+  margin-top:0 !important;
+  margin-bottom:10px !important;
+}
+
+.subscription-section-heading i,
+.subscription-section-heading i::before{
+  color:#001f5b !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+#msg .subscription-success-message,
+#msg .subscription-success-message i,
+#msg .subscription-success-message i::before{
+  color:#001f5b !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+</style>
+
+<style id="final-employer-logo-visibility-fix">
+  .account-dropdown.is-logged-in #accountTriggerLogo:not([hidden]),
+  .account-dropdown.is-logged-in #accountCardLogo,
+  .account-mobile-group.is-logged-in #mobileAccountTriggerLogo:not([hidden]),
+  .account-mobile-group.is-logged-in #mobileAccountCardLogo{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+  }
 </style>
 </head>
 
@@ -4262,6 +4308,12 @@ header nav .nav-main-link:focus-visible > i,
   </nav>
 
   <div class="auth-buttons">
+    <button type="button" class="subscription-header-action" id="subscriptionAppliedJobsButton" aria-label="View applied positions" title="View applied positions">
+      <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="subscription-header-action" id="subscriptionFavoriteJobsButton" aria-label="View favorite positions" title="View favorite positions">
+      <i class="fa-regular fa-heart" aria-hidden="true"></i>
+    </button>
     <div class="account-dropdown" id="accountDropdown">
       <button
         type="button"
@@ -4279,7 +4331,8 @@ header nav .nav-main-link:focus-visible > i,
           hidden
         />
         <i class="fa-solid fa-building-user account-icon" id="accountTriggerIcon"></i>
-        <span class="account-text">Login</span>
+        <span class="account-text" id="accountTriggerText">Login</span>
+        <span class="account-caret" id="accountTriggerCaret" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
       </button>
 
       <div class="account-menu" id="accountMenu">
@@ -4309,16 +4362,16 @@ header nav .nav-main-link:focus-visible > i,
           </div>
         </div>
 
-        <a href="companyprofile.html" id="accountCompanyProfileLink" class="account-company-profile-link">
-          <span class="account-menu-left"><i class="fa-solid fa-id-card"></i><span>Company Profile</span></span>
+        <a href="employerprofile.html" id="accountCompanyProfileLink" class="account-company-profile-link">
+          <span class="account-menu-left"><i class="fa-regular fa-address-card"></i><span>View company profile</span></span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="postedjobs.html" id="accountPostedJobsLink" class="account-posted-jobs-link account-logged-in-only">
+          <span class="account-menu-left"><i class="fa-solid fa-list-check"></i><span>Posted Jobs</span></span>
           <i class="fa-solid fa-arrow-right"></i>
         </a>
         <a href="subscribe.html">
           <span class="account-menu-left"><i class="fa-solid fa-credit-card"></i><span>Subscribe</span></span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </a>
-        <a href="postjob1.html" id="accountPostedJobsLink">
-          <span class="account-menu-left"><i class="fa-solid fa-briefcase"></i><span>Posted Jobs</span></span>
           <i class="fa-solid fa-arrow-right"></i>
         </a>
         <button type="button" class="account-menu-item account-logged-in-only account-logout-action" id="accountLogoutBtn">
@@ -4422,9 +4475,9 @@ header nav .nav-main-link:focus-visible > i,
           </div>
         </div>
 
-        <a href="companyprofile.html" id="mobileAccountCompanyProfileLink" class="mobile-account-company-profile-link"><span class="mnav-left"><i class="fa-solid fa-id-card"></i><span class="nav-text">Company Profile</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="employerprofile.html" id="mobileAccountCompanyProfileLink" class="mobile-account-company-profile-link"><span class="mnav-left"><i class="fa-regular fa-address-card"></i><span class="nav-text">View company profile</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="postedjobs.html" id="mobileAccountPostedJobsLink" class="mobile-account-posted-jobs-link mobile-account-logged-in-only"><span class="mnav-left"><i class="fa-solid fa-list-check"></i><span class="nav-text">Posted Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
         <a href="subscribe.html"><span class="mnav-left"><i class="fa-solid fa-credit-card"></i><span class="nav-text">Subscribe</span></span><i class="fa-solid fa-arrow-right"></i></a>
-        <a href="postjob1.html" id="mobileAccountPostedJobsLink"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Posted Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
         <button type="button" class="mobile-account-logged-in-only mobile-logout-btn" id="mobileAccountLogoutBtn"><span class="mnav-left"><i class="fa-solid fa-right-from-bracket"></i><span class="nav-text">Log out</span></span><i class="fa-solid fa-arrow-right"></i></button>
         <a href="loginemployer.html" class="mobile-account-logged-out-only mobile-account-login-action"><span class="mnav-left"><i class="fa-solid fa-building-user"></i><span class="nav-text">Employer Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
       </div>
@@ -4450,7 +4503,7 @@ header nav .nav-main-link:focus-visible > i,
       <div class="row"><span>Amount</span><span id="vAmount">—</span></div>
       <div class="row"><span>Days Remaining</span><span id="vRemain">—</span></div>
 
-      <div style="margin-top:14px;font-weight:800;color:#cbd5f5;">
+      <div class="subscription-section-heading payment-history-heading">
         <i class="fa-regular fa-clock"></i> Payment History
       </div>
 
@@ -4471,7 +4524,7 @@ header nav .nav-main-link:focus-visible > i,
     </div>
 
     <div class="card">
-      <div style="font-weight:800;color:#cbd5f5;margin-bottom:10px;">
+      <div class="subscription-section-heading account-subscription-heading">
         <i class="fa-solid fa-magnifying-glass"></i> Account Subscription
       </div>
 
@@ -4676,10 +4729,13 @@ const vAmount      = document.getElementById("vAmount");
 const vRemain      = document.getElementById("vRemain");
 
 const PAYMENT_TABLE = "employer_payment_transactions";
+const EMPLOYER_PROFILE_TABLES = ["employer_company_profiles", "employers"];
+const EMPLOYER_LOGO_BUCKETS = ["job_pdfs", "employer_profile_files"];
 let supabaseClient = null;
 let realtimeChannel = null;
 let refreshTimer = null;
 let currentEmployerEmail = "";
+let currentEmployerUserId = "";
 let currentCompanyName = "";
 let isLoadingSubscription = false;
 
@@ -4801,7 +4857,7 @@ function showErr(t){
 }
 
 function showOk(t){
-  msg.innerHTML = `<span style="color:#bbf7d0"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(t)}</span>`;
+  msg.innerHTML = `<span class="subscription-success-message"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(t)}</span>`;
 }
 
 function getRecordField(obj, names, fallback = ""){
@@ -5050,6 +5106,104 @@ function recursivePick(source, names, depth = 0){
   return "";
 }
 
+const EMPLOYER_LOGO_FIELD_NAMES = [
+  "company_logo_path",
+  "companyLogoPath",
+  "logo_path",
+  "logoPath",
+  "profile_logo_path",
+  "profileLogoPath",
+  "company_logo_storage_path",
+  "companyLogoStoragePath",
+  "company_logo_url",
+  "company_logo",
+  "companyLogoUrl",
+  "companyLogo",
+  "logo_url",
+  "logoUrl",
+  "logo",
+  "business_logo",
+  "business_logo_url",
+  "employer_logo",
+  "employer_logo_url",
+  "company_profile_url",
+  "company_profile_urls",
+  "profile_picture",
+  "profile_picture_url",
+  "avatar_url",
+  "avatarUrl",
+  "image_url",
+  "imageUrl",
+  "photo_url",
+  "photoUrl"
+];
+
+const LOGO_REFERENCE_VALUE_FIELDS = [
+  "path",
+  "url",
+  "publicUrl",
+  "public_url",
+  "signedUrl",
+  "signed_url"
+];
+
+function extractLogoReference(value, depth = 0){
+  if(value == null || depth > 6) return "";
+
+  if(typeof value === "string"){
+    const cleanValue = value.trim();
+    if(!cleanValue) return "";
+
+    const parsed = safeJsonParse(cleanValue);
+    if(parsed){
+      const nested = extractLogoReference(parsed, depth + 1);
+      if(nested) return nested;
+    }
+
+    return cleanValue;
+  }
+
+  if(Array.isArray(value)){
+    for(const item of value){
+      const found = extractLogoReference(item, depth + 1);
+      if(found) return found;
+    }
+    return "";
+  }
+
+  if(typeof value === "object"){
+    const direct = recursivePick(
+      value,
+      EMPLOYER_LOGO_FIELD_NAMES.concat(LOGO_REFERENCE_VALUE_FIELDS),
+      depth + 1
+    );
+    if(direct && direct !== value){
+      const found = extractLogoReference(direct, depth + 1);
+      if(found) return found;
+    }
+
+    for(const nestedValue of Object.values(value)){
+      if(!nestedValue || typeof nestedValue !== "object") continue;
+      const found = extractLogoReference(nestedValue, depth + 1);
+      if(found) return found;
+    }
+  }
+
+  return "";
+}
+
+function getRecordLogoReference(record){
+  if(!record || typeof record !== "object") return "";
+
+  for(const fieldName of EMPLOYER_LOGO_FIELD_NAMES){
+    if(!Object.prototype.hasOwnProperty.call(record, fieldName)) continue;
+    const found = extractLogoReference(record[fieldName]);
+    if(found) return found;
+  }
+
+  return "";
+}
+
 function readStorageItem(storage, key){
   try{
     if(!storage) return "";
@@ -5101,6 +5255,12 @@ function getStoredEmployerIdentity(){
     "employerLogo",
     "companyLogo",
     "company_logo",
+    "company_logo_path",
+    "companyLogoPath",
+    "logo_path",
+    "logoPath",
+    "profile_logo_path",
+    "profileLogoPath",
     "loggedInCompanyLogo",
     "jobspacelinkEmployerLogo",
     "company_logo_url",
@@ -5248,66 +5408,120 @@ function getPaymentRecordEmail(record){
 }
 
 function getPaymentRecordLogoUrl(record){
+  return getRecordLogoReference(record);
+}
+
+function getEmployerRecordCompany(record){
   return String(getRecordField(record, [
-    "company_logo_url",
-    "company_logo",
-    "companyLogoUrl",
-    "companyLogo",
-    "logo_url",
-    "logoUrl",
-    "logo",
-    "business_logo",
-    "business_logo_url",
-    "employer_logo",
-    "employer_logo_url",
-    "company_profile_url",
-    "company_profile_urls",
-    "profile_picture",
-    "profile_picture_url",
-    "avatar_url",
-    "avatarUrl",
-    "image_url",
-    "imageUrl",
-    "photo_url",
-    "photoUrl"
+    "company_name",
+    "companyName",
+    "company",
+    "business_name",
+    "businessName",
+    "organization_name",
+    "organizationName",
+    "employer_company_name",
+    "employerCompanyName",
+    "name"
   ], "") || "").trim();
 }
 
-async function getLoggedInSessionEmail(){
-  if(!supabaseClient) return "";
+function getEmployerRecordEmail(record){
+  return String(getRecordField(record, [
+    "employer_email",
+    "auth_email",
+    "login_email",
+    "company_email",
+    "email",
+    "contact_email"
+  ], "") || "").trim().toLowerCase();
+}
+
+async function getLoggedInSessionIdentity(){
+  const emptyIdentity = { email:"", userId:"", metadata:{} };
+  if(!supabaseClient) return emptyIdentity;
 
   const { data, error } = await supabaseClient.auth.getSession();
   if(error){
     console.error("Session fetch error:", error);
-    return "";
+    return emptyIdentity;
   }
 
-  return String(data?.session?.user?.email || "").trim().toLowerCase();
+  const user = data?.session?.user || null;
+  return {
+    email:String(user?.email || "").trim().toLowerCase(),
+    userId:String(user?.id || "").trim(),
+    metadata:user?.user_metadata && typeof user.user_metadata === "object"
+      ? user.user_metadata
+      : {}
+  };
 }
 
-async function getEmployerRecordByEmail(email){
-  if(!supabaseClient) throw new Error("Supabase client is not available.");
+async function getLoggedInSessionEmail(){
+  return (await getLoggedInSessionIdentity()).email;
+}
 
-  const emailColumns = ["email", "company_email", "contact_email", "employer_email"];
+async function queryEmployerProfileTable(tableName, userId, email){
+  if(!supabaseClient || !tableName) return null;
 
-  for(const column of emailColumns){
-    const { data, error } = await supabaseClient
-      .from("employers")
-      .select("*")
-      .eq(column, email)
-      .limit(1);
+  const lookups = [];
+  const cleanUserId = String(userId || "").trim();
+  const cleanEmail = String(email || "").trim().toLowerCase();
 
-    if(error){
-      console.warn(`Employers lookup failed on column "${column}":`, error.message || error);
-      continue;
-    }
+  if(cleanUserId){
+    lookups.push(["user_id", cleanUserId, "eq"]);
+    lookups.push(["auth_user_id", cleanUserId, "eq"]);
+  }
 
-    if(Array.isArray(data) && data.length){
-      return data[0];
+  if(cleanEmail){
+    lookups.push(["employer_email", cleanEmail, "ilike"]);
+    lookups.push(["email", cleanEmail, "ilike"]);
+    lookups.push(["company_email", cleanEmail, "ilike"]);
+    lookups.push(["contact_email", cleanEmail, "ilike"]);
+  }
+
+  for(const [column, value, operator] of lookups){
+    try{
+      let query = supabaseClient
+        .from(tableName)
+        .select("*")
+        .limit(1);
+
+      query = operator === "ilike"
+        ? query.ilike(column, value)
+        : query.eq(column, value);
+
+      const { data, error } = await query;
+
+      if(error){
+        console.debug(`Employer profile lookup skipped ${tableName}.${column}:`, error.message || error);
+        continue;
+      }
+
+      if(Array.isArray(data) && data.length){
+        return data[0];
+      }
+    }catch(error){
+      console.debug(`Employer profile lookup failed for ${tableName}.${column}:`, error);
     }
   }
 
   return null;
+}
+
+async function getEmployerRecordByIdentity(userId, email){
+  if(!supabaseClient) throw new Error("Supabase client is not available.");
+
+  for(const tableName of EMPLOYER_PROFILE_TABLES){
+    const record = await queryEmployerProfileTable(tableName, userId, email);
+    if(record) return record;
+  }
+
+  return null;
+}
+
+async function getEmployerRecordByEmail(email){
+  return getEmployerRecordByIdentity("", email);
 }
 
 async function queryPaymentRowsByEmail(email){
@@ -5695,28 +5909,50 @@ async function loadLoggedInEmployerSubscription(options = {}){
     }
 
     const storedIdentity = getStoredEmployerIdentity();
-    const sessionEmail = await getLoggedInSessionEmail();
+    const sessionIdentity = await getLoggedInSessionIdentity();
+    const metadata = sessionIdentity.metadata || {};
 
-    let employerEmail = String(sessionEmail || storedIdentity.email || "").trim().toLowerCase();
-    let companyName = String(storedIdentity.companyName || "").trim();
-    let logoUrl = String(storedIdentity.logoUrl || "").trim();
+    let employerEmail = String(sessionIdentity.email || storedIdentity.email || "").trim().toLowerCase();
+    let companyName = String(
+      storedIdentity.companyName ||
+      getRecordField(metadata, ["company_name", "companyName", "company", "business_name", "organization_name"], "") ||
+      ""
+    ).trim();
 
-    if(!employerEmail && !companyName){
+    const storedLogoReference = String(
+      storedIdentity.logoUrl ||
+      getRecordLogoReference(metadata) ||
+      ""
+    ).trim();
+
+    currentEmployerUserId = String(sessionIdentity.userId || "").trim();
+
+    if(!employerEmail && !companyName && !currentEmployerUserId){
       setLoggedOutSubscriptionState("No employer account is logged in. Please use Employer Login first.");
       return;
     }
 
+    let employerRecord = await getEmployerRecordByIdentity(
+      currentEmployerUserId,
+      employerEmail
+    );
+
+    if(employerRecord){
+      companyName = String(getEmployerRecordCompany(employerRecord) || companyName || "").trim();
+      employerEmail = String(getEmployerRecordEmail(employerRecord) || employerEmail || "").trim().toLowerCase();
+    }
+
     let transactions = await getPaymentTransactions(companyName, employerEmail);
     let currentRecord = selectCurrentSubscription(transactions);
+    let paymentLogoReference = "";
     let dailyDeductionResult = { deducted:false, reason:"not_checked" };
 
-    /* The logged-in dropdown and status card now take the account identity from
-       employer_payment_transactions first. Stored/session values are only fallback
-       when a matching payment row has not been created yet. */
+    /* Payment data remains authoritative for subscription identity, while the
+       employer profile supplies the current company-logo storage path. */
     if(currentRecord){
       companyName = String(getPaymentRecordCompany(currentRecord) || companyName || "").trim();
       employerEmail = String(getPaymentRecordEmail(currentRecord) || employerEmail || "").trim().toLowerCase();
-      logoUrl = String(getPaymentRecordLogoUrl(currentRecord) || logoUrl || "").trim();
+      paymentLogoReference = String(getPaymentRecordLogoUrl(currentRecord) || "").trim();
     }
 
     /* Deduct only 1 remaining-day credit for a logged-in employer for today.
@@ -5730,8 +5966,50 @@ async function loadLoggedInEmployerSubscription(options = {}){
       if(currentRecord){
         companyName = String(getPaymentRecordCompany(currentRecord) || companyName || "").trim();
         employerEmail = String(getPaymentRecordEmail(currentRecord) || employerEmail || "").trim().toLowerCase();
-        logoUrl = String(getPaymentRecordLogoUrl(currentRecord) || logoUrl || "").trim();
+        paymentLogoReference = String(getPaymentRecordLogoUrl(currentRecord) || paymentLogoReference || "").trim();
       }
+    }
+
+    /* Recheck the profile after payment data resolves the canonical email. */
+    if(!employerRecord || !getEmployerLogoUrl(employerRecord)){
+      const refreshedEmployerRecord = await getEmployerRecordByIdentity(
+        currentEmployerUserId,
+        employerEmail
+      );
+      if(refreshedEmployerRecord) employerRecord = refreshedEmployerRecord;
+    }
+
+    if(employerRecord){
+      companyName = String(companyName || getEmployerRecordCompany(employerRecord) || "").trim();
+      employerEmail = String(employerEmail || getEmployerRecordEmail(employerRecord) || "").trim().toLowerCase();
+    }
+
+    const employerProfileLogoReference = getEmployerLogoUrl(employerRecord);
+
+    /* Primary logo source required by the logged-in employer account:
+         job_pdfs/<company-name-folder>/<latest-logo-image>
+       Legacy database/session references are used only when that exact
+       Storage folder does not contain a usable image. */
+    let logoUrl = String(
+      await fetchLatestCompanyLogoFromJobPdfs(
+        companyName,
+        { force:!!options.forceLogoRefresh }
+      ) || ""
+    ).trim();
+
+    if(!logoUrl){
+      const [employerProfileLogoUrl, paymentLogoUrl, storedLogoUrl] = await Promise.all([
+        resolveLogoReferenceToDisplayUrl(employerProfileLogoReference, companyName),
+        resolveLogoReferenceToDisplayUrl(paymentLogoReference, companyName),
+        resolveLogoReferenceToDisplayUrl(storedLogoReference, companyName)
+      ]);
+
+      logoUrl = String(
+        employerProfileLogoUrl ||
+        paymentLogoUrl ||
+        storedLogoUrl ||
+        ""
+      ).trim();
     }
 
     currentCompanyName = companyName;
@@ -5810,44 +6088,522 @@ function setupFallbackRefresh(){
 
 
 function getEmployerLogoUrl(employerRow){
-  const logoValue = getRecordField(employerRow, [
-    "company_logo_url",
-    "company_logo",
-    "companyLogoUrl",
-    "companyLogo",
-    "logo_url",
-    "logoUrl",
-    "logo",
-    "business_logo",
-    "business_logo_url",
-    "employer_logo",
-    "employer_logo_url",
-    "company_profile_url",
-    "company_profile_urls",
-    "profile_picture",
-    "profile_picture_url",
-    "avatar_url",
-    "avatarUrl",
-    "image_url",
-    "imageUrl",
-    "photo_url",
-    "photoUrl"
-  ], "");
+  return getRecordLogoReference(employerRow);
+}
 
-  return String(logoValue || "").trim();
+
+/* ============================================================
+   LATEST COMPANY LOGO FROM SUPABASE STORAGE
+   Bucket: job_pdfs
+   Folder: company name (for example Collision_City)
+============================================================ */
+const COMPANY_LOGO_STORAGE_BUCKET = "job_pdfs";
+const COMPANY_LOGO_CACHE_TTL_MS = 30000;
+const companyStorageLogoCache = new Map();
+
+function normalizeCompanyStorageKey(value){
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function trimStoragePathPart(value){
+  return String(value || "")
+    .trim()
+    .replace(/^\/+|\/+$/g, "");
+}
+
+function makeCompanyStorageFolderName(value, separator){
+  return trimStoragePathPart(value)
+    .replace(/[\/\\]+/g, " ")
+    .replace(/[^a-zA-Z0-9._-]+/g, separator)
+    .replace(new RegExp("\\" + separator + "{2,}", "g"), separator)
+    .replace(new RegExp("^\\" + separator + "+|\\" + separator + "+$", "g"), "");
+}
+
+function uniqueStorageValues(values){
+  const seen = new Set();
+  const output = [];
+
+  for(const value of values){
+    const cleanValue = trimStoragePathPart(value);
+    if(!cleanValue) continue;
+
+    const key = cleanValue.toLowerCase();
+    if(seen.has(key)) continue;
+
+    seen.add(key);
+    output.push(cleanValue);
+  }
+
+  return output;
+}
+
+function getCompanyStorageFolderCandidates(companyName){
+  const raw = trimStoragePathPart(companyName);
+  const formatted = trimStoragePathPart(formatCompanyName(raw));
+
+  /* Employer Profile uploads logos to:
+       job_pdfs/<Company_Name_Folder>/<logo-file>
+     Put that exact underscore folder convention first, then keep the legacy
+     space, hyphen, lowercase, and discovered-root variants as fallbacks. */
+  const canonicalCompanyFolder =
+    makeCompanyStorageFolderName(formatted || raw, "_") ||
+    makeCompanyStorageFolderName(raw, "_");
+
+  return uniqueStorageValues([
+    canonicalCompanyFolder,
+    makeCompanyStorageFolderName(raw, "_"),
+    makeCompanyStorageFolderName(formatted, "_"),
+    raw,
+    formatted,
+    makeCompanyStorageFolderName(raw, "-"),
+    makeCompanyStorageFolderName(formatted, "-"),
+    canonicalCompanyFolder.toLowerCase(),
+    makeCompanyStorageFolderName(raw, "_").toLowerCase(),
+    makeCompanyStorageFolderName(formatted, "_").toLowerCase(),
+    makeCompanyStorageFolderName(raw, "-").toLowerCase(),
+    makeCompanyStorageFolderName(formatted, "-").toLowerCase()
+  ]);
+}
+
+function isStorageFolderEntry(item){
+  if(!item || !item.name) return false;
+
+  return (
+    item.id == null &&
+    item.created_at == null &&
+    item.updated_at == null &&
+    item.metadata == null
+  );
+}
+
+function isCompanyLogoImageFile(item){
+  if(!item || !item.name || isStorageFolderEntry(item)) return false;
+
+  return /\.(png|jpe?g|webp|gif|svg|avif|bmp)$/i.test(String(item.name));
+}
+
+function companyLogoNamePriority(item){
+  const name = String(item?.name || "").toLowerCase();
+
+  if(/(^|[^a-z])(logo|company[_ -]?logo|business[_ -]?logo|employer[_ -]?logo)([^a-z]|$)/i.test(name)){
+    return 3;
+  }
+
+  if(/brand|profile|avatar|company|business|employer/i.test(name)){
+    return 2;
+  }
+
+  return 1;
+}
+
+function getStorageObjectTimestamp(item){
+  const rawValue =
+    item?.updated_at ||
+    item?.created_at ||
+    item?.last_accessed_at ||
+    item?.metadata?.lastModified ||
+    item?.metadata?.last_modified ||
+    "";
+
+  const parsed = Date.parse(rawValue);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+async function listStorageFolderPage(bucketApi, folderPath, offset){
+  const result = await bucketApi.list(folderPath, {
+    limit:100,
+    offset:Number(offset || 0),
+    sortBy:{ column:"created_at", order:"desc" }
+  });
+
+  if(result?.error) throw result.error;
+  return Array.isArray(result?.data) ? result.data : [];
+}
+
+async function listCompanyStorageObjects(bucketApi, companyFolder){
+  const queue = [{ path:trimStoragePathPart(companyFolder), depth:0 }];
+  const visited = new Set();
+  const objects = [];
+  const maximumDepth = 3;
+
+  while(queue.length){
+    const current = queue.shift();
+    if(!current?.path || visited.has(current.path)) continue;
+
+    visited.add(current.path);
+
+    let offset = 0;
+    while(true){
+      const entries = await listStorageFolderPage(bucketApi, current.path, offset);
+
+      for(const entry of entries){
+        const entryName = trimStoragePathPart(entry?.name);
+        if(!entryName) continue;
+
+        const fullPath = current.path + "/" + entryName;
+
+        if(isStorageFolderEntry(entry)){
+          if(current.depth < maximumDepth){
+            queue.push({ path:fullPath, depth:current.depth + 1 });
+          }
+          continue;
+        }
+
+        objects.push({
+          ...entry,
+          fullPath,
+          companyFolder:trimStoragePathPart(companyFolder)
+        });
+      }
+
+      if(entries.length < 100) break;
+
+      offset += entries.length;
+      if(offset >= 2000) break;
+    }
+  }
+
+  return objects;
+}
+
+async function findMatchingCompanyFolderFromBucketRoot(bucketApi, companyName){
+  const targetKey = normalizeCompanyStorageKey(companyName);
+  if(!targetKey) return "";
+
+  let offset = 0;
+
+  try{
+    while(offset < 3000){
+      const entries = await bucketApi.list("", {
+        limit:100,
+        offset,
+        sortBy:{ column:"name", order:"asc" }
+      });
+
+      if(entries?.error) return "";
+
+      const rows = Array.isArray(entries?.data) ? entries.data : [];
+
+      for(const entry of rows){
+        if(!isStorageFolderEntry(entry)) continue;
+
+        if(normalizeCompanyStorageKey(entry.name) === targetKey){
+          return trimStoragePathPart(entry.name);
+        }
+      }
+
+      if(rows.length < 100) break;
+      offset += rows.length;
+    }
+  }catch(error){
+    console.warn("Unable to inspect job_pdfs root folders:", error);
+  }
+
+  return "";
+}
+
+async function createStorageLogoDisplayUrl(bucketName, objectPath, version = 0){
+  const cleanBucket = trimStoragePathPart(bucketName);
+  const cleanPath = trimStoragePathPart(objectPath);
+
+  if(
+    !cleanBucket ||
+    !cleanPath ||
+    !supabaseClient?.storage ||
+    typeof supabaseClient.storage.from !== "function"
+  ){
+    return "";
+  }
+
+  const bucketApi = supabaseClient.storage.from(cleanBucket);
+  const preferPublic = cleanBucket === COMPANY_LOGO_STORAGE_BUCKET;
+
+  const createPublicUrl = () => {
+    try{
+      const publicResult = bucketApi.getPublicUrl(cleanPath);
+      const publicUrl =
+        publicResult?.data?.publicUrl ||
+        publicResult?.data?.publicURL ||
+        publicResult?.publicUrl ||
+        publicResult?.publicURL ||
+        "";
+
+      if(!publicUrl) return "";
+      const separator = publicUrl.includes("?") ? "&" : "?";
+      return version ? `${publicUrl}${separator}v=${version}` : publicUrl;
+    }catch(error){
+      console.warn(`Unable to create public company-logo URL for ${cleanBucket}/${cleanPath}:`, error);
+      return "";
+    }
+  };
+
+  const createSignedUrl = async () => {
+    try{
+      const signedResult = await bucketApi.createSignedUrl(cleanPath, 21600);
+      return String(
+        signedResult?.data?.signedUrl ||
+        signedResult?.data?.signedURL ||
+        ""
+      ).trim();
+    }catch(error){
+      console.warn(`Unable to create signed company-logo URL for ${cleanBucket}/${cleanPath}:`, error);
+      return "";
+    }
+  };
+
+  if(preferPublic){
+    /* createSignedUrl verifies the object and works for protected buckets.
+       If Storage SELECT/signing is unavailable but job_pdfs is public,
+       getPublicUrl remains the fallback. */
+    return await createSignedUrl() || createPublicUrl();
+  }
+
+  return await createSignedUrl() || createPublicUrl();
+}
+
+async function createCompanyLogoDisplayUrl(bucketApi, objectRow){
+  const objectPath = trimStoragePathPart(objectRow?.fullPath);
+  if(!objectPath) return "";
+
+  const bucketName = String(bucketApi?.bucketId || COMPANY_LOGO_STORAGE_BUCKET).trim();
+  return createStorageLogoDisplayUrl(
+    bucketName,
+    objectPath,
+    getStorageObjectTimestamp(objectRow)
+  );
+}
+
+function isDirectLogoUrl(value){
+  return /^(https?:|data:image\/|blob:)/i.test(String(value || "").trim());
+}
+
+function isLocalLogoAsset(value){
+  const cleanValue = String(value || "").trim();
+  return /^\.?\/?[^/?#]+\.(png|jpe?g|webp|gif|svg|avif|bmp)([?#].*)?$/i.test(cleanValue);
+}
+
+async function resolveLogoReferenceToDisplayUrl(rawValue, companyName){
+  const extracted = extractLogoReference(rawValue);
+  if(!extracted) return "";
+
+  if(isDirectLogoUrl(extracted) || isLocalLogoAsset(extracted)){
+    return extracted;
+  }
+
+  let cleanReference = String(extracted)
+    .trim()
+    .replace(/^['"]|['"]$/g, "")
+    .replace(/^\/+/, "");
+
+  try{ cleanReference = decodeURIComponent(cleanReference); }catch(_err){}
+
+  if(isDirectLogoUrl(cleanReference) || isLocalLogoAsset(cleanReference)){
+    return cleanReference;
+  }
+
+  const exactReferences = [];
+  const lowerReference = cleanReference.toLowerCase();
+
+  for(const bucketName of EMPLOYER_LOGO_BUCKETS){
+    const prefix = bucketName.toLowerCase() + "/";
+    if(lowerReference.startsWith(prefix)){
+      exactReferences.push({
+        bucket:bucketName,
+        path:cleanReference.slice(prefix.length)
+      });
+    }
+
+    const publicMarker = `/storage/v1/object/public/${bucketName.toLowerCase()}/`;
+    const signedMarker = `/storage/v1/object/sign/${bucketName.toLowerCase()}/`;
+    const lowerValue = lowerReference;
+    const publicIndex = lowerValue.indexOf(publicMarker);
+    const signedIndex = lowerValue.indexOf(signedMarker);
+
+    if(publicIndex >= 0){
+      exactReferences.push({
+        bucket:bucketName,
+        path:cleanReference.slice(publicIndex + publicMarker.length)
+      });
+    }else if(signedIndex >= 0){
+      exactReferences.push({
+        bucket:bucketName,
+        path:cleanReference.slice(signedIndex + signedMarker.length).split("?")[0]
+      });
+    }
+  }
+
+  const looksLegacyProfilePath =
+    /(^|\/)profile\//i.test(cleanReference) ||
+    /^[0-9a-f]{8}-[0-9a-f-]{27,}\//i.test(cleanReference);
+
+  const bucketOrder = looksLegacyProfilePath
+    ? ["employer_profile_files", "job_pdfs"]
+    : ["job_pdfs", "employer_profile_files"];
+
+  if(!exactReferences.length){
+    for(const bucketName of bucketOrder){
+      exactReferences.push({ bucket:bucketName, path:cleanReference });
+    }
+  }
+
+  if(!cleanReference.includes("/") && companyName){
+    for(const folderName of getCompanyStorageFolderCandidates(companyName)){
+      exactReferences.unshift({
+        bucket:"job_pdfs",
+        path:`${folderName}/${cleanReference}`
+      });
+    }
+  }
+
+  const seen = new Set();
+  for(const reference of exactReferences){
+    const key = `${reference.bucket}/${trimStoragePathPart(reference.path)}`.toLowerCase();
+    if(!reference.path || seen.has(key)) continue;
+    seen.add(key);
+
+    const resolved = await createStorageLogoDisplayUrl(
+      reference.bucket,
+      reference.path
+    );
+    if(resolved) return resolved;
+  }
+
+  return "";
+}
+
+async function fetchLatestCompanyLogoFromJobPdfs(companyName, options = {}){
+  const cleanCompanyName = String(companyName || "").trim();
+  if(!cleanCompanyName) return "";
+
+  if(
+    !supabaseClient ||
+    !supabaseClient.storage ||
+    typeof supabaseClient.storage.from !== "function"
+  ){
+    return "";
+  }
+
+  const cacheKey = normalizeCompanyStorageKey(cleanCompanyName);
+  const now = Date.now();
+  const cached = companyStorageLogoCache.get(cacheKey);
+
+  if(
+    !options.force &&
+    cached &&
+    now - cached.savedAt < COMPANY_LOGO_CACHE_TTL_MS
+  ){
+    return cached.url || "";
+  }
+
+  const bucketApi = supabaseClient.storage.from(COMPANY_LOGO_STORAGE_BUCKET);
+  const discoveredFolder = await findMatchingCompanyFolderFromBucketRoot(
+    bucketApi,
+    cleanCompanyName
+  );
+
+  const folderCandidates = uniqueStorageValues([
+    discoveredFolder,
+    ...getCompanyStorageFolderCandidates(cleanCompanyName)
+  ]);
+
+  let selectedLogo = null;
+
+  for(const folderName of folderCandidates){
+    try{
+      const objects = await listCompanyStorageObjects(bucketApi, folderName);
+      const imageObjects = objects.filter(isCompanyLogoImageFile);
+
+      if(!imageObjects.length) continue;
+
+      const explicitLogoObjects = imageObjects.filter(
+        item => companyLogoNamePriority(item) >= 3
+      );
+
+      const candidates = explicitLogoObjects.length
+        ? explicitLogoObjects
+        : imageObjects;
+
+      candidates.sort((first, second) => {
+        const priorityDifference =
+          companyLogoNamePriority(second) - companyLogoNamePriority(first);
+
+        if(priorityDifference) return priorityDifference;
+
+        const timestampDifference =
+          getStorageObjectTimestamp(second) -
+          getStorageObjectTimestamp(first);
+
+        if(timestampDifference) return timestampDifference;
+
+        return String(second.name || "").localeCompare(
+          String(first.name || "")
+        );
+      });
+
+      selectedLogo = candidates[0] || null;
+      if(selectedLogo) break;
+    }catch(error){
+      console.warn(
+        `Unable to read job_pdfs/${folderName} while loading the company logo:`,
+        error
+      );
+    }
+  }
+
+  let logoUrl = "";
+
+  if(selectedLogo){
+    logoUrl = await createCompanyLogoDisplayUrl(bucketApi, selectedLogo);
+
+    if(logoUrl){
+      window.__latestCompanyStorageLogo = {
+        bucket:COMPANY_LOGO_STORAGE_BUCKET,
+        folder:selectedLogo.companyFolder,
+        path:selectedLogo.fullPath,
+        name:selectedLogo.name,
+        updatedAt:
+          selectedLogo.updated_at ||
+          selectedLogo.created_at ||
+          ""
+      };
+    }
+  }
+
+  companyStorageLogoCache.set(cacheKey, {
+    url:logoUrl,
+    savedAt:now
+  });
+
+  return logoUrl;
 }
 
 function setImageOrFallback(imgEl, fallbackSrc, logoUrl){
   if(!imgEl) return;
 
   const src = String(logoUrl || "").trim() || fallbackSrc;
+
+  /* Logout cleanup sets display:none inline. Remove those inline values before
+     restoring the logged-in logo so CSS can display it on desktop and mobile. */
+  imgEl.style.removeProperty("display");
+  imgEl.style.removeProperty("visibility");
+  imgEl.style.removeProperty("opacity");
+  imgEl.removeAttribute("hidden");
+
+  imgEl.onerror = function(){
+    imgEl.onerror = null;
+    imgEl.src = fallbackSrc;
+    imgEl.hidden = false;
+    imgEl.style.removeProperty("display");
+    imgEl.style.removeProperty("visibility");
+    imgEl.style.removeProperty("opacity");
+  };
+
   imgEl.src = src;
   imgEl.hidden = false;
-  imgEl.onerror = function(){
-    if(imgEl.src.indexOf(fallbackSrc) === -1){
-      imgEl.src = fallbackSrc;
-    }
-  };
 }
 
 function setTriggerLogoState(isLoggedIn, logoUrl){
@@ -5876,14 +6632,6 @@ function setTriggerLogoState(isLoggedIn, logoUrl){
 }
 
 
-function setPostedJobsDropdownLinks(isLoggedIn){
-  const targetHref = isLoggedIn ? "employer_dashboard.html" : "postedhiring.html";
-  const desktopPostedJobs = document.getElementById("accountPostedJobsLink");
-  const mobilePostedJobs = document.getElementById("mobileAccountPostedJobsLink");
-
-  if(desktopPostedJobs) desktopPostedJobs.href = targetHref;
-  if(mobilePostedJobs) mobilePostedJobs.href = targetHref;
-}
 
 function updateAccountCardDetails(companyName, employerEmail, logoUrl){
   const displayCompany = formatCompanyName(companyName || "Company");
@@ -5912,7 +6660,6 @@ function updateHeaderLoggedOutAccount(){
   if(accountDropdown) accountDropdown.classList.remove("is-logged-in");
   if(mobileGroup) mobileGroup.classList.remove("is-logged-in");
   setTriggerLogoState(false, "");
-  setPostedJobsDropdownLinks(false);
 }
 
 function updateHeaderLoggedInAccount(companyName, employerEmail, companyLogoUrl){
@@ -5924,7 +6671,6 @@ function updateHeaderLoggedInAccount(companyName, employerEmail, companyLogoUrl)
 
   updateAccountCardDetails(companyName, employerEmail, companyLogoUrl);
   setTriggerLogoState(true, companyLogoUrl);
-  setPostedJobsDropdownLinks(true);
 }
 
 function setLoggedOutSubscriptionState(message){
@@ -5938,6 +6684,7 @@ function setLoggedOutSubscriptionState(message){
 
   currentCompanyName = "";
   currentEmployerEmail = "";
+  currentEmployerUserId = "";
 
   updateHeaderLoggedOutAccount();
 
@@ -5955,7 +6702,7 @@ function setLoggedOutSubscriptionState(message){
   emailInput.value = "";
   historyBody.innerHTML = '<tr><td colspan="5">No data. Please log in to view subscription history.</td></tr>';
 
-  msg.innerHTML = `<span style="color:#facc15"><i class="fa-solid fa-circle-info"></i> ${escapeHtml(message || "No employer account is logged in. Use the account dropdown to subscribe, view posted jobs, or log in as an employer.")}</span>`;
+  msg.innerHTML = `<span style="color:#facc15"><i class="fa-solid fa-circle-info"></i> ${escapeHtml(message || "No employer account is logged in. Use the account dropdown to subscribe or log in as an employer.")}</span>`;
 }
 
 
@@ -6001,7 +6748,7 @@ document.addEventListener("DOMContentLoaded", async () => {
    - Shows LOGGED IN ACCOUNT above company name.
    - Uses the attached dark rounded account card style.
    - Adds Company Profile before Subscribe.
-   - Adds gray Log out after Posted Jobs.
+   - Adds gray Log out after Subscribe.
    - Keeps logged-out dropdown unchanged.
 ============================================================ -->
 <style id="final-markup-logged-in-account-dropdown-style">
@@ -6363,32 +7110,38 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function ensureLogoutButtons(){
-    var posted = byId("accountPostedJobsLink");
+    var desktopMenu = byId("accountMenu");
     var login = document.querySelector("#accountMenu .account-login-action");
     var logout = byId("accountLogoutBtn");
-    if (posted && !logout){
+
+    if (desktopMenu && !logout){
       logout = document.createElement("button");
       logout.type = "button";
       logout.className = "account-menu-item account-logged-in-only account-logout-action";
       logout.id = "accountLogoutBtn";
       logout.innerHTML = '<span class="account-menu-left"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></span><i class="fa-solid fa-arrow-right"></i>';
-      posted.parentNode.insertBefore(logout, login || posted.nextSibling);
-    }else if (posted && logout && logout.previousElementSibling !== posted){
-      posted.parentNode.insertBefore(logout, posted.nextSibling);
+    }
+    if (desktopMenu && logout && logout.parentNode !== desktopMenu){
+      desktopMenu.insertBefore(logout, login || null);
+    }else if (desktopMenu && logout && login && logout.nextElementSibling !== login){
+      desktopMenu.insertBefore(logout, login);
     }
 
-    var mobilePosted = byId("mobileAccountPostedJobsLink");
+    var mobileMenu = byId("mobileAccountMenu");
     var mobileLogin = document.querySelector("#mobileAccountMenu .mobile-account-login-action");
     var mobileLogout = byId("mobileAccountLogoutBtn");
-    if (mobilePosted && !mobileLogout){
+
+    if (mobileMenu && !mobileLogout){
       mobileLogout = document.createElement("button");
       mobileLogout.type = "button";
       mobileLogout.className = "mobile-account-logged-in-only mobile-logout-btn";
       mobileLogout.id = "mobileAccountLogoutBtn";
       mobileLogout.innerHTML = '<span class="mnav-left"><i class="fa-solid fa-right-from-bracket"></i><span class="nav-text">Log out</span></span><i class="fa-solid fa-arrow-right"></i>';
-      mobilePosted.parentNode.insertBefore(mobileLogout, mobileLogin || mobilePosted.nextSibling);
-    }else if (mobilePosted && mobileLogout && mobileLogout.previousElementSibling !== mobilePosted){
-      mobilePosted.parentNode.insertBefore(mobileLogout, mobilePosted.nextSibling);
+    }
+    if (mobileMenu && mobileLogout && mobileLogout.parentNode !== mobileMenu){
+      mobileMenu.insertBefore(mobileLogout, mobileLogin || null);
+    }else if (mobileMenu && mobileLogout && mobileLogin && mobileLogout.nextElementSibling !== mobileLogin){
+      mobileMenu.insertBefore(mobileLogout, mobileLogin);
     }
   }
 
@@ -6439,6 +7192,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         event.preventDefault();
         clearEmployerSession();
         try{
+          if (typeof setLoggedOutSubscriptionState === "function"){
+            setLoggedOutSubscriptionState("Logged out successfully. Please use Employer Login to access your subscription account again.");
+          }else{
+            var companyField = document.getElementById("companyInput");
+            var emailField = document.getElementById("emailInput");
+            if(companyField) companyField.value = "";
+            if(emailField) emailField.value = "";
+          }
+        }catch(_err){}
+        try{
           if (window.supabase && window.supabase.auth && window.supabase.auth.signOut){
             window.supabase.auth.signOut().catch(function(){});
           }
@@ -6447,7 +7210,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (typeof updateHeaderLoggedOutAccount === "function") updateHeaderLoggedOutAccount();
           if (typeof setLoggedOutSubscriptionState === "function") setLoggedOutSubscriptionState("Logged out successfully. Please use Employer Login to access your subscription account again.");
         }catch(_err){}
-        setTimeout(function(){ window.location.replace("index.html"); }, 80);
+        setTimeout(function(){ window.location.replace("index1.html"); }, 80);
       });
     });
   }
@@ -6488,7 +7251,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 <!-- ============================================================
    FINAL REMOVE EMPLOYER LOGIN WHEN LOGGED-IN PATCH
    - Desktop logged-in dropdown shows only: account card, Company Profile,
-     Subscribe, Posted Jobs, gray Log out.
+     Subscribe and gray Log out.
    - Employer Login stays available only in logged-out state.
    - Mobile account menu follows the same rule.
 ============================================================ -->
@@ -6509,7 +7272,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     overflow:hidden !important;
   }
 
-  /* Desktop: keep Log out gray and placed after Posted Jobs */
+  /* Desktop: keep Log out gray and placed after Subscribe */
   #accountDropdown.is-logged-in #accountMenu #accountLogoutBtn,
   #accountDropdown.is-logged-in #accountMenu .account-logout-action{
     display:flex !important;
@@ -6677,10 +7440,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     var mobile = byId('mobileAccountGroup');
     var desktopMenu = byId('accountMenu');
     var mobileMenu = byId('mobileAccountMenu');
-    var posted = byId('accountPostedJobsLink');
     var logout = byId('accountLogoutBtn');
     var login = desktopMenu ? desktopMenu.querySelector('.account-login-action, a[href*="loginemployer"]') : null;
-    var mobilePosted = byId('mobileAccountPostedJobsLink');
     var mobileLogout = byId('mobileAccountLogoutBtn');
     var mobileLogin = mobileMenu ? mobileMenu.querySelector('.mobile-account-login-action, a[href*="loginemployer"]') : null;
 
@@ -6697,12 +7458,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     setHiddenLogin(mobileLogin, logged);
 
     if (logged){
-      if (posted && logout && posted.parentNode && logout.previousElementSibling !== posted){
-        posted.parentNode.insertBefore(logout, posted.nextSibling);
-      }
-      if (mobilePosted && mobileLogout && mobilePosted.parentNode && mobileLogout.previousElementSibling !== mobilePosted){
-        mobilePosted.parentNode.insertBefore(mobileLogout, mobilePosted.nextSibling);
-      }
       styleLogout(logout);
       if (mobileLogout){
         mobileLogout.disabled = false;
@@ -6910,7 +7665,7 @@ document.addEventListener("DOMContentLoaded", async () => {
    - Clears employer session keys from localStorage/sessionStorage.
    - Signs out Supabase auth when available.
    - Clears subscription status, inputs, payment history, account logo/name/email.
-   - Redirects to index.html after logout cleanup.
+   - Redirects to index1.html after logout cleanup.
 ============================================================ -->
 <script id="final-logout-clears-account-and-loaded-data-patch">
 (function(){
@@ -7054,8 +7809,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     var mobileLoggedOutTitle = document.querySelector('#mobileAccountLoggedOutCard .mobile-account-card-title');
     if (mobileLoggedOutTitle) mobileLoggedOutTitle.textContent = 'No login account';
 
-    var posted = byId('accountPostedJobsLink');
-    var mobilePosted = byId('mobileAccountPostedJobsLink');
     if (posted) posted.href = 'postedhiring.html';
     if (mobilePosted) mobilePosted.href = 'postedhiring.html';
 
@@ -7150,8 +7903,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   function redirectToIndex(){
     if (window.__subscriptionLogoutRedirecting) return;
     window.__subscriptionLogoutRedirecting = true;
-    try{ window.location.replace('index.html'); }
-    catch(_err){ window.location.href = 'index.html'; }
+    try{ window.location.replace('index1.html'); }
+    catch(_err){ window.location.href = 'index1.html'; }
   }
 
   document.addEventListener('click', function(event){
@@ -7161,12 +7914,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     event.stopPropagation();
     if (event.stopImmediatePropagation) event.stopImmediatePropagation();
 
+    /* Prevent duplicate clicks while the account is being cleared. */
+    if (window.__subscriptionLogoutStarted) return;
+    window.__subscriptionLogoutStarted = true;
+
     target.disabled = true;
     target.setAttribute('aria-busy', 'true');
+
+    /* Clear the visible form and locally stored employer account immediately. */
+    clearTimersAndRealtime();
+    clearEmployerStorage();
+    forceLoggedOutBodyState();
+    setLoggedOutHeaderVisuals();
+    clearLoadedSubscriptionData(LOGOUT_MESSAGE);
+
+    /*
+     * Always redirect to index1.html even when Supabase signOut is delayed,
+     * blocked by the network, or an older logout listener throws an error.
+     * The normal completion path redirects sooner; this timer is the fallback.
+     */
+    var guaranteedRedirectTimer = window.setTimeout(function(){
+      redirectToIndex();
+    }, 350);
+
     performFullLogout()
-      .then(function(){ redirectToIndex(); })
+      .then(function(){
+        window.clearTimeout(guaranteedRedirectTimer);
+        redirectToIndex();
+      })
       .catch(function(err){
         console.error('Logout cleanup failed before redirect:', err);
+        window.clearTimeout(guaranteedRedirectTimer);
         clearEmployerStorage();
         forceLoggedOutBodyState();
         setLoggedOutHeaderVisuals();
@@ -7198,6 +7976,116 @@ document.addEventListener("DOMContentLoaded", async () => {
     bootLoggedOutParam();
   }
   window.addEventListener('pageshow', bootLoggedOutParam, { passive:true });
+})();
+</script>
+
+
+<style id="jsl-subscription-status-reference-account-style">
+  header, header .auth-buttons, #accountDropdown{overflow:visible!important}
+  header .auth-buttons{position:relative!important;z-index:5200!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:9px!important}
+
+  .subscription-header-action{width:46px!important;min-width:46px!important;height:46px!important;display:none!important;place-items:center!important;padding:0!important;border:1px solid #c9e4f4!important;border-radius:13px!important;color:#0b5cff!important;background:#f3faff!important;box-shadow:0 3px 10px rgba(15,23,42,.06)!important;cursor:pointer!important;transition:.18s ease!important}
+  body.subscription-employer-logged-in .subscription-header-action{display:grid!important}
+  .subscription-header-action:hover,.subscription-header-action:focus-visible{color:#0847c2!important;border-color:#7dc9ee!important;background:#e5f6ff!important;box-shadow:0 7px 17px rgba(14,116,144,.13)!important;transform:translateY(-1px)!important;outline:none!important}
+  .subscription-header-action i{display:block!important;width:auto!important;min-width:0!important;height:auto!important;margin:0!important;color:currentColor!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;filter:none!important;font-size:1.08rem!important;line-height:1!important}
+
+  #accountDropdown:not(.is-logged-in) #accountTrigger{width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important;justify-content:center!important;padding:0!important;border-radius:13px!important}
+  #accountDropdown:not(.is-logged-in) #accountTriggerText,#accountDropdown:not(.is-logged-in) #accountTriggerCaret{display:none!important}
+
+  #accountDropdown.is-logged-in #accountTrigger.account-trigger{position:relative!important;width:min(228px,22vw)!important;min-width:180px!important;height:46px!important;min-height:46px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;padding:4px 11px 4px 6px!important;overflow:hidden!important;border:0!important;border-radius:12px!important;color:#fff!important;background:linear-gradient(105deg,#16b8e9 0%,#2f83f4 48%,#7350f6 100%)!important;box-shadow:0 6px 16px rgba(47,111,238,.23)!important;cursor:pointer!important;transform:none!important}
+  #accountDropdown.is-logged-in #accountTrigger:hover,#accountDropdown.is-logged-in #accountTrigger:focus-visible{filter:saturate(1.08) brightness(1.03)!important;box-shadow:0 9px 20px rgba(47,111,238,.30)!important;transform:translateY(-1px)!important;outline:none!important}
+
+  #accountDropdown.is-logged-in #accountTriggerLogo:not([hidden]){width:38px!important;height:38px!important;min-width:38px!important;flex:0 0 38px!important;display:block!important;margin:0!important;padding:0!important;border:1px solid rgba(255,255,255,.78)!important;border-radius:10px!important;background:#0f172a!important;object-fit:cover!important;object-position:center!important;box-shadow:0 2px 7px rgba(15,23,42,.22)!important}
+  #accountDropdown.is-logged-in #accountTriggerLogo:not([hidden]) + #accountTriggerIcon{display:none!important}
+  #accountDropdown.is-logged-in #accountTriggerIcon{width:38px!important;height:38px!important;min-width:38px!important;flex:0 0 38px!important;display:grid!important;place-items:center!important;margin:0!important;border:1px solid rgba(255,255,255,.78)!important;border-radius:10px!important;color:#fff!important;background:#0f172a!important;box-shadow:0 2px 7px rgba(15,23,42,.22)!important;font-size:.92rem!important}
+  #accountDropdown.is-logged-in #accountTriggerText{min-width:0!important;flex:1 1 auto!important;display:block!important;overflow:hidden!important;color:#fff!important;font-size:.82rem!important;font-weight:850!important;line-height:1.15!important;text-align:left!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  #accountDropdown.is-logged-in #accountTriggerCaret{width:14px!important;min-width:14px!important;display:grid!important;place-items:center!important;margin-left:auto!important;color:#fff!important;pointer-events:none!important;transition:transform .2s ease!important}
+  #accountDropdown.is-logged-in #accountTriggerCaret i{display:block!important;width:auto!important;min-width:0!important;height:auto!important;color:inherit!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;filter:none!important;font-size:.68rem!important;line-height:1!important}
+  #accountDropdown.is-logged-in #accountTrigger[aria-expanded="true"] #accountTriggerCaret{transform:rotate(180deg)!important}
+
+  #accountDropdown.is-logged-in #accountMenu.account-menu{position:absolute!important;top:calc(100% + 10px)!important;right:0!important;left:auto!important;z-index:99999!important;width:295px!important;max-width:calc(100vw - 22px)!important;display:none!important;flex-direction:column!important;gap:5px!important;margin:0!important;padding:9px!important;overflow:hidden!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;border:1px solid #d9e2ee!important;border-radius:12px!important;color:#063f73!important;background:#fff!important;box-shadow:0 18px 42px rgba(15,23,42,.18)!important;backdrop-filter:none!important;transform:translateY(-5px)!important;transition:opacity .16s ease,transform .16s ease,visibility .16s ease!important}
+  #accountDropdown.is-logged-in.open #accountMenu.account-menu,#accountDropdown.is-logged-in #accountMenu.account-menu[aria-hidden="false"]{display:flex!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translateY(0)!important}
+
+  #accountDropdown.is-logged-in #accountCardHead.account-card-head{min-height:0!important;display:block!important;margin:0 0 5px!important;padding:13px!important;gap:0!important;border:0!important;border-bottom:1px solid #e5eaf1!important;border-radius:9px 9px 5px 5px!important;color:#063f73!important;background:#f8fbff!important;box-shadow:none!important}
+  #accountDropdown.is-logged-in #accountCardLogo,#accountDropdown.is-logged-in #accountCardLabel{display:none!important}
+  #accountDropdown.is-logged-in #accountCardCompany{display:block!important;max-width:none!important;margin:0 0 5px!important;overflow:visible!important;color:#063f73!important;font-size:.93rem!important;font-weight:900!important;line-height:1.2!important;text-overflow:clip!important;white-space:normal!important;overflow-wrap:anywhere!important}
+  #accountDropdown.is-logged-in #accountCardEmail{display:block!important;max-width:none!important;overflow:visible!important;color:#667085!important;font-size:.75rem!important;font-weight:700!important;line-height:1.25!important;text-overflow:clip!important;white-space:normal!important;overflow-wrap:anywhere!important}
+
+  #accountDropdown.is-logged-in #accountMenu>a,#accountDropdown.is-logged-in #accountMenu>button.account-menu-item{width:100%!important;min-height:44px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:11px!important;padding:10px 12px!important;margin:0!important;border:0!important;border-radius:9px!important;color:#063f73!important;background:transparent!important;box-shadow:none!important;font-family:"Poppins","Segoe UI",sans-serif!important;font-size:.85rem!important;font-weight:800!important;line-height:1.2!important;text-align:left!important;text-decoration:none!important;transform:none!important}
+  #accountDropdown.is-logged-in #accountMenu .account-menu-left{display:flex!important;align-items:center!important;gap:11px!important;min-width:0!important;flex:1 1 auto!important}
+  #accountDropdown.is-logged-in #accountMenu .account-menu-left i{width:19px!important;min-width:19px!important;display:block!important;color:#0b5cff!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;filter:none!important;font-size:.95rem!important;text-align:center!important}
+  #accountDropdown.is-logged-in #accountMenu>a>i.fa-arrow-right,#accountDropdown.is-logged-in #accountMenu>button>i.fa-arrow-right{display:none!important}
+  #accountDropdown.is-logged-in #accountMenu>a:hover,#accountDropdown.is-logged-in #accountMenu>a:focus-visible,#accountDropdown.is-logged-in #accountMenu>button.account-menu-item:hover,#accountDropdown.is-logged-in #accountMenu>button.account-menu-item:focus-visible{color:#0b5cff!important;background:#eef6ff!important;border:0!important;box-shadow:none!important;transform:translateX(2px)!important;outline:none!important}
+
+  #accountDropdown.is-logged-in #accountCompanyProfileLink,#accountDropdown.is-logged-in #accountPostedJobsLink,#accountDropdown.is-logged-in #accountLogoutBtn{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;height:auto!important}
+  #accountDropdown.is-logged-in #accountMenu>a[href="subscribe.html"],#accountDropdown.is-logged-in #accountMenu .account-login-action{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
+  #accountDropdown.is-logged-in #accountLogoutBtn.account-logout-action{color:#063f73!important;background:transparent!important;border:0!important;box-shadow:none!important}
+
+  #mobileAccountGroup.is-logged-in #mobileAccountCompanyProfileLink,#mobileAccountGroup.is-logged-in #mobileAccountPostedJobsLink,#mobileAccountGroup.is-logged-in #mobileAccountLogoutBtn{display:flex!important}
+  #mobileAccountGroup.is-logged-in #mobileAccountMenu>a[href="subscribe.html"],#mobileAccountGroup.is-logged-in #mobileAccountMenu .mobile-account-login-action{display:none!important}
+
+  @media (min-width:1024px) and (max-width:1439px){
+    .subscription-header-action{width:38px!important;min-width:38px!important;height:38px!important;border-radius:11px!important}
+    #accountDropdown.is-logged-in #accountTrigger.account-trigger{width:min(190px,20vw)!important;min-width:158px!important;height:40px!important;min-height:40px!important;padding:3px 8px 3px 4px!important;gap:7px!important}
+    #accountDropdown.is-logged-in #accountTriggerLogo:not([hidden]),#accountDropdown.is-logged-in #accountTriggerIcon{width:34px!important;min-width:34px!important;height:34px!important;flex-basis:34px!important;border-radius:9px!important}
+    #accountDropdown.is-logged-in #accountTriggerText{font-size:.72rem!important}
+  }
+  @media (max-width:1023px){header .auth-buttons{display:none!important}}
+</style>
+
+
+<script id="jsl-subscription-status-reference-account-controller">
+(function(){
+  "use strict";
+  function byId(id){return document.getElementById(id)}
+  function clean(v){return String(v==null?"":v).trim()}
+  function loggedIn(){var d=byId("accountDropdown");return !!((d&&d.classList.contains("is-logged-in"))||(document.body&&(document.body.classList.contains("employer-logged-in")||document.body.classList.contains("logged-in-subscription-mode"))))}
+  function setOpen(open){var b=byId("accountTrigger"),d=byId("accountDropdown"),m=byId("accountMenu");if(!b||!d||!m)return;d.classList.toggle("open",!!open);b.setAttribute("aria-expanded",open?"true":"false");m.setAttribute("aria-hidden",open?"false":"true")}
+
+  function enforceLinks(){
+    var p=byId("accountCompanyProfileLink"),mp=byId("mobileAccountCompanyProfileLink");
+    if(p){p.href="employerprofile.html";var t=p.querySelector(".account-menu-left span"),i=p.querySelector(".account-menu-left i");if(t)t.textContent="View company profile";if(i)i.className="fa-regular fa-address-card"}
+    if(mp){mp.href="employerprofile.html";var mt=mp.querySelector(".nav-text"),mi=mp.querySelector(".mnav-left i");if(mt)mt.textContent="View company profile";if(mi)mi.className="fa-regular fa-address-card"}
+    var j=byId("accountPostedJobsLink"),mj=byId("mobileAccountPostedJobsLink");if(j)j.href="postedjobs.html";if(mj)mj.href="postedjobs.html";
+  }
+
+  function sync(){
+    var active=loggedIn(),text=byId("accountTriggerText"),company=byId("accountCardCompany"),name=clean(company&&company.textContent),trigger=byId("accountTrigger");
+    if(document.body)document.body.classList.toggle("subscription-employer-logged-in",active);
+    if(text)text.textContent=active&&name&&name.toLowerCase()!=="company"?name:(active?"Employer Account":"Login");
+    if(trigger)trigger.setAttribute("aria-label",active?((name||"Employer")+" account menu"):"Open employer account menu");
+    if(!active)setOpen(false);
+    enforceLinks();
+  }
+
+  function filterJobs(kind){
+    var f=kind==="favorites"?"favorites":"applied";
+    try{sessionStorage.setItem("JSL_POSTED_JOBS_FILTER",f);sessionStorage.setItem("postedJobsFilter",f)}catch(e){}
+    try{localStorage.setItem("JSL_POSTED_JOBS_FILTER",f);localStorage.setItem("postedJobsFilter",f)}catch(e){}
+    location.href="postedjobs.html?filter="+encodeURIComponent(f);
+  }
+
+  function install(){
+    var old=byId("accountTrigger"),d=byId("accountDropdown"),m=byId("accountMenu");
+    if(!old||!d||!m)return;
+    if(old.dataset.referenceToggleInstalled!=="true"){
+      var b=old.cloneNode(true);b.dataset.referenceToggleInstalled="true";old.replaceWith(b);
+      b.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();setOpen(!d.classList.contains("open"))},true);
+      m.addEventListener("click",function(e){e.stopPropagation()},true);
+      document.addEventListener("click",function(e){if(e.target&&e.target.closest&&(e.target.closest("#accountTrigger")||e.target.closest("#accountMenu")))return;setOpen(false)},true);
+      document.addEventListener("keydown",function(e){if(e.key==="Escape")setOpen(false)});
+    }
+
+    var a=byId("subscriptionAppliedJobsButton"),h=byId("subscriptionFavoriteJobsButton");
+    if(a&&!a.dataset.bound){a.dataset.bound="1";a.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();filterJobs("applied")})}
+    if(h&&!h.dataset.bound){h.dataset.bound="1";h.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();filterJobs("favorites")})}
+
+    if(!d.dataset.referenceObserver){d.dataset.referenceObserver="1";try{var o=new MutationObserver(function(){clearTimeout(window.__statusAccountSync);window.__statusAccountSync=setTimeout(sync,20)});o.observe(d,{attributes:true,childList:true,subtree:true,characterData:true,attributeFilter:["class","hidden","src","style"]})}catch(e){}}
+    sync();setTimeout(sync,100);setTimeout(sync,320);setTimeout(sync,820);
+  }
+
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",install,{once:true});else install();
+  addEventListener("load",install,{once:true});addEventListener("focus",sync,{passive:true});addEventListener("pageshow",sync,{passive:true});addEventListener("storage",sync,{passive:true});
 })();
 </script>
 

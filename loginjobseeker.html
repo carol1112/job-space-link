@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Employee Login | Job Space Link</title>
+<title>Jobseeker Login | Job Space Link</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 <link rel="stylesheet" href="jobspacelink.css" />
@@ -2922,7 +2922,7 @@ header nav .nav-main-link:focus-visible i,
         </div>
 
         <div class="loading" id="loadingBox">
-          <i class="fa-solid fa-spinner fa-spin"></i> Checking your record.
+          <i class="fa-solid fa-spinner fa-spin"></i> Checking your jobseeker record.
         </div>
 
         <div class="msg error" id="errorBox"></div>
@@ -3105,6 +3105,11 @@ const goJobsLink = document.getElementById("goJobsLink");
 let __postLoginProfileUrl = "";
 const POST_LOGIN_REDIRECT_URL = "postedhiring1.html";
 
+const VERIFIED_JOBSEEKER_SESSION_KEY = "jsl_verified_jobseeker_session_v2";
+const VERIFIED_JOBSEEKER_SESSION_VERSION = 2;
+const VERIFIED_JOBSEEKER_SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
+
 function showError(msg){
   errorBox.textContent = msg || "";
   errorBox.style.display = "block";
@@ -3139,7 +3144,7 @@ function setPassUI({ required, noteText }){
   if (required){
     passLabel.textContent = "Password (required)";
     passEl.placeholder = "Enter your password";
-    passEl.setAttribute("required","required");
+    passEl.setAttribute("required", "required");
     passNote.style.display = "block";
     passNote.textContent = noteText || "Password is required for this account.";
   } else {
@@ -3206,14 +3211,25 @@ goProfileLink.addEventListener("click", (e)=>{
 /* ==========================================================
    HELPERS
 ========================================================== */
-function normEmail(e){
-  return String(e || "").trim().toLowerCase();
+function safeText(value){
+  return String(value == null ? "" : value).replace(/\s+/g, " ").trim();
 }
 
-function isEmailValid(e){
-  const s = normEmail(e);
-  if (!s) return false;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+function normEmail(value){
+  return safeText(value).toLowerCase();
+}
+
+function isEmailValid(value){
+  const email = normEmail(value);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function safeJsonParse(value){
+  try{
+    return value ? JSON.parse(value) : null;
+  }catch(_){
+    return null;
+  }
 }
 
 async function sha256Hex(text){
@@ -3221,25 +3237,53 @@ async function sha256Hex(text){
   const data = enc.encode(String(text || ""));
   const hashBuf = await crypto.subtle.digest("SHA-256", data);
   const hashArr = Array.from(new Uint8Array(hashBuf));
-  return hashArr.map(b => b.toString(16).padStart(2, "0")).join("");
+  return hashArr.map(byte => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function requireSupabase(){
   const client = window.supabase;
-  if (!client){
+  if (!client || typeof client.from !== "function"){
     throw new Error("Supabase client not initialized. Please check supabase_config.js.");
   }
   return client;
 }
 
+function isPermissionError(error){
+  const message = String(error?.message || error || "").toLowerCase();
+  return (
+    message.includes("permission") ||
+    message.includes("rls") ||
+    message.includes("row-level") ||
+    message.includes("not allowed") ||
+    message.includes("policy")
+  );
+}
+
+function pickFirst(row, keys){
+  for (const key of keys){
+    const value = safeText(row?.[key]);
+    if (value) return value;
+  }
+  return "";
+}
+
+function setBoth(key, value){
+  if (!key || value == null || value === "") return;
+  try{ localStorage.setItem(key, String(value)); }catch(_){ }
+  try{ sessionStorage.setItem(key, String(value)); }catch(_){ }
+}
+
+function removeBoth(key){
+  try{ localStorage.removeItem(key); }catch(_){ }
+  try{ sessionStorage.removeItem(key); }catch(_){ }
+}
+
 /* ==========================================================
-   PREFILL EMAIL PATCH - INLINE VERSION
+   PREFILL EMAIL
 ========================================================== */
 function safeGetUrlEmail(){
   try{
-    const url = new URL(window.location.href);
-    const params = url.searchParams;
-
+    const params = new URL(window.location.href).searchParams;
     return (
       params.get("email") ||
       params.get("prefill_email") ||
@@ -3257,62 +3301,50 @@ function readStoredPrefillCandidates(){
     safeGetUrlEmail(),
     sessionStorage.getItem("jobseeker_prefill_email"),
     sessionStorage.getItem("jsl_prefill_email"),
+    sessionStorage.getItem("jobseeker_email"),
+    sessionStorage.getItem("jobseeker_login_email"),
     sessionStorage.getItem("applicant_email"),
-    sessionStorage.getItem("employee_email"),
-    sessionStorage.getItem("jsl_login_email"),
     localStorage.getItem("jobseeker_prefill_email"),
     localStorage.getItem("jsl_prefill_email"),
-    localStorage.getItem("applicant_email"),
-    localStorage.getItem("employee_email"),
-    localStorage.getItem("jsl_login_email")
+    localStorage.getItem("jobseeker_email"),
+    localStorage.getItem("jobseeker_login_email"),
+    localStorage.getItem("applicant_email")
   ];
 
   for (const value of candidates){
-    const eml = normEmail(value);
-    if (isEmailValid(eml)) return eml;
+    const email = normEmail(value);
+    if (isEmailValid(email)) return email;
   }
 
   return "";
 }
 
 function persistPrefillEmail(email){
-  const eml = normEmail(email);
-  if (!isEmailValid(eml)) return;
+  const normalizedEmail = normEmail(email);
+  if (!isEmailValid(normalizedEmail)) return;
 
-  try{
-    sessionStorage.setItem("jobseeker_prefill_email", eml);
-    sessionStorage.setItem("jsl_prefill_email", eml);
-    sessionStorage.setItem("applicant_email", eml);
-    sessionStorage.setItem("employee_email", eml);
-    sessionStorage.setItem("jsl_login_email", eml);
-  }catch(_){ }
-
-  try{
-    localStorage.setItem("jobseeker_prefill_email", eml);
-    localStorage.setItem("jsl_prefill_email", eml);
-    localStorage.setItem("applicant_email", eml);
-    localStorage.setItem("employee_email", eml);
-    localStorage.setItem("jsl_login_email", eml);
-  }catch(_){ }
+  [
+    "jobseeker_prefill_email",
+    "jsl_prefill_email"
+  ].forEach(key => setBoth(key, normalizedEmail));
 }
 
 function applyPrefilledEmail(email, options = {}){
-  const eml = normEmail(email);
-  if (!isEmailValid(eml)) return false;
+  const normalizedEmail = normEmail(email);
+  if (!isEmailValid(normalizedEmail)) return false;
 
   const allowOverwrite = !!options.allowOverwrite;
   const current = normEmail(emailEl.value);
 
-  if (current && !allowOverwrite && current !== eml){
+  if (current && !allowOverwrite && current !== normalizedEmail){
     return false;
   }
 
-  emailEl.value = eml;
+  emailEl.value = normalizedEmail;
   emailEl.dataset.prefilled = "true";
   emailEl.dispatchEvent(new Event("input", { bubbles:true }));
   emailEl.dispatchEvent(new Event("change", { bubbles:true }));
-  persistPrefillEmail(eml);
-  emailEl.dataset.prefilled = "true";
+  persistPrefillEmail(normalizedEmail);
   showPrefillNote(true);
   return true;
 }
@@ -3325,118 +3357,533 @@ function hydrateEmailPrefill(){
   if (!applied) return;
 
   setTimeout(()=>{
-    try{
-      passEl.focus();
-    }catch(_){ }
+    try{ passEl.focus(); }catch(_){ }
   }, 60);
 }
 
 /* ==========================================================
-   DATA LOOKUPS
+   DATABASE LOOKUPS
 ========================================================== */
-async function fetchEmployeeAccountByEmail(email){
+async function fetchJobseekerPasswordAccount(email){
   const client = requireSupabase();
-  const eml = normEmail(email);
-
-  if (!eml) return null;
+  const normalizedEmail = normEmail(email);
+  if (!normalizedEmail) return null;
 
   const { data, error } = await client
     .from("employee_accounts")
     .select("id, email, employee_name, password_hash, is_active")
-    .ilike("email", eml)
+    .ilike("email", normalizedEmail)
     .limit(1)
     .maybeSingle();
 
   if (error){
-    const m = String(error.message || "").toLowerCase();
-
-    if (
-      m.includes("permission") ||
-      m.includes("rls") ||
-      m.includes("row-level") ||
-      m.includes("not allowed")
-    ){
-      return null;
-    }
-
-    throw new Error(error.message || "Unable to read employee_accounts.");
+    if (isPermissionError(error)) return null;
+    throw new Error(error.message || "Unable to read the jobseeker login account.");
   }
 
   return data || null;
 }
 
-async function resolveMasterIdByEmail(email){
-  const client = requireSupabase();
-  const eml = normEmail(email);
+function normalizeApplicantIdentity(row, sourceTable){
+  if (!row || typeof row !== "object") return null;
 
-  const { data, error } = await client
+  const email = normEmail(pickFirst(row, [
+    "email", "applicant_email", "employee_email", "user_email", "login_email"
+  ]));
+
+  const masterId = pickFirst(row, [
+    "master_id", "applicant_master_id", "applicant_master_table_id"
+  ]) || (sourceTable === "applicant_master_table" ? safeText(row.id) : "");
+
+  if (!email || !masterId) return null;
+
+  const firstName = pickFirst(row, ["first_name", "firstname", "firstName"]);
+  const lastName = pickFirst(row, ["last_name", "lastname", "lastName"]);
+  const fullName = pickFirst(row, [
+    "full_name", "fullName", "applicant_name", "jobseeker_name",
+    "employee_name", "display_name", "name"
+  ]) || [firstName, lastName].filter(Boolean).join(" ") || email.split("@")[0];
+
+  const photoUrl = pickFirst(row, [
+    "profile_picture_url", "profile_photo_url", "avatar_url", "photo_url",
+    "applicant_photo_url", "jobseeker_photo_url", "picture"
+  ]);
+
+  return {
+    email,
+    masterId,
+    transactionId: sourceTable === "applicant_transaction_table" ? safeText(row.id) : "",
+    userId: pickFirst(row, ["user_id", "auth_user_id", "auth_uid", "uid"]),
+    name: fullName,
+    photoUrl,
+    row,
+    sourceTable
+  };
+}
+
+async function resolveJobseekerIdentityByEmail(email){
+  const client = requireSupabase();
+  const normalizedEmail = normEmail(email);
+
+  const transactionResult = await client
     .from("applicant_transaction_table")
-    .select("master_id, email, created_at")
-    .ilike("email", eml)
-    .order("created_at", { ascending: false })
+    .select("*")
+    .ilike("email", normalizedEmail)
+    .order("created_at", { ascending:false })
     .limit(1)
     .maybeSingle();
 
-  if (error){
-    const m = String(error.message || "").toLowerCase();
-
-    if (
-      m.includes("permission") ||
-      m.includes("rls") ||
-      m.includes("row-level") ||
-      m.includes("not allowed")
-    ){
-      throw new Error(
-        "RLS blocked reading applicant_transaction_table by email.\n\n" +
-        "Fix options:\n" +
-        "1) Add safe policy to allow read by email, OR\n" +
-        "2) Create RPC (SECURITY DEFINER) get_master_id_by_email(email)."
-      );
-    }
-
-    throw new Error(error.message || "Unable to find profile record.");
+  if (transactionResult.error && !isPermissionError(transactionResult.error)){
+    throw new Error(transactionResult.error.message || "Unable to find the jobseeker profile record.");
   }
 
-  return data?.master_id || null;
+  const transactionIdentity = normalizeApplicantIdentity(
+    transactionResult.data,
+    "applicant_transaction_table"
+  );
+  if (transactionIdentity) return transactionIdentity;
+
+  const masterResult = await client
+    .from("applicant_master_table")
+    .select("*")
+    .ilike("email", normalizedEmail)
+    .limit(1)
+    .maybeSingle();
+
+  if (masterResult.error && !isPermissionError(masterResult.error)){
+    const message = String(masterResult.error.message || "");
+    if (!message.toLowerCase().includes("column") || !message.toLowerCase().includes("email")){
+      throw new Error(message || "Unable to verify the jobseeker account.");
+    }
+  }
+
+  const masterIdentity = normalizeApplicantIdentity(masterResult.data, "applicant_master_table");
+  if (masterIdentity) return masterIdentity;
+
+  if (isPermissionError(transactionResult.error) || isPermissionError(masterResult.error)){
+    throw new Error(
+      "Supabase RLS blocked the jobseeker account lookup. Allow this login page to read the matching applicant record by email."
+    );
+  }
+
+  return null;
 }
 
 /* ==========================================================
-   LOCAL STORAGE
+   SUPABASE AUTH - JOBSEEKER ONLY
 ========================================================== */
+function authRoleText(user){
+  const metadata = user?.user_metadata || {};
+  const appMetadata = user?.app_metadata || {};
+  return [
+    metadata.role,
+    metadata.user_role,
+    metadata.account_type,
+    metadata.user_type,
+    metadata.type,
+    metadata.source,
+    appMetadata.role,
+    appMetadata.user_role,
+    appMetadata.account_type,
+    appMetadata.user_type,
+    appMetadata.type
+  ].map(safeText).join(" ").toLowerCase();
+}
+
+function isEmployerOnlyAuthUser(user){
+  const roleText = authRoleText(user);
+  const hasEmployerRole = /\b(employer|company|recruiter|hiring_manager|hiring-manager)\b/.test(roleText);
+  const hasJobseekerRole = /\b(jobseeker|job_seeker|applicant|employee|candidate)\b/.test(roleText);
+  return hasEmployerRole && !hasJobseekerRole;
+}
+
+async function trySupabaseJobseekerAuth(email, password, jobseekerIdentity){
+  const client = requireSupabase();
+
+  if (!password || !client.auth || typeof client.auth.signInWithPassword !== "function"){
+    return { authenticated:false, user:null, error:null };
+  }
+
+  const { data, error } = await client.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error || !data?.user){
+    return { authenticated:false, user:null, error:error || null };
+  }
+
+  const authUser = data.user;
+  const authEmail = normEmail(authUser.email);
+
+  if (authEmail !== email){
+    try{ await client.auth.signOut(); }catch(_){ }
+    throw new Error("The Supabase Auth session does not match the entered jobseeker email.");
+  }
+
+  if (isEmployerOnlyAuthUser(authUser)){
+    try{ await client.auth.signOut(); }catch(_){ }
+    throw new Error("Employer accounts cannot log in on the Jobseeker Login page.");
+  }
+
+  /* Add explicit jobseeker metadata only after the email has been verified
+     against applicant_transaction_table/applicant_master_table. */
+  try{
+    if (typeof client.auth.updateUser === "function"){
+      const existing = authUser.user_metadata || {};
+      await client.auth.updateUser({
+        data: {
+          ...existing,
+          role: "jobseeker",
+          user_role: "jobseeker",
+          account_type: "jobseeker",
+          source: "loginjobseeker.html",
+          applicant_master_id: jobseekerIdentity.masterId
+        }
+      });
+    }
+  }catch(_){
+    /* Metadata synchronization is helpful but must not block a valid login. */
+  }
+
+  return { authenticated:true, user:authUser, error:null };
+}
+
+
+/* ==========================================================
+   AUTHORITATIVE JOBSEEKER SESSION MARKER
+   postedhiring1.html trusts only this marker. Generic account
+   keys and a raw Supabase session are never sufficient.
+========================================================== */
+function createSessionNonce(){
+  try{
+    if (crypto && typeof crypto.randomUUID === "function"){
+      return crypto.randomUUID();
+    }
+  }catch(_){ }
+
+  const randomPart = Math.random().toString(36).slice(2);
+  return `${Date.now().toString(36)}-${randomPart}`;
+}
+
+function createVerifiedJobseekerMarker(identity, authUser, hasPassword){
+  const email = normEmail(identity?.email);
+  const masterId = safeText(identity?.masterId);
+  const userId = safeText(authUser?.id || identity?.userId);
+  const now = Date.now();
+
+  if (!isEmailValid(email) || !masterId){
+    throw new Error("A verified applicant email and applicant master ID are required.");
+  }
+
+  return {
+    version: VERIFIED_JOBSEEKER_SESSION_VERSION,
+    kind: "jobseeker",
+    role: "jobseeker",
+    account_type: "jobseeker",
+    verified: true,
+    verified_by: "applicant_tables",
+    source: "loginjobseeker.html",
+    email,
+    jobseeker_email: email,
+    applicant_email: email,
+    master_id: masterId,
+    applicant_master_id: masterId,
+    transaction_id: safeText(identity?.transactionId),
+    auth_user_id: userId,
+    user_id: userId,
+    name: safeText(identity?.name) || "Logged-in Jobseeker",
+    profile_photo_url: safeText(identity?.photoUrl),
+    authenticated_with_supabase: !!authUser,
+    auth_mode: authUser ? "supabase-auth" : "applicant-database",
+    has_password: !!hasPassword,
+    nonce: createSessionNonce(),
+    issued_at: now,
+    expires_at: now + VERIFIED_JOBSEEKER_SESSION_MAX_AGE_MS
+  };
+}
+
+function persistVerifiedJobseekerMarker(marker){
+  const serialized = JSON.stringify(marker);
+  setBoth(VERIFIED_JOBSEEKER_SESSION_KEY, serialized);
+  setBoth("jobSpaceLink_jobseeker_session_authority", VERIFIED_JOBSEEKER_SESSION_KEY);
+  setBoth("jobSpaceLink_jobseeker_verified", "true");
+  return marker;
+}
+
+/* ==========================================================
+   JOBSEEKER-ONLY SESSION BRIDGE FOR POSTEDHIRING
+========================================================== */
+const JOBSEEKER_LOGOUT_KEYS = [
+  "jobSpaceLink_jobseeker_logged_out",
+  "jobSpaceLink_jobseeker_logout_at",
+  "jobSpaceLink_jobseeker_logout_event",
+  "jobSpaceLink_force_account_logout",
+  "jobSpaceLink_logout_clear_lock",
+  "jobSpaceLink_profile_logged_out",
+  "jobSpaceLink_force_profile_blank",
+  "jobSpaceLink_clear_profile_picture",
+  "force_logged_out",
+  "logged_out",
+  "profile_logged_out",
+  "jsl_force_logged_out",
+  "jsl_final_restore_logout_lock_20260615",
+  "jsl_global_jobseeker_logout_event_v25"
+];
+
+const JOBSEEKER_OBJECT_KEYS = [
+  "jobSpaceLink_login_identity",
+  "jobSpaceLink_jobseeker_session",
+  "jobSpaceLink_logged_in_jobseeker",
+  "jobSpaceLink_loggedInJobseeker",
+  "jobSpaceLink_current_jobseeker",
+  "jobSpaceLink_currentApplicant",
+  "jobSpaceLink_currentApplicantProfile",
+  "loggedInApplicant",
+  "currentApplicant",
+  "jobseekerSession",
+  "jobseekerUser",
+  "jobseekerAccount",
+  "currentJobseeker",
+  "loggedInJobseeker",
+  "applicantSession",
+  "applicantData",
+  "applicantProfile",
+  "jsl_login_identity",
+  "jsl_jobseeker_identity",
+  "jsl_current_applicant"
+];
+
+const JOBSEEKER_EMAIL_KEYS = [
+  "jobSpaceLink_jobseeker_email",
+  "jobSpaceLink_logged_in_email",
+  "jobSpaceLink_profile_email",
+  "jobseeker_email",
+  "jobseeker_login_email",
+  "applicant_email",
+  "employee_email",
+  "jsl_login_email",
+  "jsl_last_login_email",
+  "logged_in_email",
+  "loggedInEmail",
+  "user_email",
+  "login_email"
+];
+
+const JOBSEEKER_TRUE_KEYS = [
+  "jobSpaceLink_jobseeker_logged_in",
+  "jobseeker_logged_in",
+  "applicant_logged_in",
+  "jobSpaceLink_profile_logged_in",
+  "profile_logged_in",
+  "employee_logged_in",
+  "jsl_logged_in",
+  "logged_in",
+  "is_logged_in"
+];
+
+const JOBSEEKER_MASTER_KEYS = [
+  "jobSpaceLink_profile_master_id",
+  "jobSpaceLink_profile_master_row_id",
+  "employee_master_id",
+  "jsl_master_id",
+  "jobseeker_master_id",
+  "applicant_master_id",
+  "applicant_master_table_id",
+  "master_id",
+  "user_master_id",
+  "logged_in_master_id",
+  "logged_in_applicant_master_id",
+  "current_applicant_master_id"
+];
+
+const JOBSEEKER_USER_ID_KEYS = [
+  "jsl_user_id",
+  "user_id",
+  "auth_uid",
+  "auth_id",
+  "uid",
+  "auth_user_id",
+  "view_profile_user_id",
+  "current_profile_user_id"
+];
+
+const JOBSEEKER_NAME_KEYS = [
+  "jobSpaceLink_profile_fullName",
+  "jobSpaceLink_logged_in_name",
+  "jobSpaceLink_jobseeker_name",
+  "jobSpaceLink_applicant_name",
+  "jobSpaceLink_profile_name",
+  "view_profile_applicant_name",
+  "current_profile_name",
+  "profile_name",
+  "logged_in_name",
+  "current_applicant_name",
+  "employee_name"
+];
+
+const JOBSEEKER_PHOTO_KEYS = [
+  "jobSpaceLink_profile_photo_url",
+  "jobSpaceLink_logged_in_profile_photo",
+  "jobSpaceLink_loggedin_profile_photo",
+  "jobSpaceLink_jobseeker_photo_url",
+  "jobSpaceLink_profile_picture_url",
+  "jobSpaceLink_profile_photo",
+  "jobSpaceLink_profile_picture",
+  "jobSpaceLink_applicant_profile_photo_url",
+  "jobSpaceLink_applicant_photo_url",
+  "view_profile_avatar_url",
+  "jobseekerProfilePhoto",
+  "jobseeker_profile_photo",
+  "jobseekerPhoto"
+];
+
+function clearJobseekerLogoutFlags(){
+  JOBSEEKER_LOGOUT_KEYS.forEach(removeBoth);
+}
+
 function buildProfileUrl(masterId, email){
   return `view_profile.html?master_id=${encodeURIComponent(masterId)}&email=${encodeURIComponent(email)}&from=login`;
 }
 
-function storeLoginLocal(email, name, hasPassword){
-  localStorage.setItem("employee_logged_in", "true");
-  localStorage.setItem("employee_email", email);
-  localStorage.setItem("employee_name", name || "");
-  localStorage.setItem("employee_has_password", hasPassword ? "true" : "false");
+function createJobseekerSessionPayload(identity, authUser, hasPassword){
+  const now = Date.now();
+  const userId = safeText(authUser?.id || identity.userId);
 
-  localStorage.setItem("jsl_logged_in", "true");
-  localStorage.setItem("jsl_login_email", email);
+  return {
+    action: "login",
+    type: "login",
+    event: "SIGNED_IN",
+    role: "jobseeker",
+    user_role: "jobseeker",
+    account_type: "jobseeker",
+    login_type: "jobseeker",
+    source: "loginjobseeker.html",
+    page: "loginjobseeker.html",
+    email: identity.email,
+    jobseeker_email: identity.email,
+    applicant_email: identity.email,
+    employee_email: identity.email,
+    name: identity.name || "Logged-in Jobseeker",
+    full_name: identity.name || "Logged-in Jobseeker",
+    applicant_name: identity.name || "Logged-in Jobseeker",
+    jobseeker_name: identity.name || "Logged-in Jobseeker",
+    master_id: identity.masterId,
+    applicant_master_id: identity.masterId,
+    jobseeker_master_id: identity.masterId,
+    transaction_id: identity.transactionId || "",
+    applicant_transaction_id: identity.transactionId || "",
+    user_id: userId,
+    auth_user_id: userId,
+    profile_photo_url: identity.photoUrl || "",
+    profile_picture_url: identity.photoUrl || "",
+    authenticated_with_supabase: !!authUser,
+    has_password: !!hasPassword,
+    logged_in: true,
+    loggedIn: true,
+    saved_at: new Date(now).toISOString(),
+    timestamp: now,
+    time: now
+  };
+}
+
+function broadcastJobseekerLogin(payload){
+  const channels = [
+    "jsl_jobseeker_auth_sync_channel_v25",
+    "jobSpaceLink_jobseeker_auth_channel_v1",
+    "jobspace_jobseeker_session",
+    "jobSpaceLink_jobseeker_session",
+    "jobspacelink-session-sync"
+  ];
+
+  channels.forEach(channelName => {
+    try{
+      const channel = new BroadcastChannel(channelName);
+      channel.postMessage(payload);
+      channel.close();
+    }catch(_){ }
+  });
 
   try{
-    sessionStorage.setItem("employee_logged_in", "true");
-    sessionStorage.setItem("employee_email", email);
-    sessionStorage.setItem("employee_name", name || "");
-    sessionStorage.setItem("employee_has_password", hasPassword ? "true" : "false");
-    sessionStorage.setItem("jsl_logged_in", "true");
-    sessionStorage.setItem("jsl_login_email", email);
+    window.dispatchEvent(new CustomEvent("jsl:jobseeker-session-login", { detail:payload }));
+    document.dispatchEvent(new CustomEvent("jsl:jobseeker-session-login", { detail:payload }));
+    document.dispatchEvent(new CustomEvent("jsl:jobseeker-login-restored", { detail:{ identity:payload, reason:"loginjobseeker" } }));
+  }catch(_){ }
+}
+
+function persistJobseekerLogin(identity, authUser, hasPassword){
+  clearJobseekerLogoutFlags();
+
+  const marker = persistVerifiedJobseekerMarker(
+    createVerifiedJobseekerMarker(identity, authUser, hasPassword)
+  );
+
+  const payload = {
+    ...createJobseekerSessionPayload(identity, authUser, hasPassword),
+    verified_jobseeker_session: true,
+    verification_version: marker.version,
+    verified_by: marker.verified_by,
+    session_authority: VERIFIED_JOBSEEKER_SESSION_KEY,
+    session_nonce: marker.nonce,
+    session_expires_at: marker.expires_at
+  };
+  const payloadJson = JSON.stringify(payload);
+
+  JOBSEEKER_OBJECT_KEYS.forEach(key => setBoth(key, payloadJson));
+  JOBSEEKER_EMAIL_KEYS.forEach(key => setBoth(key, identity.email));
+  JOBSEEKER_TRUE_KEYS.forEach(key => setBoth(key, "true"));
+  JOBSEEKER_MASTER_KEYS.forEach(key => setBoth(key, identity.masterId));
+  JOBSEEKER_NAME_KEYS.forEach(key => setBoth(key, identity.name || "Logged-in Jobseeker"));
+
+  if (identity.transactionId){
+    [
+      "jobSpaceLink_profile_transaction_id",
+      "view_profile_transaction_id",
+      "view_profile_tx_id",
+      "current_profile_transaction_id",
+      "transaction_id",
+      "tx_id",
+      "applicant_transaction_id"
+    ].forEach(key => setBoth(key, identity.transactionId));
+  }
+
+  const resolvedUserId = safeText(authUser?.id || identity.userId);
+  if (resolvedUserId){
+    JOBSEEKER_USER_ID_KEYS.forEach(key => setBoth(key, resolvedUserId));
+  }
+
+  if (identity.photoUrl){
+    JOBSEEKER_PHOTO_KEYS.forEach(key => setBoth(key, identity.photoUrl));
+  }
+
+  setBoth("employee_has_password", hasPassword ? "true" : "false");
+  setBoth("jobSpaceLink_jobseeker_login_event", payloadJson);
+  setBoth("jsl_global_auth_sync_v25", payloadJson);
+  setBoth("jsl_global_jobseeker_session_heartbeat_v25", payloadJson);
+  persistPrefillEmail(identity.email);
+  broadcastJobseekerLogin(payload);
+
+  try{
+    if (window.JobSpaceSharedSessionAdapter?.login){
+      window.JobSpaceSharedSessionAdapter.login(payload, {
+        source: "loginjobseeker.html",
+        reason: "jobseeker-login"
+      });
+    }
   }catch(_){ }
 
-  persistPrefillEmail(email);
+  return payload;
 }
 
 /* ==========================================================
    LOGIN
 ========================================================== */
-form.addEventListener("submit", async (e)=>{
-  e.preventDefault();
+form.addEventListener("submit", async (event)=>{
+  event.preventDefault();
   clearMsgs();
 
   const email = normEmail(emailEl.value);
-  const pass  = String(passEl.value || "").trim();
+  const password = String(passEl.value || "").trim();
 
   if (!email){
     showError("Please enter your email.");
@@ -3452,85 +3899,94 @@ form.addEventListener("submit", async (e)=>{
   setBusy(true);
 
   try{
-    const acc = await fetchEmployeeAccountByEmail(email);
+    /* Verify the applicant record first. This prevents an employer-only email
+       from replacing an existing Supabase Auth session on this page. */
+    const identity = await resolveJobseekerIdentityByEmail(email);
 
-    if (acc && acc.is_active === false){
-      setPassUI({
-        required: false,
-        noteText: "This account is not active."
-      });
-      showError("Your employee account is not active.");
+    if (!identity){
+      setPassUI({ required:false, noteText:"" });
+      showError("No jobseeker account was found for this email. Employer accounts cannot log in here.");
       return;
     }
 
-    const dbHash = acc ? String(acc.password_hash || "").trim() : "";
-    const hasPassword = !!dbHash;
+    const passwordAccount = await fetchJobseekerPasswordAccount(email);
+
+    if (passwordAccount && passwordAccount.is_active === false){
+      setPassUI({ required:false, noteText:"This jobseeker account is not active." });
+      showError("Your jobseeker account is not active.");
+      return;
+    }
+
+    const databaseHash = safeText(passwordAccount?.password_hash);
+    const hasPassword = !!databaseHash;
 
     if (hasPassword){
-      setPassUI({
-        required: true,
-        noteText: "Password is required for this account."
-      });
+      setPassUI({ required:true, noteText:"Password is required for this jobseeker account." });
 
-      if (!pass){
+      if (!password){
         hideMsgBoxes();
         passEl.focus();
-        passEl.scrollIntoView({
-          block: "center",
-          behavior: "smooth"
-        });
+        passEl.scrollIntoView({ block:"center", behavior:"smooth" });
         return;
       }
 
-      const inputHash = await sha256Hex(pass);
-
-      if (inputHash !== dbHash){
-        showError("Invalid email or password.");
+      const inputHash = await sha256Hex(password);
+      if (inputHash !== databaseHash){
+        showError("Invalid jobseeker email or password.");
         return;
       }
-    } else {
-      setPassUI({
-        required: false,
-        noteText: ""
-      });
+    }else{
+      setPassUI({ required:false, noteText:"" });
     }
 
-    const masterId = await resolveMasterIdByEmail(email);
+    let authResult = { authenticated:false, user:null, error:null };
 
-    if (!masterId){
-      showError("No account is found. Please sign up!");
-      return;
+    if (password){
+      authResult = await trySupabaseJobseekerAuth(email, password, identity);
+
+      /* Existing no-password/legacy jobseeker records remain supported. A
+         failed Auth sign-in does not convert an employer session into a
+         jobseeker session; the trusted jobseeker bridge below is scoped by
+         applicant master ID and role. */
+      if (!authResult.authenticated && authResult.error){
+        console.warn("Supabase Auth sign-in was unavailable for this legacy jobseeker record:", authResult.error.message || authResult.error);
+      }
     }
 
-    storeLoginLocal(email, (acc?.employee_name || ""), hasPassword);
+    identity.userId = safeText(authResult.user?.id || identity.userId);
+    identity.name = safeText(passwordAccount?.employee_name || identity.name) || "Logged-in Jobseeker";
 
-    __postLoginProfileUrl = buildProfileUrl(masterId, email);
+    if (!identity.masterId || !isEmailValid(identity.email)){
+      throw new Error("This account is not linked to a valid jobseeker applicant record.");
+    }
+
+    persistJobseekerLogin(identity, authResult.user, hasPassword);
+
+    __postLoginProfileUrl = buildProfileUrl(identity.masterId, identity.email);
     goProfileLink.href = __postLoginProfileUrl;
     goProfileLink.classList.remove("disabled");
 
-    /*
-      UPDATED LOGIN FLOW:
-      After successful login, do not open the after-login choice modal.
-      Redirect straight to postedhiring1.html.
-    */
-    showSuccess("Login successful. Redirecting to Job Hiring...");
-    window.location.replace(POST_LOGIN_REDIRECT_URL);
+    showSuccess("Jobseeker login successful. Redirecting to Job Hiring...");
 
-  } catch(err){
-    showError(err?.message || "Unexpected login error.");
-  } finally {
+    /* Give localStorage/BroadcastChannel listeners one event loop to receive
+       the trusted jobseeker identity before postedhiring1.html loads. */
+    setTimeout(()=>{
+      window.location.replace(POST_LOGIN_REDIRECT_URL);
+    }, 80);
+
+  }catch(error){
+    showError(error?.message || "Unexpected jobseeker login error.");
+  }finally{
     setBusy(false);
   }
 });
 
 document.addEventListener("DOMContentLoaded", ()=>{
   clearMsgs();
-  setPassUI({
-    required: false,
-    noteText: ""
-  });
+  setPassUI({ required:false, noteText:"" });
   hydrateEmailPrefill();
 });
+
 </script>
 
 </body>
