@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3236,7 +3237,7 @@ header .auth-buttons .subscribe-employer-icon-btn i,
     }
   }
 
-  @media (max-width:1023px){
+  @media (max-width:768px){
     header .auth-buttons.subscribe-employer-auth-shell{
       display:none !important;
     }
@@ -3316,8 +3317,7 @@ header .auth-buttons .subscribe-employer-icon-btn i,
         title="Employer account"
       >
         <img id="subscribeEmployerAccountLogo" class="subscribe-employer-account-logo-img" src="" alt="Company logo" />
-        <i class="fa-solid fa-building-user subscribe-account-fallback-icon" aria-hidden="true"></i>
-        <span class="auth-text subscribe-account-name" id="subscribeEmployerAccountName">Employer Account</span>
+        <span class="auth-text subscribe-account-name" id="subscribeEmployerAccountName">Login</span>
         <span class="subscribe-account-caret" aria-hidden="true">
           <i class="fa-solid fa-chevron-down"></i>
         </span>
@@ -3327,7 +3327,6 @@ header .auth-buttons .subscribe-employer-icon-btn i,
         <div class="subscribe-employer-dropdown-profile">
           <div class="subscribe-employer-dropdown-logo-wrap has-logo" id="subscribeEmployerDropdownLogoWrap">
             <img id="subscribeEmployerDropdownLogo" src="JOBSPACELINK.png" alt="Job Space Link logo" />
-            <i class="fa-solid fa-building-user subscribe-employer-dropdown-logo-fallback" id="subscribeEmployerDropdownLogoFallback" aria-hidden="true"></i>
           </div>
           <div class="subscribe-employer-dropdown-identity">
             <div class="subscribe-employer-dropdown-label" id="subscribeEmployerDropdownLabel"></div>
@@ -3340,6 +3339,7 @@ header .auth-buttons .subscribe-employer-icon-btn i,
           <a href="employerprofile.html" class="subscribe-employer-dropdown-item" id="subscribeEmployerCompanyProfileLink"><i class="fa-regular fa-address-card"></i><span>View company profile</span></a>
           <a href="postedjobs.html" class="subscribe-employer-dropdown-item subscribe-employer-posted-jobs-link" id="subscribeEmployerPostedJobsLink"><i class="fa-solid fa-list-check"></i><span>Posted Jobs</span></a>
           <a href="subscribe.html" class="subscribe-employer-dropdown-item" id="subscribeEmployerSubscribeLink"><i class="fa-solid fa-credit-card"></i><span>Subscribe</span></a>
+          <a href="subscriptionstatus.html" class="subscribe-employer-dropdown-item" id="subscribeEmployerSubscriptionStatusLink"><i class="fa-solid fa-clipboard-check"></i><span>Subscription Status</span></a>
           <a href="loginemployer.html" class="subscribe-employer-dropdown-item subscribe-employer-dropdown-login" id="subscribeEmployerLoginLink"><i class="fa-solid fa-right-to-bracket"></i><span>Employer Login</span></a>
           <button type="button" class="subscribe-employer-dropdown-item subscribe-employer-dropdown-logout" id="subscribeEmployerLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></button>
         </div>
@@ -4593,7 +4593,7 @@ form.addEventListener("submit", async (e) => {
     document.body.classList.toggle("employer-logged-in", logged);
 
     if(!logged){
-      if(accountName) accountName.textContent = "Employer Account";
+      if(accountName) accountName.textContent = "Login";
       if(label) label.textContent = "";
       if(companyEl) companyEl.textContent = "No login account";
       if(emailEl) emailEl.textContent = "";
@@ -4642,12 +4642,121 @@ form.addEventListener("submit", async (e) => {
     return identity;
   }
 
+  let employerLogoutInProgress = false;
+
+  function getEmployerLogoutRedirectUrl(){
+    try{
+      return new URL("index1.html", window.location.href).href;
+    }catch(_err){
+      return "index1.html";
+    }
+  }
+
+  let employerLogoutRedirectStarted = false;
+
+  function redirectAfterEmployerLogout(){
+    if(employerLogoutRedirectStarted) return;
+    employerLogoutRedirectStarted = true;
+
+    const redirectUrl = getEmployerLogoutRedirectUrl();
+
+    try{
+      window.location.replace(redirectUrl);
+    }catch(_err){
+      window.location.href = redirectUrl;
+    }
+  }
+
+  function clearSupabaseEmployerAuthStorage(){
+    const shouldRemove = (key) => {
+      const name = clean(key).toLowerCase();
+      return (
+        /^sb-.+-auth-token(?:-code-verifier)?$/.test(name) ||
+        name === "supabase.auth.token" ||
+        name === "supabase.auth.token-code-verifier"
+      );
+    };
+
+    [window.localStorage, window.sessionStorage].forEach((storage) => {
+      try{
+        const keysToRemove = [];
+        for(let index = 0; index < storage.length; index += 1){
+          const key = storage.key(index);
+          if(key && shouldRemove(key)) keysToRemove.push(key);
+        }
+        keysToRemove.forEach((key) => storage.removeItem(key));
+      }catch(_err){}
+    });
+  }
+
+  function registerEmployerLoggedOutState(email, company){
+    const loggedOutAt = new Date().toISOString();
+    const record = JSON.stringify({
+      role: "employer",
+      status: "logged_out",
+      source: "subscribe-dropdown",
+      email: clean(email).toLowerCase(),
+      company: clean(company),
+      redirect: "index1.html",
+      logged_out_at: loggedOutAt
+    });
+
+    try{ localStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
+    try{ sessionStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
+    try{ localStorage.setItem("JSL_EMPLOYER_AUTH_STATE", "logged_out"); }catch(_err){}
+    try{ sessionStorage.setItem("JSL_EMPLOYER_AUTH_STATE", "logged_out"); }catch(_err){}
+    try{ localStorage.setItem("JSL_EMPLOYER_LOGOUT_RECORD", record); }catch(_err){}
+    try{ sessionStorage.setItem("JSL_EMPLOYER_LOGOUT_RECORD", record); }catch(_err){}
+
+    return { loggedOutAt, record };
+  }
+
+  async function signOutEmployerSupabase(){
+    const client = getSupabaseClient();
+    if(!client || !client.auth || typeof client.auth.signOut !== "function") return;
+
+    const timeout = new Promise((resolve) => {
+      window.setTimeout(resolve, 1200);
+    });
+
+    const signOutRequest = (async () => {
+      try{
+        await client.auth.signOut({ scope: "local" });
+      }catch(firstError){
+        try{
+          await client.auth.signOut();
+        }catch(secondError){
+          console.warn("Employer Supabase sign-out warning:", secondError || firstError);
+        }
+      }
+    })();
+
+    await Promise.race([signOutRequest, timeout]);
+  }
+
   async function logoutEmployer(){
+    if(employerLogoutInProgress || window.__JSLSubscribeEmployerLogoutInProgress) return;
+    employerLogoutInProgress = true;
+    window.__JSLSubscribeEmployerLogoutInProgress = true;
+
+    /*
+      Fail-safe navigation:
+      even if an external auth listener or network request stalls,
+      the logged-out account is returned to index1.html.
+    */
+    const logoutRedirectFallback = window.setTimeout(function(){
+      redirectAfterEmployerLogout();
+    }, 2200);
+
     const logoutBtn = byId("subscribeEmployerLogoutBtn");
     if(logoutBtn){
       logoutBtn.disabled = true;
+      logoutBtn.setAttribute("aria-busy", "true");
       logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i><span>Logging out</span>';
     }
+
+    const previousEmail = readStorage(EMAIL_KEYS);
+    const previousCompany = readStorage(COMPANY_KEYS);
 
     const EXTRA_LOGOUT_KEYS = [
       "lastSubscribedEmail",
@@ -4677,6 +4786,7 @@ form.addEventListener("submit", async (e) => {
       "logo_url",
       "JSL_EMPLOYER_LOGO",
       "JSL_LOGGED_IN_COMPANY_LOGO",
+      "JSL_EMPLOYER_LOGO_PATH",
       "JSL_EMPLOYER_SESSION",
       "JSL_EMPLOYER_ACCOUNT",
       "JSL_LOGGED_IN_EMPLOYER",
@@ -4702,10 +4812,7 @@ form.addEventListener("submit", async (e) => {
     }
 
     try{
-      const client = getSupabaseClient();
-      if(client && client.auth && typeof client.auth.signOut === "function"){
-        await client.auth.signOut();
-      }
+      await signOutEmployerSupabase();
     }catch(error){
       console.warn("Employer logout warning:", error);
     }
@@ -4714,28 +4821,46 @@ form.addEventListener("submit", async (e) => {
     clearStorage(COMPANY_KEYS);
     clearStorage(LOGO_KEYS);
     EXTRA_LOGOUT_KEYS.forEach(clearKeyEverywhere);
+    clearSupabaseEmployerAuthStorage();
 
-    try{ localStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
-    try{ sessionStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
+    try{ window.clearTimeout(window.__JSLSubscribeCompanyLogoTimer); }catch(_err){}
 
     try{ if(companyNameInput) companyNameInput.value = ""; }catch(_err){}
     try{ if(companyEmailInput) companyEmailInput.value = ""; }catch(_err){}
     try{ if(cardNameInput) cardNameInput.value = ""; }catch(_err){}
     try{ if(cardNumberInput) cardNumberInput.value = ""; }catch(_err){}
-    try{ if(expiryInput) expiryInput.value = ""; }catch(_err){}
-    try{ if(cvcInput) cvcInput.value = ""; }catch(_err){}
+    try{ if(cardExpiryInput) cardExpiryInput.value = ""; }catch(_err){}
+    try{ if(cardCvvInput) cardCvvInput.value = ""; }catch(_err){}
 
     renderDropdown({ loggedIn:false });
     setDropdownOpen(false);
 
+    const logoutState = registerEmployerLoggedOutState(previousEmail, previousCompany);
+
     try{
       window.dispatchEvent(new CustomEvent("jsl-employer-logout", {
-        detail: { source:"subscribe-dropdown", redirect:"index.html" }
+        detail: {
+          source: "subscribe-dropdown",
+          role: "employer",
+          status: "logged_out",
+          email: clean(previousEmail).toLowerCase(),
+          company: clean(previousCompany),
+          logged_out_at: logoutState.loggedOutAt,
+          redirect: "index1.html"
+        }
       }));
     }catch(_err){}
 
-    window.location.replace("index.html");
+    window.clearTimeout(logoutRedirectFallback);
+    redirectAfterEmployerLogout();
   }
+
+  /*
+    Expose the verified logout controller for the final stable dropdown
+    patch. This avoids duplicate sign-out logic and guarantees that the
+    same cleanup and index1.html redirect are used everywhere.
+  */
+  window.logoutSubscribeEmployer = logoutEmployer;
 
   function bindEmployerDropdown(){
     const btn = byId("subscribeEmployerAccountBtn");
@@ -6072,7 +6197,7 @@ header .auth-buttons button i{
       dropdown.classList.toggle("is-logged-out", !email);
     }
     document.body.classList.toggle("employer-logged-in", !!email);
-    if(accountName) accountName.textContent = email ? company : "Employer Account";
+    if(accountName) accountName.textContent = email ? company : "Login";
     if(label) label.textContent = email ? "Logged in account" : "";
     if(companyElement) companyElement.textContent = email ? company : "No login account";
     if(emailElement) emailElement.textContent = email;
@@ -6156,184 +6281,6 @@ header .auth-buttons button i{
   };
 })();
 </script>
-
-
-
-<!-- ============================================================
-   FINAL LOGOUT REDIRECT SAFETY PATCH
-   Ensures the employer account dropdown Log out clears the logged-in
-   account/session data first, then redirects to index.html.
-============================================================ -->
-<script id="final-subscribe-logout-clear-and-redirect-patch">
-(function(){
-  "use strict";
-
-  var LOGOUT_KEYS = [
-    "lastSubscribedEmail",
-    "lastSubscribedCompanyName",
-    "loggedInEmployerEmail",
-    "employerEmail",
-    "companyEmail",
-    "loginEmployerEmail",
-    "employer_email",
-    "jobspacelinkEmployerEmail",
-    "JSL_EMPLOYER_EMAIL",
-    "JSL_LOGGED_IN_EMPLOYER_EMAIL",
-    "loggedInCompanyName",
-    "companyName",
-    "employerCompanyName",
-    "company_name",
-    "jobspacelinkEmployerCompanyName",
-    "JSL_EMPLOYER_COMPANY",
-    "JSL_LOGGED_IN_COMPANY_NAME",
-    "loggedInEmployerLogo",
-    "employerLogo",
-    "companyLogo",
-    "company_logo",
-    "jobspacelinkEmployerLogo",
-    "companyLogoUrl",
-    "company_logo_url",
-    "logo_url",
-    "JSL_EMPLOYER_LOGO",
-    "JSL_LOGGED_IN_COMPANY_LOGO",
-    "JSL_EMPLOYER_SESSION",
-    "JSL_EMPLOYER_ACCOUNT",
-    "JSL_LOGGED_IN_EMPLOYER",
-    "jobSpaceLink_employer_session",
-    "jobSpaceLink_employer_account",
-    "jobspacelink_employer_session",
-    "employerSession",
-    "employer_account",
-    "loggedInEmployer",
-    "currentEmployer",
-    "companySession",
-    "employer",
-    "loggedInEmployerId",
-    "employerId",
-    "employerUserId",
-    "JSL_EMPLOYER_ID",
-    "JSL_LOGGED_IN_EMPLOYER_ID"
-  ];
-
-  function clearKey(key){
-    try{ localStorage.removeItem(key); }catch(_err){}
-    try{ sessionStorage.removeItem(key); }catch(_err){}
-  }
-
-  function setTextOrValue(id, value){
-    var el = document.getElementById(id);
-    if(!el) return;
-    if("value" in el) el.value = value || "";
-    else el.textContent = value || "";
-  }
-
-  function resetAccountDisplay(){
-    var dropdown = document.getElementById("subscribeEmployerAccountDropdown");
-    var btn = document.getElementById("subscribeEmployerAccountBtn");
-    var headerLogo = document.getElementById("subscribeEmployerAccountLogo");
-    var dropdownLogo = document.getElementById("subscribeEmployerDropdownLogo");
-    var logoWrap = document.getElementById("subscribeEmployerDropdownLogoWrap");
-
-    if(dropdown){
-      dropdown.classList.remove("open", "is-logged-in");
-      dropdown.classList.add("is-logged-out");
-      dropdown.setAttribute("aria-hidden", "true");
-    }
-
-    if(btn){
-      btn.classList.remove("has-account-logo", "is-logged-in");
-      btn.classList.add("is-logged-out");
-      btn.setAttribute("aria-expanded", "false");
-      btn.setAttribute("aria-label", "Employer account menu");
-      btn.title = "Employer account";
-    }
-
-    if(headerLogo){
-      headerLogo.removeAttribute("src");
-      headerLogo.setAttribute("hidden", "hidden");
-    }
-
-    if(dropdownLogo){
-      dropdownLogo.src = "JOBSPACELINK.png";
-      dropdownLogo.alt = "Job Space Link logo";
-    }
-
-    if(logoWrap){
-      logoWrap.classList.add("has-logo");
-    }
-
-    setTextOrValue("subscribeEmployerDropdownLabel", "");
-    setTextOrValue("subscribeEmployerDropdownCompany", "No login account");
-    setTextOrValue("subscribeEmployerDropdownEmail", "");
-    setTextOrValue("companyName", "");
-    setTextOrValue("companyEmail", "");
-    setTextOrValue("cardName", "");
-    setTextOrValue("cardNumber", "");
-    setTextOrValue("expiry", "");
-    setTextOrValue("cvc", "");
-  }
-
-  async function signOutSupabase(){
-    try{
-      var client = null;
-      if(typeof resolveSupabaseClient === "function") client = resolveSupabaseClient();
-      else if(window.supabaseClient && window.supabaseClient.auth) client = window.supabaseClient;
-      else if(window.supabase && window.supabase.auth) client = window.supabase;
-      if(client && client.auth && typeof client.auth.signOut === "function"){
-        await client.auth.signOut();
-      }
-    }catch(error){
-      console.warn("Employer logout warning:", error);
-    }
-  }
-
-  async function clearEmployerLoginAndRedirect(){
-    var logoutBtn = document.getElementById("subscribeEmployerLogoutBtn");
-    if(logoutBtn){
-      logoutBtn.disabled = true;
-      logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i><span>Logging out</span>';
-    }
-
-    await signOutSupabase();
-
-    LOGOUT_KEYS.forEach(clearKey);
-    try{ localStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
-    try{ sessionStorage.setItem("JSL_EMPLOYER_LOGOUT_TS", String(Date.now())); }catch(_err){}
-
-    resetAccountDisplay();
-
-    try{
-      window.dispatchEvent(new CustomEvent("jsl-employer-logout", {
-        detail: { source:"subscribe-dropdown", redirect:"index.html" }
-      }));
-    }catch(_err){}
-
-    window.location.replace("index.html");
-  }
-
-  function bindLogoutRedirect(){
-    var logoutBtn = document.getElementById("subscribeEmployerLogoutBtn");
-    if(!logoutBtn || logoutBtn.__finalSubscribeLogoutRedirectBound) return;
-    logoutBtn.__finalSubscribeLogoutRedirectBound = true;
-
-    logoutBtn.addEventListener("click", function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      if(typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
-      clearEmployerLoginAndRedirect();
-    }, true);
-  }
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", bindLogoutRedirect, { once:true });
-  }else{
-    bindLogoutRedirect();
-  }
-
-  window.addEventListener("load", bindLogoutRedirect, { once:true });
-})();
-</script>
-
 
 <!-- ============================================================
    RESTORE PATCH: logged-in employer account dropdown display/style
@@ -7101,7 +7048,7 @@ header nav .nav-main-link:focus-visible,
       btn.title = "Employer account";
       btn.setAttribute("aria-label", "Employer account menu");
     }
-    if(accountName) accountName.textContent = "Employer Account";
+    if(accountName) accountName.textContent = "Login";
     if(img){ img.hidden = true; img.removeAttribute("src"); }
     if(dropdown){
       dropdown.classList.remove("is-logged-in");
@@ -7191,8 +7138,12 @@ header nav .nav-main-link:focus-visible,
     }, true);
 
     dropdown.addEventListener("click", function(event){
+      /*
+        Allow the clicked dropdown item to receive its own event first.
+        The event is stopped here only after it bubbles back to the menu.
+      */
       event.stopPropagation();
-    }, true);
+    });
 
     document.addEventListener("click", function(event){
       if(event.target && event.target.closest && event.target.closest("#subscribeEmployerAccountBtn, #subscribeEmployerAccountDropdown")) return;
@@ -7441,12 +7392,12 @@ header nav .nav-main-link:focus-visible,
     flex:0 0 38px !important;
     display:none !important;
     margin:0 !important;
-    padding:0 !important;
+    padding:2px !important;
     border:1px solid rgba(255,255,255,.78) !important;
     border-radius:10px !important;
     background:#0f172a !important;
-    object-fit:cover !important;
-    object-position:center !important;
+    object-fit:contain !important;
+    object-position:center center !important;
     box-shadow:0 2px 7px rgba(15,23,42,.22) !important;
   }
 
@@ -7722,7 +7673,7 @@ header nav .nav-main-link:focus-visible,
     }
   }
 
-  @media (max-width:1023px){
+  @media (max-width:768px){
     header .auth-buttons.subscribe-employer-auth-shell{
       display:none !important;
     }
@@ -7819,8 +7770,42 @@ header nav .nav-main-link:focus-visible,
     }, true);
 
     dropdown.addEventListener("click", function(event){
+      /*
+        Allow the clicked dropdown item to receive its own event first.
+        The event is stopped here only after it bubbles back to the menu.
+      */
       event.stopPropagation();
-    }, true);
+    });
+
+    var logoutButton = byId("subscribeEmployerLogoutBtn");
+
+    if(logoutButton && logoutButton.dataset.index1LogoutBound !== "true"){
+      logoutButton.dataset.index1LogoutBound = "true";
+
+      logoutButton.addEventListener("click", function(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        if(typeof event.stopImmediatePropagation === "function"){
+          event.stopImmediatePropagation();
+        }
+
+        if(typeof window.logoutSubscribeEmployer === "function"){
+          window.logoutSubscribeEmployer();
+          return;
+        }
+
+        /*
+          Emergency fallback used only if the main logout controller
+          was not initialized. The requested destination is index1.html.
+        */
+        try{
+          window.location.replace(new URL("index1.html", window.location.href).href);
+        }catch(_error){
+          window.location.href = "index1.html";
+        }
+      }, true);
+    }
 
     document.addEventListener("click", function(event){
       var target = event.target;
@@ -7862,6 +7847,626 @@ header nav .nav-main-link:focus-visible,
   }, { once:true });
 })();
 </script>
+
+<!-- ============================================================
+     FINAL ACCOUNT LINKS + #0b5cff NAV HOVER OVERRIDE
+============================================================ -->
+<style id="jsl-final-subscribe-status-and-blue-hover-2026-08-10">
+  :root{--jsl-hover-blue:#0b5cff}
+
+  /* Keep Subscribe and Subscription Status visible in the logged-in menu. */
+  html body #subscribeEmployerAccountDropdown.is-logged-in #subscribeEmployerSubscribeLink,
+  html body #subscribeEmployerAccountDropdown.is-logged-in #subscribeEmployerSubscriptionStatusLink{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:44px !important;
+  }
+
+  /* Hide Subscription Status when no employer account is logged in. */
+  html body #subscribeEmployerAccountDropdown.is-logged-out #subscribeEmployerSubscriptionStatusLink{
+    display:none !important;
+  }
+
+  /* Desktop navigation link hover: blue text, icon and underline. */
+  html body header nav > a::after,
+  html body header nav .nav-main-link::after,
+  html body .nav-dropdown-menu a::after{
+    background:var(--jsl-hover-blue) !important;
+    border-color:var(--jsl-hover-blue) !important;
+  }
+
+  html body header nav > a:hover,
+  html body header nav > a:focus-visible,
+  html body header nav .nav-main-link:hover,
+  html body header nav .nav-main-link:focus-visible,
+  html body .nav-dropdown:hover .nav-main-link,
+  html body .nav-dropdown.open .nav-main-link,
+  html body .nav-dropdown-menu a:hover,
+  html body .nav-dropdown-menu a:focus-visible,
+  html body header nav > a:hover > i,
+  html body header nav > a:focus-visible > i,
+  html body header nav .nav-main-link:hover > i,
+  html body header nav .nav-main-link:focus-visible > i,
+  html body .nav-dropdown:hover .nav-main-link > i,
+  html body .nav-dropdown.open .nav-main-link > i,
+  html body .nav-dropdown-menu a:hover > i,
+  html body .nav-dropdown-menu a:focus-visible > i{
+    color:var(--jsl-hover-blue) !important;
+  }
+
+  html body header nav > a:hover::after,
+  html body header nav > a:focus-visible::after,
+  html body header nav .nav-main-link:hover::after,
+  html body header nav .nav-main-link:focus-visible::after,
+  html body .nav-dropdown:hover .nav-main-link::after,
+  html body .nav-dropdown.open .nav-main-link::after,
+  html body .nav-dropdown-menu a:hover::after,
+  html body .nav-dropdown-menu a:focus-visible::after{
+    background:var(--jsl-hover-blue) !important;
+    opacity:1 !important;
+  }
+
+  /* Logged-in account dropdown hover: one blue underline plus blue text/icon. */
+  html body .subscribe-employer-dropdown-item{
+    position:relative !important;
+    overflow:visible !important;
+    text-decoration:none !important;
+  }
+
+  html body .subscribe-employer-dropdown-item::after{
+    content:"" !important;
+    position:absolute !important;
+    left:12px !important;
+    right:12px !important;
+    bottom:5px !important;
+    height:2px !important;
+    border-radius:999px !important;
+    background:var(--jsl-hover-blue) !important;
+    opacity:0 !important;
+    transform:scaleX(0) !important;
+    transform-origin:left center !important;
+    transition:opacity .18s ease,transform .18s ease !important;
+    pointer-events:none !important;
+  }
+
+  html body .subscribe-employer-dropdown-item:hover,
+  html body .subscribe-employer-dropdown-item:focus-visible,
+  html body .subscribe-employer-dropdown-item:hover i,
+  html body .subscribe-employer-dropdown-item:focus-visible i{
+    color:var(--jsl-hover-blue) !important;
+  }
+
+  html body .subscribe-employer-dropdown-item:hover::after,
+  html body .subscribe-employer-dropdown-item:focus-visible::after{
+    background:var(--jsl-hover-blue) !important;
+    opacity:1 !important;
+    transform:scaleX(1) !important;
+  }
+
+  /* Mobile navigation uses the same blue hover treatment. */
+  html body .mobile-panel .mnav a::after,
+  html body .mobile-panel .mnav-main-link::after{
+    background:var(--jsl-hover-blue) !important;
+    border-color:var(--jsl-hover-blue) !important;
+  }
+
+  html body .mobile-panel .mnav a:hover,
+  html body .mobile-panel .mnav a:focus-visible,
+  html body .mobile-panel .mnav-main-link:hover,
+  html body .mobile-panel .mnav-main-link:focus-visible,
+  html body .mobile-panel .mnav a:hover i,
+  html body .mobile-panel .mnav a:focus-visible i,
+  html body .mobile-panel .mnav-main-link:hover i,
+  html body .mobile-panel .mnav-main-link:focus-visible i{
+    color:var(--jsl-hover-blue) !important;
+  }
+</style>
+
+<script id="jsl-final-account-subscription-routes-2026-08-10">
+(function(){
+  "use strict";
+  function enforceAccountSubscriptionLinks(){
+    var subscribe=document.getElementById("subscribeEmployerSubscribeLink");
+    var status=document.getElementById("subscribeEmployerSubscriptionStatusLink");
+    if(subscribe) subscribe.setAttribute("href","subscribe.html");
+    if(status) status.setAttribute("href","subscriptionstatus.html");
+  }
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",enforceAccountSubscriptionLinks,{once:true});
+  }else{
+    enforceAccountSubscriptionLinks();
+  }
+  window.addEventListener("pageshow",enforceAccountSubscriptionLinks,{passive:true});
+})();
+</script>
+
+
+<!-- ============================================================
+     FINAL LOGO READABILITY + HEADER CONTAINMENT PATCH
+     - Enlarges the logged-in account logo tile
+     - Adds a smooth hover/focus zoom effect
+     - Keeps the company logo uncropped with object-fit: contain
+     - Prevents the main Job Space Link logo from overflowing header
+============================================================ -->
+<style id="jsl-final-logo-readability-header-containment-2026-08-10">
+
+  /* ------------------------------------------------------------
+     MAIN HEADER LOGO SAFETY
+     The image can never become taller than the active header.
+  ------------------------------------------------------------ */
+  html body header > .logo{
+    box-sizing:border-box !important;
+    max-height:var(--header-h) !important;
+  }
+
+  html body header > .logo img{
+    display:block !important;
+    width:auto !important;
+    height:auto !important;
+    max-height:calc(var(--header-h) - 10px) !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+  }
+
+  /* Large desktop */
+  @media (min-width:1440px){
+    html body header > .logo img{
+      max-width:200px !important;
+      max-height:calc(var(--header-h) - 10px) !important;
+    }
+  }
+
+  /* Standard desktop / small laptop */
+  @media (min-width:1024px) and (max-width:1439px){
+    html body header > .logo img{
+      max-width:170px !important;
+      max-height:calc(var(--header-h) - 12px) !important;
+    }
+  }
+
+  /* Tablet landscape */
+  @media (min-width:769px) and (max-width:1023px){
+    html body header > .logo img{
+      max-width:150px !important;
+      max-height:calc(var(--header-h) - 14px) !important;
+    }
+  }
+
+  /* Mobile */
+  @media (max-width:768px){
+    html body header > .logo{
+      max-height:var(--header-h) !important;
+    }
+
+    html body header > .logo img{
+      width:auto !important;
+      height:auto !important;
+      max-width:150px !important;
+      max-height:calc(var(--header-h) - 18px) !important;
+      object-fit:contain !important;
+    }
+  }
+
+  @media (max-width:480px){
+    html body header > .logo img{
+      max-width:142px !important;
+      max-height:calc(var(--header-h) - 18px) !important;
+    }
+  }
+
+  /* ------------------------------------------------------------
+     LOGGED-IN EMPLOYER ACCOUNT
+     Bigger account pill + bigger uncropped logo tile.
+  ------------------------------------------------------------ */
+  html body.employer-logged-in #subscribeEmployerAccountBtn,
+  html body #subscribeEmployerAccountBtn.is-logged-in{
+    width:min(248px,24vw) !important;
+    min-width:200px !important;
+    height:54px !important;
+    min-height:54px !important;
+    padding:4px 12px 4px 5px !important;
+    gap:10px !important;
+    transform-origin:center center !important;
+    transition:
+      transform .22s ease,
+      box-shadow .22s ease,
+      filter .22s ease !important;
+  }
+
+  html body.employer-logged-in #subscribeEmployerAccountLogo,
+  html body #subscribeEmployerAccountBtn.is-logged-in #subscribeEmployerAccountLogo{
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+    flex:0 0 46px !important;
+    margin:0 !important;
+    padding:2px !important;
+    border:1px solid rgba(255,255,255,.88) !important;
+    border-radius:12px !important;
+    background:#0f172a !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    transform:scale(1) !important;
+    transform-origin:center center !important;
+    transition:
+      transform .22s ease,
+      box-shadow .22s ease,
+      border-color .22s ease !important;
+    box-shadow:0 3px 10px rgba(15,23,42,.28) !important;
+  }
+
+  /* Zoom/enlarge effect for the full account tile. */
+  html body.employer-logged-in #subscribeEmployerAccountBtn:hover,
+  html body.employer-logged-in #subscribeEmployerAccountBtn:focus-visible,
+  html body #subscribeEmployerAccountBtn.is-logged-in:hover,
+  html body #subscribeEmployerAccountBtn.is-logged-in:focus-visible{
+    transform:translateY(-1px) scale(1.025) !important;
+    box-shadow:0 10px 24px rgba(47,111,238,.34) !important;
+    filter:saturate(1.08) brightness(1.04) !important;
+    outline:none !important;
+  }
+
+  /* Zoom/enlarge the actual company logo while keeping it uncropped. */
+  html body.employer-logged-in #subscribeEmployerAccountBtn:hover #subscribeEmployerAccountLogo,
+  html body.employer-logged-in #subscribeEmployerAccountBtn:focus-visible #subscribeEmployerAccountLogo,
+  html body #subscribeEmployerAccountBtn.is-logged-in:hover #subscribeEmployerAccountLogo,
+  html body #subscribeEmployerAccountBtn.is-logged-in:focus-visible #subscribeEmployerAccountLogo{
+    transform:scale(1.10) !important;
+    border-color:#ffffff !important;
+    box-shadow:0 5px 14px rgba(15,23,42,.34) !important;
+  }
+
+  /* Keep fallback icon visually matched when a company has no logo. */
+  html body.employer-logged-in #subscribeEmployerAccountBtn:not(.has-account-logo) > .subscribe-account-fallback-icon,
+  html body #subscribeEmployerAccountBtn.is-logged-in:not(.has-account-logo) > .subscribe-account-fallback-icon{
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+    flex:0 0 46px !important;
+    border-radius:12px !important;
+  }
+
+  /* Preserve enough room on 1024–1439px screens while making logo readable. */
+  @media (min-width:1024px) and (max-width:1439px){
+    html body.employer-logged-in #subscribeEmployerAccountBtn,
+    html body #subscribeEmployerAccountBtn.is-logged-in{
+      width:min(215px,22vw) !important;
+      min-width:178px !important;
+      height:50px !important;
+      min-height:50px !important;
+      padding:4px 9px 4px 5px !important;
+      gap:8px !important;
+    }
+
+    html body.employer-logged-in #subscribeEmployerAccountLogo,
+    html body #subscribeEmployerAccountBtn.is-logged-in #subscribeEmployerAccountLogo,
+    html body.employer-logged-in #subscribeEmployerAccountBtn:not(.has-account-logo) > .subscribe-account-fallback-icon,
+    html body #subscribeEmployerAccountBtn.is-logged-in:not(.has-account-logo) > .subscribe-account-fallback-icon{
+      width:42px !important;
+      height:42px !important;
+      min-width:42px !important;
+      flex:0 0 42px !important;
+      flex-basis:42px !important;
+      border-radius:11px !important;
+    }
+
+    html body.employer-logged-in #subscribeEmployerAccountBtn .subscribe-account-name,
+    html body #subscribeEmployerAccountBtn.is-logged-in .subscribe-account-name{
+      font-size:.76rem !important;
+    }
+  }
+</style>
+
+
+<!-- ============================================================
+     FINAL 2026-08-28 EMPLOYER ACCOUNT THUMBNAIL + TABLET AUTH FIX
+     - Company logo stays fully visible (no clipping/cropping)
+     - Old building fallback icon is disabled/removed from the account thumbnail
+     - Logged-out state shows a readable Login button
+     - 769px–1023px shows Login or the logged-in employer account
+============================================================ -->
+<style id="jsl-final-employer-account-thumbnail-tablet-fix-2026-08-28">
+  /* The old building fallback is intentionally retired for this account UI. */
+  #subscribeEmployerAccountBtn .subscribe-account-fallback-icon,
+  #subscribeEmployerAccountDropdown .subscribe-employer-dropdown-logo-fallback{
+    display:none !important;
+  }
+
+  /* Logged-out state: use a real text Login control instead of an icon-only button. */
+  #subscribeEmployerAccountBtn.is-logged-out{
+    width:auto !important;
+    min-width:82px !important;
+    height:38px !important;
+    min-height:38px !important;
+    padding:0 12px !important;
+    gap:7px !important;
+    overflow:visible !important;
+    border-radius:10px !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+    background:linear-gradient(135deg, rgba(0,198,255,.22), rgba(139,92,246,.22)) !important;
+  }
+
+  #subscribeEmployerAccountBtn.is-logged-out #subscribeEmployerAccountLogo{
+    display:none !important;
+  }
+
+  #subscribeEmployerAccountBtn.is-logged-out .subscribe-account-name{
+    display:block !important;
+    min-width:0 !important;
+    color:#fff !important;
+    font-size:.76rem !important;
+    font-weight:800 !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+
+  #subscribeEmployerAccountBtn.is-logged-out .subscribe-account-caret{
+    display:inline-flex !important;
+    width:auto !important;
+    min-width:0 !important;
+    color:#fff !important;
+  }
+
+  #subscribeEmployerAccountBtn.is-logged-out .subscribe-account-caret i{
+    display:block !important;
+    color:#fff !important;
+    font-size:.68rem !important;
+  }
+
+  /* Desktop/laptop logged-in account: keep the entire company logo inside the thumbnail. */
+  html body.employer-logged-in #subscribeEmployerAccountBtn,
+  html body #subscribeEmployerAccountBtn.is-logged-in{
+    overflow:hidden !important;
+  }
+
+  html body.employer-logged-in #subscribeEmployerAccountLogo,
+  html body #subscribeEmployerAccountBtn.is-logged-in #subscribeEmployerAccountLogo{
+    display:none !important;
+    box-sizing:border-box !important;
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+    flex:0 0 46px !important;
+    max-width:46px !important;
+    max-height:46px !important;
+    margin:0 !important;
+    padding:3px !important;
+    border:1px solid rgba(255,255,255,.88) !important;
+    border-radius:11px !important;
+    background:#0f172a !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    transform:none !important;
+    clip-path:none !important;
+    overflow:visible !important;
+  }
+
+  html body.employer-logged-in #subscribeEmployerAccountBtn.has-account-logo #subscribeEmployerAccountLogo,
+  html body #subscribeEmployerAccountBtn.is-logged-in.has-account-logo #subscribeEmployerAccountLogo{
+    display:block !important;
+  }
+
+  /* Do not enlarge the logo inside an overflow-hidden pill; that was clipping its edges. */
+  html body.employer-logged-in #subscribeEmployerAccountBtn:hover #subscribeEmployerAccountLogo,
+  html body.employer-logged-in #subscribeEmployerAccountBtn:focus-visible #subscribeEmployerAccountLogo,
+  html body #subscribeEmployerAccountBtn.is-logged-in:hover #subscribeEmployerAccountLogo,
+  html body #subscribeEmployerAccountBtn.is-logged-in:focus-visible #subscribeEmployerAccountLogo{
+    transform:none !important;
+  }
+
+  /* Dropdown logo also stays fully visible. */
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logo-wrap{
+    overflow:hidden !important;
+  }
+
+  #subscribeEmployerAccountDropdown.is-logged-in .subscribe-employer-dropdown-logo-wrap img{
+    box-sizing:border-box !important;
+    width:100% !important;
+    height:100% !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    padding:5px !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    transform:none !important;
+    clip-path:none !important;
+  }
+
+  /* Laptop/desktop sizing keeps the logo readable without letting the pill collide with nav links. */
+  @media (min-width:1024px) and (max-width:1439px){
+    html body.employer-logged-in #subscribeEmployerAccountBtn,
+    html body #subscribeEmployerAccountBtn.is-logged-in{
+      width:min(210px,21vw) !important;
+      min-width:172px !important;
+      height:48px !important;
+      min-height:48px !important;
+      padding:3px 9px 3px 4px !important;
+      gap:8px !important;
+    }
+
+    html body.employer-logged-in #subscribeEmployerAccountLogo,
+    html body #subscribeEmployerAccountBtn.is-logged-in #subscribeEmployerAccountLogo{
+      width:40px !important;
+      height:40px !important;
+      min-width:40px !important;
+      max-width:40px !important;
+      max-height:40px !important;
+      flex:0 0 40px !important;
+      padding:3px !important;
+    }
+  }
+
+  /* Tablet landscape: explicitly show nav + Login/logged-in employer account. */
+  @media (min-width:769px) and (max-width:1023px){
+    header{
+      display:flex !important;
+      align-items:center !important;
+      justify-content:space-between !important;
+      gap:5px !important;
+      padding:0 7px 0 5px !important;
+      overflow:visible !important;
+    }
+
+    header > .logo{
+      flex:0 0 auto !important;
+      min-width:0 !important;
+      margin:0 !important;
+    }
+
+    header > .logo img{
+      width:auto !important;
+      height:auto !important;
+      max-width:118px !important;
+      max-height:calc(var(--header-h) - 16px) !important;
+      object-fit:contain !important;
+    }
+
+    header nav{
+      display:flex !important;
+      flex:1 1 auto !important;
+      min-width:0 !important;
+      gap:4px !important;
+      margin-left:1px !important;
+      overflow:visible !important;
+      white-space:nowrap !important;
+    }
+
+    header nav > a,
+    header nav .nav-main-link{
+      height:30px !important;
+      padding:0 1px !important;
+      font-size:.58rem !important;
+      gap:3px !important;
+    }
+
+    header nav > a i,
+    header nav .nav-main-link i{
+      font-size:.86em !important;
+    }
+
+    .nav-dropdown{
+      height:30px !important;
+    }
+
+    .nav-dropdown-toggle{
+      width:16px !important;
+      height:16px !important;
+    }
+
+    .nav-dropdown-toggle i{
+      font-size:.62rem !important;
+    }
+
+    header .auth-buttons.subscribe-employer-auth-shell{
+      display:flex !important;
+      flex:0 0 auto !important;
+      align-items:center !important;
+      justify-content:flex-end !important;
+      gap:4px !important;
+      min-width:0 !important;
+      overflow:visible !important;
+    }
+
+    .nav-toggle{
+      display:none !important;
+    }
+
+    .mobile-panel{
+      display:none !important;
+    }
+
+    /* Keep applied/favorite actions compact so they never push the account over nav links. */
+    body.employer-logged-in .subscribe-header-action{
+      display:grid !important;
+      width:28px !important;
+      height:28px !important;
+      min-width:28px !important;
+      border-radius:8px !important;
+    }
+
+    body.employer-logged-in .subscribe-header-action i{
+      font-size:.74rem !important;
+    }
+
+    #subscribeEmployerAccountBtn.is-logged-out{
+      display:flex !important;
+      width:auto !important;
+      min-width:68px !important;
+      height:30px !important;
+      min-height:30px !important;
+      padding:0 8px !important;
+      gap:5px !important;
+      border-radius:8px !important;
+    }
+
+    #subscribeEmployerAccountBtn.is-logged-out .subscribe-account-name{
+      display:block !important;
+      font-size:.62rem !important;
+    }
+
+    #subscribeEmployerAccountBtn.is-logged-out .subscribe-account-caret{
+      display:inline-flex !important;
+    }
+
+    html body.employer-logged-in #subscribeEmployerAccountBtn,
+    html body #subscribeEmployerAccountBtn.is-logged-in{
+      display:flex !important;
+      width:min(150px,19vw) !important;
+      min-width:118px !important;
+      height:34px !important;
+      min-height:34px !important;
+      padding:2px 6px 2px 3px !important;
+      gap:5px !important;
+      border-radius:9px !important;
+    }
+
+    html body.employer-logged-in #subscribeEmployerAccountLogo,
+    html body #subscribeEmployerAccountBtn.is-logged-in #subscribeEmployerAccountLogo{
+      width:29px !important;
+      height:29px !important;
+      min-width:29px !important;
+      max-width:29px !important;
+      max-height:29px !important;
+      flex:0 0 29px !important;
+      padding:2px !important;
+      border-radius:8px !important;
+    }
+
+    html body.employer-logged-in #subscribeEmployerAccountBtn .subscribe-account-name,
+    html body #subscribeEmployerAccountBtn.is-logged-in .subscribe-account-name{
+      display:block !important;
+      min-width:0 !important;
+      font-size:.61rem !important;
+      line-height:1.05 !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      white-space:nowrap !important;
+    }
+
+    html body.employer-logged-in #subscribeEmployerAccountBtn .subscribe-account-caret,
+    html body #subscribeEmployerAccountBtn.is-logged-in .subscribe-account-caret{
+      display:inline-flex !important;
+      width:10px !important;
+      min-width:10px !important;
+    }
+
+    #subscribeEmployerAccountDropdown.subscribe-employer-account-dropdown{
+      right:0 !important;
+      width:min(350px, calc(100vw - 16px)) !important;
+    }
+  }
+
+  /* Mobile keeps the existing hamburger/mobile-panel behavior. */
+  @media (max-width:768px){
+    header .auth-buttons.subscribe-employer-auth-shell{
+      display:none !important;
+    }
+  }
+</style>
 
 </body>
 </html>

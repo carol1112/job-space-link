@@ -3959,7 +3959,7 @@
 
     /* ============================================================
        COMPANY REVIEW FLOW
-       Opens from “Review companies you’ve worked for” and recreates
+       Opens from â€œReview companies youâ€™ve worked forâ€ and recreates
        the Indeed-style company review screens shown in the reference.
     ============================================================ */
     .review-shell{
@@ -7066,7 +7066,6 @@ header.viewstaff-profile-header{
 
 .profile-photo-action span,
 .jobseeker-account-trigger span{
-  display:grid !important;
   place-items:center !important;
   color:var(--bank-navy) !important;
   background:#f8fafc !important;
@@ -7663,7 +7662,7 @@ button.settings-close{
     .viewstaff-profile-header .about-menu-btn:hover,
     .viewstaff-profile-header .about-menu-btn:focus-visible,
     .viewstaff-profile-header .about-menu.open .about-menu-btn{
-      color:#000000 !important;
+      color:#0b5cff !important;
       background:transparent !important;
       text-shadow:none !important;
       text-decoration:underline !important;
@@ -7796,7 +7795,7 @@ button.settings-close{
 
     .viewstaff-profile-header .about-dropdown a:hover i,
     .viewstaff-profile-header .about-dropdown a:focus-visible i{
-      color:#000000 !important;
+      color:#0b5cff !important;
       background:rgba(0,0,0,.045) !important;
       border-color:rgba(0,0,0,.12) !important;
     }
@@ -7856,7 +7855,6 @@ button.settings-close{
 
     .viewstaff-profile-header .profile-photo-action span,
     .viewstaff-profile-header .jobseeker-account-trigger span{
-      display:grid !important;
       place-items:center !important;
       color:var(--choose-header-navy) !important;
       background:#f8fafc !important;
@@ -8027,7 +8025,7 @@ button.settings-close{
 
 
     /* ============================================================
-       FINAL REQUEST PATCH — LOGO ZOOM + CLEAN NAV ICONS/UNDERLINE
+       FINAL REQUEST PATCH â€” LOGO ZOOM + CLEAN NAV ICONS/UNDERLINE
        - Adds Job Space Link logo zoom-in hover.
        - Removes background, border, glow, shadow, and box effect
          from desktop nav icons and About dropdown header/icon.
@@ -8095,7 +8093,7 @@ button.settings-close{
       bottom:2px !important;
       height:2px !important;
       border-radius:999px !important;
-      background:#000000 !important;
+      background:#0b5cff !important;
       transform:scaleX(0) !important;
       transform-origin:left center !important;
       transition:transform .2s ease !important;
@@ -8183,7 +8181,7 @@ button.settings-close{
     .viewstaff-profile-header .about-menu-btn:hover .about-caret,
     .viewstaff-profile-header .about-menu-btn:focus-visible .about-caret,
     .viewstaff-profile-header .about-menu.open .about-menu-btn .about-caret{
-      color:#000000 !important;
+      color:#0b5cff !important;
       background:transparent !important;
       border:0 !important;
       box-shadow:none !important;
@@ -8219,7 +8217,7 @@ button.settings-close{
       bottom:7px !important;
       height:2px !important;
       border-radius:999px !important;
-      background:#000000 !important;
+      background:#0b5cff !important;
       transform:scaleX(0) !important;
       transform-origin:left center !important;
       transition:transform .2s ease !important;
@@ -8228,7 +8226,7 @@ button.settings-close{
 
     .viewstaff-profile-header .about-dropdown a:hover,
     .viewstaff-profile-header .about-dropdown a:focus-visible{
-      color:#000000 !important;
+      color:#0b5cff !important;
       background:#ffffff !important;
       border:0 !important;
       box-shadow:none !important;
@@ -8302,7 +8300,6 @@ button.settings-close{
     .viewstaff-profile-header .jobseeker-account-trigger span{
       width:100% !important;
       height:100% !important;
-      display:grid !important;
       place-items:center !important;
       border-radius:999px !important;
       background:#f8fbff !important;
@@ -9529,7 +9526,7 @@ button.settings-close{
 
 
     /* ============================================================
-       PROFILE VIEW TOP CONTROLS — ZOOM / FIT PAGE / RESET
+       PROFILE VIEW TOP CONTROLS â€” ZOOM / FIT PAGE / RESET
        Inserts the requested one-row viewer controls below the header
        and above the profile card without changing existing profile,
        upload, modal, route, or session behavior.
@@ -10421,7 +10418,7 @@ button.settings-close{
 
 
     /* ============================================================
-       FINAL PATCH 2026-06-22 — WIDER DESKTOP HEADER NAV SPACING
+       FINAL PATCH 2026-06-22 â€” WIDER DESKTOP HEADER NAV SPACING
        Increases the spacing between Home, About, Job Hiring,
        Jobseeker, Post Jobs, and Post Resume while preserving all
        links, dropdowns, login/account controls, and mobile behavior.
@@ -10594,7 +10591,7 @@ button.settings-close{
 
 
     /* ============================================================
-       FINAL PATCH 2026-06-22 — JOBSEEKER ACTIVE STATUS TOGGLE
+       FINAL PATCH 2026-06-22 â€” JOBSEEKER ACTIVE STATUS TOGGLE
        Replaces the Job Hiring dropdown shortcut with an Activate /
        Deactivate action that updates applicant_transaction_table.status.
     ============================================================ */
@@ -10669,7 +10666,131 @@ button.settings-close{
       margin-left:3ch !important;
     }
 
+
+    /* ============================================================
+       FINAL AVATAR FALLBACK CLEANUP
+       Prevents the fallback user icon from displaying beside or over
+       a successfully loaded profile photo. The account dropdown and
+       profile-photo click behavior remain unchanged.
+    ============================================================ */
+    .jobseeker-account-trigger,
+    .profile-photo-action,
+    .jobseeker-menu-photo,
+    .profile-main-avatar{
+      position:relative;
+    }
+
+    .jobseeker-account-trigger.has-photo > img,
+    .profile-photo-action.has-photo > img,
+    .jobseeker-menu-photo.has-photo > img,
+    .profile-main-avatar.has-photo > img{
+      display:block !important;
+    }
+
+    .jobseeker-account-trigger.has-photo > span,
+    .profile-photo-action.has-photo > span,
+    .jobseeker-menu-photo.has-photo > span,
+    .profile-main-avatar.has-photo > .profile-avatar-fallback{
+      display:none !important;
+    }
+
+    .jobseeker-account-trigger:not(.has-photo) > img,
+    .profile-photo-action:not(.has-photo) > img,
+    .jobseeker-menu-photo:not(.has-photo) > img,
+    .profile-main-avatar:not(.has-photo) > img{
+      display:none !important;
+    }
+
+    .jobseeker-account-trigger:not(.has-photo) > span,
+    .profile-photo-action:not(.has-photo) > span,
+    .jobseeker-menu-photo:not(.has-photo) > span{
+      display:grid !important;
+      place-items:center !important;
+    }
+
+    .profile-main-avatar:not(.has-photo) > .profile-avatar-fallback{
+      display:flex !important;
+    }
+
+    /* The old camera/upload overlay remains removed from the profile display. */
+    .profile-avatar-upload-btn{
+      display:none !important;
+    }
+
 </style>
+
+<!-- ============================================================
+     FINAL HEADER LOGO SIZE REDUCTION
+     - Visual-only change
+     - Keeps all existing header links, dropdowns, account actions,
+       mobile menu, Supabase/session logic, and logo hover zoom behavior.
+============================================================ -->
+<style id="jsl-final-smaller-header-logo">
+  /* Desktop / large screens */
+  .viewstaff-profile-header .brand.jobspace-brand img,
+  .viewstaff-profile-header .jobspace-brand img,
+  .topbar.viewstaff-profile-header .brand img,
+  .topbar.viewstaff-profile-header .jobspace-brand img{
+    height:62px !important;
+    width:auto !important;
+    max-width:132px !important;
+    object-fit:contain !important;
+  }
+
+  /* Tablet */
+  @media (min-width:781px) and (max-width:1023px){
+    .viewstaff-profile-header .brand.jobspace-brand img,
+    .viewstaff-profile-header .jobspace-brand img,
+    .topbar.viewstaff-profile-header .brand img,
+    .topbar.viewstaff-profile-header .jobspace-brand img{
+      height:52px !important;
+      max-width:116px !important;
+    }
+  }
+
+  /* Mobile */
+  @media (max-width:780px){
+    .viewstaff-profile-header .brand.jobspace-brand img,
+    .viewstaff-profile-header .jobspace-brand img,
+    .topbar.viewstaff-profile-header .brand img,
+    .topbar.viewstaff-profile-header .jobspace-brand img{
+      height:44px !important;
+      max-width:104px !important;
+    }
+  }
+
+  /* Small phones */
+  @media (max-width:480px){
+    .viewstaff-profile-header .brand.jobspace-brand img,
+    .viewstaff-profile-header .jobspace-brand img,
+    .topbar.viewstaff-profile-header .brand img,
+    .topbar.viewstaff-profile-header .jobspace-brand img{
+      height:40px !important;
+      max-width:96px !important;
+    }
+  }
+</style>
+
+<!-- Keep navigation hover text/icons matched to the blue underline. -->
+<style id="jsl-final-blue-nav-hover-color">
+  .viewstaff-profile-header .jobspace-nav > a:hover,
+  .viewstaff-profile-header .jobspace-nav > a:focus-visible,
+  .viewstaff-profile-header .about-menu-btn:hover,
+  .viewstaff-profile-header .about-menu-btn:focus-visible,
+  .viewstaff-profile-header .about-menu.open .about-menu-btn,
+  .viewstaff-profile-header .jobspace-nav > a:hover > i,
+  .viewstaff-profile-header .jobspace-nav > a:focus-visible > i,
+  .viewstaff-profile-header .about-menu-btn:hover > i,
+  .viewstaff-profile-header .about-menu-btn:focus-visible > i,
+  .viewstaff-profile-header .about-menu.open .about-menu-btn > i,
+  .viewstaff-profile-header .about-dropdown a:hover,
+  .viewstaff-profile-header .about-dropdown a:focus-visible,
+  .viewstaff-profile-header .about-dropdown a:hover i,
+  .viewstaff-profile-header .about-dropdown a:focus-visible i{
+    color:#0b5cff !important;
+  }
+</style>
+
 </head>
 <body>
 <header class="topbar jobspace-header viewstaff-profile-header">
@@ -10797,7 +10918,7 @@ button.settings-close{
 <span>Connecting to applicant_master_table...</span>
 </div>
 <button aria-controls="profileSettingsModal" aria-haspopup="dialog" class="privacy-alert" id="profileSettingsOpen" type="button">
-<span><i class="fa-solid fa-eye-slash" id="privacyAlertIcon"></i> <strong id="privacyAlertText">Employers can’t find you</strong></span>
+<span><i class="fa-solid fa-eye-slash" id="privacyAlertIcon"></i> <strong id="privacyAlertText">Employers canâ€™t find you</strong></span>
 <i class="fa-solid fa-chevron-down"></i>
 </button>
 <section class="block">
@@ -10863,7 +10984,7 @@ button.settings-close{
 <button class="profile-row" data-route="readyToWork" type="button">
 <span>
 <span class="row-title">Ready to work</span>
-<span class="row-desc" id="readyToWorkProfileDesc">Let employers know that you’re available to start working as soon as possible.</span>
+<span class="row-desc" id="readyToWorkProfileDesc">Let employers know that youâ€™re available to start working as soon as possible.</span>
 </span>
 <i class="fa-solid fa-chevron-right"></i>
 </button>
@@ -10923,74 +11044,74 @@ button.settings-close{
 <div class="phone-grid custom-phone-grid">
 <div class="phone-country-picker" id="phoneCountryPicker">
 <button aria-controls="countryDropdown" aria-expanded="false" aria-haspopup="listbox" class="country-code-btn" id="countryCodeBtn" type="button">
-<span class="selected-country-flag" id="selectedCountryFlag">🇺🇸</span>
+<span class="selected-country-flag" id="selectedCountryFlag">ðŸ‡ºðŸ‡¸</span>
 <span class="selected-country-code" id="selectedCountryCode">+1</span>
 <i aria-hidden="true" class="fa-solid fa-chevron-down country-code-caret" id="countryCodeCaret"></i>
 </button>
 <input aria-label="Phone country code" class="country-code-hidden" id="countryCodeInput" type="hidden" value="+1"/>
 <div aria-hidden="true" aria-label="Select phone country code" class="country-dropdown" id="countryDropdown" role="listbox">
-<button aria-selected="true" class="country-option active" data-code="+1" data-country="United States" data-flag="🇺🇸" role="option" type="button">
-<span class="country-option-flag">🇺🇸</span><span class="country-option-name">United States</span><span class="country-option-code">+1</span>
+<button aria-selected="true" class="country-option active" data-code="+1" data-country="United States" data-flag="ðŸ‡ºðŸ‡¸" role="option" type="button">
+<span class="country-option-flag">ðŸ‡ºðŸ‡¸</span><span class="country-option-name">United States</span><span class="country-option-code">+1</span>
 </button>
-<button class="country-option" data-code="+63" data-country="Philippines" data-flag="🇵🇭" role="option" type="button">
-<span class="country-option-flag">🇵🇭</span><span class="country-option-name">Philippines</span><span class="country-option-code">+63</span>
+<button class="country-option" data-code="+63" data-country="Philippines" data-flag="ðŸ‡µðŸ‡­" role="option" type="button">
+<span class="country-option-flag">ðŸ‡µðŸ‡­</span><span class="country-option-name">Philippines</span><span class="country-option-code">+63</span>
 </button>
-<button class="country-option" data-code="+44" data-country="United Kingdom" data-flag="🇬🇧" role="option" type="button">
-<span class="country-option-flag">🇬🇧</span><span class="country-option-name">United Kingdom</span><span class="country-option-code">+44</span>
+<button class="country-option" data-code="+44" data-country="United Kingdom" data-flag="ðŸ‡¬ðŸ‡§" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¬ðŸ‡§</span><span class="country-option-name">United Kingdom</span><span class="country-option-code">+44</span>
 </button>
-<button class="country-option" data-code="+61" data-country="Australia" data-flag="🇦🇺" role="option" type="button">
-<span class="country-option-flag">🇦🇺</span><span class="country-option-name">Australia</span><span class="country-option-code">+61</span>
+<button class="country-option" data-code="+61" data-country="Australia" data-flag="ðŸ‡¦ðŸ‡º" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¦ðŸ‡º</span><span class="country-option-name">Australia</span><span class="country-option-code">+61</span>
 </button>
-<button class="country-option" data-code="+81" data-country="Japan" data-flag="🇯🇵" role="option" type="button">
-<span class="country-option-flag">🇯🇵</span><span class="country-option-name">Japan</span><span class="country-option-code">+81</span>
+<button class="country-option" data-code="+81" data-country="Japan" data-flag="ðŸ‡¯ðŸ‡µ" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¯ðŸ‡µ</span><span class="country-option-name">Japan</span><span class="country-option-code">+81</span>
 </button>
-<button class="country-option" data-code="+1" data-country="Canada" data-flag="🇨🇦" role="option" type="button">
-<span class="country-option-flag">🇨🇦</span><span class="country-option-name">Canada</span><span class="country-option-code">+1</span>
+<button class="country-option" data-code="+1" data-country="Canada" data-flag="ðŸ‡¨ðŸ‡¦" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¨ðŸ‡¦</span><span class="country-option-name">Canada</span><span class="country-option-code">+1</span>
 </button>
-<button class="country-option" data-code="+971" data-country="United Arab Emirates" data-flag="🇦🇪" role="option" type="button">
-<span class="country-option-flag">🇦🇪</span><span class="country-option-name">United Arab Emirates</span><span class="country-option-code">+971</span>
+<button class="country-option" data-code="+971" data-country="United Arab Emirates" data-flag="ðŸ‡¦ðŸ‡ª" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¦ðŸ‡ª</span><span class="country-option-name">United Arab Emirates</span><span class="country-option-code">+971</span>
 </button>
-<button class="country-option" data-code="+966" data-country="Saudi Arabia" data-flag="🇸🇦" role="option" type="button">
-<span class="country-option-flag">🇸🇦</span><span class="country-option-name">Saudi Arabia</span><span class="country-option-code">+966</span>
+<button class="country-option" data-code="+966" data-country="Saudi Arabia" data-flag="ðŸ‡¸ðŸ‡¦" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¸ðŸ‡¦</span><span class="country-option-name">Saudi Arabia</span><span class="country-option-code">+966</span>
 </button>
-<button class="country-option" data-code="+65" data-country="Singapore" data-flag="🇸🇬" role="option" type="button">
-<span class="country-option-flag">🇸🇬</span><span class="country-option-name">Singapore</span><span class="country-option-code">+65</span>
+<button class="country-option" data-code="+65" data-country="Singapore" data-flag="ðŸ‡¸ðŸ‡¬" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¸ðŸ‡¬</span><span class="country-option-name">Singapore</span><span class="country-option-code">+65</span>
 </button>
-<button class="country-option" data-code="+82" data-country="South Korea" data-flag="🇰🇷" role="option" type="button">
-<span class="country-option-flag">🇰🇷</span><span class="country-option-name">South Korea</span><span class="country-option-code">+82</span>
+<button class="country-option" data-code="+82" data-country="South Korea" data-flag="ðŸ‡°ðŸ‡·" role="option" type="button">
+<span class="country-option-flag">ðŸ‡°ðŸ‡·</span><span class="country-option-name">South Korea</span><span class="country-option-code">+82</span>
 </button>
-<button class="country-option" data-code="+86" data-country="China" data-flag="🇨🇳" role="option" type="button">
-<span class="country-option-flag">🇨🇳</span><span class="country-option-name">China</span><span class="country-option-code">+86</span>
+<button class="country-option" data-code="+86" data-country="China" data-flag="ðŸ‡¨ðŸ‡³" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¨ðŸ‡³</span><span class="country-option-name">China</span><span class="country-option-code">+86</span>
 </button>
-<button class="country-option" data-code="+91" data-country="India" data-flag="🇮🇳" role="option" type="button">
-<span class="country-option-flag">🇮🇳</span><span class="country-option-name">India</span><span class="country-option-code">+91</span>
+<button class="country-option" data-code="+91" data-country="India" data-flag="ðŸ‡®ðŸ‡³" role="option" type="button">
+<span class="country-option-flag">ðŸ‡®ðŸ‡³</span><span class="country-option-name">India</span><span class="country-option-code">+91</span>
 </button>
-<button class="country-option" data-code="+62" data-country="Indonesia" data-flag="🇮🇩" role="option" type="button">
-<span class="country-option-flag">🇮🇩</span><span class="country-option-name">Indonesia</span><span class="country-option-code">+62</span>
+<button class="country-option" data-code="+62" data-country="Indonesia" data-flag="ðŸ‡®ðŸ‡©" role="option" type="button">
+<span class="country-option-flag">ðŸ‡®ðŸ‡©</span><span class="country-option-name">Indonesia</span><span class="country-option-code">+62</span>
 </button>
-<button class="country-option" data-code="+60" data-country="Malaysia" data-flag="🇲🇾" role="option" type="button">
-<span class="country-option-flag">🇲🇾</span><span class="country-option-name">Malaysia</span><span class="country-option-code">+60</span>
+<button class="country-option" data-code="+60" data-country="Malaysia" data-flag="ðŸ‡²ðŸ‡¾" role="option" type="button">
+<span class="country-option-flag">ðŸ‡²ðŸ‡¾</span><span class="country-option-name">Malaysia</span><span class="country-option-code">+60</span>
 </button>
-<button class="country-option" data-code="+66" data-country="Thailand" data-flag="🇹🇭" role="option" type="button">
-<span class="country-option-flag">🇹🇭</span><span class="country-option-name">Thailand</span><span class="country-option-code">+66</span>
+<button class="country-option" data-code="+66" data-country="Thailand" data-flag="ðŸ‡¹ðŸ‡­" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¹ðŸ‡­</span><span class="country-option-name">Thailand</span><span class="country-option-code">+66</span>
 </button>
-<button class="country-option" data-code="+84" data-country="Vietnam" data-flag="🇻🇳" role="option" type="button">
-<span class="country-option-flag">🇻🇳</span><span class="country-option-name">Vietnam</span><span class="country-option-code">+84</span>
+<button class="country-option" data-code="+84" data-country="Vietnam" data-flag="ðŸ‡»ðŸ‡³" role="option" type="button">
+<span class="country-option-flag">ðŸ‡»ðŸ‡³</span><span class="country-option-name">Vietnam</span><span class="country-option-code">+84</span>
 </button>
-<button class="country-option" data-code="+212" data-country="Western Sahara" data-flag="🇪🇭" role="option" type="button">
-<span class="country-option-flag">🇪🇭</span><span class="country-option-name">Western Sahara</span><span class="country-option-code">+212</span>
+<button class="country-option" data-code="+212" data-country="Western Sahara" data-flag="ðŸ‡ªðŸ‡­" role="option" type="button">
+<span class="country-option-flag">ðŸ‡ªðŸ‡­</span><span class="country-option-name">Western Sahara</span><span class="country-option-code">+212</span>
 </button>
-<button class="country-option" data-code="+967" data-country="Yemen" data-flag="🇾🇪" role="option" type="button">
-<span class="country-option-flag">🇾🇪</span><span class="country-option-name">Yemen</span><span class="country-option-code">+967</span>
+<button class="country-option" data-code="+967" data-country="Yemen" data-flag="ðŸ‡¾ðŸ‡ª" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¾ðŸ‡ª</span><span class="country-option-name">Yemen</span><span class="country-option-code">+967</span>
 </button>
-<button class="country-option" data-code="+260" data-country="Zambia" data-flag="🇿🇲" role="option" type="button">
-<span class="country-option-flag">🇿🇲</span><span class="country-option-name">Zambia</span><span class="country-option-code">+260</span>
+<button class="country-option" data-code="+260" data-country="Zambia" data-flag="ðŸ‡¿ðŸ‡²" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¿ðŸ‡²</span><span class="country-option-name">Zambia</span><span class="country-option-code">+260</span>
 </button>
-<button class="country-option" data-code="+263" data-country="Zimbabwe" data-flag="🇿🇼" role="option" type="button">
-<span class="country-option-flag">🇿🇼</span><span class="country-option-name">Zimbabwe</span><span class="country-option-code">+263</span>
+<button class="country-option" data-code="+263" data-country="Zimbabwe" data-flag="ðŸ‡¿ðŸ‡¼" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¿ðŸ‡¼</span><span class="country-option-name">Zimbabwe</span><span class="country-option-code">+263</span>
 </button>
-<button class="country-option" data-code="+358" data-country="Åland Islands" data-flag="🇦🇽" role="option" type="button">
-<span class="country-option-flag">🇦🇽</span><span class="country-option-name">Åland Islands</span><span class="country-option-code">+358</span>
+<button class="country-option" data-code="+358" data-country="Ã…land Islands" data-flag="ðŸ‡¦ðŸ‡½" role="option" type="button">
+<span class="country-option-flag">ðŸ‡¦ðŸ‡½</span><span class="country-option-name">Ã…land Islands</span><span class="country-option-code">+358</span>
 </button>
 </div>
 </div>
@@ -11019,7 +11140,7 @@ button.settings-close{
 <div class="form-group">
 <label class="form-label" for="countryInput"><i aria-hidden="true" class="fa-solid fa-flag"></i>Country <span class="required-star">*</span></label>
 <select autocomplete="country-name" class="select-input" id="countryInput" required="">
-<option disabled="" hidden="" selected="" value="">—</option>
+<option disabled="" hidden="" selected="" value="">â€”</option>
 <option value="Philippines">Philippines</option>
 <option value="United States">United States</option>
 </select>
@@ -11027,13 +11148,13 @@ button.settings-close{
 <div class="form-group">
 <label class="form-label" for="cityInput" id="cityLabel"><i aria-hidden="true" class="fa-solid fa-city"></i><span id="cityLabelText">City</span> <span class="required-star">*</span></label>
 <select autocomplete="address-level2" class="select-input" disabled="" id="cityInput" required="">
-<option disabled="" hidden="" selected="" value="">—</option>
+<option disabled="" hidden="" selected="" value="">â€”</option>
 </select>
 </div>
 <div class="form-group">
 <label class="form-label" for="provinceInput" id="provinceLabel"><i aria-hidden="true" class="fa-solid fa-map"></i><span id="provinceLabelText">Province/State</span></label>
 <select autocomplete="address-level1" class="select-input location-auto-select" disabled="" id="provinceInput">
-<option disabled="" hidden="" selected="" value="">—</option>
+<option disabled="" hidden="" selected="" value="">â€”</option>
 </select>
 <div class="auto-field-note"><i aria-hidden="true" class="fa-solid fa-circle-info"></i>Province/State displays automatically from the selected city.</div>
 </div>
@@ -11049,7 +11170,7 @@ button.settings-close{
 <div class="radio-stack">
 <label class="radio-item">
 <input checked="" id="relocateYes" type="checkbox"/>
-              Yes, I’m willing to relocate
+              Yes, Iâ€™m willing to relocate
             </label>
 <label class="radio-item">
 <input checked="" name="relocationChoice" type="radio" value="Anywhere"/>
@@ -11102,7 +11223,7 @@ button.settings-close{
 <p class="multi-line" id="educationText">
 <span>college level, Computer Science</span>
 <span>Junior High School Education</span>
-<span>Master’s degree, Computer Science</span>
+<span>Masterâ€™s degree, Computer Science</span>
 </p>
 </div>
 <button aria-label="Open education records" class="edit-btn" data-route="education" type="button">
@@ -11127,7 +11248,7 @@ button.settings-close{
 <div class="qual-icon"><i class="fa-regular fa-id-card"></i></div>
 <div class="qual-content">
 <h3>Licenses</h3>
-<p id="licensesText">Driver’s License, August 2030</p>
+<p id="licensesText">Driverâ€™s License, August 2030</p>
 </div>
 <button aria-label="Open license records" class="edit-btn" data-route="licenses" type="button">
 <i class="fa-solid fa-pen"></i>
@@ -11335,7 +11456,7 @@ button.settings-close{
       </button>
 <h1 class="page-title">Block employers</h1>
 <p class="block-employers-subtitle">
-        We work to hide your profile from employers you select, unless you apply to them. We can’t guarantee it. For example, employers may use different names.
+        We work to hide your profile from employers you select, unless you apply to them. We canâ€™t guarantee it. For example, employers may use different names.
       </p>
 <div aria-label="Blocked employers" class="block-employers-list">
 <button class="block-employers-add-row" id="openBlockEmployersModal" type="button">
@@ -11388,7 +11509,7 @@ button.settings-close{
 <div class="review-hero-icon"><i class="fa-solid fa-building"></i></div>
 <h1 class="review-title">Share your anonymous review about <strong id="reviewQuestionCompany">job space link</strong> in just two steps</h1>
 <p class="review-helper">Your feedback can help other job seekers. <span class="review-help-badge">?</span></p>
-<p class="review-question-tip"><span class="review-info-dot">i</span> All questions are optional. Please skip any that don’t apply.</p>
+<p class="review-question-tip"><span class="review-info-dot">i</span> All questions are optional. Please skip any that donâ€™t apply.</p>
 <div class="review-section-gap" id="reviewQuestionList">
 <div class="review-question">
 <h2 class="review-question-title">During the job space link interview process, I knew how to ask for disability accommodations and support</h2>
@@ -11430,7 +11551,7 @@ button.settings-close{
 </div>
 </div>
 <div class="review-question">
-<h2 class="review-question-title">It’s easy to request PTO at job space link.</h2>
+<h2 class="review-question-title">Itâ€™s easy to request PTO at job space link.</h2>
 <div class="rating-scale" data-rating-group="ptoRequest"></div>
 <div class="rating-labels"><span>Strongly disagree</span><span>Strongly agree</span></div>
 </div>
@@ -11471,7 +11592,7 @@ button.settings-close{
 <p class="review-helper">Share your overall experience with other job seekers. Be sure to follow Job Space Link review guidelines.</p>
 <div class="info-banner" style="margin:18px 0 20px;">
 <i class="fa-solid fa-circle-info"></i>
-<span>Submitting an updated review will replace your current review. If your new review isn’t approved, your old review will remain active.</span>
+<span>Submitting an updated review will replace your current review. If your new review isnâ€™t approved, your old review will remain active.</span>
 </div>
 <form autocomplete="off" class="review-section-gap" id="reviewWriteForm" novalidate="">
 <div class="review-field">
@@ -11542,7 +11663,7 @@ button.settings-close{
 </div>
 <div class="review-field review-section-gap">
 <label class="review-label" for="reviewMaternityLeave">How long do you have to work at job space link before you can go on maternity leave?</label>
-<textarea class="review-textarea" id="reviewMaternityLeave" style="min-height:92px;">I’m not sure about the exact required length of employment before maternity leave at Job Space Link. It may depend on company policy and local labor laws. It would be best to ask HR or management directly for the official maternity leave requirements and benefits.</textarea>
+<textarea class="review-textarea" id="reviewMaternityLeave" style="min-height:92px;">Iâ€™m not sure about the exact required length of employment before maternity leave at Job Space Link. It may depend on company policy and local labor laws. It would be best to ask HR or management directly for the official maternity leave requirements and benefits.</textarea>
 </div>
 <div class="review-inline-actions">
 <button class="review-primary-btn" type="submit">Submit Review</button>
@@ -11554,7 +11675,7 @@ button.settings-close{
 <section aria-label="Review preview page" class="page-view review-shell review-preview-page" id="reviewPreviewPage">
 <h1 class="preview-title">Preview your review</h1>
 <article class="review-card">
-<div aria-label="Overall rating preview" class="preview-stars" id="previewStars">★★★★★ <strong id="previewRatingText">5.0</strong></div>
+<div aria-label="Overall rating preview" class="preview-stars" id="previewStars">â˜…â˜…â˜…â˜…â˜… <strong id="previewRatingText">5.0</strong></div>
 <h2 class="preview-card-title" id="previewSummaryText">great place to work</h2>
 <p class="preview-meta">Website Designer (Current Employee) - Daly City, CA - May 8, 2026</p>
 <p class="preview-body" id="previewBodyText"></p>
@@ -11603,7 +11724,7 @@ button.settings-close{
 </div>
 </section>
 <footer class="footer-mini">
-      © 2026 Job Space Link · <a href="#">Cookies</a>, <a href="#">Privacy</a> and <a href="#">Terms</a>
+      Â© 2026 Job Space Link Â· <a href="#">Cookies</a>, <a href="#">Privacy</a> and <a href="#">Terms</a>
 </footer>
 </main>
 <!-- PROFILE SETTINGS MODAL -->
@@ -11633,7 +11754,7 @@ button.settings-close{
 <span class="settings-option-content">
 <span class="settings-option-title">Employers can't find you on Job Space Link</span>
 <span class="settings-option-desc">
-              Only employers you’ve applied to can see you on Job Space Link. Other employers can’t find your profile
+              Only employers youâ€™ve applied to can see you on Job Space Link. Other employers canâ€™t find your profile
               or reach out about jobs.
             </span>
 </span>
@@ -14185,7 +14306,7 @@ button.settings-close{
         Philippines:{
           short:"PH",
           phoneCode:"+63",
-          flag:"🇵🇭",
+          flag:"ðŸ‡µðŸ‡­",
           provinceLabel:"Province",
           cityLabel:"City / Municipality",
           provinces:{
@@ -14200,13 +14321,13 @@ button.settings-close{
             ],
             "Metro Manila":[
               { city:"Caloocan", zip:"1400" },
-              { city:"Las Piñas", zip:"1740" },
+              { city:"Las PiÃ±as", zip:"1740" },
               { city:"Makati", zip:"1200" },
               { city:"Manila", zip:"1000" },
               { city:"Mandaluyong", zip:"1550" },
               { city:"Marikina", zip:"1800" },
               { city:"Muntinlupa", zip:"1770" },
-              { city:"Parañaque", zip:"1700" },
+              { city:"ParaÃ±aque", zip:"1700" },
               { city:"Pasay", zip:"1300" },
               { city:"Pasig", zip:"1600" },
               { city:"Quezon City", zip:"1100" },
@@ -14230,15 +14351,15 @@ button.settings-close{
             "Cavite":[
               { city:"Bacoor", zip:"4102" },
               { city:"Cavite City", zip:"4100" },
-              { city:"Dasmariñas", zip:"4114" },
+              { city:"DasmariÃ±as", zip:"4114" },
               { city:"General Trias", zip:"4107" },
               { city:"Imus", zip:"4103" },
               { city:"Tagaytay", zip:"4120" }
             ],
             "Laguna":[
-              { city:"Biñan", zip:"4024" },
+              { city:"BiÃ±an", zip:"4024" },
               { city:"Calamba", zip:"4027" },
-              { city:"Los Baños", zip:"4030" },
+              { city:"Los BaÃ±os", zip:"4030" },
               { city:"San Pablo", zip:"4000" },
               { city:"Santa Rosa", zip:"4026" }
             ],
@@ -14286,7 +14407,7 @@ button.settings-close{
         USA:{
           short:"USA",
           phoneCode:"+1",
-          flag:"🇺🇸",
+          flag:"ðŸ‡ºðŸ‡¸",
           provinceLabel:"State",
           cityLabel:"City",
           provinces:{
@@ -14412,7 +14533,7 @@ button.settings-close{
         return LOCATION_DATA[countryKeyFromValue(countryInput?.value)] || LOCATION_DATA.Philippines;
       }
 
-      function clearOptions(select, placeholder = "—"){
+      function clearOptions(select, placeholder = "â€”"){
         if(!select) return;
         while(select.firstChild) select.removeChild(select.firstChild);
         const option = document.createElement("option");
@@ -14556,7 +14677,7 @@ button.settings-close{
       function updateProvinceZipFromCity(selectedZip = ""){
         if(!provinceInput || !cityInput || !postalInput) return;
         const selected = cityInput.options[cityInput.selectedIndex];
-        clearOptions(provinceInput, "—");
+        clearOptions(provinceInput, "â€”");
         provinceInput.disabled = true;
         postalInput.value = "";
         showZipError("");
@@ -14583,8 +14704,8 @@ button.settings-close{
         const displayCountry = countryDisplayValue(countryInput.value || "Philippines");
         countryInput.value = displayCountry;
         updateLabelsForCountry(displayCountry);
-        clearOptions(cityInput, "—");
-        clearOptions(provinceInput, "—");
+        clearOptions(cityInput, "â€”");
+        clearOptions(provinceInput, "â€”");
         postalInput.value = "";
         showZipError("");
         cityInput.disabled = true;
@@ -14906,7 +15027,7 @@ button.settings-close{
           openBtn.style.borderColor = "#86efac";
           openBtn.style.color = "#14532d";
         }else{
-          alertText.textContent = "Employers can’t find you";
+          alertText.textContent = "Employers canâ€™t find you";
           alertIcon.className = "fa-solid fa-eye-slash";
           openBtn.style.background = "";
           openBtn.style.borderColor = "";
@@ -15364,7 +15485,7 @@ button.settings-close{
 
       function normalizeQualificationLines(targetId, lines){
         const rawLines = (Array.isArray(lines) ? lines : [lines])
-          .flatMap(line => String(line || "").replace(/\r/g, "\n").split(/\n|•/))
+          .flatMap(line => String(line || "").replace(/\r/g, "\n").split(/\n|â€¢/))
           .map(compactText)
           .filter(line => line && line.toLowerCase() !== "not added yet");
 
@@ -16136,7 +16257,7 @@ button.settings-close{
           .slice(0, 8);
 
         if(!matches.length){
-          suggestionsBox.innerHTML = `<div class="employer-no-results">No saved employer found. Press Enter to add “${escapeHtml(searchInput.value)}”.</div>`;
+          suggestionsBox.innerHTML = `<div class="employer-no-results">No saved employer found. Press Enter to add â€œ${escapeHtml(searchInput.value)}â€.</div>`;
           return;
         }
 
@@ -16275,7 +16396,7 @@ button.settings-close{
             pros:"Supportive management, friendly coworkers, good workplace culture",
             cons:"The workload could sometimes be stressful, especially during busy days",
             advice:"just be confident and relax.",
-            maternity:"I’m not sure about the exact required length of employment before maternity leave at Job Space Link. It may depend on company policy and local labor laws. It would be best to ask HR or management directly for the official maternity leave requirements and benefits."
+            maternity:"Iâ€™m not sure about the exact required length of employment before maternity leave at Job Space Link. It may depend on company policy and local labor laws. It would be best to ask HR or management directly for the official maternity leave requirements and benefits."
           }
         };
 
@@ -16536,8 +16657,8 @@ button.settings-close{
       function updateProfileSummary(){
         if(!profileDesc) return;
         profileDesc.textContent = savedReady
-          ? "I’m available to start immediately."
-          : "Let employers know that you’re available to start working as soon as possible.";
+          ? "Iâ€™m available to start immediately."
+          : "Let employers know that youâ€™re available to start working as soon as possible.";
       }
 
       toggle.addEventListener("click", ()=>{
@@ -17264,7 +17385,7 @@ button.settings-close{
         if(!cleaned) return [];
         return String(cleaned)
           .replace(/\r/g, "\n")
-          .split(splitCommas ? /\n|\r|•|,/ : /\n|\r|•/)
+          .split(splitCommas ? /\n|\r|â€¢|,/ : /\n|\r|â€¢/)
           .map(compactQualificationText)
           .filter(Boolean)
           .filter(line => !/^not added yet$/i.test(line));
@@ -18152,7 +18273,7 @@ button.settings-close{
           toggle.setAttribute("aria-checked", isReady ? "true" : "false");
         }
         if(icon) icon.innerHTML = isReady ? '<i class="fa-solid fa-check" aria-hidden="true"></i>' : '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
-        if(desc) desc.textContent = isReady ? "I’m available to start immediately." : "Let employers know that you’re available to start working as soon as possible.";
+        if(desc) desc.textContent = isReady ? "Iâ€™m available to start immediately." : "Let employers know that youâ€™re available to start working as soon as possible.";
       }
 
       function applyReviewData(reviews){
@@ -18360,7 +18481,7 @@ button.settings-close{
         const alertText = $("privacyAlertText");
         const alertIcon = $("privacyAlertIcon");
         const openBtn = $("profileSettingsOpen");
-        if(alertText) alertText.textContent = "Employers can’t find you";
+        if(alertText) alertText.textContent = "Employers canâ€™t find you";
         if(alertIcon) alertIcon.className = "fa-solid fa-eye-slash";
         if(openBtn){ openBtn.style.background = ""; openBtn.style.borderColor = ""; openBtn.style.color = ""; }
         const logoutButton = $("jobseekerLogoutBtn");
@@ -18419,7 +18540,7 @@ button.settings-close{
         const alertText = $("privacyAlertText");
         const alertIcon = $("privacyAlertIcon");
         const openBtn = $("profileSettingsOpen");
-        if(alertText) alertText.textContent = "Employers can’t find you";
+        if(alertText) alertText.textContent = "Employers canâ€™t find you";
         if(alertIcon) alertIcon.className = "fa-solid fa-eye-slash";
         if(openBtn){ openBtn.style.background = ""; openBtn.style.borderColor = ""; openBtn.style.color = ""; }
         if(context.masterId){
@@ -18464,7 +18585,7 @@ button.settings-close{
             const alertText = $("privacyAlertText");
             const alertIcon = $("privacyAlertIcon");
             const openBtn = $("profileSettingsOpen");
-            if(alertText) alertText.textContent = row.profile_visibility === "visible" ? "Employers can find you" : "Employers can’t find you";
+            if(alertText) alertText.textContent = row.profile_visibility === "visible" ? "Employers can find you" : "Employers canâ€™t find you";
             if(alertIcon) alertIcon.className = row.profile_visibility === "visible" ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
             if(openBtn && row.profile_visibility === "visible"){
               openBtn.style.background = "#ecfdf5";
@@ -18687,7 +18808,7 @@ button.settings-close{
 
       function pdfCell(label, value){
         const clean = Array.isArray(value) ? value.filter(Boolean).join(", ") : String(value ?? "").trim();
-        return '<div class="pdf-cell"><span>' + escapeHtml(label) + '</span><strong>' + escapeHtml(clean || "—") + '</strong></div>';
+        return '<div class="pdf-cell"><span>' + escapeHtml(label) + '</span><strong>' + escapeHtml(clean || "â€”") + '</strong></div>';
       }
 
       function pdfSection(title, html){
@@ -20554,7 +20675,7 @@ button.settings-close{
       readyToggle.setAttribute("aria-checked", "false");
     }
     if(readyIcon) readyIcon.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
-    if(readyDesc) readyDesc.textContent = "Let employers know that you’re available to start working as soon as possible.";
+    if(readyDesc) readyDesc.textContent = "Let employers know that youâ€™re available to start working as soon as possible.";
   }
 
   function closeMenusAndModals(){
@@ -20608,7 +20729,7 @@ button.settings-close{
     const alertText = $("privacyAlertText");
     const alertIcon = $("privacyAlertIcon");
     const openBtn = $("profileSettingsOpen");
-    if(alertText) alertText.textContent = "Employers can’t find you";
+    if(alertText) alertText.textContent = "Employers canâ€™t find you";
     if(alertIcon) alertIcon.className = "fa-solid fa-eye-slash";
     if(openBtn){
       openBtn.style.background = "";
@@ -22247,7 +22368,7 @@ button.settings-close{
 
 <script>
 /* ============================================================
-   FINAL PATCH 2026-06-22 — PROFILE DROPDOWN ACTIVE STATUS
+   FINAL PATCH 2026-06-22 â€” PROFILE DROPDOWN ACTIVE STATUS
    The account dropdown button toggles the current
    applicant_transaction_table.status between "active" and "not active".
 ============================================================ */

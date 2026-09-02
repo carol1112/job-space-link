@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1137,76 +1139,6 @@ section, footer, .slanted-divider{
   .mobile-panel{ display:none !important; }
 }
 
-/* ===== 769px to 1023px ===== */
-@media (min-width: 769px) and (max-width: 1023px){
-  :root{ --header-h:74px !important; }
-
-  header{
-    height:var(--header-h) !important;
-    gap:7px !important;
-    padding:0 8px 0 5px !important;
-  }
-
-  header .logo{
-    margin-left:-2px !important;
-  }
-
-  header .logo img{
-    height:58px !important;
-  }
-
-  header nav{
-    display:flex !important;
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    align-items:center !important;
-    justify-content:flex-start !important;
-    gap:7px !important;
-    margin-left:2px !important;
-    white-space:nowrap !important;
-  }
-
-  header nav > a,
-  header nav .nav-main-link{
-    height:31px !important;
-    padding:0 2px !important;
-    font-size:0.66rem !important;
-  }
-
-  .nav-dropdown{
-    height:31px !important;
-  }
-
-  .nav-dropdown-trigger{
-    gap:1px !important;
-  }
-
-  .nav-dropdown-toggle{
-    width:18px !important;
-    height:18px !important;
-  }
-
-  .nav-dropdown-toggle i{
-    font-size:0.68rem !important;
-  }
-
-  header .auth-buttons{
-    display:flex !important;
-    gap:4px !important;
-  }
-
-  header .auth-buttons a{
-    height:30px !important;
-    padding:0 6px !important;
-    font-size:0.61rem !important;
-    border-radius:8px !important;
-    gap:4px !important;
-  }
-
-  .nav-toggle{ display:none !important; }
-  .mobile-panel{ display:none !important; }
-}
-
 /* ===== 481px to 768px ===== */
 @media (min-width: 481px) and (max-width: 768px){
   :root{ --header-h:72px !important; }
@@ -1557,35 +1489,6 @@ header nav .nav-text,
   header .auth-buttons a{ padding:0 6px !important; font-size:0.66rem !important; }
 }
 
-@media (min-width:769px) and (max-width:1023px){
-  header{ gap:5px !important; padding-left:4px !important; padding-right:6px !important; }
-  header .logo img{ height:54px !important; }
-  header nav{ gap:4px !important; margin-left:1px !important; }
-  header nav > a,
-  header nav .nav-main-link{
-    gap:3px !important;
-    padding:0 1px !important;
-    font-size:0.58rem !important;
-    letter-spacing:-0.03em !important;
-  }
-  header nav > a i,
-  header nav .nav-main-link i{
-    width:10px !important;
-    min-width:10px !important;
-    font-size:0.78em !important;
-  }
-  .nav-dropdown-toggle{ width:15px !important; height:15px !important; }
-  .nav-dropdown-toggle i{ font-size:0.58rem !important; }
-  header .auth-buttons{ gap:3px !important; }
-  header .auth-buttons a{
-    height:28px !important;
-    padding:0 4px !important;
-    font-size:0.56rem !important;
-    gap:3px !important;
-  }
-  header .auth-buttons a i{ font-size:0.70em !important; }
-}
-
 @media (max-width:768px){
   .mobile-panel{
     max-height:calc(100vh - var(--header-h)) !important;
@@ -1774,19 +1677,6 @@ header .auth-buttons .auth-text{
     height:15px !important;
     min-width:15px !important;
     font-size:0.68rem !important;
-  }
-}
-
-@media (min-width:769px) and (max-width:1023px){
-  header nav > a,
-  header nav .nav-main-link{
-    border-radius:8px !important;
-  }
-  header .auth-buttons a i{
-    width:13px !important;
-    height:13px !important;
-    min-width:13px !important;
-    font-size:0.58rem !important;
   }
 }
 
@@ -2344,10 +2234,6 @@ header nav .nav-main-link:focus-visible > i,
   header .logo img{ height:66px !important; }
 }
 
-@media (min-width:769px) and (max-width:1023px){
-  header .logo img{ height:54px !important; }
-}
-
 @media (min-width:481px) and (max-width:768px){
   body > header .logo img,
   header .logo img{ height:52px !important; }
@@ -2408,7 +2294,983 @@ header nav .nav-main-link:focus-visible > i,
 }
 
 
+
+/* ============================================================
+   FINAL BLACK UNDERLINE NAV HOVER PATCH
+   Applies the same clean underline-only hover to header nav links
+   and dropdown nav links. Icons and text stay on one line.
+   Links, dropdown JS, mobile menu JS, layout, and page behavior
+   remain unchanged.
+============================================================ */
+:root{
+  --final-nav-underline:#000000;
+  --final-nav-text:#012169;
+  --final-nav-icon:#003a70;
+}
+
+/* Desktop header nav: one-line icon + label, no hover box/background/glow */
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown-trigger > a.nav-main-link{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-wrap:nowrap !important;
+  gap:7px !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+  color:var(--final-nav-text) !important;
+  text-decoration:none !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  isolation:auto !important;
+  transition:color .18s ease !important;
+}
+
+/* Disable all previous glow/background pseudo effects. */
+header nav > a::before,
+header nav .nav-main-link::before{
+  content:none !important;
+  display:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+/* Real underline under the full nav item including icon + label width. */
+header nav > a::after,
+header nav .nav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:2px !important;
+  height:2px !important;
+  width:100% !important;
+  border-radius:999px !important;
+  background:var(--final-nav-underline) !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  opacity:0 !important;
+  transition:transform .18s ease, opacity .18s ease !important;
+  pointer-events:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown.open .nav-main-link::after{
+  transform:scaleX(1) !important;
+  opacity:1 !important;
+}
+
+/* Header icons: transparent background, same-line sizing, black on hover. */
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-toggle > i{
+  flex:0 0 auto !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:auto !important;
+  min-width:0 !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:var(--final-nav-icon) !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+header nav .nav-text{
+  display:inline-block !important;
+  white-space:nowrap !important;
+  min-width:0 !important;
+}
+
+/* About caret button stays clean and transparent. */
+.nav-dropdown-toggle{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+/* Dropdown options: one-line black underline hover, no background/glow. */
+.nav-dropdown-menu a{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  flex-wrap:nowrap !important;
+  gap:10px !important;
+  white-space:nowrap !important;
+  color:var(--final-nav-text) !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  overflow:visible !important;
+  transition:color .18s ease !important;
+}
+
+.nav-dropdown-menu a::before{
+  content:none !important;
+  display:none !important;
+}
+
+.nav-dropdown-menu a::after{
+  content:"" !important;
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:6px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:var(--final-nav-underline) !important;
+  transform:scaleX(0) !important;
+  transform-origin:left center !important;
+  opacity:0 !important;
+  transition:transform .18s ease, opacity .18s ease !important;
+  pointer-events:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after{
+  transform:scaleX(1) !important;
+  opacity:1 !important;
+}
+
+.nav-dropdown-menu a > i{
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  color:var(--final-nav-icon) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Mobile menu gets the same underline-only interaction without changing menu behavior. */
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  position:relative !important;
+  color:var(--final-nav-text) !important;
+  background:#ffffff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration:none !important;
+}
+
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::after,
+.mobile-panel .mnav-toggle::after{
+  content:"" !important;
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:7px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:var(--final-nav-underline) !important;
+  transform:scaleX(0) !important;
+  transform-origin:left center !important;
+  opacity:0 !important;
+  transition:transform .18s ease, opacity .18s ease !important;
+  pointer-events:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:#ffffff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration:none !important;
+}
+
+.mobile-panel .mnav a:hover::after,
+.mobile-panel .mnav a:focus-visible::after,
+.mobile-panel .mnav-main-link:hover::after,
+.mobile-panel .mnav-main-link:focus-visible::after,
+.mobile-panel .mnav-toggle:hover::after,
+.mobile-panel .mnav-toggle:focus-visible::after{
+  transform:scaleX(1) !important;
+  opacity:1 !important;
+}
+
+.mobile-panel .mnav-left,
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right,
+.mobile-panel .mnav-toggle > i{
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i{
+  color:#000000 !important;
+  transform:none !important;
+  text-shadow:none !important;
+}
+
+/* Preserve compact responsive nav sizing already defined by the page. */
+@media (max-width:768px){
+  header nav > a::after,
+  header nav .nav-main-link::after{
+    display:none !important;
+  }
+}
+
+
+/* ============================================================
+   POSTED JOBS HEADER VISUAL MATCH - WHY CHOOSE US
+   Header-only visual override. Existing links, dropdown logic,
+   mobile-menu behavior, page content, animations, and scripts
+   remain unchanged.
+============================================================ */
+:root{
+  --posted-nav-text:#063f73;
+  --posted-nav-icon:#06477f;
+  --posted-nav-blue:#0b5cff;
+  --posted-nav-blue-dark:#0847c2;
+  --posted-nav-hover:#eef6ff;
+  --posted-nav-line:#d9e2ee;
+}
+
+/* White header surface used by the Posted Jobs page. */
+header{
+  color:var(--posted-nav-text) !important;
+  background:#ffffff !important;
+  border-bottom:1px solid #dfe6ef !important;
+  box-shadow:0 2px 10px rgba(15,23,42,.06) !important;
+  backdrop-filter:none !important;
+}
+
+/* Desktop navigation typography, alignment, colors, and underline. */
+header nav{
+  align-items:center !important;
+}
+
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown-trigger > a.nav-main-link{
+  position:relative !important;
+  min-height:48px !important;
+  height:48px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-wrap:nowrap !important;
+  gap:9px !important;
+  padding:0 3px !important;
+  color:var(--posted-nav-text) !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  white-space:nowrap !important;
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+  font-size:.96rem !important;
+  font-weight:700 !important;
+  transform:none !important;
+  transition:color .18s ease,transform .18s ease !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  content:none !important;
+  display:none !important;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:3px !important;
+  right:3px !important;
+  bottom:5px !important;
+  width:auto !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:var(--posted-nav-blue) !important;
+  opacity:0 !important;
+  transform:scaleX(.35) !important;
+  transform-origin:center !important;
+  transition:opacity .18s ease,transform .18s ease !important;
+  pointer-events:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:var(--posted-nav-blue) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:translateY(-1px) !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown.open .nav-main-link::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+/* Desktop navigation icons. */
+header nav > a > i,
+header nav .nav-main-link > i{
+  flex:0 0 auto !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:auto !important;
+  min-width:0 !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:var(--posted-nav-icon) !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-size:1.02rem !important;
+  line-height:1 !important;
+  transform:none !important;
+  transition:color .18s ease !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i{
+  color:var(--posted-nav-blue) !important;
+}
+
+/* About dropdown caret. */
+.nav-dropdown{
+  height:100% !important;
+  align-items:center !important;
+}
+
+.nav-dropdown-trigger{
+  height:100% !important;
+  align-items:center !important;
+  gap:0 !important;
+}
+
+.nav-dropdown-toggle{
+  width:28px !important;
+  min-width:28px !important;
+  height:48px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 28px !important;
+  margin-left:-3px !important;
+  padding:0 !important;
+  color:var(--posted-nav-text) !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease !important;
+}
+
+.nav-dropdown-toggle > i,
+.nav-dropdown-toggle .nav-caret{
+  color:currentColor !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  filter:none !important;
+  font-size:.70rem !important;
+  transition:transform .2s ease !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown.open .nav-dropdown-toggle{
+  color:var(--posted-nav-blue) !important;
+  background:var(--posted-nav-hover) !important;
+  transform:none !important;
+}
+
+.nav-dropdown.open .nav-dropdown-toggle .nav-caret{
+  transform:rotate(180deg) !important;
+}
+
+/* White dropdown card and Posted Jobs item styling. */
+.nav-dropdown-menu{
+  top:calc(100% - 5px) !important;
+  left:-12px !important;
+  min-width:245px !important;
+  padding:9px !important;
+  gap:3px !important;
+  border:1px solid var(--posted-nav-line) !important;
+  border-radius:12px !important;
+  background:#ffffff !important;
+  box-shadow:0 18px 42px rgba(15,23,42,.16) !important;
+  backdrop-filter:none !important;
+  overflow:visible !important;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex !important;
+}
+
+.nav-dropdown-menu a{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  flex-wrap:nowrap !important;
+  gap:11px !important;
+  padding:12px 13px !important;
+  border:0 !important;
+  border-radius:9px !important;
+  color:var(--posted-nav-text) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  white-space:nowrap !important;
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+  font-size:.90rem !important;
+  font-weight:700 !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease,transform .18s ease !important;
+}
+
+.nav-dropdown-menu a::before,
+.nav-dropdown-menu a::after{
+  content:none !important;
+  display:none !important;
+}
+
+.nav-dropdown-menu a > i{
+  width:19px !important;
+  min-width:19px !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:var(--posted-nav-blue) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  text-align:center !important;
+  font-size:.95rem !important;
+  transform:none !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:var(--posted-nav-blue) !important;
+  background:var(--posted-nav-hover) !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:translateX(2px) !important;
+}
+
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:var(--posted-nav-blue) !important;
+}
+
+/* Posted Jobs-style login/account action. */
+header .auth-buttons a{
+  min-height:46px !important;
+  height:46px !important;
+  padding:4px 14px !important;
+  gap:8px !important;
+  border:0 !important;
+  border-radius:12px !important;
+  color:#ffffff !important;
+  background:linear-gradient(105deg,#16b8e9 0%,#2f83f4 48%,#7350f6 100%) !important;
+  box-shadow:0 6px 16px rgba(47,111,238,.23) !important;
+  text-shadow:none !important;
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+  font-size:.82rem !important;
+  font-weight:850 !important;
+  transform:none !important;
+  transition:filter .18s ease,transform .18s ease !important;
+}
+
+header .auth-buttons a > i{
+  color:#ffffff !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+header .auth-buttons a:hover,
+header .auth-buttons a:focus-visible{
+  color:#ffffff !important;
+  filter:saturate(1.08) brightness(1.03) !important;
+  transform:translateY(-1px) !important;
+}
+
+/* Posted Jobs-style hamburger and mobile drawer. */
+.nav-toggle{
+  width:42px !important;
+  height:42px !important;
+  border:1px solid #b9def2 !important;
+  border-radius:10px !important;
+  color:var(--posted-nav-icon) !important;
+  background:#eef9ff !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.nav-toggle > i{
+  color:currentColor !important;
+  background:transparent !important;
+  filter:none !important;
+}
+
+.nav-toggle:hover,
+.nav-toggle:focus-visible{
+  color:var(--posted-nav-blue) !important;
+  background:#dff5ff !important;
+  border-color:#70c7ee !important;
+  transform:none !important;
+}
+
+.mobile-panel{
+  background:#ffffff !important;
+  border-top:1px solid #dfe6ef !important;
+  border-bottom:1px solid #dfe6ef !important;
+  box-shadow:0 18px 34px rgba(15,23,42,.14) !important;
+  backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  color:var(--posted-nav-text) !important;
+  background:transparent !important;
+  border:0 !important;
+  border-bottom:1px solid #edf1f6 !important;
+  border-radius:9px !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+  font-weight:750 !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease !important;
+}
+
+.mobile-panel .mnav a::before,
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::before,
+.mobile-panel .mnav-main-link::after,
+.mobile-panel .mnav-toggle::before,
+.mobile-panel .mnav-toggle::after{
+  content:none !important;
+  display:none !important;
+}
+
+.mobile-panel .mnav-left,
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav a > i,
+.mobile-panel .mnav-main-link > i,
+.mobile-panel .mnav-toggle i{
+  color:var(--posted-nav-blue) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:var(--posted-nav-blue) !important;
+  background:var(--posted-nav-hover) !important;
+  border-bottom-color:#dbe7f7 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:#ffffff !important;
+}
+
+/* Keep the page's existing responsive sizing and hide desktop underline
+   where the desktop navigation itself is hidden. */
+@media (max-width:768px){
+  header nav > a::after,
+  header nav .nav-main-link::after{
+    display:none !important;
+  }
+}
+
 </style>
+
+<!-- ============================================================
+     FINAL ABOUT DROPDOWN UNDERLINE + HEADER LOGO CONTAINMENT
+     2026-08-10
+
+     - About dropdown items use the same #0B5CFF animated underline
+       style as the main header navigation links.
+     - Job Space Link logo is constrained inside the fixed header
+       at every responsive breakpoint.
+     - Existing hrefs, dropdown JavaScript, mobile menu behavior,
+       page animations, and all other functionality stay unchanged.
+============================================================ -->
+<style id="jsl-final-dropdown-underline-logo-containment-2026-08-10">
+  :root{
+    --jsl-final-nav-blue:#0B5CFF;
+  }
+
+  /* ============================================================
+     ABOUT DROPDOWN - SAME UNDERLINE EFFECT AS MAIN NAV
+  ============================================================ */
+  html body > header #aboutNavMenu.nav-dropdown-menu a{
+    position:relative !important;
+    overflow:visible !important;
+    text-decoration:none !important;
+  }
+
+  /*
+    The previous final header patch disabled dropdown a::after.
+    Restore it as the same 2px blue animated underline used by the
+    desktop nav links.
+  */
+  html body > header #aboutNavMenu.nav-dropdown-menu a::before{
+    content:none !important;
+    display:none !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a::after{
+    content:"" !important;
+    display:block !important;
+    position:absolute !important;
+    left:13px !important;
+    right:13px !important;
+    bottom:6px !important;
+    width:auto !important;
+    height:2px !important;
+    border-radius:999px !important;
+    background:var(--jsl-final-nav-blue) !important;
+    opacity:0 !important;
+    transform:scaleX(.35) !important;
+    transform-origin:center !important;
+    transition:opacity .18s ease, transform .18s ease !important;
+    pointer-events:none !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible{
+    color:var(--jsl-final-nav-blue) !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover > i,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible > i{
+    color:var(--jsl-final-nav-blue) !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover::after,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible::after{
+    opacity:1 !important;
+    transform:scaleX(1) !important;
+  }
+
+  /* Mobile About submenu gets the same blue underline interaction. */
+  @media (max-width:768px){
+    .mobile-panel #mobileAboutMenu a{
+      position:relative !important;
+      overflow:visible !important;
+      text-decoration:none !important;
+    }
+
+    .mobile-panel #mobileAboutMenu a::after{
+      content:"" !important;
+      display:block !important;
+      position:absolute !important;
+      left:12px !important;
+      right:12px !important;
+      bottom:6px !important;
+      height:2px !important;
+      border-radius:999px !important;
+      background:var(--jsl-final-nav-blue) !important;
+      opacity:0 !important;
+      transform:scaleX(.35) !important;
+      transform-origin:center !important;
+      transition:opacity .18s ease, transform .18s ease !important;
+      pointer-events:none !important;
+    }
+
+    .mobile-panel #mobileAboutMenu a:hover,
+    .mobile-panel #mobileAboutMenu a:focus-visible{
+      color:var(--jsl-final-nav-blue) !important;
+    }
+
+    .mobile-panel #mobileAboutMenu a:hover::after,
+    .mobile-panel #mobileAboutMenu a:focus-visible::after{
+      opacity:1 !important;
+      transform:scaleX(1) !important;
+    }
+  }
+
+  /* ============================================================
+     LOGO CONTAINMENT - NEVER OVERFLOW OUTSIDE HEADER
+  ============================================================ */
+  html body > header{
+    overflow:visible !important;
+  }
+
+  html body > header .logo{
+    height:100% !important;
+    max-height:100% !important;
+    min-height:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+    padding-top:5px !important;
+    padding-bottom:5px !important;
+  }
+
+  html body > header .logo img{
+    display:block !important;
+    width:auto !important;
+    height:auto !important;
+    max-height:calc(var(--header-h) - 10px) !important;
+    max-width:150px !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+    margin:0 !important;
+  }
+
+  /* Keep the logo comfortably inside each header height. */
+  @media (min-width:1800px){
+    html body > header .logo img{
+      height:72px !important;
+      max-height:72px !important;
+      max-width:150px !important;
+    }
+  }
+
+  @media (min-width:1440px) and (max-width:1799px){
+    html body > header .logo img{
+      height:66px !important;
+      max-height:66px !important;
+      max-width:145px !important;
+    }
+  }
+
+  @media (min-width:1024px) and (max-width:1439px){
+    html body > header .logo img{
+      height:62px !important;
+      max-height:62px !important;
+      max-width:136px !important;
+    }
+  }
+
+  @media (min-width:481px) and (max-width:768px){
+    html body > header .logo{
+      padding-top:7px !important;
+      padding-bottom:7px !important;
+    }
+
+    html body > header .logo img{
+      height:50px !important;
+      max-height:50px !important;
+      max-width:116px !important;
+    }
+  }
+
+  @media (max-width:480px){
+    html body > header .logo{
+      padding-top:8px !important;
+      padding-bottom:8px !important;
+    }
+
+    html body > header .logo img{
+      height:46px !important;
+      max-height:46px !important;
+      max-width:108px !important;
+    }
+  }
+</style>
+
+
+<!-- ============================================================
+     FINAL LOGIN BUTTON HOVER - DARK NAVY SCREENSHOT STYLE
+     2026-08-10
+     Visual-only update:
+       - Keeps the existing Login destination and markup unchanged.
+       - Default Login button remains unchanged.
+       - Hover/focus changes to the dark navy style shown in the
+         supplied Applicant Form screenshot.
+============================================================ -->
+<style id="jsl-final-login-hover-dark-navy-2026-08-10">
+  :root{
+    --jsl-login-hover-navy:#00254f;
+    --jsl-login-hover-blue:#0B5CFF;
+  }
+
+  html body > header .auth-buttons a.jobseeker-auth{
+    transition:
+      background .20s ease,
+      border-color .20s ease,
+      box-shadow .20s ease,
+      transform .20s ease,
+      filter .20s ease !important;
+  }
+
+  html body > header .auth-buttons a.jobseeker-auth:hover,
+  html body > header .auth-buttons a.jobseeker-auth:focus-visible{
+    color:#ffffff !important;
+    background:var(--jsl-login-hover-navy) !important;
+    border:1px solid rgba(11,92,255,.72) !important;
+    box-shadow:
+      0 6px 16px rgba(0,37,79,.28),
+      0 0 0 1px rgba(11,92,255,.12),
+      0 0 16px rgba(11,92,255,.24) !important;
+    filter:none !important;
+    text-shadow:none !important;
+    transform:translateY(-2px) scale(1.025) !important;
+    outline:none !important;
+  }
+
+  /* Prevent an older white shine layer from changing the navy hover surface. */
+  html body > header .auth-buttons a.jobseeker-auth:hover::before,
+  html body > header .auth-buttons a.jobseeker-auth:focus-visible::before{
+    opacity:0 !important;
+    background:transparent !important;
+  }
+
+  html body > header .auth-buttons a.jobseeker-auth:hover > i,
+  html body > header .auth-buttons a.jobseeker-auth:focus-visible > i{
+    color:#ffffff !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    text-shadow:none !important;
+    filter:none !important;
+    transform:scale(1.08) !important;
+  }
+
+  html body > header .auth-buttons a.jobseeker-auth:hover .auth-text,
+  html body > header .auth-buttons a.jobseeker-auth:focus-visible .auth-text{
+    color:#ffffff !important;
+    text-shadow:none !important;
+  }
+</style>
+
 </head>
 
 <body>
@@ -2507,7 +3369,7 @@ header nav .nav-main-link:focus-visible > i,
 
     <a href="postjob1.html"><span class="mnav-left"><i class="fa-solid fa-square-plus"></i><span class="nav-text">Post Jobs</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="postedhiring1.html"><span class="mnav-left"><i class="fa-solid fa-briefcase"></i><span class="nav-text">Job Hiring</span></span><i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker Directory</span></span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span class="mnav-left"><i class="fa-solid fa-users"></i><span class="nav-text">Jobseeker</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="applicantform1.html?source=jobspacelink"><span class="mnav-left"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Post Resume</span></span><i class="fa-solid fa-arrow-right"></i></a>
     <a href="index1.html"><span class="mnav-left"><i class="fa-solid fa-right-to-bracket"></i><span class="nav-text">Login</span></span><i class="fa-solid fa-arrow-right"></i></a>
   </div>
@@ -2778,6 +3640,241 @@ header nav .nav-main-link:focus-visible > i,
   tick();
 })();
 </script>
+
+<!-- ============================================================
+     AUTHORITATIVE APPLICANT FORM HEADER MATCH
+     Why Choose Us | 769px–1023px
+     CSS-only; all page links, menus, animations and scripts remain.
+=============================================================== -->
+<style id="jsl-why-choose-us-applicant-form-tablet-header-20260828">
+@media (min-width:769px) and (max-width:1023px){
+  :root{
+    --header-h:72px !important;
+    --hdrH:72px !important;
+    --jsl-af-ink:#063f73;
+    --jsl-af-icon:#06477f;
+  }
+
+  html body{padding-top:72px !important;}
+
+  html body > header{
+    position:fixed !important;
+    inset:0 0 auto 0 !important;
+    width:100% !important;
+    max-width:100vw !important;
+    height:72px !important;
+    min-height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:12px !important;
+    padding:0 6px 0 4px !important;
+    color:var(--jsl-af-ink) !important;
+    background:#fff !important;
+    border:0 !important;
+    border-bottom:1px solid #dfe6ef !important;
+    border-radius:0 !important;
+    box-shadow:0 2px 10px rgba(15,23,42,.06) !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    overflow:visible !important;
+    transform:none !important;
+    z-index:1500 !important;
+  }
+
+  html body > header > .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:70px !important;
+    max-width:132px !important;
+    height:72px !important;
+    min-height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body > header > .logo img{
+    display:block !important;
+    width:auto !important;
+    height:50px !important;
+    max-width:132px !important;
+    max-height:50px !important;
+    margin:0 !important;
+    padding:0 !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+    filter:none !important;
+    transform:none !important;
+  }
+
+  html body > header > nav{
+    order:2 !important;
+    flex:0 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:6px !important;
+    margin:0 auto 0 6px !important;
+    padding:0 !important;
+    color:var(--jsl-af-ink) !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    visibility:visible !important;
+    opacity:1 !important;
+  }
+
+  html body > header > nav > a,
+  html body > header > nav .nav-main-link{
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:48px !important;
+    min-height:48px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    margin:0 !important;
+    padding:0 2px !important;
+    border:0 !important;
+    border-radius:0 !important;
+    color:var(--jsl-af-ink) !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    text-decoration:none !important;
+    white-space:nowrap !important;
+    font-family:Inter,Arial,Helvetica,sans-serif !important;
+    font-size:.72rem !important;
+    font-weight:700 !important;
+    line-height:1 !important;
+    letter-spacing:0 !important;
+    transform:none !important;
+  }
+
+  html body > header > nav > a > i,
+  html body > header > nav .nav-main-link > i{
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    color:var(--jsl-af-icon) !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    font-size:.78rem !important;
+    line-height:1 !important;
+    transform:none !important;
+  }
+
+  html body > header > nav .nav-dropdown,
+  html body > header > nav .nav-dropdown-trigger,
+  html body > header > nav .nav-dropdown .nav-main-link{
+    height:48px !important;
+    min-height:48px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+  }
+
+  html body > header > nav .nav-dropdown-toggle{
+    flex:0 0 24px !important;
+    width:24px !important;
+    min-width:24px !important;
+    height:48px !important;
+    min-height:48px !important;
+    margin-left:-3px !important;
+    padding:0 !important;
+  }
+
+  html body > header > .auth-buttons{
+    order:20 !important;
+    position:relative !important;
+    inset:auto !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:78px !important;
+    max-width:none !important;
+    height:auto !important;
+    min-height:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:4px !important;
+    margin:0 0 0 auto !important;
+    padding:0 !important;
+    overflow:visible !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    transform:none !important;
+  }
+
+  html body > header > .auth-buttons > a.admin,
+  html body > header > .auth-buttons > a.jobseeker-auth{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:auto !important;
+    min-width:78px !important;
+    max-width:none !important;
+    height:32px !important;
+    min-height:32px !important;
+    gap:5px !important;
+    padding:0 10px !important;
+    border-radius:9px !important;
+    font-size:.78rem !important;
+    letter-spacing:0 !important;
+    visibility:visible !important;
+    opacity:1 !important;
+  }
+
+  html body > header > .auth-buttons > a i{
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    margin:0 !important;
+    font-size:.86rem !important;
+  }
+
+  html body > header > .nav-toggle,
+  html body > header + .mobile-panel,
+  html body > .mobile-panel{
+    display:none !important;
+  }
+}
+
+/* ============================================================
+   POSTEDHIRING1 HEADER LOGO ZOOM EFFECT
+============================================================ */
+body > header .logo img,
+html body > header .logo img,
+header .logo img{
+  transform:scale(1) !important;
+  transform-origin:center center !important;
+  transition:transform .22s ease, filter .22s ease !important;
+}
+
+body > header .logo:hover img,
+html body > header .logo:hover img,
+header .logo:hover img{
+  transform:scale(1.06) !important;
+}
+</style>
 
 </body>
 </html>
