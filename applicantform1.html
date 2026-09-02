@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Applicant Form | Job Space Link</title>
 
+<!-- ✅ SINGLE-SUBMISSION / SINGLE-RECORD FIX: A guarded idempotent submit flow prevents duplicate master/transaction rows and saves the generated PDF URL in the original transaction. -->
+<!-- ✅ FILE PICKER DRAFT-PRESERVATION FIX: Opening or closing the picture/resume/document chooser no longer clears or overwrites unsaved form inputs. -->
 <!-- ✅ FORCE ACTIVE LOGGED-IN SESSION FIX: active Jobseeker session now displays the logged-in account and auto-loads matching applicant data. -->
 <!-- ✅ ENHANCED POPUP LOCK: Qualification and Job Preferences inputs/rows are disabled while message popups are open to prevent accidental field opening. -->
 <!-- ✅ ENHANCED POST-SAVE LOGOUT CLEAR: After saving a new record/password, Logout fully clears the form and blocks delayed restore/session reloading. -->
@@ -13,6 +15,7 @@
 <!-- ✅ EMPLOYMENT STATUS UI FIX: Employment Status dropdown is now visible under Ready to Work and saves to applicant_transaction_table.employment_status. -->
 <!-- ✅ QUALIFICATION PLAIN DB SAVE FIX: Qualification JSON envelopes are converted to readable plain text before saving to applicant_transaction_table. -->
 <!-- ✅ RELOCATION PLAIN DB SAVE FIX: Job preference relocation JSON envelope is converted to readable plain text before saving to applicant_transaction_table.job_pref_relocation. -->
+<!-- ✅ OPTIONAL BIRTHDAY + DUPLICATE MATCH FIX: Birthday may be blank; the form and Edge Function match existing applicants by first name + last name in applicant_master_table and email in applicant_transaction_table through master_id. -->
 
 <!-- ICONS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
@@ -23,6 +26,166 @@
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase_config.js"></script>
+
+<!-- ============================================================
+     2026-08-31 PREBOOT V2: SAVED/VIEWED APPLICANT RECORD SESSION
+     - Runs before the page's legacy restore/login guards.
+     - A newer valid applicant record session wins over an older logout marker.
+     - Restores the persistent applicant-form snapshot into sessionStorage before
+       DOMContentLoaded so the existing restore code can keep the record visible.
+     - Employer storage/session is never touched.
+============================================================ -->
+<script id="jsl-jobseeker-record-session-preboot-v2">
+(function(){
+  "use strict";
+  if(window.__JSL_JOBSEEKER_RECORD_SESSION_PREBOOT_V2__) return;
+  window.__JSL_JOBSEEKER_RECORD_SESSION_PREBOOT_V2__=true;
+
+  var CANONICAL_KEY="JSL_JOBSEEKER_RECORD_SESSION_V2";
+  var PERSISTENT_RESTORE_KEY="jsl_applicant_form_restore_persistent_v2";
+  var FORM_RESTORE_KEY="jsl_applicant_form_restore_v1";
+  var SESSION_KEYS=[
+    CANONICAL_KEY,"postedhiring1_jobseeker_session","jobSpaceLink_login_identity",
+    "jobSpaceLink_jobseeker_session","jobSpaceLink_logged_in_jobseeker",
+    "jobSpaceLink_loggedInJobseeker","jobSpaceLink_current_jobseeker","loggedInApplicant",
+    "jobseekerSession","jobseekerUser","jobseekerAccount","currentJobseeker",
+    "loggedInJobseeker","applicantSession","applicantData","currentUser",
+    "jsl_active_jobseeker_session","jsl_shared_session_event"
+  ];
+  var EMAIL_KEYS=[
+    "jobSpaceLink_jobseeker_email","jobSpaceLink_logged_in_email","employee_email",
+    "jsl_login_email","jsl_last_login_email","jobseeker_email","jobseeker_login_email",
+    "logged_in_email","loggedInEmail","applicant_email","user_email","email","login_email"
+  ];
+  var FLAG_KEYS=[
+    "jobSpaceLink_jobseeker_logged_in","employee_logged_in","jsl_logged_in",
+    "jsl_jobseeker_logged_in","jobseeker_logged_in","applicant_logged_in","logged_in"
+  ];
+  var NAME_KEYS=[
+    "employee_name","jsl_login_name","jsl_last_login_name","jobseeker_name",
+    "jobseeker_full_name","applicant_name","applicant_full_name","logged_in_name",
+    "loggedInName","full_name","profile_name","view_profile_name","current_applicant_name"
+  ];
+  var MASTER_KEYS=[
+    "employee_master_id","jsl_master_id","jobseeker_master_id","applicant_master_id",
+    "master_id","user_master_id","view_profile_master_id","current_profile_master_id"
+  ];
+  var USER_KEYS=["jsl_user_id","user_id","auth_uid","auth_id","uid","view_profile_user_id","current_profile_user_id"];
+  var LOGIN_AT_KEYS=["jsl_jobseeker_login_at","jobSpaceLink_jobseeker_login_at","jobseeker_login_at","applicant_login_at"];
+  var LOGOUT_KEYS=[
+    "jsl_force_logout","jsl_jobseeker_logout_at","jobSpaceLink_jobseeker_logout_at",
+    "jobseeker_logout_at","applicant_logout_at","jsl_jobseeker_logged_out","jobSpaceLink_jobseeker_logged_out"
+  ];
+  var LOGOUT_REASON_KEYS=["jsl_logout_reason"];
+  var EVENT_KEYS=["jsl_shared_session_event","jsl_active_jobseeker_session","jsl_jobseeker_session_event","jobSpaceLink_jobseeker_session_event","jobSpaceLink_shared_session_event"];
+
+  function clean(v){return v==null?"":String(v).trim();}
+  function lower(v){return clean(v).toLowerCase().replace(/\s+/g,"");}
+  function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lower(v));}
+  function parse(raw){try{return JSON.parse(raw);}catch(_e){return null;}}
+  function readStore(store,key){try{return clean(store.getItem(key));}catch(_e){return "";}}
+  function readAny(key){var v=readStore(localStorage,key);return v||readStore(sessionStorage,key);}
+  function setBoth(key,value){var v=String(value==null?"":value);try{localStorage.setItem(key,v);}catch(_e1){}try{sessionStorage.setItem(key,v);}catch(_e2){}}
+  function removeBoth(key){try{localStorage.removeItem(key);}catch(_e1){}try{sessionStorage.removeItem(key);}catch(_e2){}}
+  function numberTime(v){
+    var n=Number(v); if(Number.isFinite(n)&&n>100000000000) return n;
+    var d=Date.parse(clean(v)); return Number.isFinite(d)?d:0;
+  }
+  function objTime(obj){
+    if(!obj||typeof obj!=="object") return 0;
+    var vals=[obj.at,obj.timestamp,obj.login_at,obj.loginAt,obj.authenticated_at,obj.authenticatedAt,obj.saved_at,obj.savedAt,obj.synced_at,obj.syncedAt,obj.updated_at,obj.updatedAt,obj.created_at,obj.createdAt];
+    var best=0; for(var i=0;i<vals.length;i++) best=Math.max(best,numberTime(vals[i])); return best;
+  }
+  function roleText(obj){return lower(obj&&(obj.role||obj.type||obj.account_type||obj.accountType||obj.user_type||obj.userType||obj.profile_role||""));}
+  function emailOf(obj){return lower(obj&&(obj.email||obj.employee_email||obj.jobseeker_email||obj.applicant_email||obj.user_email||obj.login_email||""));}
+  function masterOf(obj){return clean(obj&&(obj.master_id||obj.applicant_master_id||obj.employee_master_id||obj.user_master_id||""));}
+  function nameOf(obj){return clean(obj&&(obj.full_name||obj.name||obj.employee_name||obj.jobseeker_name||obj.applicant_name||""));}
+  function userOf(obj){return clean(obj&&(obj.user_id||obj.auth_uid||obj.auth_id||obj.uid||""));}
+  function avatarOf(obj){return clean(obj&&(obj.profile_picture_url||obj.profile_photo_url||obj.avatar_url||""));}
+  function isLoggedInObject(obj){
+    if(!obj||typeof obj!=="object") return false;
+    var role=roleText(obj);
+    if(/employer|company|business|organization/.test(role)) return false;
+    if(obj.logged===false||obj.loggedIn===false||obj.isLoggedIn===false||obj.authenticated===false) return false;
+    if(/logout|logged[-_ ]?out|signed[-_ ]?out/.test(lower(obj.event||obj.action||obj.state||obj.status||""))) return false;
+    return validEmail(emailOf(obj)) && !!masterOf(obj);
+  }
+  function bestLogin(){
+    var best=null,bestAt=0;
+    for(var i=0;i<SESSION_KEYS.length;i++){
+      var raw=readAny(SESSION_KEYS[i]); if(!raw) continue;
+      var obj=parse(raw); if(!isLoggedInObject(obj)) continue;
+      var at=objTime(obj)||numberTime(readAny("jsl_jobseeker_login_at"))||1;
+      if(!best||at>=bestAt){best=obj;bestAt=at;}
+    }
+    if(best){best.__jsl_preboot_at=bestAt;}
+    return best;
+  }
+  function logoutTime(){
+    var best=0;
+    for(var i=0;i<LOGOUT_KEYS.length;i++) best=Math.max(best,numberTime(readAny(LOGOUT_KEYS[i])));
+    for(var j=0;j<EVENT_KEYS.length;j++){
+      var obj=parse(readAny(EVENT_KEYS[j]));
+      if(!obj||typeof obj!=="object") continue;
+      if(obj.logged===false||/logout|logged[-_ ]?out|signed[-_ ]?out/.test(lower(obj.event||obj.action||obj.state||obj.status||""))) best=Math.max(best,objTime(obj));
+    }
+    return best;
+  }
+  function restoreSnapshotIfMatching(account){
+    var raw=readStore(localStorage,PERSISTENT_RESTORE_KEY); if(!raw) return;
+    var box=parse(raw); if(!box||typeof box!=="object") return;
+    var snapshot=box.snapshot&&typeof box.snapshot==="object"?box.snapshot:box;
+    var email=lower(box.email||(snapshot.values&&snapshot.values.email)||"");
+    var master=clean(box.master_id||snapshot.currentMasterId||"");
+    if(email&&email!==emailOf(account)) return;
+    if(master&&master!==masterOf(account)) return;
+    var status=clean(snapshot.status||(snapshot.values&&snapshot.values.status_display)||"");
+    if(/^not active$/i.test(status)) return;
+    try{sessionStorage.setItem(FORM_RESTORE_KEY,JSON.stringify(snapshot));}catch(_e){}
+  }
+
+  var login=bestLogin();
+  var loginAt=login?Number(login.__jsl_preboot_at||objTime(login)||0):0;
+  var logoutAt=logoutTime();
+  if(login&&loginAt>logoutAt){
+    try{delete login.__jsl_preboot_at;}catch(_e){}
+    var email=emailOf(login),master=masterOf(login),name=nameOf(login),user=userOf(login),avatar=avatarOf(login);
+    var now=Math.max(loginAt,Date.now());
+    var canonical=Object.assign({},login,{
+      logged:true,loggedIn:true,isLoggedIn:true,authenticated:true,event:"login",action:"login",
+      state:"logged-in",status:"logged-in",scope:"jobseeker",type:"jobseeker",role:"jobseeker",
+      account_type:"jobseeker",profile_role:"applicant",user_type:"applicant",is_jobseeker:true,is_applicant:true,
+      email:email,employee_email:email,jobseeker_email:email,applicant_email:email,user_email:email,login_email:email,
+      full_name:name||login.full_name||"Jobseeker",name:name||login.name||"Jobseeker",
+      master_id:master,applicant_master_id:master,employee_master_id:master,
+      user_id:user,auth_uid:user,uid:user,profile_picture_url:avatar,profile_photo_url:avatar,avatar_url:avatar,
+      at:now,timestamp:now,login_at:now,authenticated_at:new Date(now).toISOString(),
+      session_source:"applicant_record_valid_login_preboot_v2"
+    });
+    var serialized=JSON.stringify(canonical);
+    LOGOUT_KEYS.concat(LOGOUT_REASON_KEYS).forEach(removeBoth);
+    EMAIL_KEYS.forEach(function(k){setBoth(k,email);});
+    FLAG_KEYS.forEach(function(k){setBoth(k,"1");});
+    if(name) NAME_KEYS.forEach(function(k){setBoth(k,name);});
+    MASTER_KEYS.forEach(function(k){setBoth(k,master);});
+    if(user) USER_KEYS.forEach(function(k){setBoth(k,user);});
+    LOGIN_AT_KEYS.forEach(function(k){setBoth(k,String(now));});
+    [CANONICAL_KEY,"postedhiring1_jobseeker_session","jobSpaceLink_login_identity","jobSpaceLink_jobseeker_session","jobSpaceLink_logged_in_jobseeker","jobSpaceLink_loggedInJobseeker","jobSpaceLink_current_jobseeker","loggedInApplicant","jobseekerSession","jobseekerUser","jobseekerAccount","currentJobseeker","loggedInJobseeker","applicantSession","applicantData","currentUser","jsl_active_jobseeker_session","jsl_shared_session_event"].forEach(function(k){setBoth(k,serialized);});
+    setBoth("jobSpaceLink_jobseeker_session_state","logged-in");
+    setBoth("jsl_jobseeker_session_state","logged-in");
+    setBoth("jsl_master_id__"+email,master);
+    if(avatar) setBoth("jsl_avatar_url__"+email,avatar);
+    restoreSnapshotIfMatching(canonical);
+    window.__JSL_PREBOOT_VALID_JOBSEEKER_RECORD_SESSION_V2__=canonical;
+  }else if(logoutAt&&logoutAt>=loginAt){
+    removeBoth(CANONICAL_KEY);
+    removeBoth("postedhiring1_jobseeker_session");
+    try{localStorage.removeItem(PERSISTENT_RESTORE_KEY);}catch(_e1){}
+    try{sessionStorage.removeItem(FORM_RESTORE_KEY);}catch(_e2){}
+  }
+})();
+</script>
+
 
 <!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -6917,6 +7080,233 @@ header .auth-buttons a:hover,
 }
 </style>
 
+
+<!-- ============================================================
+     FINAL APPLICANT FORM HEADER LOGO CONTAINMENT PATCH
+     - Prevents the Job Space Link logo from overflowing outside
+       the fixed header at every responsive breakpoint.
+     - Clips only the logo wrapper, not the whole header, so the
+       About dropdown, login/account dropdown, and mobile controls
+       remain fully visible.
+     - Keeps all existing form, Supabase, login/session, upload,
+       PDF, modal, navigation, and responsive behavior unchanged.
+============================================================ -->
+<style id="jsl-final-applicantform-header-logo-containment">
+  /*
+    Header must remain overflow-visible because this page contains
+    dropdown menus/account menus that can extend below the header.
+  */
+  body > header,
+  header{
+    overflow:visible !important;
+  }
+
+  /*
+    The logo wrapper itself is constrained to the header height.
+    Any image zoom/drop-shadow that would extend outside is clipped
+    only inside this wrapper.
+  */
+  body > header .logo,
+  header .logo{
+    height:100% !important;
+    max-height:100% !important;
+    min-height:0 !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    overflow:hidden !important;
+    padding-top:5px !important;
+    padding-bottom:5px !important;
+  }
+
+  body > header .logo img,
+  header .logo img{
+    display:block !important;
+    width:auto !important;
+    height:auto !important;
+    max-height:calc(var(--hdrH, var(--header-h, 78px)) - 12px) !important;
+    max-width:150px !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  /*
+    Preserve existing hover/zoom behavior while keeping it contained.
+  */
+  body > header .logo:hover img,
+  body > header .logo:focus-visible img,
+  header .logo:hover img,
+  header .logo:focus-visible img{
+    transform-origin:left center !important;
+  }
+
+  /* 1800px and above */
+  @media (min-width:1800px){
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--hdrH, var(--header-h, 84px)) - 12px) !important;
+      max-width:148px !important;
+    }
+  }
+
+  /* 1440px - 1799px */
+  @media (min-width:1440px) and (max-width:1799px){
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--hdrH, var(--header-h, 78px)) - 12px) !important;
+      max-width:144px !important;
+    }
+  }
+
+  /* 1024px - 1439px */
+  @media (min-width:1024px) and (max-width:1439px){
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--hdrH, var(--header-h, 76px)) - 14px) !important;
+      max-width:130px !important;
+    }
+  }
+
+  /* 769px - 1023px */
+  @media (min-width:769px) and (max-width:1023px){
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--hdrH, var(--header-h, 72px)) - 16px) !important;
+      max-width:112px !important;
+    }
+  }
+
+  /* 481px - 768px */
+  @media (min-width:481px) and (max-width:768px){
+    body > header .logo,
+    header .logo{
+      max-width:calc(100vw - 82px) !important;
+      padding-top:6px !important;
+      padding-bottom:6px !important;
+    }
+
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--hdrH, var(--header-h, 68px)) - 18px) !important;
+      max-width:min(112px, calc(100vw - 88px)) !important;
+    }
+  }
+
+  /* 480px and below */
+  @media (max-width:480px){
+    body > header .logo,
+    header .logo{
+      max-width:calc(100vw - 74px) !important;
+      padding-top:6px !important;
+      padding-bottom:6px !important;
+    }
+
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--hdrH, var(--header-h, 64px)) - 18px) !important;
+      max-width:min(100px, calc(100vw - 80px)) !important;
+    }
+  }
+</style>
+
+
+
+<!-- ============================================================
+     FINAL PROFILE THUMBNAIL LAYOUT ENHANCEMENT — 2026-08-19
+     - Keeps the section navigation directly below the profile thumbnail.
+     - Displays the complete profile picture without cropping/clipping.
+     - Preserves all existing IDs, click handlers, upload behavior, and section navigation.
+============================================================ -->
+<style id="jsl-profile-thumbnail-no-clip-nav-final-2026-08-19">
+  /* Keep the marked section-navigation block directly beneath the thumbnail. */
+  .profile-card{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+  }
+
+  .profile-pic{
+    order:1 !important;
+    width:100% !important;
+    height:clamp(210px, 22vw, 280px) !important;
+    max-height:none !important;
+    aspect-ratio:auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    background:linear-gradient(180deg,#eef4ff,#e2e8f0) !important;
+  }
+
+  /* Show the entire uploaded photo. No cover-crop and no hover zoom crop. */
+  .profile-pic img,
+  #leftPicImg{
+    width:100% !important;
+    height:100% !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    transform:none !important;
+  }
+
+  .profile-pic:hover img,
+  .profile-pic:hover #leftPicImg{
+    transform:none !important;
+  }
+
+  /* The red-marked navigation stays immediately below the thumbnail. */
+  .profile-section-nav{
+    order:2 !important;
+    width:100% !important;
+    margin:10px 0 10px !important;
+    position:relative !important;
+    inset:auto !important;
+    float:none !important;
+    clear:both !important;
+    z-index:3 !important;
+  }
+
+  #picWarning{
+    order:3 !important;
+    margin-top:0 !important;
+  }
+
+  .profile-name{
+    order:4 !important;
+  }
+
+  .profile-sub{
+    order:5 !important;
+  }
+
+  .left-status-wrap{
+    order:6 !important;
+  }
+
+  @media (max-width:1179px){
+    .profile-pic{
+      height:230px !important;
+    }
+  }
+
+  @media (max-width:900px){
+    .profile-pic{
+      height:clamp(210px, 42vw, 300px) !important;
+    }
+  }
+
+  @media (max-width:480px){
+    .profile-pic{
+      height:220px !important;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -7442,6 +7832,27 @@ header .auth-buttons a:hover,
                 <span id="picActionText" style="opacity:.95;">Click to Upload (optional)</span>
               </div>
             </div>
+            <nav class="profile-section-nav" aria-label="Applicant form sections">
+              <button type="button" class="profile-section-nav-btn" data-scroll-section="personalInformationSection">
+                <i class="fa-solid fa-user"></i><span>Personal Information</span>
+              </button>
+              <button type="button" class="profile-section-nav-btn" data-scroll-section="qualificationSection">
+                <i class="fa-solid fa-award"></i><span>Qualification</span>
+              </button>
+              <button type="button" class="profile-section-nav-btn" data-scroll-section="jobPreferencesSection">
+                <i class="fa-solid fa-sliders"></i><span>Job Preferences</span>
+              </button>
+              <button type="button" class="profile-section-nav-btn" data-scroll-section="blockEmployerSection">
+                <i class="fa-solid fa-user-shield"></i><span>Block Employer</span>
+              </button>
+              <button type="button" class="profile-section-nav-btn" data-scroll-section="readyToWorkSection">
+                <i class="fa-solid fa-circle-check"></i><span>Ready to Work</span>
+              </button>
+              <button type="button" class="profile-section-nav-btn" data-scroll-section="resumeDocumentsSection">
+                <i class="fa-solid fa-file-arrow-up"></i><span>Resume and Documents</span>
+              </button>
+            </nav>
+
             <div id="picWarning"></div>
 
             <div class="profile-name" id="leftProfileName">Your Name</div>
@@ -7456,9 +7867,9 @@ header .auth-buttons a:hover,
           </div>
 
           <!-- RIGHT SIDE -->
-          <div style="min-width:0;">
+          <div class="jsl-form-scroll-column" style="min-width:0;">
             <!-- PERSONAL INFORMATION -->
-            <div class="section">
+            <div class="section" id="personalInformationSection" tabindex="-1">
               <div class="section-head">
                 <div class="left"><i class="fa-solid fa-user"></i><span>Personal Information</span></div>
                 <div class="mini">Fill out all required fields</div>
@@ -7469,7 +7880,7 @@ header .auth-buttons a:hover,
                   <div class="field-card"><div class="lbl"><i class="fa-solid fa-id-card"></i> First Name</div><input id="first_name" required /></div>
                   <div class="field-card"><div class="lbl"><i class="fa-solid fa-id-card"></i> Middle Name</div><input id="middle_name" /></div>
                   <div class="field-card"><div class="lbl"><i class="fa-solid fa-id-card"></i> Last Name</div><input id="last_name" required /></div>
-                  <div class="field-card birthday-field-card"><div class="lbl"><i class="fa-solid fa-cake-candles"></i> Birthday</div><input type="date" id="birthday" required autocomplete="bday" /></div>
+                  <div class="field-card birthday-field-card"><div class="lbl"><i class="fa-solid fa-cake-candles"></i> Birthday (Optional)</div><input type="date" id="birthday" autocomplete="bday" /></div>
                 </div>
 
                 <div class="personal-row row4">
@@ -7513,7 +7924,7 @@ header .auth-buttons a:hover,
             </div>
 
             <!-- QUALIFICATIONS -->
-            <div class="section qualification-section">
+            <div class="section qualification-section" id="qualificationSection" tabindex="-1">
               <div class="section-head">
                 <div class="left"><i class="fa-solid fa-award"></i><span>Qualifications</span></div>
                 <div class="mini">Click pencil to add details</div>
@@ -7592,7 +8003,7 @@ header .auth-buttons a:hover,
             </div>
 
             <!-- JOB PREFERENCES -->
-            <div class="section job-preferences-section">
+            <div class="section job-preferences-section" id="jobPreferencesSection" tabindex="-1">
               <div class="section-head">
                 <div class="left"><i class="fa-solid fa-sliders"></i><span>Job Preferences</span></div>
                 <div class="mini">Click row or pencil to add</div>
@@ -7703,7 +8114,7 @@ header .auth-buttons a:hover,
             </div>
 
             <!-- BLOCK EMPLOYER -->
-            <div class="section block-employer-section">
+            <div class="section block-employer-section" id="blockEmployerSection" tabindex="-1">
               <div class="section-head">
                 <div class="left"><i class="fa-solid fa-user-shield"></i><span>Block Employer</span></div>
                 <div class="mini">Click row or plus to add</div>
@@ -7733,7 +8144,7 @@ header .auth-buttons a:hover,
 
 
             <!-- READY TO WORK -->
-            <div class="section ready-to-work-section">
+            <div class="section ready-to-work-section" id="readyToWorkSection" tabindex="-1">
               <div class="ready-work-card" aria-label="Ready to work">
                 <h2 class="ready-work-title">Ready to work</h2>
                 <p class="ready-work-subtitle">Let employers know that you can begin work right away.</p>
@@ -7792,7 +8203,7 @@ header .auth-buttons a:hover,
             </div>
 
             <!-- RESUME / DOCUMENTS -->
-            <div class="section">
+            <div class="section resume-documents-section" id="resumeDocumentsSection" tabindex="-1">
               <div class="section-head">
                 <div class="left"><i class="fa-solid fa-file-lines"></i><span>Resume / Documents</span></div>
                 <div class="mini">Upload then View anytime</div>
@@ -11408,6 +11819,13 @@ window._suppressAuthPromptOnce = false;
 window._logoutSkipConfirmOnce = false;
 window._postAuthSuccessMessage = "Saved successfully.";
 
+/* Single-submit / idempotency state.
+   The lock is acquired synchronously before any async duplicate lookup, master
+   resolution, upload, or database write can begin. */
+window._applicantSubmitInFlight = false;
+window._applicantSubmitToken = "";
+window._applicantSubmitStorageLockKey = "";
+
 /* restore flow flags */
 window._isRestoringApplicantState = false;
 
@@ -11415,6 +11833,103 @@ function resetLogoutFlags(){
   window._logoutAfterSave = false;
   window._suppressAuthPromptOnce = false;
   window._logoutSkipConfirmOnce = false;
+}
+
+function applicantSubmitIdentityStorageKey(){
+  var fn = "";
+  var ln = "";
+  var em = "";
+  try{ fn = normalizeExistingApplicantLookupName(document.getElementById("first_name").value); }catch(_e1){}
+  try{ ln = normalizeExistingApplicantLookupName(document.getElementById("last_name").value); }catch(_e2){}
+  try{ em = normalizeExistingApplicantLookupEmail(document.getElementById("email").value); }catch(_e3){}
+
+  var identity = [fn, ln, em].join("|") || "unidentified";
+  return "jsl_applicant_submit_lock_v3__" + encodeURIComponent(identity).slice(0, 480);
+}
+
+function createApplicantSubmitToken(){
+  try{
+    if (window.crypto && typeof window.crypto.randomUUID === "function"){
+      return window.crypto.randomUUID();
+    }
+  }catch(_e){}
+  return "applicant-submit-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+}
+
+function acquireApplicantSubmissionLock(){
+  /* Same-tab double click / Enter / programmatic submit protection. */
+  if (window._applicantSubmitInFlight) return "";
+
+  var token = createApplicantSubmitToken();
+  var storageKey = applicantSubmitIdentityStorageKey();
+  var now = Date.now();
+  var expiresAt = now + (3 * 60 * 1000);
+
+  /* Cross-tab protection for the same first-name + last-name + email identity. */
+  try{
+    var existingRaw = localStorage.getItem(storageKey);
+    if (existingRaw){
+      var existing = JSON.parse(existingRaw);
+      if (
+        existing &&
+        existing.token &&
+        Number(existing.expiresAt || 0) > now &&
+        existing.token !== token
+      ){
+        return "";
+      }
+    }
+
+    localStorage.setItem(storageKey, JSON.stringify({
+      token: token,
+      createdAt: now,
+      expiresAt: expiresAt,
+      page: "applicantform1.html"
+    }));
+  }catch(_storageLockErr){
+    /* Same-tab lock still protects the save even when localStorage is unavailable. */
+  }
+
+  window._applicantSubmitInFlight = true;
+  window._applicantSubmitToken = token;
+  window._applicantSubmitStorageLockKey = storageKey;
+
+  try{
+    if (submitBtn) submitBtn.disabled = true;
+    if (appForm) appForm.setAttribute("aria-busy", "true");
+  }catch(_uiLockErr){}
+
+  return token;
+}
+
+function releaseApplicantSubmissionLock(token){
+  if (
+    token &&
+    window._applicantSubmitToken &&
+    token !== window._applicantSubmitToken
+  ){
+    return;
+  }
+
+  var storageKey = window._applicantSubmitStorageLockKey || "";
+  try{
+    if (storageKey){
+      var raw = localStorage.getItem(storageKey);
+      var parsed = raw ? JSON.parse(raw) : null;
+      if (!parsed || !parsed.token || parsed.token === window._applicantSubmitToken || parsed.token === token){
+        localStorage.removeItem(storageKey);
+      }
+    }
+  }catch(_storageUnlockErr){}
+
+  window._applicantSubmitInFlight = false;
+  window._applicantSubmitToken = "";
+  window._applicantSubmitStorageLockKey = "";
+
+  try{
+    if (appForm) appForm.removeAttribute("aria-busy");
+    if (submitBtn) submitBtn.disabled = false;
+  }catch(_uiUnlockErr){}
 }
 
 /* Logout cleanup can be triggered two different ways:
@@ -13227,7 +13742,8 @@ async function uploadApplicantStorageFile(fileBlob, options){
   options = options || {};
   if (!(fileBlob instanceof Blob)) throw new Error("A file blob is required for upload.");
 
-  if (!currentMasterId){
+  var targetMasterId = options.masterId || currentMasterId;
+  if (!targetMasterId){
     throw new Error("No saved profile loaded yet. Submit first or load an existing profile.");
   }
 
@@ -13239,7 +13755,7 @@ async function uploadApplicantStorageFile(fileBlob, options){
 
   var data = await callApplicantFormBackend("upload_storage_file", {
     bucket: options.bucket || "applicantfile",
-    masterId: currentMasterId,
+    masterId: targetMasterId,
     firstName: fn,
     lastName: ln,
     fileName: fileName,
@@ -14327,6 +14843,223 @@ if (desiredSalaryEl){
 ========================================================== */
 var ACCEPT_ALL = ".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.txt,.json,.xml,.md,.rtf,.odt,.jfif,.heic,.heif,.tif,.tiff,.avif,.webp,.png,.jpg,.jpeg,.gif,.bmp,.svg,.ico,video/*,audio/*,image/*";
 
+/* ==========================================================
+   FILE PICKER DRAFT-PRESERVATION GUARD
+   Opening a native file chooser temporarily returns focus to the page when it
+   closes. Several account/session reconciliation listeners also use that focus
+   event, which could reload a saved record or reset a logged-out form before the
+   file input's change event finished. Preserve the visible draft and suppress
+   only those focus/visibility refreshes while the chooser is active.
+========================================================== */
+function jslCaptureFilePickerDraft(){
+  var form = document.getElementById("appForm");
+  var controls = [];
+
+  if (form){
+    form.querySelectorAll("input,select,textarea").forEach(function(el, index){
+      if (!el || el.type === "file") return;
+      controls.push({
+        index:index,
+        id:el.id || "",
+        name:el.name || "",
+        type:String(el.type || el.tagName || "").toLowerCase(),
+        value:el.value,
+        checked:!!el.checked,
+        selectedValues:(el.multiple && el.options)
+          ? Array.from(el.options).filter(function(opt){ return opt.selected; }).map(function(opt){ return opt.value; })
+          : null,
+        disabled:!!el.disabled,
+        readOnly:!!el.readOnly
+      });
+    });
+  }
+
+  return {
+    form:form,
+    controls:controls,
+    scrollX:window.scrollX || 0,
+    scrollY:window.scrollY || 0,
+    activeElementId:(document.activeElement && document.activeElement.id) || "",
+    state:{
+      isUpdateMode:!!window.isUpdateMode,
+      isViewOnlyMode:!!window.isViewOnlyMode,
+      loadedExistingRecord:!!window._loadedExistingRecord,
+      currentMasterId:(typeof currentMasterId !== "undefined" ? currentMasterId : null),
+      oldDocs:(typeof old_docs !== "undefined" && Array.isArray(old_docs)) ? old_docs.slice() : [],
+      oldResume:(typeof old_resume !== "undefined" ? old_resume : ""),
+      oldPicture:(typeof old_picture !== "undefined" ? old_picture : ""),
+      oldPdf:(typeof old_pdf !== "undefined" ? old_pdf : ""),
+      selectedDocs:(typeof selectedDocs !== "undefined" && Array.isArray(selectedDocs)) ? selectedDocs.slice() : [],
+      selectedResume:(typeof selectedResume !== "undefined" ? selectedResume : null),
+      selectedPicture:(typeof selectedPicture !== "undefined" ? selectedPicture : null),
+      currentMasterIdWindow:window.currentMasterId,
+      pendingUpload:!!window._hasPendingFileUpload,
+      pendingKind:window._pendingFileUploadKind || "",
+      baseline:(typeof baselineSnapshot !== "undefined" ? baselineSnapshot : null),
+      transactionCache:(typeof lastTransactionCache !== "undefined" ? lastTransactionCache : null),
+      savedPdfUrl:(typeof lastSavedPdfUrl !== "undefined" ? lastSavedPdfUrl : ""),
+      savedPdfPath:(typeof lastSavedPdfPath !== "undefined" ? lastSavedPdfPath : ""),
+      savedPdfName:(typeof lastSavedPdfName !== "undefined" ? lastSavedPdfName : "")
+    }
+  };
+}
+
+function jslRestoreFilePickerDraft(snapshot){
+  if (!snapshot || !snapshot.form || !snapshot.form.isConnected) return;
+
+  var form = snapshot.form;
+  (snapshot.controls || []).forEach(function(saved){
+    var el = null;
+    if (saved.id) el = document.getElementById(saved.id);
+    if (!el && saved.name){
+      try{ el = form.querySelector('[name="' + CSS.escape(saved.name) + '"]'); }catch(_e){}
+    }
+    if (!el || el.type === "file") return;
+
+    try{
+      if (saved.type === "checkbox" || saved.type === "radio"){
+        el.checked = saved.checked;
+      } else if (saved.selectedValues && el.multiple && el.options){
+        Array.from(el.options).forEach(function(opt){ opt.selected = saved.selectedValues.indexOf(opt.value) >= 0; });
+      } else {
+        el.value = saved.value;
+      }
+      el.disabled = saved.disabled;
+      el.readOnly = saved.readOnly;
+    }catch(_e2){}
+  });
+
+  var state = snapshot.state || {};
+  try{
+    window.isUpdateMode = state.isUpdateMode;
+    window.isViewOnlyMode = state.isViewOnlyMode;
+    window._loadedExistingRecord = state.loadedExistingRecord;
+    window.currentMasterId = state.currentMasterIdWindow;
+    if (typeof currentMasterId !== "undefined") currentMasterId = state.currentMasterId;
+    if (typeof old_docs !== "undefined") old_docs = Array.isArray(state.oldDocs) ? state.oldDocs.slice() : [];
+    if (typeof old_resume !== "undefined") old_resume = state.oldResume || "";
+    if (typeof old_picture !== "undefined") old_picture = state.oldPicture || "";
+    if (typeof old_pdf !== "undefined") old_pdf = state.oldPdf || "";
+
+    /* Never discard a file that was selected after the snapshot was captured. */
+    if (typeof selectedDocs !== "undefined" && (!Array.isArray(selectedDocs) || !selectedDocs.length)){
+      selectedDocs = Array.isArray(state.selectedDocs) ? state.selectedDocs.slice() : [];
+    }
+    if (typeof selectedResume !== "undefined" && !selectedResume) selectedResume = state.selectedResume || null;
+    if (typeof selectedPicture !== "undefined" && !selectedPicture) selectedPicture = state.selectedPicture || null;
+
+    window._hasPendingFileUpload = !!(window._hasPendingFileUpload || state.pendingUpload || selectedPicture || selectedResume || (Array.isArray(selectedDocs) && selectedDocs.length));
+    window._pendingFileUploadKind = window._pendingFileUploadKind || state.pendingKind || "";
+    if (typeof baselineSnapshot !== "undefined") baselineSnapshot = state.baseline;
+    if (typeof lastTransactionCache !== "undefined") lastTransactionCache = state.transactionCache;
+    if (typeof lastSavedPdfUrl !== "undefined") lastSavedPdfUrl = state.savedPdfUrl || "";
+    if (typeof lastSavedPdfPath !== "undefined") lastSavedPdfPath = state.savedPdfPath || "";
+    if (typeof lastSavedPdfName !== "undefined") lastSavedPdfName = state.savedPdfName || "";
+  }catch(_stateErr){}
+
+  try{ if (typeof updateAgeHidden === "function") updateAgeHidden(); }catch(_e3){}
+  try{ if (typeof updateSalaryCurrency === "function") updateSalaryCurrency(); }catch(_e4){}
+  try{ if (typeof renderApplicantQualificationRows === "function") renderApplicantQualificationRows(); }catch(_e5){}
+  try{ if (typeof renderJobPreferenceRows === "function") renderJobPreferenceRows(); }catch(_e6){}
+  try{ if (typeof renderBlockEmployerRows === "function") renderBlockEmployerRows(); }catch(_e7){}
+  try{ if (typeof renderReadyToWorkBox === "function") renderReadyToWorkBox(); }catch(_e8){}
+  try{ if (typeof setViewOnlyMode === "function") setViewOnlyMode(!!window.isViewOnlyMode); }catch(_e9){}
+  try{ if (typeof lockIdentityFields === "function") lockIdentityFields(); }catch(_e10){}
+  try{ if (typeof renderPicPreview === "function") renderPicPreview(); }catch(_e11){}
+  try{ if (typeof renderResumePreview === "function") renderResumePreview(); }catch(_e12){}
+  try{ if (typeof renderDocPreview === "function") renderDocPreview(); }catch(_e13){}
+  try{ if (typeof refreshButtonsLayout === "function") refreshButtonsLayout(); }catch(_e14){}
+  try{ if (typeof refreshStatusButtonStyle === "function") refreshStatusButtonStyle(); }catch(_e15){}
+  try{ if (typeof validateUploads === "function") validateUploads(); }catch(_e16){}
+  try{ if (typeof syncLeftName === "function") syncLeftName(); }catch(_e17){}
+  try{ if (typeof refreshLeftStatusBadge === "function") refreshLeftStatusBadge(); }catch(_e18){}
+}
+
+function jslBeginFilePickerGuard(kind){
+  var existing = window.__JSL_FILE_PICKER_GUARD__;
+  if (existing && existing.active) return existing;
+
+  var guard = {
+    active:true,
+    kind:kind || "file",
+    startedAt:Date.now(),
+    snapshot:jslCaptureFilePickerDraft(),
+    restoreTimer:null,
+    releaseTimer:null
+  };
+  window.__JSL_FILE_PICKER_GUARD__ = guard;
+  document.documentElement.classList.add("jsl-file-picker-open");
+
+  /* A long-open chooser can overlap an existing session watchdog. Reapply only
+     the captured draft while the user is outside the page. */
+  guard.restoreTimer = setInterval(function(){
+    if (!guard.active) return;
+    jslRestoreFilePickerDraft(guard.snapshot);
+  }, 350);
+  return guard;
+}
+
+function jslFinishFilePickerGuard(guard, delay){
+  guard = guard || window.__JSL_FILE_PICKER_GUARD__;
+  if (!guard) return;
+  clearTimeout(guard.releaseTimer);
+  guard.releaseTimer = setTimeout(function(){
+    jslRestoreFilePickerDraft(guard.snapshot);
+    guard.active = false;
+    clearInterval(guard.restoreTimer);
+    document.documentElement.classList.remove("jsl-file-picker-open");
+    if (window.__JSL_FILE_PICKER_GUARD__ === guard) window.__JSL_FILE_PICKER_GUARD__ = null;
+  }, typeof delay === "number" ? delay : 850);
+}
+
+function jslPrepareNativeFileInput(kind, accept, multiple){
+  var guard = jslBeginFilePickerGuard(kind);
+  var input = document.createElement("input");
+  input.type = "file";
+  input.accept = accept || "";
+  input.multiple = !!multiple;
+  input.tabIndex = -1;
+  input.setAttribute("aria-hidden", "true");
+  input.style.cssText = "position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;";
+  document.body.appendChild(input);
+
+  function cleanup(delay){
+    jslFinishFilePickerGuard(guard, delay);
+    setTimeout(function(){ try{ input.remove(); }catch(_e){} }, Math.max(1000, Number(delay || 0) + 250));
+  }
+
+  input.__jslPickerGuard = guard;
+  input.__jslPickerCleanup = cleanup;
+  return input;
+}
+
+/* Capture phase runs before the many focus/visibility session listeners added
+   later in this file. During a native chooser return, suppress only that one
+   reconciliation cycle and restore the user's draft. */
+if (!window.__JSL_FILE_PICKER_FOCUS_GUARD_BOUND__){
+  window.__JSL_FILE_PICKER_FOCUS_GUARD_BOUND__ = true;
+
+  window.addEventListener("focus", function(event){
+    var guard = window.__JSL_FILE_PICKER_GUARD__;
+    if (!guard || !guard.active) return;
+    try{ event.stopImmediatePropagation(); event.stopPropagation(); }catch(_e){}
+    setTimeout(function(){ jslRestoreFilePickerDraft(guard.snapshot); }, 0);
+    setTimeout(function(){ jslRestoreFilePickerDraft(guard.snapshot); }, 180);
+    jslFinishFilePickerGuard(guard, 950);
+  }, true);
+
+  document.addEventListener("visibilitychange", function(event){
+    var guard = window.__JSL_FILE_PICKER_GUARD__;
+    if (!guard || !guard.active) return;
+    try{ event.stopImmediatePropagation(); event.stopPropagation(); }catch(_e){}
+    if (!document.hidden){
+      setTimeout(function(){ jslRestoreFilePickerDraft(guard.snapshot); }, 0);
+      setTimeout(function(){ jslRestoreFilePickerDraft(guard.snapshot); }, 180);
+      jslFinishFilePickerGuard(guard, 950);
+    }
+  }, true);
+}
+
 function mergeSelectedDocumentFiles(existing, picked){
   var out = [];
   var seen = {};
@@ -14342,10 +15075,10 @@ function mergeSelectedDocumentFiles(existing, picked){
 
 function pickPicture(){
   if (!ensureFileEditModeForUpload("Profile picture")){ return; }
-  var i=document.createElement("input");
-  i.type="file";
-  i.accept="image/*,.jfif,.heic,.heif,.tif,.tiff,.avif,.webp";
+  var i = jslPrepareNativeFileInput("profile-picture", "image/*,.jfif,.heic,.heif,.tif,.tiff,.avif,.webp", false);
+  var guard = i.__jslPickerGuard;
   i.onchange=function(){
+    jslRestoreFilePickerDraft(guard.snapshot);
     if(i.files && i.files[0]){
       selectedPicture=i.files[0];
       markPendingFileUpload("profile-picture");
@@ -14354,15 +15087,17 @@ function pickPicture(){
       validateUploads();
       persistLoadedRecordSessionState("pick-picture");
     }
+    i.__jslPickerCleanup(900);
   };
+  i.oncancel=function(){ i.__jslPickerCleanup(250); };
   i.click();
 }
 function pickResume(){
   if (!ensureFileEditModeForUpload("Resume")){ return; }
-  var i=document.createElement("input");
-  i.type="file";
-  i.accept=ACCEPT_ALL;
+  var i = jslPrepareNativeFileInput("resume", ACCEPT_ALL, false);
+  var guard = i.__jslPickerGuard;
   i.onchange=function(){
+    jslRestoreFilePickerDraft(guard.snapshot);
     if(i.files && i.files[0]){
       selectedResume=i.files[0];
       markPendingFileUpload("resume");
@@ -14371,25 +15106,29 @@ function pickResume(){
       validateUploads();
       persistLoadedRecordSessionState("pick-resume");
     }
+    i.__jslPickerCleanup(900);
   };
+  i.oncancel=function(){ i.__jslPickerCleanup(250); };
   i.click();
 }
 function pickDocs(m){
   if (!ensureFileEditModeForUpload("Supporting document")){ return; }
-  var i=document.createElement("input");
-  i.type="file";
-  i.multiple=!!m;
-  i.accept=ACCEPT_ALL;
+  var i = jslPrepareNativeFileInput("supporting-documents", ACCEPT_ALL, !!m);
+  var guard = i.__jslPickerGuard;
   i.onchange=function(){
+    jslRestoreFilePickerDraft(guard.snapshot);
     var picked = Array.from(i.files||[]);
-    if (!picked.length) return;
-    selectedDocs = mergeSelectedDocumentFiles(selectedDocs, picked);
-    markPendingFileUpload("supporting-documents");
-    renderDocPreview();
-    refreshButtonsLayout();
-    validateUploads();
-    persistLoadedRecordSessionState("pick-docs");
+    if (picked.length){
+      selectedDocs = mergeSelectedDocumentFiles(selectedDocs, picked);
+      markPendingFileUpload("supporting-documents");
+      renderDocPreview();
+      refreshButtonsLayout();
+      validateUploads();
+      persistLoadedRecordSessionState("pick-docs");
+    }
+    i.__jslPickerCleanup(900);
   };
+  i.oncancel=function(){ i.__jslPickerCleanup(250); };
   i.click();
 }
 window.pickPicture=pickPicture;
@@ -14644,8 +15383,41 @@ async function markTransactionsNotLatest(masterId){
 
 async function savePdfUrlToLatestTransaction(masterId, pdfUrl){
   if (!masterId || !pdfUrl) return false;
-  var data = await callApplicantFormBackend("save_pdf_url", { masterId: masterId, pdfUrl: pdfUrl });
-  return !!data.saved;
+
+  var transactionId = "";
+  try{
+    transactionId = safeTrim(
+      lastTransactionCache &&
+      (lastTransactionCache.id || lastTransactionCache.transaction_id || lastTransactionCache.tx_id)
+    );
+  }catch(_transactionIdErr){}
+
+  /*
+    Explicitly request an UPDATE of the already-saved transaction. The backend
+    must not create a new transaction row merely to attach a PDF URL.
+  */
+  var data = await callApplicantFormBackend("save_pdf_url", {
+    masterId: masterId,
+    master_id: masterId,
+    transactionId: transactionId || null,
+    transaction_id: transactionId || null,
+    pdfUrl: pdfUrl,
+    pdf_url: pdfUrl,
+    update_only: true,
+    allow_insert: false,
+    create_transaction: false
+  });
+
+  if (data && data.lastTransaction){
+    lastTransactionCache = mergeSavedTransactionWithSubmittedFiles(data.lastTransaction, {
+      master_id: masterId,
+      pdf: pdfUrl
+    });
+  } else if (lastTransactionCache){
+    lastTransactionCache.pdf = pdfUrl;
+  }
+
+  return !!(data && data.saved);
 }
 
 
@@ -15071,27 +15843,202 @@ async function refreshLoadedRecordFromLatest(masterId, sourceMode, preferredTran
 
 /* ==========================================================
    EXISTING RECORD LOOKUP
+   Match rule: applicant_master_table.first_name +
+               applicant_master_table.last_name +
+               applicant_transaction_table.email
+   Birthday is optional and is not used to decide whether a record exists.
 ========================================================== */
 
-async function checkExistingApplicant(){
-  if (window.isUpdateMode && currentMasterId) return;
+function normalizeExistingApplicantLookupName(value){
+  return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+}
 
-  var fn=proper(document.getElementById("first_name").value);
-  var mn=proper(document.getElementById("middle_name").value);
-  var ln=proper(document.getElementById("last_name").value);
-  var bd=getBirthdayValueForSave();
-  if(!fn || !ln || !bd) return;
+function normalizeExistingApplicantLookupEmail(value){
+  return safeLowerTrim(value || "");
+}
+
+function isExactExistingApplicantMatch(masterRow, transactionRow, firstName, lastName, email){
+  if (!masterRow || !transactionRow) return false;
+
+  return (
+    normalizeExistingApplicantLookupName(masterRow.first_name) === normalizeExistingApplicantLookupName(firstName) &&
+    normalizeExistingApplicantLookupName(masterRow.last_name) === normalizeExistingApplicantLookupName(lastName) &&
+    normalizeExistingApplicantLookupEmail(transactionRow.email) === normalizeExistingApplicantLookupEmail(email)
+  );
+}
+
+async function directExistingApplicantLookup(firstName, lastName, email){
+  var client = window.supabase;
+  if (!client) throw new Error("Supabase client not initialized.");
+
+  var fn = proper(firstName);
+  var ln = proper(lastName);
+  var em = normalizeExistingApplicantLookupEmail(email);
+  if (!fn || !ln || !em) return null;
+
+  /*
+    Email belongs to applicant_transaction_table while first_name and last_name
+    belong to applicant_master_table. Find transaction rows by email, then use
+    master_id to verify the exact first-name and last-name combination.
+  */
+  var txResult = await client
+    .from("applicant_transaction_table")
+    .select("*")
+    .ilike("email", em)
+    .order("created_at", { ascending:false })
+    .order("id", { ascending:false })
+    .limit(200);
+
+  if (txResult.error) throw txResult.error;
+
+  var transactions = Array.isArray(txResult.data) ? txResult.data.filter(function(row){
+    var rowMasterId = row && (row.master_id != null ? row.master_id : row.applicant_master_id);
+    return normalizeExistingApplicantLookupEmail(row && row.email) === em && rowMasterId != null;
+  }) : [];
+
+  if (!transactions.length) return null;
+
+  var seenMasterIds = {};
+  var masterIds = [];
+  transactions.forEach(function(row){
+    var rowMasterId = row && (row.master_id != null ? row.master_id : row.applicant_master_id);
+    var id = String(rowMasterId);
+    if (rowMasterId != null && !seenMasterIds[id]){
+      seenMasterIds[id] = true;
+      masterIds.push(rowMasterId);
+    }
+  });
+
+  if (!masterIds.length) return null;
+
+  var masterResult = await client
+    .from("applicant_master_table")
+    .select("*")
+    .in("id", masterIds)
+    .ilike("first_name", fn)
+    .ilike("last_name", ln)
+    .limit(200);
+
+  if (masterResult.error) throw masterResult.error;
+
+  var masters = Array.isArray(masterResult.data) ? masterResult.data.filter(function(row){
+    return (
+      normalizeExistingApplicantLookupName(row && row.first_name) === normalizeExistingApplicantLookupName(fn) &&
+      normalizeExistingApplicantLookupName(row && row.last_name) === normalizeExistingApplicantLookupName(ln)
+    );
+  }) : [];
+
+  if (!masters.length) return null;
+
+  var masterById = {};
+  masters.forEach(function(row){ masterById[String(row.id)] = row; });
+
+  /*
+    transactions is already sorted newest first, so the first exact joined match
+    is the latest matching applicant record.
+  */
+  for (var i=0; i<transactions.length; i++){
+    var tx = transactions[i];
+    var txMasterId = tx && (tx.master_id != null ? tx.master_id : tx.applicant_master_id);
+    var master = masterById[String(txMasterId)];
+    if (master && isExactExistingApplicantMatch(master, tx, fn, ln, em)){
+      return {
+        master: master,
+        lastTransaction: tx,
+        matchedBy: "first_name,last_name,email"
+      };
+    }
+  }
+
+  return null;
+}
+
+async function lookupExistingApplicantByNameAndEmail(firstName, lastName, email, birthday){
+  var fn = proper(firstName);
+  var ln = proper(lastName);
+  var em = normalizeExistingApplicantLookupEmail(email);
+  var bd = birthday || null;
+  if (!fn || !ln || !em) return null;
+
+  var directSucceeded = false;
+  var backendSucceeded = false;
+  var directError = null;
+  var backendError = null;
+
+  /*
+    Use the two tables directly so the browser enforces the requested match.
+    The Edge Function call is also kept as a fallback for projects whose RLS
+    policies require server-side lookup.
+  */
+  try{
+    var directData = await directExistingApplicantLookup(fn, ln, em);
+    directSucceeded = true;
+    if (directData && directData.master) return directData;
+  }catch(err){
+    directError = err;
+    console.warn("Direct existing-applicant lookup warning:", err && err.message ? err.message : err);
+  }
 
   try{
-    var data = await callApplicantFormBackend("lookup_existing", {
+    var backendData = await callApplicantFormBackend("lookup_existing", {
       first_name: fn,
-      middle_name: mn || null,
+      middle_name: null,
       last_name: ln,
-      birthday: bd
+      email: em,
+      birthday: bd,
+      birthday_optional: true,
+      lookup_strategy: "first_name_last_name_email",
+      match_fields: ["first_name", "last_name", "email"],
+      master_table: "applicant_master_table",
+      transaction_table: "applicant_transaction_table"
     });
 
-    var master = data.master || null;
-    if (!master) return;
+    backendSucceeded = true;
+
+    var backendMaster = backendData.master || null;
+    var backendTransaction =
+      backendData.lastTransaction ||
+      backendData.latestTransaction ||
+      backendData.transaction ||
+      null;
+
+    /*
+      Do not accept an older backend response that matched only by birthday.
+      The returned master and transaction must still pass the exact requested
+      first-name + last-name + email rule.
+    */
+    if (isExactExistingApplicantMatch(backendMaster, backendTransaction, fn, ln, em)){
+      return {
+        master: backendMaster,
+        lastTransaction: backendTransaction,
+        matchedBy: "first_name,last_name,email"
+      };
+    }
+  }catch(err){
+    backendError = err;
+    console.warn("Backend existing-applicant lookup warning:", err && err.message ? err.message : err);
+  }
+
+  if (directSucceeded || backendSucceeded) return null;
+
+  throw backendError || directError || new Error("Unable to check for an existing applicant record.");
+}
+
+async function checkExistingApplicant(options){
+  options = options || {};
+  if (window.isUpdateMode && currentMasterId) return false;
+
+  var fn = proper(document.getElementById("first_name").value);
+  var ln = proper(document.getElementById("last_name").value);
+  var em = normalizeExistingApplicantLookupEmail(document.getElementById("email").value);
+  var bd = getBirthdayValueForSave() || null;
+
+  if (!fn || !ln || !em) return false;
+
+  try{
+    var data = await lookupExistingApplicantByNameAndEmail(fn, ln, em, bd);
+    var master = data && data.master ? data.master : null;
+    if (!master) return false;
 
     currentMasterId = master.id;
     window.isUpdateMode = true;
@@ -15112,8 +16059,11 @@ async function checkExistingApplicant(){
     persistLoadedRecordSessionState("existing-record-found");
     setPopupFormLock(true);
     existingPopup.style.display = "flex";
+    return true;
   }catch(err){
     console.warn("Existing lookup failed:", err && err.message ? err.message : err);
+    if (options.rethrow) throw err;
+    return false;
   }
 }
 
@@ -15404,6 +16354,27 @@ async function handlePostSubmitAuthPrompt(savedEmail, baseMessage){
     ensureApplicantProfilesTableRole(email, { reason:"post-submit-auth-prompt" }).catch(function(){});
   }catch(e){}
 
+  /*
+     Do not ask for another password when this email already has one saved.
+     If the password check cannot be completed, keep the original popup behavior
+     so a temporary backend/network problem does not block account setup.
+  */
+  try{
+    var passwordAlreadySaved = await isAlreadyRegistered(email);
+    if (passwordAlreadySaved){
+      hideSuccessPopupForce();
+      showAutoSuccess(finalMsg + " Your password is already saved. You can continue using your existing login.");
+      return;
+    }
+  }catch(passwordCheckError){
+    console.warn(
+      "Saved password verification skipped:",
+      passwordCheckError && passwordCheckError.message
+        ? passwordCheckError.message
+        : passwordCheckError
+    );
+  }
+
   hideSuccessPopupForce();
   showAuthPopup(email, finalMsg);
 }
@@ -15415,7 +16386,7 @@ async function doLogoutCleanup(options){
   var logoutCleanupOptions = normalizeLogoutCleanupOptions(options);
   try{
     var client = window.supabase;
-    if (client && client.auth){ try{ await client.auth.signOut(); }catch(e){} }
+    if (client && client.auth){ try{ await client.auth.signOut({ scope:"local" }); }catch(e){} }
   } finally {
     clearApplicantFormRestoreState();
     clearApplicantLoginPrefillCapture(logoutCleanupOptions.reason || "logout-cleanup");
@@ -16103,8 +17074,11 @@ async function html2pdfToBlob(root, fileName){
 }
 
 
-async function uploadGeneratedPdfToStorage(pdfBlob, fileName){
-  if (!currentMasterId){
+async function uploadGeneratedPdfToStorage(pdfBlob, fileName, options){
+  options = options || {};
+  var targetMasterId = options.masterId || currentMasterId;
+
+  if (!targetMasterId){
     throw new Error("No saved profile loaded yet. Submit first or load an existing profile.");
   }
 
@@ -16114,6 +17088,7 @@ async function uploadGeneratedPdfToStorage(pdfBlob, fileName){
   var pdfFile = new File([pdfBlob], safeName, { type: "application/pdf" });
   var saved = await uploadApplicantStorageFile(pdfFile, {
     bucket: "applicantfile",
+    masterId: targetMasterId,
     kind: "PDF",
     fileName: safeName,
     contentType: "application/pdf"
@@ -16130,12 +17105,24 @@ async function uploadGeneratedPdfToStorage(pdfBlob, fileName){
   lastSavedPdfPath = storagePath;
   lastSavedPdfName = safeName;
 
-  try{
-    await savePdfUrlToLatestTransaction(currentMasterId, viewUrl);
+  /*
+    During the main form submission, saveToTransaction is false because the PDF
+    URL is included in the original transaction payload. This prevents a second
+    PDF-only database write from creating another transaction row.
+  */
+  if (options.saveToTransaction !== false){
+    await savePdfUrlToLatestTransaction(targetMasterId, viewUrl);
     old_pdf = viewUrl;
-  }catch(e){}
+  }
 
-  persistLoadedRecordSessionState("pdf-uploaded");
+  if (options.updateLocalState === true){
+    old_pdf = viewUrl;
+  }
+
+  if (options.persistState !== false){
+    persistLoadedRecordSessionState("pdf-uploaded");
+  }
+
   return { url: viewUrl, path: storagePath, name: safeName };
 }
 
@@ -16203,13 +17190,19 @@ async function buildProfilePdfBlob(){
   }
 }
 
-async function generateAndUploadPdf(openModal){
+async function generateAndUploadPdf(openModal, options){
   openModal = !!openModal;
-  if (!currentMasterId){
+  options = options || {};
+  var targetMasterId = options.masterId || currentMasterId;
+
+  if (!targetMasterId){
     throw new Error("No saved profile loaded yet. Submit first or load an existing profile.");
   }
+
   var built = await buildProfilePdfBlob();
-  var saved = await uploadGeneratedPdfToStorage(built.blob, built.fileName);
+  var saved = await uploadGeneratedPdfToStorage(built.blob, built.fileName, Object.assign({}, options, {
+    masterId: targetMasterId
+  }));
 
   if (openModal){
     openPdfModal(saved.url, saved.name);
@@ -16224,26 +17217,71 @@ async function generateAndUploadPdf(openModal){
 appForm.addEventListener("submit", async function(e){
   e.preventDefault();
 
+  /*
+    Acquire the lock before any asynchronous duplicate lookup. Previously the
+    button was disabled only after the lookup completed, so a quick double click
+    could run two resolve_master + submit_profile chains at the same time.
+  */
+  var submitToken = acquireApplicantSubmissionLock();
+  if (!submitToken){
+    return;
+  }
+
   if (window.isViewOnlyMode){
     resetLogoutFlags();
+    releaseApplicantSubmissionLock(submitToken);
+    submitToken = "";
     return;
   }
   if (getStatusDisplay() === "Not Active"){
     resetLogoutFlags();
+    releaseApplicantSubmissionLock(submitToken);
+    submitToken = "";
     return;
   }
 
   updateAgeHidden();
   if (!validateUploads()){
     resetLogoutFlags();
+    releaseApplicantSubmissionLock(submitToken);
+    submitToken = "";
     return;
   }
 
-  var computedAge = calculateAge(birthdayEl.value);
-  if (computedAge === "" || computedAge < 0){
+  var birthdayValueForValidation = getBirthdayValueForSave();
+  var computedAge = birthdayValueForValidation ? calculateAge(birthdayValueForValidation) : null;
+  if (birthdayValueForValidation && (computedAge === "" || computedAge < 0)){
     resetLogoutFlags();
-    alert("Please enter a valid birthday.");
+    alert("Please enter a valid birthday or leave Birthday blank.");
+    releaseApplicantSubmissionLock(submitToken);
+    submitToken = "";
     return;
+  }
+
+  /*
+    A new submission must be checked against both applicant tables using
+    first_name + last_name + email before a new master record is resolved.
+  */
+  if (!window.isUpdateMode && !currentMasterId){
+    try{
+      var existingFoundBeforeSubmit = await checkExistingApplicant({ rethrow:true });
+      if (existingFoundBeforeSubmit){
+        resetLogoutFlags();
+        releaseApplicantSubmissionLock(submitToken);
+        submitToken = "";
+        return;
+      }
+    }catch(existingCheckErr){
+      resetLogoutFlags();
+      alert(
+        "Unable to verify whether this applicant already exists.\n\n" +
+        "Please check your connection and try again.\n\n" +
+        (existingCheckErr && existingCheckErr.message ? existingCheckErr.message : existingCheckErr)
+      );
+      releaseApplicantSubmissionLock(submitToken);
+      submitToken = "";
+      return;
+    }
   }
 
   if (window.isUpdateMode && baselineSnapshot){
@@ -16257,6 +17295,9 @@ appForm.addEventListener("submit", async function(e){
 
       persistLoadedRecordSessionState("submit-no-change");
 
+      releaseApplicantSubmissionLock(submitToken);
+      submitToken = "";
+
       if (window._logoutAfterSave){
         window._logoutAfterSave = false;
         window._logoutSkipConfirmOnce = true;
@@ -16268,7 +17309,7 @@ appForm.addEventListener("submit", async function(e){
     }
   }
 
-  submitBtn.disabled = true;
+  /* The synchronous submission lock already disabled the button. */
   showSubmitLaunchPopup(
     window.isUpdateMode ? "Saving your profile..." : "Submitting your profile...",
     window.isUpdateMode
@@ -16286,7 +17327,7 @@ appForm.addEventListener("submit", async function(e){
     var fn = proper(document.getElementById("first_name").value);
     var mn = proper(document.getElementById("middle_name").value);
     var ln = proper(document.getElementById("last_name").value);
-    var bd = getBirthdayValueForSave();
+    var bd = getBirthdayValueForSave() || null;
 
     lastSubmittedFullName = [fn,mn,ln].filter(Boolean).join(" ").trim();
 
@@ -16297,17 +17338,35 @@ appForm.addEventListener("submit", async function(e){
     );
     var masterResolve = await callApplicantFormBackend("resolve_master", {
       master_id: currentMasterId || null,
+      request_id: submitToken,
+      submission_id: submitToken,
+      idempotency_key: submitToken,
       first_name: fn,
       middle_name: mn || null,
       last_name: ln,
-      birthday: bd
+      email: normalizeExistingApplicantLookupEmail(document.getElementById("email").value),
+      birthday: bd,
+      birthday_optional: true,
+      lookup_strategy: "first_name_last_name_email",
+      match_fields: ["first_name", "last_name", "email"],
+      master_table: "applicant_master_table",
+      transaction_table: "applicant_transaction_table"
     });
 
     var master_id = masterResolve.master_id;
     if (!master_id) throw new Error("Unable to resolve applicant profile record.");
     currentMasterId = master_id;
-    startedAsExistingRecord = !!masterResolve.startedAsExistingRecord;
-    console.info("Applicant master record resolved", { master_id: master_id, startedAsExistingRecord: startedAsExistingRecord });
+    startedAsExistingRecord = !!(
+      startedAsExistingRecord ||
+      masterResolve.startedAsExistingRecord === true ||
+      masterResolve.existing === true ||
+      masterResolve.created === false
+    );
+    console.info("Applicant master record resolved", {
+      master_id: master_id,
+      startedAsExistingRecord: startedAsExistingRecord,
+      resolvedBy: masterResolve.resolvedBy || masterResolve.matchedBy || ""
+    });
     updateSubmitProgress(
       window.isUpdateMode ? "Saving your profile..." : "Submitting your profile...",
       "Uploading selected files..."
@@ -16330,6 +17389,7 @@ appForm.addEventListener("submit", async function(e){
       pictureJobIndex = uploadJobs.length;
       uploadJobs.push(uploadApplicantStorageFile(selectedPicture, {
         bucket: "applicantfile",
+        masterId: master_id,
         kind: "PIC",
         fileName: selectedPicture.name,
         contentType: selectedPicture.type || "application/octet-stream"
@@ -16340,6 +17400,7 @@ appForm.addEventListener("submit", async function(e){
       resumeJobIndex = uploadJobs.length;
       uploadJobs.push(uploadApplicantStorageFile(selectedResume, {
         bucket: "applicantfile",
+        masterId: master_id,
         kind: "RESUME",
         fileName: selectedResume.name,
         contentType: selectedResume.type || "application/octet-stream"
@@ -16352,6 +17413,7 @@ appForm.addEventListener("submit", async function(e){
         docsJobIndexes[fileIndex] = uploadJobs.length;
         uploadJobs.push(uploadApplicantStorageFile(f, {
           bucket: "applicantfile",
+          masterId: master_id,
           kind: "DOC",
           fileName: f.name,
           contentType: f.type || "application/octet-stream"
@@ -16420,6 +17482,32 @@ appForm.addEventListener("submit", async function(e){
       ).filter(Boolean);
     }catch(_docNameErr){ supportingDocNamesToSave = []; }
 
+    /*
+      Build and upload the PDF before inserting the transaction. The returned PDF
+      URL is written into this same transaction row, so the form no longer saves
+      one row without a PDF and then performs a second PDF-only database action.
+    */
+    updateSubmitProgress(
+      window.isUpdateMode ? "Saving your profile..." : "Submitting your profile...",
+      "Generating and uploading your applicant PDF..."
+    );
+
+    var builtPdfForSubmit = await buildProfilePdfBlob();
+    var savedPdfForSubmit = await uploadGeneratedPdfToStorage(
+      builtPdfForSubmit.blob,
+      builtPdfForSubmit.fileName,
+      {
+        masterId: master_id,
+        saveToTransaction: false,
+        updateLocalState: false,
+        persistState: false
+      }
+    );
+    var pdf_url = safeTrim(savedPdfForSubmit && savedPdfForSubmit.url);
+    if (!pdf_url){
+      throw new Error("The applicant PDF could not be saved. No database record was submitted.");
+    }
+
     var payload = {
       master_id: master_id,
       phone: safeTrim(document.getElementById("phone_number").value) || null,
@@ -16442,7 +17530,7 @@ appForm.addEventListener("submit", async function(e){
       resume: dbNotNullFileValue(resume_url),
       resume_url: dbNotNullFileValue(resume_url),
       resume_file_url: dbNotNullFileValue(resume_url),
-      pdf: dbNotNullFileValue(old_pdf),
+      pdf: dbNotNullFileValue(pdf_url),
       desired_salary: formatSalaryForDBOrNull(desiredSalaryEl.value, country.value),
       age: computedAge,
       source: detectSource(),
@@ -16508,6 +17596,14 @@ appForm.addEventListener("submit", async function(e){
 
     var submitData = await callApplicantFormBackend("submit_profile", {
       master_id: master_id,
+      resolved_master_id: master_id,
+      request_id: submitToken,
+      submission_id: submitToken,
+      idempotency_key: submitToken,
+      create_master: false,
+      allow_master_insert: false,
+      must_use_master_id: true,
+      transaction_insert_once: true,
       profile_role: "applicant",
       role: "applicant",
       account_type: "applicant",
@@ -16520,6 +17616,7 @@ appForm.addEventListener("submit", async function(e){
         first_name: fn,
         middle_name: mn || null,
         last_name: ln,
+        email: normalizeExistingApplicantLookupEmail(document.getElementById("email").value),
         birthday: bd
       },
       statusValue: statusValue,
@@ -16533,6 +17630,10 @@ appForm.addEventListener("submit", async function(e){
     old_picture = picture_url || "";
     old_resume = resume_url || "";
     old_docs = documentsToSave || [];
+    old_pdf = pdf_url || "";
+    lastSavedPdfUrl = old_pdf;
+    lastSavedPdfPath = safeTrim(savedPdfForSubmit && savedPdfForSubmit.path);
+    lastSavedPdfName = safeTrim(savedPdfForSubmit && savedPdfForSubmit.name) || builtPdfForSubmit.fileName || "Applicant_Profile.pdf";
     window._jslPendingProfilePicturePreviewUrl = old_picture || "";
     selectedPicture = null;
     selectedResume = null;
@@ -16546,24 +17647,11 @@ appForm.addEventListener("submit", async function(e){
 
     applyLoadedRecordFromBackend(submitData.master || { id: master_id, first_name: fn, middle_name: mn || null, last_name: ln, birthday: bd }, latestSavedTransaction, startedAsExistingRecord ? "existing" : "new", latestSavedTransaction || payload);
     lockIdentityFields();
-    submitBtn.disabled = false;
 
     showWorkingPopup("Profile saved. Finalizing...");
 
     var finalSaveMessage = "Profile saved.";
-    /* Generate and upload the PDF after the main save succeeds, without blocking the
-       visible save completion. This keeps new-record submission fast while still
-       attempting to save the generated PDF URL to the latest transaction. */
-    setTimeout(async function(){
-      try{
-        await generateAndUploadPdf(false);
-        baselineSnapshot = buildCurrentSnapshot();
-        persistLoadedRecordSessionState("pdf-auto-saved");
-      }catch(pdfErr){
-        console.warn("Auto PDF save failed:", pdfErr);
-      }
-    }, 250);
-
+    /* PDF was already uploaded and included in the original transaction row. */
     baselineSnapshot = buildCurrentSnapshot();
     persistLoadedRecordSessionState("submit-success");
 
@@ -16605,10 +17693,10 @@ appForm.addEventListener("submit", async function(e){
     console.error("Applicant submit failed", err);
     alert(errorMessage);
     resetLogoutFlags();
-    submitBtn.disabled = false;
   } finally {
     stopSubmitPlaneAnimation();
-    submitBtn.disabled = false;
+    releaseApplicantSubmissionLock(submitToken);
+    submitToken = "";
   }
 });
 
@@ -16766,15 +17854,15 @@ viewPdfBtn.addEventListener("click", async function(){
 /* ==========================================================
    TRIGGER EXISTING LOOKUP ON IDENTITY BLUR
 ========================================================== */
-["first_name","middle_name","last_name","birthday"].forEach(function(id){
+["first_name","last_name","email"].forEach(function(id){
   var el = document.getElementById(id);
   if (!el) return;
   el.addEventListener("blur", function(){
     if (window.isUpdateMode && currentMasterId) return;
-    var fn=document.getElementById("first_name").value.trim();
-    var ln=document.getElementById("last_name").value.trim();
-    var bd=getBirthdayValueForSave();
-    if(fn && ln && bd) checkExistingApplicant();
+    var fn = document.getElementById("first_name").value.trim();
+    var ln = document.getElementById("last_name").value.trim();
+    var em = normalizeExistingApplicantLookupEmail(document.getElementById("email").value);
+    if (fn && ln && em) checkExistingApplicant();
   });
 });
 
@@ -20064,7 +21152,7 @@ function refreshViewStaffMobileModalState(){
   async function strictLogoutFromHeader(options){
     var logoutOptions = normalizeLogoutCleanupOptions(options);
     closeHeaderMenu();
-    try{ if (window.supabase && window.supabase.auth && typeof window.supabase.auth.signOut === "function") await window.supabase.auth.signOut(); }catch(e){}
+    try{ if (window.supabase && window.supabase.auth && typeof window.supabase.auth.signOut === "function") await window.supabase.auth.signOut({ scope:"local" }); }catch(e){}
     clearStrictLoginStorage();
     try{
       if (typeof doLogoutCleanup === "function") await doLogoutCleanup(logoutOptions);
@@ -20646,7 +21734,7 @@ function refreshViewStaffMobileModalState(){
       logout.addEventListener("click", async function(e){
         e.preventDefault();
         closeHeaderMenu();
-        try{ if (window.supabase && window.supabase.auth && typeof window.supabase.auth.signOut === "function") await window.supabase.auth.signOut(); }catch(err){}
+        try{ if (window.supabase && window.supabase.auth && typeof window.supabase.auth.signOut === "function") await window.supabase.auth.signOut({ scope:"local" }); }catch(err){}
         clearLoggedIdentity();
         try{
           if (window.jslApplicantFormLoginSync && typeof window.jslApplicantFormLoginSync.logout === "function"){
@@ -21540,7 +22628,7 @@ function refreshViewStaffMobileModalState(){
       logout.addEventListener("click", async function(e){
         e.preventDefault();
         closeMenu(menu);
-        try{ if (window.supabase && window.supabase.auth && typeof window.supabase.auth.signOut === "function") await window.supabase.auth.signOut(); }catch(_e){}
+        try{ if (window.supabase && window.supabase.auth && typeof window.supabase.auth.signOut === "function") await window.supabase.auth.signOut({ scope:"local" }); }catch(_e){}
         clearLoggedIdentityForProfile();
         try{
           if (window.jslApplicantFormLoginSync && typeof window.jslApplicantFormLoginSync.logout === "function"){
@@ -23363,7 +24451,7 @@ function refreshViewStaffMobileModalState(){
     try{
       var client = window.supabase || window.supabaseClient || null;
       if (client && client.auth && typeof client.auth.signOut === "function"){
-        signOutPromise = Promise.resolve(client.auth.signOut());
+        signOutPromise = Promise.resolve(client.auth.signOut({ scope:"local" }));
       }
     }catch(_e){}
 
@@ -28817,6 +29905,2035 @@ header nav .nav-main-link:focus-visible > i,
   font-weight:400 !important;
 }
 
+</style>
+
+
+
+<!-- ============================================================
+     FINAL POSTED JOBS HEADER VISUAL MATCH
+     Applies the Posted Jobs page navigation link, icon, dropdown,
+     account-dropdown, mobile-menu font/color/hover presentation.
+     CSS only: all Applicant Form IDs, JavaScript, Supabase sessions,
+     form fields, uploads, PDF tools, save/update and logout behavior
+     remain unchanged.
+=============================================================== -->
+<style id="jsl-final-posted-jobs-header-visual-match">
+:root{
+  --jsl-pj-nav:#063f73;
+  --jsl-pj-icon:#06477f;
+  --jsl-pj-blue:#0b5cff;
+  --jsl-pj-blue-dark:#0847c2;
+  --jsl-pj-hover:#eef6ff;
+  --jsl-pj-soft:#eef9ff;
+  --jsl-pj-line:#d9e2ee;
+  --jsl-pj-header-line:#dfe6ef;
+  --jsl-pj-muted:#667085;
+}
+
+/* Header surface: same clean white presentation as Posted Jobs. */
+header{
+  color:var(--jsl-pj-nav) !important;
+  background:#ffffff !important;
+  border-bottom:1px solid var(--jsl-pj-header-line) !important;
+  box-shadow:0 2px 10px rgba(15,23,42,.06) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header,
+header nav,
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown-menu,
+.nav-dropdown-menu a,
+.mobile-panel,
+.mobile-panel a,
+.mobile-panel button,
+.jsl-jobseeker-dropdown,
+.jsl-jobseeker-dropdown a,
+.jsl-jobseeker-dropdown button{
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+}
+
+/* Desktop navigation typography and animated underline. */
+header nav{
+  color:var(--jsl-pj-nav) !important;
+  font-size:.96rem !important;
+  font-weight:700 !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  min-height:48px !important;
+  height:48px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:9px !important;
+  padding:0 3px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:var(--jsl-pj-nav) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  white-space:nowrap !important;
+  font-size:.96rem !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+  transform:none !important;
+  transition:color .18s ease,transform .18s ease !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before{
+  display:none !important;
+  content:none !important;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:3px !important;
+  right:3px !important;
+  bottom:5px !important;
+  width:auto !important;
+  height:2px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:var(--jsl-pj-blue) !important;
+  opacity:0 !important;
+  transform:scaleX(.35) !important;
+  transform-origin:center !important;
+  transition:opacity .18s ease,transform .18s ease !important;
+  pointer-events:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:var(--jsl-pj-blue) !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  transform:translateY(-1px) !important;
+  outline:none !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown.open .nav-main-link::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+/* Remove previous boxed/shadowed icon treatments and match Posted Jobs. */
+header nav > a > i,
+header nav .nav-main-link > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:var(--jsl-pj-icon) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  opacity:1 !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-size:1.02rem !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  transform:none !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i{
+  color:var(--jsl-pj-blue) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* About dropdown toggle. Existing click/open behavior is untouched. */
+.nav-dropdown{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  height:48px !important;
+  flex:0 0 auto !important;
+  overflow:visible !important;
+}
+
+.nav-dropdown-trigger{
+  height:48px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:0 !important;
+}
+
+.nav-dropdown-toggle{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  width:28px !important;
+  min-width:28px !important;
+  height:48px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 28px !important;
+  margin-left:-3px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:8px !important;
+  color:var(--jsl-pj-nav) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  cursor:pointer !important;
+  transition:color .18s ease,background .18s ease !important;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown.open > .nav-dropdown-trigger > .nav-dropdown-toggle{
+  color:var(--jsl-pj-blue) !important;
+  background:var(--jsl-pj-hover) !important;
+  border:0 !important;
+  box-shadow:none !important;
+  outline:none !important;
+}
+
+.nav-dropdown-toggle .nav-caret,
+.nav-dropdown-toggle i,
+.nav-dropdown-toggle i::before{
+  color:currentColor !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-size:.7rem !important;
+  font-weight:900 !important;
+  transition:transform .2s ease !important;
+}
+
+.nav-dropdown.open .nav-caret{
+  transform:rotate(180deg) !important;
+}
+
+/* Posted Jobs white dropdown card, typography, icons and hover. */
+.nav-dropdown-menu{
+  position:absolute !important;
+  top:calc(100% + 8px) !important;
+  left:-12px !important;
+  right:auto !important;
+  z-index:1800 !important;
+  min-width:245px !important;
+  width:max-content !important;
+  max-width:min(320px,calc(100vw - 24px)) !important;
+  display:none !important;
+  padding:9px !important;
+  border:1px solid var(--jsl-pj-line) !important;
+  border-radius:12px !important;
+  color:var(--jsl-pj-nav) !important;
+  background:#ffffff !important;
+  box-shadow:0 18px 42px rgba(15,23,42,.16) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  overflow:visible !important;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:grid !important;
+  gap:3px !important;
+}
+
+.nav-dropdown-menu a{
+  min-height:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:11px !important;
+  padding:12px 13px !important;
+  border:0 !important;
+  border-radius:9px !important;
+  color:var(--jsl-pj-nav) !important;
+  background:#ffffff !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  white-space:nowrap !important;
+  font-size:.9rem !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease,transform .18s ease !important;
+}
+
+.nav-dropdown-menu a > i,
+.nav-dropdown-menu a > i::before{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:19px !important;
+  min-width:19px !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:var(--jsl-pj-blue) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-size:.95rem !important;
+  font-weight:900 !important;
+  text-align:center !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:var(--jsl-pj-blue) !important;
+  background:var(--jsl-pj-hover) !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  transform:translateX(2px) !important;
+  outline:none !important;
+}
+
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:var(--jsl-pj-blue) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+/* Match the Posted Jobs mobile menu surface without changing open/close logic. */
+.nav-toggle{
+  border:1px solid #b9def2 !important;
+  border-radius:10px !important;
+  color:var(--jsl-pj-icon) !important;
+  background:var(--jsl-pj-soft) !important;
+  box-shadow:none !important;
+}
+
+.nav-toggle:hover,
+.nav-toggle:focus-visible{
+  color:var(--jsl-pj-blue) !important;
+  background:#dff5ff !important;
+  border-color:#70c7ee !important;
+  box-shadow:none !important;
+  outline:none !important;
+}
+
+.nav-toggle i,
+.nav-toggle i::before{
+  color:currentColor !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+}
+
+.mobile-panel{
+  color:var(--jsl-pj-nav) !important;
+  background:#ffffff !important;
+  border-top:0 !important;
+  border-bottom:1px solid var(--jsl-pj-header-line) !important;
+  box-shadow:0 18px 34px rgba(15,23,42,.14) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:var(--jsl-pj-nav) !important;
+  background:transparent !important;
+  border:0 !important;
+  border-bottom:1px solid #edf1f6 !important;
+  border-radius:9px !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  font-size:.9rem !important;
+  font-weight:750 !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease,transform .18s ease !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible,
+.mobile-panel .mnav-group.open > .mnav-row .mnav-main-link,
+.mobile-panel .mnav-group.open > .mnav-row .mnav-toggle{
+  color:var(--jsl-pj-blue) !important;
+  background:var(--jsl-pj-hover) !important;
+  border-bottom-color:#dbe8ff !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  transform:translateX(2px) !important;
+  outline:none !important;
+}
+
+.mobile-panel .mnav i,
+.mobile-panel .mnav i::before,
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav-left > i::before{
+  color:var(--jsl-pj-blue) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+}
+
+.mobile-panel .mnav .fa-arrow-right{
+  color:var(--jsl-pj-icon) !important;
+}
+
+.mobile-panel .mnav-toggle .mnav-caret{
+  color:currentColor !important;
+  transition:transform .2s ease !important;
+}
+
+.mobile-panel .mnav-group.open .mnav-caret{
+  transform:rotate(180deg) !important;
+}
+
+.mobile-panel .mnav-submenu{
+  padding-left:14px !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  color:var(--jsl-pj-nav) !important;
+  background:#ffffff !important;
+}
+
+.mobile-panel .mnav-submenu a:hover,
+.mobile-panel .mnav-submenu a:focus-visible{
+  color:var(--jsl-pj-blue) !important;
+  background:var(--jsl-pj-hover) !important;
+}
+
+/* Jobseeker account dropdown receives the same white/blue dropdown language. */
+.jsl-jobseeker-dropdown{
+  padding:8px !important;
+  border:1px solid var(--jsl-pj-line) !important;
+  border-radius:12px !important;
+  color:var(--jsl-pj-nav) !important;
+  background:#ffffff !important;
+  box-shadow:0 18px 42px rgba(15,23,42,.18) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.jsl-account-top{
+  padding:12px !important;
+  margin-bottom:5px !important;
+  border:0 !important;
+  border-bottom:1px solid #e5eaf1 !important;
+  border-radius:9px 9px 5px 5px !important;
+  background:#f8fbff !important;
+}
+
+.jsl-account-logo-wrap{
+  border:1px solid #d9e2ee !important;
+  border-radius:10px !important;
+  background:#ffffff !important;
+  box-shadow:none !important;
+}
+
+.jsl-account-title{
+  color:var(--jsl-pj-nav) !important;
+  font-size:.9rem !important;
+  font-weight:800 !important;
+  letter-spacing:0 !important;
+  text-transform:none !important;
+}
+
+.jsl-account-email{
+  color:var(--jsl-pj-muted) !important;
+  font-size:.75rem !important;
+  font-weight:700 !important;
+  text-decoration:none !important;
+}
+
+.jsl-account-status{
+  color:var(--jsl-pj-muted) !important;
+  font-size:.72rem !important;
+  font-weight:700 !important;
+}
+
+.jsl-account-actions{
+  gap:3px !important;
+  margin-top:0 !important;
+}
+
+.jsl-account-action,
+.jsl-account-action.login,
+.jsl-account-action.logout{
+  min-height:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  padding:11px 12px !important;
+  border:0 !important;
+  border-radius:9px !important;
+  color:var(--jsl-pj-nav) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  font-size:.84rem !important;
+  font-weight:750 !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease,transform .18s ease !important;
+}
+
+.jsl-account-action:hover,
+.jsl-account-action:focus-visible,
+.jsl-account-action.login:hover,
+.jsl-account-action.login:focus-visible,
+.jsl-account-action.logout:hover,
+.jsl-account-action.logout:focus-visible{
+  color:var(--jsl-pj-blue) !important;
+  background:var(--jsl-pj-hover) !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  transform:translateX(2px) !important;
+  outline:none !important;
+}
+
+.jsl-account-action i,
+.jsl-account-action .left i,
+.jsl-account-action.logout .left i,
+.jsl-account-action.login .left i{
+  color:var(--jsl-pj-blue) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+}
+
+.jsl-account-sync-note{
+  color:#166534 !important;
+  background:#ecfdf3 !important;
+  border:1px solid #bbf7d0 !important;
+  border-radius:9px !important;
+  font-size:.72rem !important;
+  font-weight:700 !important;
+}
+
+/* Preserve the existing login/account trigger behavior while matching header icon color. */
+.jsl-jobseeker-account-btn:not(.has-profile-photo) i{
+  color:#ffffff !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+}
+
+/* Posted Jobs responsive typography, adapted to the Applicant Form breakpoint. */
+@media (max-width:1180px) and (min-width:1024px){
+  header nav{
+    gap:14px !important;
+    font-size:.8rem !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    gap:7px !important;
+    font-size:.8rem !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    font-size:.9rem !important;
+  }
+}
+
+@media (max-width:1023px) and (min-width:769px){
+  header nav{
+    gap:6px !important;
+  }
+
+  header nav > a,
+  header nav .nav-main-link{
+    gap:5px !important;
+    padding:0 2px !important;
+    font-size:.72rem !important;
+  }
+
+  header nav > a > i,
+  header nav .nav-main-link > i{
+    font-size:.78rem !important;
+  }
+
+  .nav-dropdown-toggle{
+    width:24px !important;
+    min-width:24px !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel{
+    padding:12px 16px 18px !important;
+  }
+
+  .mobile-panel .mnav{
+    gap:3px !important;
+  }
+
+  .mobile-panel .mnav-row{
+    gap:3px !important;
+  }
+
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:13px 12px !important;
+  }
+
+  .mobile-panel .mnav-toggle{
+    flex:0 0 48px !important;
+    width:48px !important;
+    min-width:48px !important;
+  }
+}
+</style>
+
+
+<!-- ============================================================
+     FINAL ABOUT DROPDOWN UNDERLINE COLOR FIX - 2026-08-10
+     Requested change:
+       About dropdown underline hover color = #0B5CFF
+     CSS-only visual update.
+     Existing Applicant Form functionality/behavior is unchanged.
+============================================================ -->
+<style id="jsl-final-about-dropdown-underline-blue-2026-08-10">
+  :root{
+    --jsl-about-dropdown-underline-blue:#0B5CFF;
+  }
+
+  /*
+    The Applicant Form already creates its dropdown underline with
+    .nav-dropdown-menu a::after. Keep the exact same size, position,
+    animation and behavior; change ONLY the underline color.
+  */
+  html body > header #aboutNavMenu.nav-dropdown-menu a::after,
+  html body > header .nav-dropdown-menu#aboutNavMenu a::after{
+    background:var(--jsl-about-dropdown-underline-blue) !important;
+    background-color:var(--jsl-about-dropdown-underline-blue) !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover::after,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible::after,
+  html body > header .nav-dropdown-menu#aboutNavMenu a:hover::after,
+  html body > header .nav-dropdown-menu#aboutNavMenu a:focus-visible::after{
+    background:var(--jsl-about-dropdown-underline-blue) !important;
+    background-color:var(--jsl-about-dropdown-underline-blue) !important;
+  }
+
+  /*
+    Safeguard for any browser/rule that uses text-decoration instead
+    of the existing pseudo-element underline.
+  */
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible{
+    text-decoration-color:var(--jsl-about-dropdown-underline-blue) !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover .nav-text,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible .nav-text{
+    text-decoration-color:var(--jsl-about-dropdown-underline-blue) !important;
+  }
+
+  /* Mobile About submenu gets the same requested underline color. */
+  @media (max-width:768px){
+    .mobile-panel #mobileAboutMenu a::after,
+    .mobile-panel #mobileAboutMenu a:hover::after,
+    .mobile-panel #mobileAboutMenu a:focus-visible::after{
+      background:var(--jsl-about-dropdown-underline-blue) !important;
+      background-color:var(--jsl-about-dropdown-underline-blue) !important;
+    }
+
+    .mobile-panel #mobileAboutMenu a:hover,
+    .mobile-panel #mobileAboutMenu a:focus-visible,
+    .mobile-panel #mobileAboutMenu a:hover .nav-text,
+    .mobile-panel #mobileAboutMenu a:focus-visible .nav-text{
+      text-decoration-color:var(--jsl-about-dropdown-underline-blue) !important;
+    }
+  }
+</style>
+
+<!-- ============================================================
+     PROFILE THUMBNAIL SECTION NAVIGATION
+     Adds visual navigation only; existing form behavior is unchanged.
+============================================================ -->
+<style id="jsl-profile-section-navigation-style-2026-08-10">
+  .profile-section-nav{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    margin:12px 0 14px;
+  }
+
+  .profile-section-nav-btn{
+    width:100%;
+    min-height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:10px;
+    padding:9px 11px;
+    border:1px solid rgba(11,92,255,.18);
+    border-radius:11px;
+    color:#063f73;
+    background:#ffffff;
+    box-shadow:0 4px 12px rgba(15,23,42,.06);
+    font:inherit;
+    font-size:.78rem;
+    font-weight:900;
+    line-height:1.2;
+    text-align:left;
+    cursor:pointer;
+    transition:color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+  }
+
+  .profile-section-nav-btn i{
+    width:22px;
+    min-width:22px;
+    color:#0b5cff;
+    text-align:center;
+  }
+
+  .profile-section-nav-btn:hover,
+  .profile-section-nav-btn:focus-visible,
+  .profile-section-nav-btn.active{
+    color:#0b5cff;
+    background:#eef4ff;
+    border-color:rgba(11,92,255,.42);
+    box-shadow:0 7px 16px rgba(11,92,255,.12);
+    transform:translateY(-1px);
+    outline:none;
+  }
+
+  #personalInformationSection,
+  #qualificationSection,
+  #jobPreferencesSection,
+  #blockEmployerSection,
+  #readyToWorkSection,
+  #resumeDocumentsSection{
+    scroll-margin-top:calc(var(--hdrH, 78px) + 22px) !important;
+    outline:none;
+  }
+
+  #personalInformationSection.jsl-scroll-target,
+  #qualificationSection.jsl-scroll-target,
+  #jobPreferencesSection.jsl-scroll-target,
+  #blockEmployerSection.jsl-scroll-target,
+  #readyToWorkSection.jsl-scroll-target,
+  #resumeDocumentsSection.jsl-scroll-target{
+    animation:jslSectionTargetPulse .85s ease;
+  }
+
+  @keyframes jslSectionTargetPulse{
+    0%{box-shadow:0 0 0 0 rgba(11,92,255,.28);}
+    100%{box-shadow:0 0 0 8px rgba(11,92,255,0);}
+  }
+
+  @media (max-width:900px){
+    .profile-section-nav{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+  }
+
+  @media (max-width:480px){
+    .profile-section-nav{
+      grid-template-columns:1fr;
+      gap:7px;
+    }
+
+    .profile-section-nav-btn{
+      min-height:40px;
+      font-size:.74rem;
+    }
+  }
+</style>
+
+<script id="jsl-profile-section-navigation-script-2026-08-10">
+(function(){
+  "use strict";
+
+  function scrollOnlyFormColumn(target){
+    var formScroller = target && target.closest ? target.closest(".jsl-form-scroll-column") : null;
+    var useIndependentFormScroll = !!(
+      formScroller &&
+      window.matchMedia &&
+      window.matchMedia("(min-width: 769px)").matches
+    );
+
+    if(useIndependentFormScroll){
+      var scrollerRect = formScroller.getBoundingClientRect();
+      var targetRect = target.getBoundingClientRect();
+      var targetTop = formScroller.scrollTop + (targetRect.top - scrollerRect.top) - 4;
+      targetTop = Math.max(0, targetTop);
+
+      try{
+        formScroller.scrollTo({top:targetTop, behavior:"smooth"});
+      }catch(_error){
+        formScroller.scrollTop = targetTop;
+      }
+      return;
+    }
+
+    target.scrollIntoView({behavior:"smooth", block:"start", inline:"nearest"});
+  }
+
+  function initializeProfileSectionNavigation(){
+    var buttons = Array.prototype.slice.call(document.querySelectorAll(".profile-section-nav-btn[data-scroll-section]"));
+    if(!buttons.length) return;
+
+    buttons.forEach(function(button){
+      if(button.dataset.scrollNavigationReady === "true") return;
+      button.dataset.scrollNavigationReady = "true";
+
+      button.addEventListener("click", function(){
+        var targetId = button.getAttribute("data-scroll-section");
+        var target = targetId ? document.getElementById(targetId) : null;
+        if(!target) return;
+
+        buttons.forEach(function(item){
+          item.classList.toggle("active", item === button);
+          item.setAttribute("aria-pressed", item === button ? "true" : "false");
+        });
+
+        target.classList.remove("jsl-scroll-target");
+        void target.offsetWidth;
+        target.classList.add("jsl-scroll-target");
+        scrollOnlyFormColumn(target);
+
+        window.setTimeout(function(){
+          try{ target.focus({preventScroll:true}); }
+          catch(_error){ try{ target.focus(); }catch(_ignored){} }
+        }, 380);
+
+        window.setTimeout(function(){
+          target.classList.remove("jsl-scroll-target");
+        }, 950);
+      });
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initializeProfileSectionNavigation, {once:true});
+  }else{
+    initializeProfileSectionNavigation();
+  }
+})();
+</script>
+
+
+
+<!-- ============================================================
+     FINAL AUTHORITATIVE PATCH: LOADED / VIEWED / UPDATED / SAVED
+     APPLICANT RECORD = VALID JOBSEEKER LOGIN + POSTEDHIRING1 SYNC
+     - A real applicant record (valid master_id + email) becomes the
+       active Jobseeker session after existing-record load/view/update
+       or after a successful new/update save.
+     - Writes full name + email to shared Jobseeker keys used by
+       applicantform1.html and postedhiring1.html account displays.
+     - Keeps employer storage isolated and preserves all existing
+       applicant form save/update/PDF/upload/logout behavior.
+============================================================ -->
+<script id="jsl-final-record-valid-jobseeker-login-postedhiring-sync">
+(function(){
+  "use strict";
+  if(window.__JSL_RECORD_VALID_JOBSEEKER_LOGIN_POSTEDHIRING_SYNC__) return;
+  window.__JSL_RECORD_VALID_JOBSEEKER_LOGIN_POSTEDHIRING_SYNC__ = true;
+
+  var EMAIL_KEYS = [
+    "jobSpaceLink_jobseeker_email","jobSpaceLink_logged_in_email","employee_email",
+    "jsl_login_email","jsl_last_login_email","jobseeker_email","jobseeker_login_email",
+    "logged_in_email","loggedInEmail","applicant_email","user_email","email","login_email"
+  ];
+  var FLAG_KEYS = [
+    "jobSpaceLink_jobseeker_logged_in","employee_logged_in","jsl_logged_in",
+    "jsl_jobseeker_logged_in","jobseeker_logged_in","applicant_logged_in","logged_in"
+  ];
+  var NAME_KEYS = [
+    "employee_name","jsl_login_name","jsl_last_login_name","jobseeker_name",
+    "jobseeker_full_name","applicant_name","applicant_full_name","logged_in_name",
+    "loggedInName","full_name","profile_name","view_profile_name","current_applicant_name"
+  ];
+  var MASTER_KEYS = [
+    "employee_master_id","jsl_master_id","jobseeker_master_id","applicant_master_id",
+    "master_id","user_master_id","view_profile_master_id","current_profile_master_id"
+  ];
+  var USER_KEYS = [
+    "jsl_user_id","user_id","auth_uid","auth_id","uid","view_profile_user_id","current_profile_user_id"
+  ];
+  var AVATAR_KEYS = [
+    "jobSpaceLink_profile_photo_url","jobSpaceLink_profile_picture_url",
+    "jobSpaceLink_logged_in_profile_photo","jsl_avatar_url","employee_avatar_url",
+    "avatar_url","view_profile_avatar_url"
+  ];
+  var SESSION_KEYS = [
+    "jobSpaceLink_login_identity","jobSpaceLink_jobseeker_session","jobSpaceLink_logged_in_jobseeker",
+    "jobSpaceLink_loggedInJobseeker","jobSpaceLink_current_jobseeker","loggedInApplicant",
+    "jobseekerSession","jobseekerUser","jobseekerAccount","currentJobseeker","loggedInJobseeker",
+    "applicantSession","applicantData","currentUser"
+  ];
+  var EVENT_KEYS = [
+    "jsl_shared_session_event","jsl_active_jobseeker_session","jsl_jobseeker_session_event",
+    "jobSpaceLink_jobseeker_session_event","jobSpaceLink_shared_session_event"
+  ];
+  var LOGIN_AT_KEYS = [
+    "jsl_jobseeker_login_at","jobSpaceLink_jobseeker_login_at","jobseeker_login_at","applicant_login_at"
+  ];
+  var JOBSEEKER_LOGOUT_KEYS = [
+    "jsl_force_logout","jsl_logout_reason","jsl_jobseeker_logout_at","jobSpaceLink_jobseeker_logout_at",
+    "jobseeker_logout_at","applicant_logout_at","jsl_jobseeker_logged_out","jobSpaceLink_jobseeker_logged_out"
+  ];
+  var CHANNELS = [
+    "jobseeker-session-sync","jsl-jobseeker-session-sync","jsl_shared_session_sync",
+    "jobSpaceLink-session-sync","jobSpaceLink_jobseeker_session"
+  ];
+
+  var promoting = false;
+  var lastSignature = "";
+
+  function clean(v){ return v == null ? "" : String(v).trim(); }
+  function lower(v){ return clean(v).toLowerCase().replace(/\s+/g, ""); }
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lower(v)); }
+  function byId(id){ return document.getElementById(id); }
+  function setBoth(key,value){
+    if(!key) return;
+    var v = String(value == null ? "" : value);
+    try{ localStorage.setItem(key,v); }catch(_e1){}
+    try{ sessionStorage.setItem(key,v); }catch(_e2){}
+  }
+  function removeBoth(key){
+    try{ localStorage.removeItem(key); }catch(_e1){}
+    try{ sessionStorage.removeItem(key); }catch(_e2){}
+  }
+  function readBoth(key){
+    var v="";
+    try{ v=clean(localStorage.getItem(key)); }catch(_e1){}
+    if(v) return v;
+    try{ v=clean(sessionStorage.getItem(key)); }catch(_e2){}
+    return v;
+  }
+  function firstStored(keys){
+    for(var i=0;i<keys.length;i++){
+      var v=readBoth(keys[i]);
+      if(v && v!=="0" && v!=="false" && v!=="null" && v!=="undefined") return v;
+    }
+    return "";
+  }
+  function inputValue(ids){
+    for(var i=0;i<ids.length;i++){
+      var el=byId(ids[i]);
+      if(el && clean(el.value)) return clean(el.value);
+    }
+    return "";
+  }
+  function currentEmail(){
+    var candidates=[
+      inputValue(["email","jobseeker_email","applicant_email","user_email"]),
+      firstStored(EMAIL_KEYS)
+    ];
+    try{
+      if(typeof lastTransactionCache!=="undefined" && lastTransactionCache){
+        candidates.push(lastTransactionCache.email,lastTransactionCache.employee_email,lastTransactionCache.jobseeker_email,lastTransactionCache.applicant_email);
+      }
+    }catch(_e){}
+    for(var i=0;i<candidates.length;i++){
+      var em=lower(candidates[i]);
+      if(validEmail(em)) return em;
+    }
+    return "";
+  }
+  function currentMasterIdValue(){
+    var value="";
+    try{ value=clean(window.currentMasterId || (typeof currentMasterId!=="undefined" ? currentMasterId : "")); }catch(_e){}
+    return value || inputValue(["master_id","applicant_master_id"]) || firstStored(MASTER_KEYS);
+  }
+  function currentUserId(){
+    var value="";
+    try{
+      value=clean(
+        (window.jslApplicantFormLoginSync && window.jslApplicantFormLoginSync.snapshot && window.jslApplicantFormLoginSync.snapshot.userId) ||
+        ""
+      );
+    }catch(_e){}
+    return value || inputValue(["user_id","auth_uid","uid"]) || firstStored(USER_KEYS);
+  }
+  function titleCasePart(v){
+    return clean(v).toLowerCase().replace(/(^|[\s'\-])([a-z])/g,function(_m,p1,p2){ return p1+p2.toUpperCase(); });
+  }
+  function currentName(){
+    var first=inputValue(["first_name","firstName","firstname"]);
+    var middle=inputValue(["middle_name","middleName","middlename"]);
+    var last=inputValue(["last_name","lastName","lastname"]);
+    var built=[first,middle,last].filter(Boolean).map(titleCasePart).join(" ").replace(/\s+/g," ").trim();
+    if(built) return built;
+    var left=byId("leftProfileName") || byId("profileName");
+    var txt=clean(left && left.textContent);
+    if(txt && !/^(your name|applicant name|jobseeker)$/i.test(txt)) return txt;
+    var stored=firstStored(NAME_KEYS);
+    if(stored && stored.indexOf("@")<0) return stored;
+    var em=currentEmail();
+    return em ? em.split("@")[0] : "Jobseeker";
+  }
+  function currentAvatar(){
+    var candidates=[];
+    try{ candidates.push(clean(window.old_picture || (typeof old_picture!=="undefined" ? old_picture : ""))); }catch(_e){}
+    ["leftPicImg","profilePicPreview","profilePreview","jslJobseekerAccountAvatar","jslAccountLogo"].forEach(function(id){
+      var img=byId(id); if(!img) return;
+      var src=clean(img.getAttribute("src") || img.src || "");
+      if(src && src!=="JOBSPACELINK.png" && !/^javascript:/i.test(src)) candidates.push(src);
+    });
+    AVATAR_KEYS.forEach(function(key){ candidates.push(readBoth(key)); });
+    var em=currentEmail();
+    if(em) candidates.push(readBoth("jsl_avatar_url__"+em));
+    for(var i=0;i<candidates.length;i++){
+      var src=clean(candidates[i]);
+      if(src && src!=="JOBSPACELINK.png" && !/^javascript:/i.test(src)) return src;
+    }
+    return "";
+  }
+  function recordIsValid(){
+    var masterId=currentMasterIdValue();
+    var email=currentEmail();
+    if(!masterId || !validEmail(email)) return false;
+    var activeContext=false;
+    try{ activeContext=!!(window.isUpdateMode || window._loadedExistingRecord || window.isViewOnlyMode); }catch(_e){}
+    return activeContext;
+  }
+  function buildPayload(reason){
+    if(!recordIsValid()) return null;
+    var email=currentEmail();
+    var masterId=currentMasterIdValue();
+    var userId=currentUserId();
+    var name=currentName();
+    var avatar=currentAvatar();
+    var now=Date.now();
+    return {
+      logged:true,
+      loggedIn:true,
+      isLoggedIn:true,
+      authenticated:true,
+      event:"login",
+      action:"login",
+      state:"logged-in",
+      status:"logged-in",
+      scope:"jobseeker",
+      type:"jobseeker",
+      role:"jobseeker",
+      account_type:"jobseeker",
+      profile_role:"applicant",
+      user_type:"applicant",
+      is_jobseeker:true,
+      is_applicant:true,
+      source:"applicantform1.html",
+      reason:reason || "valid-applicant-record-login",
+      email:email,
+      employee_email:email,
+      jobseeker_email:email,
+      applicant_email:email,
+      user_email:email,
+      login_email:email,
+      full_name:name,
+      name:name,
+      employee_name:name,
+      jobseeker_name:name,
+      applicant_name:name,
+      master_id:masterId,
+      applicant_master_id:masterId,
+      employee_master_id:masterId,
+      user_id:userId,
+      auth_uid:userId,
+      uid:userId,
+      profile_picture_url:avatar,
+      profile_photo_url:avatar,
+      avatar_url:avatar,
+      at:now,
+      timestamp:now,
+      login_at:now,
+      authenticated_at:new Date(now).toISOString(),
+      saved_at:new Date(now).toISOString(),
+      session_source:"applicant_record_valid_login",
+      target_pages:["applicantform1.html","postedhiring1.html"]
+    };
+  }
+  function broadcast(payload){
+    try{ window.dispatchEvent(new CustomEvent("jsl-jobseeker-session-sync",{detail:payload})); }catch(_e1){}
+    try{ window.dispatchEvent(new CustomEvent("jobSpaceLink-jobseeker-session",{detail:payload})); }catch(_e2){}
+    try{ window.dispatchEvent(new CustomEvent("postedhiring1-jobseeker-login-sync",{detail:payload})); }catch(_e3){}
+    if(typeof BroadcastChannel!=="function") return;
+    CHANNELS.forEach(function(name){
+      try{
+        var ch=new BroadcastChannel(name);
+        ch.postMessage(payload);
+        setTimeout(function(){ try{ ch.close(); }catch(_e){} },120);
+      }catch(_e4){}
+    });
+  }
+  function applyHeader(payload){
+    try{
+      document.body.classList.add("jobseeker-logged-in","jsl-logged-in");
+      document.body.classList.remove("jobseeker-logged-out","jsl-logged-out");
+    }catch(_e){}
+    var loginBtn=byId("jslHeaderLoggedOutLoginBtn");
+    if(loginBtn) loginBtn.style.display="none";
+    var menu=byId("jslJobseekerAccountMenu");
+    if(menu){
+      menu.style.display="inline-flex";
+      menu.classList.add("logged-in");
+      menu.classList.remove("logged-out","jsl-login-button-mode");
+    }
+    var title=byId("jslAccountTitle"); if(title) title.textContent="JOBSEEKER ACCOUNT";
+    var status=byId("jslAccountStatus"); if(status) status.textContent=payload.full_name || "Jobseeker";
+    var emailEl=byId("jslAccountEmail");
+    if(emailEl){ emailEl.textContent=payload.email; emailEl.href="mailto:"+payload.email; emailEl.title=payload.email; }
+    var login=byId("jslAccountLogin"); if(login) login.style.display="none";
+    var logout=byId("jslAccountLogout"); if(logout) logout.style.display="flex";
+    var viewProfile=byId("jslAccountViewProfile"); if(viewProfile) viewProfile.style.display="flex";
+    var mobileText=byId("mobileLoginText"); if(mobileText) mobileText.textContent=payload.full_name || "Account";
+    var avatar=byId("jslJobseekerAccountAvatar");
+    var icon=byId("jslJobseekerAccountIcon");
+    var logo=byId("jslAccountLogo");
+    var btn=byId("jslJobseekerAccountBtn");
+    if(payload.avatar_url){
+      if(avatar){ avatar.src=payload.avatar_url; avatar.style.display="block"; }
+      if(logo){ logo.src=payload.avatar_url; logo.style.display="block"; logo.alt="Logged-in Jobseeker Profile Picture"; }
+      if(icon) icon.style.display="none";
+      if(btn) btn.classList.add("has-profile-photo");
+    }else{
+      if(icon){ icon.style.display="inline-grid"; icon.className="fa-solid fa-user-check"; }
+    }
+  }
+  function persist(payload){
+    var serialized=JSON.stringify(payload);
+    JOBSEEKER_LOGOUT_KEYS.forEach(removeBoth);
+    EMAIL_KEYS.forEach(function(k){ setBoth(k,payload.email); });
+    FLAG_KEYS.forEach(function(k){ setBoth(k,"1"); });
+    NAME_KEYS.forEach(function(k){ setBoth(k,payload.full_name); });
+    MASTER_KEYS.forEach(function(k){ setBoth(k,payload.master_id); });
+    if(payload.user_id) USER_KEYS.forEach(function(k){ setBoth(k,payload.user_id); });
+    if(payload.avatar_url){
+      AVATAR_KEYS.forEach(function(k){ setBoth(k,payload.avatar_url); });
+      setBoth("jsl_avatar_url__"+payload.email,payload.avatar_url);
+      setBoth("jsl_last_avatar_owner",payload.email);
+    }
+    setBoth("jsl_master_id__"+payload.email,payload.master_id);
+    setBoth("jsl_last_login_owner",payload.email);
+    setBoth("view_profile_applicant_name",payload.full_name);
+    LOGIN_AT_KEYS.forEach(function(k){ setBoth(k,String(payload.at)); });
+    SESSION_KEYS.forEach(function(k){ setBoth(k,serialized); });
+    EVENT_KEYS.forEach(function(k){ setBoth(k,serialized); });
+    setBoth("jobSpaceLink_jobseeker_session_state","logged-in");
+    setBoth("jsl_jobseeker_session_state","logged-in");
+    setBoth("postedhiring1_jobseeker_session",serialized);
+  }
+  function promote(reason,force){
+    if(promoting || !recordIsValid()) return false;
+    var payload=buildPayload(reason);
+    if(!payload) return false;
+    var signature=[payload.email,payload.master_id,payload.full_name,payload.user_id||"",payload.avatar_url||""].join("|");
+    if(!force && signature===lastSignature){
+      applyHeader(payload);
+      return true;
+    }
+    promoting=true;
+    try{
+      persist(payload);
+      broadcast(payload);
+      applyHeader(payload);
+      lastSignature=signature;
+
+      try{
+        if(typeof window.JSL_publishExistingApplicantAutoLogin==="function"){
+          Promise.resolve(window.JSL_publishExistingApplicantAutoLogin(reason || "valid-record-login")).catch(function(){});
+        }
+      }catch(_e1){}
+      try{
+        if(window.jslApplicantMarkedAccountDropdown && typeof window.jslApplicantMarkedAccountDropdown.refresh==="function"){
+          window.jslApplicantMarkedAccountDropdown.refresh({
+            logged:true,email:payload.email,masterId:payload.master_id,userId:payload.user_id,
+            avatarUrl:payload.avatar_url,full_name:payload.full_name,name:payload.full_name
+          });
+        }
+      }catch(_e2){}
+      try{
+        if(window.jslApplicantFormPostedHiringDropdownStyle && typeof window.jslApplicantFormPostedHiringDropdownStyle.refresh==="function"){
+          window.jslApplicantFormPostedHiringDropdownStyle.refresh();
+        }
+      }catch(_e3){}
+      return true;
+    }finally{
+      promoting=false;
+    }
+  }
+  function schedule(reason){
+    [0,100,350,900,1800].forEach(function(delay){
+      setTimeout(function(){ promote(reason+"-"+delay,delay===1800); },delay);
+    });
+  }
+  function wrapFunction(name,after){
+    try{
+      var fn=window[name];
+      if(typeof fn!=="function" || fn.__jslValidRecordLoginWrapped) return;
+      var wrapped=function(){
+        var args=arguments;
+        var result=fn.apply(this,args);
+        if(result && typeof result.then==="function"){
+          return result.then(function(value){
+            try{ after(value,args); }catch(_e){}
+            return value;
+          });
+        }
+        try{ after(result,args); }catch(_e2){}
+        return result;
+      };
+      wrapped.__jslValidRecordLoginWrapped=true;
+      wrapped.__original=fn;
+      window[name]=wrapped;
+    }catch(_e3){}
+  }
+  function installWrappers(){
+    wrapFunction("checkExistingApplicant",function(result){ if(result) schedule("existing-record-input-match"); });
+    wrapFunction("applyLoadedRecordFromBackend",function(){ schedule("record-loaded-or-saved"); });
+    wrapFunction("refreshLoadedRecordFromLatest",function(){ schedule("record-refreshed"); });
+    wrapFunction("persistLoadedRecordSessionState",function(_result,args){
+      var reason=clean(args && args[0] || "record-state-persisted");
+      if(/submit-success|saved|existing|loaded|update|view|status-changed|record/i.test(reason)) schedule("persist-"+reason);
+    });
+  }
+  function bindActions(){
+    var form=byId("appForm");
+    if(form && !form.__jslValidRecordLoginBound){
+      form.__jslValidRecordLoginBound=true;
+      form.addEventListener("submit",function(){ schedule("form-submit-completion-check"); },true);
+    }
+    ["btnExistingUpdate","btnExistingCancel","submitBtn","viewPdfBtn","jobHiringBtn"].forEach(function(id){
+      var el=byId(id);
+      if(!el || el.__jslValidRecordLoginBound) return;
+      el.__jslValidRecordLoginBound=true;
+      el.addEventListener("click",function(){ schedule(id+"-click"); },true);
+    });
+  }
+  function boot(){
+    installWrappers();
+    bindActions();
+    schedule("boot-valid-record-check");
+  }
+
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",boot,{once:true});
+  else boot();
+  window.addEventListener("load",function(){ setTimeout(boot,100); });
+  window.addEventListener("pageshow",function(){ setTimeout(function(){ installWrappers(); bindActions(); promote("pageshow-valid-record",true); },120); });
+  window.addEventListener("focus",function(){ setTimeout(function(){ promote("focus-valid-record",false); },150); });
+
+  window.JSL_promoteCurrentApplicantRecordToValidJobseekerLogin=function(reason){
+    return promote(clean(reason)||"manual-valid-record-login",true);
+  };
+})();
+</script>
+
+
+
+<!-- ============================================================
+     FINAL AUTHORITATIVE V2: EXISTING/SAVED RECORD = JOBSEEKER LOGIN
+     - Save, Update, View, or load of a valid applicant record immediately changes
+       the Applicant Form header from Login to the logged-in account display.
+     - Publishes name/email/master_id to postedhiring1.html-compatible shared keys.
+     - Writes the database-backed jsl_verified_jobseeker_session_v2 marker required by postedhiring1.html.
+     - Persists the current loaded form snapshot across page navigation and restores
+       the same record when returning to applicantform1.html.
+     - Explicit Jobseeker logout still clears the canonical session and restore copy.
+============================================================ -->
+<script id="jsl-final-existing-record-authoritative-jobseeker-session-v2">
+(function(){
+  "use strict";
+  if(window.__JSL_FINAL_EXISTING_RECORD_AUTHORITATIVE_JOBSEEKER_SESSION_V2__) return;
+  window.__JSL_FINAL_EXISTING_RECORD_AUTHORITATIVE_JOBSEEKER_SESSION_V2__=true;
+
+  var CANONICAL_KEY="JSL_JOBSEEKER_RECORD_SESSION_V2";
+  var VERIFIED_JOBSEEKER_SESSION_KEY="jsl_verified_jobseeker_session_v2";
+  var VERIFIED_JOBSEEKER_SESSION_VERSION=2;
+  var VERIFIED_JOBSEEKER_SESSION_MAX_AGE_MS=30*24*60*60*1000;
+  var PERSISTENT_RESTORE_KEY="jsl_applicant_form_restore_persistent_v2";
+  var FORM_RESTORE_KEY="jsl_applicant_form_restore_v1";
+  var EMAIL_KEYS=["jobSpaceLink_jobseeker_email","jobSpaceLink_logged_in_email","employee_email","jsl_login_email","jsl_last_login_email","jobseeker_email","jobseeker_login_email","logged_in_email","loggedInEmail","applicant_email","user_email","email","login_email"];
+  var FLAG_KEYS=["jobSpaceLink_jobseeker_logged_in","employee_logged_in","jsl_logged_in","jsl_jobseeker_logged_in","jobseeker_logged_in","applicant_logged_in","logged_in"];
+  var NAME_KEYS=["employee_name","jsl_login_name","jsl_last_login_name","jobseeker_name","jobseeker_full_name","applicant_name","applicant_full_name","logged_in_name","loggedInName","full_name","profile_name","view_profile_name","current_applicant_name"];
+  var MASTER_KEYS=["employee_master_id","jsl_master_id","jobseeker_master_id","applicant_master_id","master_id","user_master_id","view_profile_master_id","current_profile_master_id"];
+  var USER_KEYS=["jsl_user_id","user_id","auth_uid","auth_id","uid","view_profile_user_id","current_profile_user_id"];
+  var AVATAR_KEYS=["jobSpaceLink_profile_photo_url","jobSpaceLink_profile_picture_url","jobSpaceLink_logged_in_profile_photo","jsl_avatar_url","employee_avatar_url","avatar_url","view_profile_avatar_url"];
+  var LOGIN_AT_KEYS=["jsl_jobseeker_login_at","jobSpaceLink_jobseeker_login_at","jobseeker_login_at","applicant_login_at"];
+  var SESSION_KEYS=[CANONICAL_KEY,"postedhiring1_jobseeker_session","jobSpaceLink_login_identity","jobSpaceLink_jobseeker_session","jobSpaceLink_logged_in_jobseeker","jobSpaceLink_loggedInJobseeker","jobSpaceLink_current_jobseeker","loggedInApplicant","jobseekerSession","jobseekerUser","jobseekerAccount","currentJobseeker","loggedInJobseeker","applicantSession","applicantData","currentUser"];
+  var EVENT_KEYS=["jsl_shared_session_event","jsl_active_jobseeker_session","jsl_jobseeker_session_event","jobSpaceLink_jobseeker_session_event","jobSpaceLink_shared_session_event"];
+  var LOGOUT_KEYS=["jsl_force_logout","jsl_logout_reason","jsl_jobseeker_logout_at","jobSpaceLink_jobseeker_logout_at","jobseeker_logout_at","applicant_logout_at","jsl_jobseeker_logged_out","jobSpaceLink_jobseeker_logged_out"];
+  var CHANNELS=["jobseeker-session-sync","jsl-jobseeker-session-sync","jsl_shared_session_sync","jobSpaceLink-session-sync","jobSpaceLink_jobseeker_session"];
+  var running=false,lastSignature="",restoreRunning=false;
+
+  function clean(v){return v==null?"":String(v).trim();}
+  function lower(v){return clean(v).toLowerCase().replace(/\s+/g,"");}
+  function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lower(v));}
+  function byId(id){return document.getElementById(id);}
+  function parse(raw){try{return JSON.parse(raw);}catch(_e){return null;}}
+  function setBoth(key,value){var v=String(value==null?"":value);try{localStorage.setItem(key,v);}catch(_e1){}try{sessionStorage.setItem(key,v);}catch(_e2){}}
+  function removeBoth(key){try{localStorage.removeItem(key);}catch(_e1){}try{sessionStorage.removeItem(key);}catch(_e2){}}
+  function readAny(key){var v="";try{v=clean(localStorage.getItem(key));}catch(_e1){}if(v)return v;try{return clean(sessionStorage.getItem(key));}catch(_e2){return "";}}
+  function input(ids){for(var i=0;i<ids.length;i++){var el=byId(ids[i]);if(el&&clean(el.value))return clean(el.value);}return "";}
+  function title(v){return clean(v).toLowerCase().replace(/(^|[\s'\-])([a-z])/g,function(_m,p1,p2){return p1+p2.toUpperCase();});}
+
+  function emailNow(){
+    var values=[input(["email","jobseeker_email","applicant_email","user_email"])];
+    try{if(typeof lastTransactionCache!=="undefined"&&lastTransactionCache)values.push(lastTransactionCache.email,lastTransactionCache.employee_email,lastTransactionCache.applicant_email);}catch(_e){}
+    values=values.concat(EMAIL_KEYS.map(readAny));
+    for(var i=0;i<values.length;i++){var e=lower(values[i]);if(validEmail(e))return e;}return "";
+  }
+  function masterNow(){
+    var v="";try{v=clean(window.currentMasterId||(typeof currentMasterId!=="undefined"?currentMasterId:""));}catch(_e){}
+    if(v)return v;v=input(["master_id","applicant_master_id"]);if(v)return v;
+    for(var i=0;i<MASTER_KEYS.length;i++){v=readAny(MASTER_KEYS[i]);if(v)return v;}return "";
+  }
+  function userNow(){
+    var v=input(["user_id","auth_uid","uid"]);if(v)return v;
+    for(var i=0;i<USER_KEYS.length;i++){v=readAny(USER_KEYS[i]);if(v)return v;}return "";
+  }
+  function nameNow(){
+    var built=[input(["first_name","firstName","firstname"]),input(["middle_name","middleName","middlename"]),input(["last_name","lastName","lastname"])].filter(Boolean).map(title).join(" ").replace(/\s+/g," ").trim();
+    if(built)return built;
+    var el=byId("leftProfileName")||byId("profileName"),t=clean(el&&el.textContent);
+    if(t&&!/^(your name|applicant name|jobseeker)$/i.test(t))return t;
+    for(var i=0;i<NAME_KEYS.length;i++){t=readAny(NAME_KEYS[i]);if(t&&t.indexOf("@")<0)return t;}
+    var em=emailNow();return em?em.split("@")[0]:"Jobseeker";
+  }
+  function avatarNow(){
+    var vals=[];try{vals.push(clean(window.old_picture||(typeof old_picture!=="undefined"?old_picture:"")));}catch(_e){}
+    ["leftPicImg","profilePicPreview","profilePreview","jslJobseekerAccountAvatar","jslAccountLogo"].forEach(function(id){var el=byId(id);if(el){var s=clean(el.getAttribute("src")||el.src||"");if(s&&s!=="JOBSPACELINK.png")vals.push(s);}});
+    AVATAR_KEYS.forEach(function(k){vals.push(readAny(k));});
+    for(var i=0;i<vals.length;i++){var s=clean(vals[i]);if(s&&s!=="JOBSPACELINK.png"&&!/^javascript:/i.test(s))return s;}return "";
+  }
+  function validRecord(){
+    var email=emailNow(),master=masterNow();if(!validEmail(email)||!master)return false;
+    try{return !!(window.isUpdateMode||window._loadedExistingRecord||window.isViewOnlyMode||currentMasterId);}catch(_e){return true;}
+  }
+  function build(reason){
+    if(!validRecord())return null;
+    var now=Date.now(),email=emailNow(),master=masterNow(),name=nameNow(),user=userNow(),avatar=avatarNow();
+    return {logged:true,loggedIn:true,isLoggedIn:true,authenticated:true,event:"login",action:"login",state:"logged-in",status:"logged-in",scope:"jobseeker",type:"jobseeker",role:"jobseeker",account_type:"jobseeker",profile_role:"applicant",user_type:"applicant",is_jobseeker:true,is_applicant:true,source:"applicantform1.html",reason:reason||"existing-or-saved-record-valid-login",email:email,employee_email:email,jobseeker_email:email,applicant_email:email,user_email:email,login_email:email,full_name:name,name:name,employee_name:name,jobseeker_name:name,applicant_name:name,master_id:master,applicant_master_id:master,employee_master_id:master,user_id:user,auth_uid:user,uid:user,profile_picture_url:avatar,profile_photo_url:avatar,avatar_url:avatar,at:now,timestamp:now,login_at:now,authenticated_at:new Date(now).toISOString(),saved_at:new Date(now).toISOString(),session_source:"applicant_record_valid_login_v2",target_pages:["applicantform1.html","postedhiring1.html"]};
+  }
+  function broadcast(payload){
+    try{window.dispatchEvent(new CustomEvent("jsl-jobseeker-session-sync",{detail:payload}));}catch(_e1){}
+    try{window.dispatchEvent(new CustomEvent("jobSpaceLink-jobseeker-session",{detail:payload}));}catch(_e2){}
+    try{window.dispatchEvent(new CustomEvent("postedhiring1-jobseeker-login-sync",{detail:payload}));}catch(_e3){}
+    if(typeof BroadcastChannel!=="function")return;
+    CHANNELS.forEach(function(n){try{var c=new BroadcastChannel(n);c.postMessage(payload);setTimeout(function(){try{c.close();}catch(_e){}},100);}catch(_e4){}});
+  }
+  function savePersistentRestore(payload,reason){
+    try{if(typeof window.persistLoadedRecordSessionState==="function")window.persistLoadedRecordSessionState(reason||"v2-persist");}catch(_e){}
+    var raw="";try{raw=sessionStorage.getItem(FORM_RESTORE_KEY)||"";}catch(_e2){}
+    if(!raw)return;
+    var snapshot=parse(raw);if(!snapshot||typeof snapshot!=="object")return;
+    snapshot.currentMasterId=snapshot.currentMasterId||payload.master_id;
+    snapshot.isUpdateMode=true;
+    if(typeof snapshot.loadedExistingRecord!=="boolean")snapshot.loadedExistingRecord=!!window._loadedExistingRecord;
+    if(snapshot.values&&typeof snapshot.values==="object")snapshot.values.email=payload.email;
+    var box={version:2,email:payload.email,master_id:payload.master_id,full_name:payload.full_name,saved_at:Date.now(),snapshot:snapshot};
+    try{localStorage.setItem(PERSISTENT_RESTORE_KEY,JSON.stringify(box));}catch(_e3){}
+  }
+  function applyHeader(p){
+    try{document.body.classList.add("jobseeker-logged-in","jsl-logged-in");document.body.classList.remove("jobseeker-logged-out","jsl-logged-out");}catch(_e){}
+    var loginBtn=byId("jslHeaderLoggedOutLoginBtn");if(loginBtn)loginBtn.style.display="none";
+    var menu=byId("jslJobseekerAccountMenu");if(menu){menu.style.display="inline-flex";menu.classList.add("logged-in");menu.classList.remove("logged-out","jsl-login-button-mode");}
+    var t=byId("jslAccountTitle");if(t)t.textContent="JOBSEEKER ACCOUNT";
+    var s=byId("jslAccountStatus");if(s)s.textContent=p.full_name||"Jobseeker";
+    var e=byId("jslAccountEmail");if(e){e.textContent=p.email;e.href="mailto:"+p.email;e.title=p.email;}
+    var li=byId("jslAccountLogin");if(li)li.style.display="none";
+    var lo=byId("jslAccountLogout");if(lo)lo.style.display="flex";
+    var vp=byId("jslAccountViewProfile");if(vp)vp.style.display="flex";
+    var mt=byId("mobileLoginText");if(mt)mt.textContent=p.full_name||"Account";
+    var av=byId("jslJobseekerAccountAvatar"),ic=byId("jslJobseekerAccountIcon"),lg=byId("jslAccountLogo"),btn=byId("jslJobseekerAccountBtn");
+    if(p.avatar_url){if(av){av.src=p.avatar_url;av.style.display="block";}if(lg){lg.src=p.avatar_url;lg.style.display="block";}if(ic)ic.style.display="none";if(btn)btn.classList.add("has-profile-photo");}else if(ic){ic.style.display="inline-grid";ic.className="fa-solid fa-user-check";}
+    try{if(window.jslApplicantMarkedAccountDropdown&&typeof window.jslApplicantMarkedAccountDropdown.refresh==="function")window.jslApplicantMarkedAccountDropdown.refresh({logged:true,email:p.email,masterId:p.master_id,userId:p.user_id,avatarUrl:p.avatar_url,full_name:p.full_name,name:p.full_name});}catch(_e2){}
+    try{if(window.jslApplicantFormPostedHiringDropdownStyle&&typeof window.jslApplicantFormPostedHiringDropdownStyle.refresh==="function")window.jslApplicantFormPostedHiringDropdownStyle.refresh();}catch(_e3){}
+  }
+  function writePostedHiringVerifiedMarker(p,reason){
+    if(!p||!validEmail(p.email)||!clean(p.master_id))return false;
+    var issuedAt=Date.now();
+    var marker={
+      version:VERIFIED_JOBSEEKER_SESSION_VERSION,
+      kind:"jobseeker",
+      role:"jobseeker",
+      account_type:"jobseeker",
+      profile_role:"applicant",
+      user_type:"applicant",
+      verified:true,
+      verified_by:"applicant_tables",
+      source:"applicantform1.html",
+      verification_flow:"existing-or-saved-applicant-record",
+      verification_reason:clean(reason||p.reason||"applicant-record-valid-login"),
+      email:p.email,
+      jobseeker_email:p.email,
+      applicant_email:p.email,
+      master_id:p.master_id,
+      applicant_master_id:p.master_id,
+      auth_user_id:clean(p.user_id||p.auth_uid||p.uid||""),
+      user_id:clean(p.user_id||p.auth_uid||p.uid||""),
+      name:clean(p.full_name||p.name||p.applicant_name||"Jobseeker"),
+      full_name:clean(p.full_name||p.name||p.applicant_name||"Jobseeker"),
+      applicant_name:clean(p.full_name||p.name||p.applicant_name||"Jobseeker"),
+      profile_photo_url:clean(p.profile_photo_url||p.profile_picture_url||p.avatar_url||""),
+      profile_picture_url:clean(p.profile_picture_url||p.profile_photo_url||p.avatar_url||""),
+      avatar_url:clean(p.avatar_url||p.profile_picture_url||p.profile_photo_url||""),
+      issued_at:issuedAt,
+      timestamp:issuedAt,
+      authenticated_at:new Date(issuedAt).toISOString(),
+      expires_at:issuedAt+VERIFIED_JOBSEEKER_SESSION_MAX_AGE_MS
+    };
+    setBoth(VERIFIED_JOBSEEKER_SESSION_KEY,JSON.stringify(marker));
+    return true;
+  }
+  function persist(p,reason){
+    var serial=JSON.stringify(p);LOGOUT_KEYS.forEach(removeBoth);
+    EMAIL_KEYS.forEach(function(k){setBoth(k,p.email);});FLAG_KEYS.forEach(function(k){setBoth(k,"1");});NAME_KEYS.forEach(function(k){setBoth(k,p.full_name);});MASTER_KEYS.forEach(function(k){setBoth(k,p.master_id);});
+    if(p.user_id)USER_KEYS.forEach(function(k){setBoth(k,p.user_id);});if(p.avatar_url){AVATAR_KEYS.forEach(function(k){setBoth(k,p.avatar_url);});setBoth("jsl_avatar_url__"+p.email,p.avatar_url);setBoth("jsl_last_avatar_owner",p.email);}
+    setBoth("jsl_master_id__"+p.email,p.master_id);setBoth("jsl_last_login_owner",p.email);setBoth("view_profile_applicant_name",p.full_name);LOGIN_AT_KEYS.forEach(function(k){setBoth(k,String(p.at));});
+    SESSION_KEYS.concat(EVENT_KEYS).forEach(function(k){setBoth(k,serial);});setBoth("jobSpaceLink_jobseeker_session_state","logged-in");setBoth("jsl_jobseeker_session_state","logged-in");
+    writePostedHiringVerifiedMarker(p,reason);
+    savePersistentRestore(p,reason);
+  }
+  function promote(reason,force){
+    if(running||!validRecord())return false;var p=build(reason);if(!p)return false;
+    var sig=[p.email,p.master_id,p.full_name,p.user_id||"",p.avatar_url||""].join("|");
+    if(!force&&sig===lastSignature){applyHeader(p);savePersistentRestore(p,reason);return true;}
+    running=true;try{persist(p,reason);applyHeader(p);broadcast(p);lastSignature=sig;try{if(typeof window.JSL_publishExistingApplicantAutoLogin==="function")Promise.resolve(window.JSL_publishExistingApplicantAutoLogin(reason||"v2-valid-login")).catch(function(){});}catch(_e){}return true;}finally{running=false;}
+  }
+  function schedule(reason){[0,100,350,900,1800,3500].forEach(function(ms){setTimeout(function(){promote(reason+"-"+ms,ms>=1800);},ms);});}
+  function canonical(){var o=parse(readAny(CANONICAL_KEY))||parse(readAny("postedhiring1_jobseeker_session"));if(!o||o.logged===false)return null;var em=lower(o.email||o.jobseeker_email||o.applicant_email||"");var mi=clean(o.master_id||o.applicant_master_id||"");return validEmail(em)&&mi?o:null;}
+  async function restoreFromCanonical(reason){
+    if(restoreRunning||validRecord())return;var c=canonical();if(!c)return;restoreRunning=true;
+    try{
+      var em=lower(c.email||c.jobseeker_email||c.applicant_email||""),mi=clean(c.master_id||c.applicant_master_id||"");
+      var stored="";try{stored=localStorage.getItem(PERSISTENT_RESTORE_KEY)||"";}catch(_e){}
+      var box=parse(stored);if(box&&box.snapshot&&(!box.email||lower(box.email)===em)&&(!box.master_id||clean(box.master_id)===mi)){try{sessionStorage.setItem(FORM_RESTORE_KEY,JSON.stringify(box.snapshot));}catch(_e2){}}
+      if(typeof window.restoreApplicantStateFromSessionIfAny==="function"){
+        try{var restored=await window.restoreApplicantStateFromSessionIfAny();if(restored){schedule(reason+"-snapshot-restored");return;}}catch(_e3){}
+      }
+      try{window.currentMasterId=mi;if(typeof currentMasterId!=="undefined")currentMasterId=mi;}catch(_e4){}
+      try{window.isUpdateMode=true;window._loadedExistingRecord=true;window.isViewOnlyMode=false;}catch(_e5){}
+      if(typeof window.refreshLoadedRecordFromLatest==="function"){
+        try{await window.refreshLoadedRecordFromLatest(mi,"existing");schedule(reason+"-backend-restored");return;}catch(_e6){}
+      }
+      var emailInput=byId("email");if(emailInput&&!clean(emailInput.value))emailInput.value=em;
+      applyHeader(Object.assign({},c,{email:em,master_id:mi,full_name:clean(c.full_name||c.name||em.split("@")[0])}));
+    }finally{restoreRunning=false;}
+  }
+  function wrap(name){
+    try{var fn=window[name];if(typeof fn!=="function"||fn.__jslAuthoritativeV2Wrapped)return;var w=function(){var result=fn.apply(this,arguments);if(result&&typeof result.then==="function")return result.then(function(v){schedule(name+"-complete");return v;});schedule(name+"-complete");return result;};w.__jslAuthoritativeV2Wrapped=true;w.__original=fn;window[name]=w;}catch(_e){}
+  }
+  function install(){["checkExistingApplicant","applyLoadedRecordFromBackend","refreshLoadedRecordFromLatest"].forEach(wrap);}
+  function bind(){
+    var form=byId("appForm");if(form&&!form.__jslAuthoritativeV2Bound){form.__jslAuthoritativeV2Bound=true;form.addEventListener("submit",function(){schedule("form-submit-save");},true);}
+    ["btnExistingUpdate","btnExistingCancel","submitBtn","viewPdfBtn"].forEach(function(id){var el=byId(id);if(el&&!el.__jslAuthoritativeV2Bound){el.__jslAuthoritativeV2Bound=true;el.addEventListener("click",function(){schedule(id+"-action");},true);}});
+  }
+  function isPostedHiringTarget(el){var a=el&&el.closest?el.closest('a[href*="postedhiring1.html"],#jobHiringBtn'):null;return !!a;}
+  function isLogoutTarget(el){return !!(el&&el.closest&&el.closest('#logoutBtn,#jslAccountLogout,.jsl-account-action.logout,[data-jsl-logout],[data-logout]'));}
+  function clearPersistent(){removeBoth(CANONICAL_KEY);removeBoth("postedhiring1_jobseeker_session");removeBoth(VERIFIED_JOBSEEKER_SESSION_KEY);try{localStorage.removeItem(PERSISTENT_RESTORE_KEY);}catch(_e){}try{sessionStorage.removeItem(FORM_RESTORE_KEY);}catch(_e2){}}
+  document.addEventListener("click",function(ev){if(isLogoutTarget(ev.target)){clearPersistent();return;}if(isPostedHiringTarget(ev.target)){promote("navigate-postedhiring1",true);}},true);
+  window.addEventListener("pagehide",function(){promote("pagehide",true);});
+  window.addEventListener("beforeunload",function(){promote("beforeunload",true);});
+  window.addEventListener("storage",function(ev){if(ev&&ev.key==="jsl_force_logout"&&ev.newValue)clearPersistent();});
+  function boot(){install();bind();restoreFromCanonical("boot-return");schedule("boot");setTimeout(function(){install();bind();restoreFromCanonical("boot-late-return");},800);}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
+  window.addEventListener("load",function(){setTimeout(function(){install();bind();restoreFromCanonical("load-return");schedule("load");},120);});
+  window.addEventListener("pageshow",function(){setTimeout(function(){install();bind();restoreFromCanonical("pageshow-return");schedule("pageshow");},100);});
+  window.addEventListener("focus",function(){setTimeout(function(){restoreFromCanonical("focus-return");promote("focus",false);},160);});
+  setInterval(function(){if(validRecord())promote("record-session-watchdog",false);},3000);
+  window.JSL_promoteApplicantRecordToAuthoritativeJobseekerSessionV2=function(reason){return promote(clean(reason)||"manual-v2",true);};
+  window.JSL_restoreApplicantRecordFromAuthoritativeJobseekerSessionV2=function(){return restoreFromCanonical("manual-v2-restore");};
+})();
+</script>
+
+
+
+<!-- ============================================================
+     FINAL STICKY PROFILE/NAV + FORM-ONLY SECTION SCROLL — 2026-08-31
+     - Desktop/tablet (>=769px): keeps the left profile/navigation panel
+       steady and visible while the right form column scrolls independently.
+     - Qualification / Resume & Documents / other section buttons move only
+       the form pane to their existing target sections.
+     - Mobile <=768px keeps the existing natural stacked page scrolling.
+     - No save, upload, PDF, View/Update, Supabase, auth/session behavior changed.
+=============================================================== -->
+<style id="jsl-final-sticky-profile-form-only-scroll-20260831">
+@media (min-width:769px){
+  /* Keep the marked profile + section-navigation panel steady in the viewport. */
+  html body .grid{
+    align-items:start !important;
+  }
+
+  html body .grid > .profile-card{
+    position:sticky !important;
+    top:calc(var(--hdrH, 78px) + 8px) !important;
+    align-self:start !important;
+    max-height:calc(100vh - var(--hdrH, 78px) - 16px) !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    z-index:80 !important;
+  }
+
+  /* If the viewport is short and the left card itself must scroll, keep the
+     section buttons available instead of allowing them to disappear. */
+  html body .grid > .profile-card .profile-section-nav{
+    position:sticky !important;
+    top:0 !important;
+    z-index:90 !important;
+    margin-top:10px !important;
+    padding:4px 0 !important;
+    background:linear-gradient(180deg,rgba(248,250,252,.98),rgba(241,245,249,.96)) !important;
+  }
+
+  /* Only this right-hand form pane moves when a section-navigation button is clicked. */
+  html body .grid > .jsl-form-scroll-column{
+    min-width:0 !important;
+    height:calc(100vh - var(--hdrH, 78px) - 28px) !important;
+    max-height:calc(100vh - var(--hdrH, 78px) - 28px) !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    scroll-behavior:smooth !important;
+    scroll-padding-top:6px !important;
+    overscroll-behavior:contain !important;
+    scrollbar-gutter:stable !important;
+    padding-right:4px !important;
+  }
+
+  html body .grid > .jsl-form-scroll-column > #personalInformationSection,
+  html body .grid > .jsl-form-scroll-column > #qualificationSection,
+  html body .grid > .jsl-form-scroll-column > #jobPreferencesSection,
+  html body .grid > .jsl-form-scroll-column > #blockEmployerSection,
+  html body .grid > .jsl-form-scroll-column > #readyToWorkSection,
+  html body .grid > .jsl-form-scroll-column > #resumeDocumentsSection{
+    scroll-margin-top:6px !important;
+  }
+}
+
+/* Preserve the existing stacked/small-screen behavior. */
+@media (max-width:768px){
+  html body .grid > .profile-card{
+    position:relative !important;
+    top:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+  }
+
+  html body .grid > .profile-card .profile-section-nav{
+    position:relative !important;
+    top:auto !important;
+  }
+
+  html body .grid > .jsl-form-scroll-column{
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding-right:0 !important;
+  }
+}
+</style>
+
+
+
+<!-- ============================================================
+     FINAL TABLET ACTION ROW — 2026-08-31
+     Requested CSS-only change for 769px–1023px:
+       - Keep Deactivate/Activate, View PDF/Profile, Job Hiring, Save/Submit,
+         and Log Out on one readable row at the end of the form.
+       - Reduce button width/spacing only enough to fit the tablet viewport.
+       - No JavaScript, Supabase, save/update, PDF, navigation, or logout behavior changed.
+=============================================================== -->
+<style id="jsl-final-tablet-action-buttons-one-row-20260831">
+@media (min-width:769px) and (max-width:1023px){
+  html body #actionRow.actions-joined{
+    display:flex !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    align-items:stretch !important;
+    justify-content:stretch !important;
+    width:100% !important;
+    max-width:100% !important;
+    gap:4px !important;
+    margin-top:8px !important;
+  }
+
+  html body #actionRow.actions-joined > .bigbtn{
+    flex:1 1 0 !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    min-height:40px !important;
+    height:auto !important;
+    padding:6px 4px !important;
+    gap:4px !important;
+    border-radius:10px !important;
+    font-size:clamp(.66rem, 1.25vw, .76rem) !important;
+    line-height:1.12 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:clip !important;
+  }
+
+  html body #actionRow.actions-joined > .bigbtn > i,
+  html body #actionRow.actions-joined > .bigbtn .submit-main-icon{
+    flex:0 0 auto !important;
+    font-size:.78rem !important;
+  }
+
+  html body #actionRow #submitBtn .submit-btn-inner{
+    width:100% !important;
+    min-width:0 !important;
+    gap:4px !important;
+    justify-content:center !important;
+  }
+
+  html body #actionRow #submitBtn .submit-icon-wrap{
+    width:auto !important;
+    min-width:0 !important;
+    flex:0 0 auto !important;
+  }
+
+  html body #actionRow #submitBtn .submit-label{
+    min-width:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+}
+</style>
+
+<!-- ============================================================
+     ALTERNATE EASY NAVIGATION FORMAT — NUMBERED FORM STEPPER
+     2026-08-31
+     - Reuses the existing six profile-section navigation buttons/targets.
+     - Desktop/tablet: vertical numbered stepper inside the sticky Jobseeker Profile.
+     - Mobile: compact horizontal scrollable step strip.
+     - Adds active-step tracking only; no save/update/upload/PDF/Supabase/session logic changed.
+=============================================================== -->
+<style id="jsl-alternate-numbered-stepper-navigation-20260831">
+  /* ---------- Shared stepper treatment ---------- */
+  html body .profile-section-nav{
+    counter-reset:jsl-form-step !important;
+    position:relative !important;
+    width:100% !important;
+    margin:12px 0 14px !important;
+    border:1px solid rgba(11,92,255,.14) !important;
+    border-radius:16px !important;
+    background:linear-gradient(180deg,#fbfdff,#f4f8ff) !important;
+    box-shadow:0 8px 20px rgba(15,23,42,.06) !important;
+  }
+
+  html body .profile-section-nav-btn{
+    counter-increment:jsl-form-step !important;
+    position:relative !important;
+    min-width:0 !important;
+    border:0 !important;
+    outline:0 !important;
+    color:#26415f !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    transform:none !important;
+    font-family:"Poppins","Segoe UI",Arial,sans-serif !important;
+    font-weight:900 !important;
+    cursor:pointer !important;
+  }
+
+  html body .profile-section-nav-btn::before{
+    content:counter(jsl-form-step) !important;
+    display:grid !important;
+    place-items:center !important;
+    flex:0 0 auto !important;
+    border-radius:999px !important;
+    background:#ffffff !important;
+    color:#0b5cff !important;
+    border:2px solid #b9d1ff !important;
+    box-shadow:0 2px 7px rgba(11,92,255,.10) !important;
+    font-weight:1100 !important;
+    line-height:1 !important;
+    z-index:2 !important;
+  }
+
+  html body .profile-section-nav-btn i{
+    flex:0 0 auto !important;
+    color:#4b6d91 !important;
+    text-align:center !important;
+  }
+
+  html body .profile-section-nav-btn:hover,
+  html body .profile-section-nav-btn:focus-visible{
+    color:#0b5cff !important;
+    background:#eef5ff !important;
+    box-shadow:none !important;
+    transform:none !important;
+  }
+
+  html body .profile-section-nav-btn.active{
+    color:#07336b !important;
+    background:#e7f0ff !important;
+    box-shadow:inset 0 0 0 1px rgba(11,92,255,.18) !important;
+    transform:none !important;
+  }
+
+  html body .profile-section-nav-btn.active::before{
+    background:#0b5cff !important;
+    color:#ffffff !important;
+    border-color:#0b5cff !important;
+    box-shadow:0 0 0 4px rgba(11,92,255,.12) !important;
+  }
+
+  html body .profile-section-nav-btn.active i{
+    color:#0b5cff !important;
+  }
+
+  /* Give the target section a clearer temporary focus without moving fields. */
+  html body #personalInformationSection.jsl-scroll-target,
+  html body #qualificationSection.jsl-scroll-target,
+  html body #jobPreferencesSection.jsl-scroll-target,
+  html body #blockEmployerSection.jsl-scroll-target,
+  html body #readyToWorkSection.jsl-scroll-target,
+  html body #resumeDocumentsSection.jsl-scroll-target{
+    border-color:rgba(11,92,255,.34) !important;
+  }
+
+  /* ---------- Desktop + tablet: vertical progress rail ---------- */
+  @media (min-width:769px){
+    html body .profile-section-nav{
+      display:flex !important;
+      flex-direction:column !important;
+      gap:2px !important;
+      padding:10px !important;
+      overflow:visible !important;
+    }
+
+    html body .profile-section-nav::before{
+      content:"" !important;
+      position:absolute !important;
+      left:28px !important;
+      top:30px !important;
+      bottom:30px !important;
+      width:2px !important;
+      border-radius:999px !important;
+      background:linear-gradient(180deg,#b9d1ff,#dbe7ff) !important;
+      pointer-events:none !important;
+      z-index:0 !important;
+    }
+
+    html body .profile-section-nav-btn{
+      width:100% !important;
+      min-height:46px !important;
+      display:grid !important;
+      grid-template-columns:28px 20px minmax(0,1fr) !important;
+      align-items:center !important;
+      justify-content:stretch !important;
+      gap:8px !important;
+      padding:7px 9px !important;
+      border-radius:12px !important;
+      text-align:left !important;
+      font-size:.76rem !important;
+      line-height:1.18 !important;
+      white-space:normal !important;
+      overflow:visible !important;
+    }
+
+    html body .profile-section-nav-btn::before{
+      width:26px !important;
+      height:26px !important;
+      font-size:.70rem !important;
+    }
+
+    html body .profile-section-nav-btn i{
+      width:20px !important;
+      min-width:20px !important;
+      font-size:.80rem !important;
+    }
+
+    html body .profile-section-nav-btn span{
+      min-width:0 !important;
+      overflow-wrap:anywhere !important;
+    }
+
+    /* Keep the Jobseeker panel steady; navigation itself does not create another scrollbar. */
+    html body .grid > .profile-card .profile-section-nav{
+      top:auto !important;
+      overflow:visible !important;
+    }
+  }
+
+  /* ---------- Tablet: compact but fully readable ---------- */
+  @media (min-width:769px) and (max-width:1023px){
+    html body .profile-section-nav{
+      padding:8px !important;
+      gap:1px !important;
+      border-radius:14px !important;
+    }
+
+    html body .profile-section-nav::before{
+      left:25px !important;
+      top:27px !important;
+      bottom:27px !important;
+    }
+
+    html body .profile-section-nav-btn{
+      min-height:40px !important;
+      grid-template-columns:24px 17px minmax(0,1fr) !important;
+      gap:6px !important;
+      padding:5px 6px !important;
+      border-radius:10px !important;
+      font-size:clamp(.63rem,1.05vw,.72rem) !important;
+      line-height:1.12 !important;
+    }
+
+    html body .profile-section-nav-btn::before{
+      width:23px !important;
+      height:23px !important;
+      font-size:.62rem !important;
+    }
+
+    html body .profile-section-nav-btn i{
+      width:17px !important;
+      min-width:17px !important;
+      font-size:.70rem !important;
+    }
+  }
+
+  /* ---------- Mobile: horizontal step strip ---------- */
+  @media (max-width:768px){
+    html body .profile-section-nav{
+      display:flex !important;
+      flex-direction:row !important;
+      align-items:stretch !important;
+      gap:7px !important;
+      padding:8px !important;
+      overflow-x:auto !important;
+      overflow-y:hidden !important;
+      scroll-snap-type:x proximity !important;
+      -webkit-overflow-scrolling:touch !important;
+      scrollbar-width:thin !important;
+    }
+
+    html body .profile-section-nav::before{
+      display:none !important;
+    }
+
+    html body .profile-section-nav-btn{
+      flex:0 0 auto !important;
+      width:auto !important;
+      min-width:142px !important;
+      min-height:42px !important;
+      display:grid !important;
+      grid-template-columns:24px 17px minmax(0,1fr) !important;
+      align-items:center !important;
+      gap:6px !important;
+      padding:6px 8px !important;
+      border-radius:11px !important;
+      text-align:left !important;
+      font-size:.70rem !important;
+      line-height:1.12 !important;
+      scroll-snap-align:start !important;
+      border:1px solid rgba(11,92,255,.12) !important;
+      background:#ffffff !important;
+    }
+
+    html body .profile-section-nav-btn::before{
+      width:22px !important;
+      height:22px !important;
+      font-size:.60rem !important;
+    }
+
+    html body .profile-section-nav-btn i{
+      width:17px !important;
+      min-width:17px !important;
+      font-size:.68rem !important;
+    }
+
+    html body .profile-section-nav-btn.active{
+      background:#e7f0ff !important;
+    }
+  }
+
+  @media (max-width:480px){
+    html body .profile-section-nav-btn{
+      min-width:132px !important;
+      font-size:.66rem !important;
+    }
+  }
+</style>
+
+<script id="jsl-alternate-numbered-stepper-scrollspy-20260831">
+(function(){
+  "use strict";
+  if(window.__JSL_ALTERNATE_NUMBERED_STEPPER_SCROLLSPY_20260831__) return;
+  window.__JSL_ALTERNATE_NUMBERED_STEPPER_SCROLLSPY_20260831__=true;
+
+  var sectionIds=[
+    "personalInformationSection",
+    "qualificationSection",
+    "jobPreferencesSection",
+    "blockEmployerSection",
+    "readyToWorkSection",
+    "resumeDocumentsSection"
+  ];
+
+  function buttons(){
+    return Array.prototype.slice.call(
+      document.querySelectorAll(".profile-section-nav-btn[data-scroll-section]")
+    );
+  }
+
+  function setActive(id){
+    var list=buttons();
+    list.forEach(function(btn){
+      var active=btn.getAttribute("data-scroll-section")===id;
+      btn.classList.toggle("active",active);
+      btn.setAttribute("aria-current",active?"step":"false");
+      if(active){
+        try{btn.scrollIntoView({block:"nearest",inline:"nearest"});}catch(_e){}
+      }
+    });
+  }
+
+  function currentFromViewport(){
+    var headerOffset=0;
+    try{
+      var raw=getComputedStyle(document.documentElement).getPropertyValue("--hdrH");
+      headerOffset=parseFloat(raw)||78;
+    }catch(_e){headerOffset=78;}
+
+    var scroller=document.querySelector(".jsl-form-scroll-column");
+    var usePane=false;
+    if(scroller && window.matchMedia && window.matchMedia("(min-width:769px)").matches){
+      var st=getComputedStyle(scroller);
+      usePane=/auto|scroll/.test(st.overflowY) && scroller.scrollHeight>scroller.clientHeight+4;
+    }
+
+    var bestId=sectionIds[0];
+    var bestDistance=Infinity;
+
+    sectionIds.forEach(function(id){
+      var section=document.getElementById(id);
+      if(!section) return;
+
+      var rect=section.getBoundingClientRect();
+      var anchor=usePane && scroller
+        ? scroller.getBoundingClientRect().top + 12
+        : headerOffset + 18;
+
+      var distance=Math.abs(rect.top-anchor);
+      if(rect.top<=anchor+120) distance*=0.55;
+
+      if(distance<bestDistance){
+        bestDistance=distance;
+        bestId=id;
+      }
+    });
+
+    setActive(bestId);
+  }
+
+  function bind(){
+    var list=buttons();
+    if(!list.length) return;
+
+    if(!list.some(function(btn){return btn.classList.contains("active");})){
+      setActive(sectionIds[0]);
+    }
+
+    var scroller=document.querySelector(".jsl-form-scroll-column");
+    if(scroller && !scroller.__jslAlternateStepperSpyBound){
+      scroller.__jslAlternateStepperSpyBound=true;
+      scroller.addEventListener("scroll",currentFromViewport,{passive:true});
+    }
+
+    if(!window.__jslAlternateStepperWindowSpyBound){
+      window.__jslAlternateStepperWindowSpyBound=true;
+      window.addEventListener("scroll",currentFromViewport,{passive:true});
+      window.addEventListener("resize",currentFromViewport,{passive:true});
+    }
+
+    window.setTimeout(currentFromViewport,120);
+    window.setTimeout(currentFromViewport,600);
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",bind,{once:true});
+  }else{
+    bind();
+  }
+})();
+</script>
+
+<!-- Same header-logo zoom effect used by postedhiring1.html. -->
+<style id="jsl-postedhiring-logo-zoom-effect">
+body > header .logo img,
+html body > header .logo img,
+header .logo img{
+  transform:scale(1) !important;
+  transform-origin:center center !important;
+  transition:transform .22s ease, filter .22s ease !important;
+}
+
+body > header .logo:hover img,
+html body > header .logo:hover img,
+header .logo:hover img{
+  transform:scale(1.06) !important;
+}
 </style>
 
 </body>

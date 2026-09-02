@@ -5935,7 +5935,821 @@ body > header .nav-dropdown-menu a:focus-visible::after{
   transform:none !important;
 }
 
+
+
+/* ============================================================
+   FINAL POSTED JOBS HEADER STYLE OVERRIDE
+   Applies the Posted Jobs navigation font, colors, icons,
+   dropdown design, and hover effects to the How It Works page.
+   Existing links, dropdown JavaScript, mobile behavior, page
+   content, animations, footer, and functionality are preserved.
+============================================================ */
+:root{
+  --posted-header-navy:#063f73;
+  --posted-header-icon:#06477f;
+  --posted-header-blue:#0b5cff;
+  --posted-header-blue-soft:#eef6ff;
+  --posted-header-cyan-soft:#eef9ff;
+  --posted-header-cyan-hover:#dff5ff;
+  --posted-header-border:#dfe6ef;
+  --posted-dropdown-border:#d9e2ee;
+}
+
+/* White Posted Jobs header surface */
+body > header{
+  color:var(--posted-header-navy) !important;
+  background:#ffffff !important;
+  border-bottom:1px solid var(--posted-header-border) !important;
+  box-shadow:0 2px 10px rgba(15,23,42,.06) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+body > header .logo img{
+  filter:none !important;
+}
+
+/* Posted Jobs desktop navigation */
+body > header nav{
+  color:var(--posted-header-navy) !important;
+}
+
+body > header nav > a,
+body > header nav .nav-main-link,
+body > header .nav-dropdown-trigger > .nav-main-link{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-wrap:nowrap !important;
+  gap:9px !important;
+  min-height:48px !important;
+  padding-left:3px !important;
+  padding-right:3px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:var(--posted-header-navy) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  white-space:nowrap !important;
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+  font-size:.96rem !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  transform:none !important;
+  transition:color .18s ease,transform .18s ease !important;
+  overflow:visible !important;
+}
+
+/* Remove older black/glow effects and draw the Posted Jobs blue underline */
+body > header nav > a::before,
+body > header nav .nav-main-link::before,
+body > header .nav-dropdown-trigger > .nav-main-link::before{
+  display:none !important;
+  content:none !important;
+}
+
+body > header nav > a::after,
+body > header nav .nav-main-link::after,
+body > header .nav-dropdown-trigger > .nav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:3px !important;
+  right:3px !important;
+  bottom:5px !important;
+  width:auto !important;
+  height:2px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:var(--posted-header-blue) !important;
+  box-shadow:none !important;
+  opacity:0 !important;
+  transform:scaleX(.35) !important;
+  transform-origin:center !important;
+  transition:opacity .18s ease,transform .18s ease !important;
+  pointer-events:none !important;
+}
+
+body > header nav > a:hover,
+body > header nav > a:focus-visible,
+body > header nav .nav-main-link:hover,
+body > header nav .nav-main-link:focus-visible,
+body > header .nav-dropdown.open .nav-main-link{
+  color:var(--posted-header-blue) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:translateY(-1px) !important;
+}
+
+body > header nav > a:hover::after,
+body > header nav > a:focus-visible::after,
+body > header nav .nav-main-link:hover::after,
+body > header nav .nav-main-link:focus-visible::after,
+body > header .nav-dropdown.open .nav-main-link::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+/* Posted Jobs icon colors: transparent icons, navy by default, blue on hover */
+body > header nav > a > i,
+body > header nav .nav-main-link > i,
+body > header .nav-dropdown-trigger > .nav-main-link > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:auto !important;
+  height:auto !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:var(--posted-header-icon) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-size:1.02rem !important;
+  transform:none !important;
+  transition:color .18s ease !important;
+}
+
+body > header nav > a:hover > i,
+body > header nav > a:focus-visible > i,
+body > header nav .nav-main-link:hover > i,
+body > header nav .nav-main-link:focus-visible > i,
+body > header .nav-dropdown.open .nav-main-link > i{
+  color:var(--posted-header-blue) !important;
+}
+
+/* About link and caret remain one row */
+body > header .nav-dropdown{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  height:100% !important;
+  overflow:visible !important;
+}
+
+body > header .nav-dropdown-trigger{
+  display:inline-flex !important;
+  align-items:center !important;
+  flex-wrap:nowrap !important;
+  gap:0 !important;
+  height:100% !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+}
+
+body > header .nav-dropdown-toggle{
+  width:28px !important;
+  height:48px !important;
+  min-width:28px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 28px !important;
+  margin-left:-3px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:8px !important;
+  color:var(--posted-header-navy) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease !important;
+}
+
+body > header .nav-dropdown-toggle:hover,
+body > header .nav-dropdown-toggle:focus-visible,
+body > header .nav-dropdown.open .nav-dropdown-toggle{
+  color:var(--posted-header-blue) !important;
+  background:var(--posted-header-blue-soft) !important;
+}
+
+body > header .nav-dropdown-toggle > i,
+body > header .nav-dropdown-toggle .nav-caret{
+  width:auto !important;
+  height:auto !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:currentColor !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  font-size:.70rem !important;
+  transition:transform .20s ease !important;
+}
+
+body > header .nav-dropdown.open .nav-caret{
+  transform:rotate(180deg) !important;
+}
+
+/* Posted Jobs dropdown card */
+body > header .nav-dropdown-menu{
+  top:calc(100% - 5px) !important;
+  left:-12px !important;
+  min-width:245px !important;
+  padding:9px !important;
+  border:1px solid var(--posted-dropdown-border) !important;
+  border-radius:12px !important;
+  color:var(--posted-header-navy) !important;
+  background:#ffffff !important;
+  box-shadow:0 18px 42px rgba(15,23,42,.16) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  overflow:visible !important;
+  z-index:1600 !important;
+}
+
+body > header .nav-dropdown.open .nav-dropdown-menu{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:3px !important;
+}
+
+body > header .nav-dropdown-menu a{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  flex-wrap:nowrap !important;
+  gap:11px !important;
+  min-height:auto !important;
+  padding:12px 13px !important;
+  border:0 !important;
+  border-radius:9px !important;
+  color:var(--posted-header-navy) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  white-space:nowrap !important;
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+  font-size:.90rem !important;
+  font-weight:700 !important;
+  line-height:1.25 !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease,transform .18s ease !important;
+  overflow:visible !important;
+}
+
+body > header .nav-dropdown-menu a::before,
+body > header .nav-dropdown-menu a::after{
+  display:none !important;
+  content:none !important;
+}
+
+body > header .nav-dropdown-menu a > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 19px !important;
+  width:19px !important;
+  height:auto !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:var(--posted-header-blue) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  text-align:center !important;
+  transform:none !important;
+}
+
+body > header .nav-dropdown-menu a:hover,
+body > header .nav-dropdown-menu a:focus-visible{
+  color:var(--posted-header-blue) !important;
+  background:var(--posted-header-blue-soft) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:translateX(2px) !important;
+}
+
+body > header .nav-dropdown-menu a:hover > i,
+body > header .nav-dropdown-menu a:focus-visible > i{
+  color:var(--posted-header-blue) !important;
+}
+
+/* Posted Jobs-style Login control, preserving the existing destination */
+body > header .auth-buttons a,
+body > header .auth-buttons a.login-auth{
+  min-height:40px !important;
+  height:auto !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  padding:0 14px !important;
+  border:0 !important;
+  border-radius:12px !important;
+  color:#ffffff !important;
+  background:linear-gradient(105deg,#16b8e9 0%,#2f83f4 48%,#7350f6 100%) !important;
+  box-shadow:0 6px 16px rgba(47,111,238,.23) !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+  font-size:.84rem !important;
+  font-weight:800 !important;
+  transform:none !important;
+  transition:filter .18s ease,transform .18s ease !important;
+}
+
+body > header .auth-buttons a:hover,
+body > header .auth-buttons a:focus-visible{
+  color:#ffffff !important;
+  border-color:transparent !important;
+  filter:saturate(1.08) brightness(1.03) !important;
+  box-shadow:0 6px 16px rgba(47,111,238,.23) !important;
+  transform:translateY(-1px) !important;
+}
+
+body > header .auth-buttons a i,
+body > header .auth-buttons a:hover i,
+body > header .auth-buttons a:focus-visible i{
+  color:#ffffff !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+/* Posted Jobs mobile hamburger */
+body > header .nav-toggle{
+  border:1px solid #b9def2 !important;
+  border-radius:10px !important;
+  color:var(--posted-header-icon) !important;
+  background:var(--posted-header-cyan-soft) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transition:color .18s ease,background .18s ease,border-color .18s ease,transform .18s ease !important;
+}
+
+body > header .nav-toggle:hover,
+body > header .nav-toggle:focus-visible{
+  border-color:#70c7ee !important;
+  color:var(--posted-header-blue) !important;
+  background:var(--posted-header-cyan-hover) !important;
+  transform:translateY(-1px) !important;
+}
+
+body > header .nav-toggle i{
+  color:currentColor !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+/* Posted Jobs mobile drawer */
+.mobile-panel{
+  border-top:0 !important;
+  border-bottom:1px solid var(--posted-header-border) !important;
+  color:var(--posted-header-navy) !important;
+  background:#ffffff !important;
+  box-shadow:0 18px 34px rgba(15,23,42,.14) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel .mnav{
+  gap:3px !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:11px !important;
+  min-height:auto !important;
+  padding:13px 12px !important;
+  border:0 !important;
+  border-bottom:1px solid #edf1f6 !important;
+  border-radius:9px !important;
+  color:var(--posted-header-navy) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  font-family:Inter,Arial,Helvetica,sans-serif !important;
+  font-size:.90rem !important;
+  font-weight:750 !important;
+  transform:none !important;
+  transition:color .18s ease,background .18s ease,transform .18s ease !important;
+}
+
+.mobile-panel .mnav a::before,
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::before,
+.mobile-panel .mnav-main-link::after,
+.mobile-panel .mnav-toggle::before,
+.mobile-panel .mnav-toggle::after{
+  display:none !important;
+  content:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:var(--posted-header-blue) !important;
+  background:var(--posted-header-blue-soft) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:translateX(2px) !important;
+}
+
+.mobile-panel .mnav-left{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:11px !important;
+  min-width:0 !important;
+}
+
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav-toggle i,
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  width:20px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:var(--posted-header-blue) !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  text-align:center !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav-row{
+  gap:3px !important;
+}
+
+.mobile-panel .mnav-toggle{
+  flex:0 0 48px !important;
+  width:48px !important;
+  justify-content:center !important;
+}
+
+.mobile-panel .mnav-submenu{
+  gap:3px !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  background:#f8fbff !important;
+}
+
+.mobile-panel .mnav-group.open .mnav-caret{
+  transform:rotate(180deg) !important;
+}
+
+/* Responsive font sizing keeps the latest page layout from overflowing */
+@media (min-width:1440px){
+  body > header nav > a,
+  body > header nav .nav-main-link,
+  body > header .nav-dropdown-trigger > .nav-main-link{
+    font-size:.94rem !important;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  body > header nav > a,
+  body > header nav .nav-main-link,
+  body > header .nav-dropdown-trigger > .nav-main-link{
+    gap:6px !important;
+    min-height:42px !important;
+    font-size:.78rem !important;
+  }
+
+  body > header nav > a > i,
+  body > header nav .nav-main-link > i,
+  body > header .nav-dropdown-trigger > .nav-main-link > i{
+    font-size:.88rem !important;
+  }
+
+  body > header .nav-dropdown-toggle{
+    width:23px !important;
+    min-width:23px !important;
+    height:42px !important;
+    flex-basis:23px !important;
+  }
+
+  body > header .auth-buttons a,
+  body > header .auth-buttons a.login-auth{
+    padding:0 10px !important;
+    font-size:.74rem !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  body > header nav > a,
+  body > header nav .nav-main-link,
+  body > header .nav-dropdown-trigger > .nav-main-link{
+    gap:4px !important;
+    min-height:36px !important;
+    font-size:.67rem !important;
+  }
+
+  body > header nav > a > i,
+  body > header nav .nav-main-link > i,
+  body > header .nav-dropdown-trigger > .nav-main-link > i{
+    font-size:.76rem !important;
+  }
+
+  body > header .nav-dropdown-toggle{
+    width:19px !important;
+    min-width:19px !important;
+    height:36px !important;
+    flex-basis:19px !important;
+  }
+
+  body > header .auth-buttons a,
+  body > header .auth-buttons a.login-auth{
+    padding:0 7px !important;
+    font-size:.64rem !important;
+  }
+}
+
+@media (max-width:768px){
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    font-size:.88rem !important;
+  }
+}
+
+@media (max-width:480px){
+  .mobile-panel .mnav a,
+  .mobile-panel .mnav-main-link,
+  .mobile-panel .mnav-toggle{
+    padding:11px 10px !important;
+    font-size:.84rem !important;
+  }
+}
+
 </style>
+
+<!-- ============================================================
+     FINAL HEADER LOGO CONTAINMENT PATCH
+     - Prevents the Job Space Link logo from overflowing outside
+       the header at all responsive breakpoints.
+     - Keeps navigation dropdowns visible because overflow is
+       clipped only on the logo container, not on the whole header.
+     - Keeps all existing links, menus, auth/session behavior,
+       JavaScript, animations, and responsive behavior unchanged.
+============================================================ -->
+<style id="jsl-final-header-logo-containment">
+  body > header{
+    overflow:visible !important;
+  }
+
+  body > header .logo,
+  header .logo{
+    height:100% !important;
+    max-height:100% !important;
+    min-height:0 !important;
+    min-width:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+    padding-top:5px !important;
+    padding-bottom:5px !important;
+  }
+
+  body > header .logo img,
+  header .logo img{
+    display:block !important;
+    width:auto !important;
+    height:auto !important;
+    max-height:calc(var(--header-h) - 12px) !important;
+    max-width:150px !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  /*
+    If the existing page uses a hover/zoom effect, the effect remains,
+    but the enlarged part is clipped by .logo so it never leaves header.
+  */
+  body > header .logo:hover img,
+  body > header .logo:focus-visible img,
+  header .logo:hover img,
+  header .logo:focus-visible img{
+    transform-origin:left center !important;
+  }
+
+  /* Large desktop */
+  @media (min-width:1440px){
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--header-h) - 12px) !important;
+      max-width:146px !important;
+    }
+  }
+
+  /* Desktop / small laptop */
+  @media (min-width:1024px) and (max-width:1439px){
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--header-h) - 14px) !important;
+      max-width:134px !important;
+    }
+  }
+
+  /* Tablet landscape / compact desktop */
+  @media (min-width:769px) and (max-width:1023px){
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--header-h) - 16px) !important;
+      max-width:120px !important;
+    }
+  }
+
+  /* Tablet / large mobile */
+  @media (min-width:481px) and (max-width:768px){
+    body > header .logo,
+    header .logo{
+      max-width:calc(100vw - 78px) !important;
+      padding-top:6px !important;
+      padding-bottom:6px !important;
+    }
+
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--header-h) - 18px) !important;
+      max-width:min(116px, calc(100vw - 82px)) !important;
+    }
+  }
+
+  /* Small mobile */
+  @media (max-width:480px){
+    body > header .logo,
+    header .logo{
+      max-width:calc(100vw - 70px) !important;
+      padding-top:6px !important;
+      padding-bottom:6px !important;
+    }
+
+    body > header .logo img,
+    header .logo img{
+      max-height:calc(var(--header-h) - 20px) !important;
+      max-width:min(102px, calc(100vw - 76px)) !important;
+    }
+  }
+</style>
+
+
+<!-- ============================================================
+     FINAL ABOUT DROPDOWN #0B5CFF UNDERLINE HOVER - 2026-08-10
+     Visual-only enhancement:
+       - Why Choose Us / How It Works get the same blue animated
+         underline style as the main navigation links.
+       - Uses the .nav-text element so older a::after rules cannot
+         cancel or recolor the underline.
+       - Existing dropdown JS, hrefs, Login, mobile menu and all
+         page functionality/behavior remain unchanged.
+============================================================ -->
+<style id="jsl-final-about-dropdown-blue-underline-2026-08-10">
+  :root{
+    --jsl-about-dropdown-blue:#0B5CFF;
+  }
+
+  /* ------------------------------------------------------------
+     DESKTOP ABOUT DROPDOWN
+  ------------------------------------------------------------ */
+  html body > header #aboutNavMenu.nav-dropdown-menu a{
+    text-decoration:none !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a > .nav-text{
+    position:relative !important;
+    display:inline-block !important;
+    color:inherit !important;
+    text-decoration:none !important;
+    padding-bottom:3px !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a > .nav-text::after{
+    content:"" !important;
+    display:block !important;
+    position:absolute !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:-1px !important;
+    width:100% !important;
+    height:2px !important;
+    border:0 !important;
+    border-radius:999px !important;
+    background:var(--jsl-about-dropdown-blue) !important;
+    box-shadow:none !important;
+    opacity:0 !important;
+    transform:scaleX(.35) !important;
+    transform-origin:center !important;
+    transition:opacity .18s ease, transform .18s ease !important;
+    pointer-events:none !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible{
+    color:var(--jsl-about-dropdown-blue) !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover > i,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible > i{
+    color:var(--jsl-about-dropdown-blue) !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover > .nav-text,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible > .nav-text{
+    color:var(--jsl-about-dropdown-blue) !important;
+    text-decoration:none !important;
+  }
+
+  html body > header #aboutNavMenu.nav-dropdown-menu a:hover > .nav-text::after,
+  html body > header #aboutNavMenu.nav-dropdown-menu a:focus-visible > .nav-text::after{
+    opacity:1 !important;
+    transform:scaleX(1) !important;
+  }
+
+  /*
+    Disable any older link-level underline pseudo-element so only
+    one clean underline appears directly beneath the dropdown text.
+  */
+  html body > header #aboutNavMenu.nav-dropdown-menu a::after{
+    display:none !important;
+    content:none !important;
+  }
+
+  /* ------------------------------------------------------------
+     MOBILE ABOUT SUBMENU
+  ------------------------------------------------------------ */
+  @media (max-width:768px){
+    .mobile-panel #mobileAboutMenu a{
+      text-decoration:none !important;
+    }
+
+    .mobile-panel #mobileAboutMenu a > .nav-text{
+      position:relative !important;
+      display:inline-block !important;
+      color:inherit !important;
+      text-decoration:none !important;
+      padding-bottom:3px !important;
+    }
+
+    .mobile-panel #mobileAboutMenu a > .nav-text::after{
+      content:"" !important;
+      display:block !important;
+      position:absolute !important;
+      left:0 !important;
+      right:0 !important;
+      bottom:-1px !important;
+      width:100% !important;
+      height:2px !important;
+      border-radius:999px !important;
+      background:var(--jsl-about-dropdown-blue) !important;
+      opacity:0 !important;
+      transform:scaleX(.35) !important;
+      transform-origin:center !important;
+      transition:opacity .18s ease, transform .18s ease !important;
+      pointer-events:none !important;
+    }
+
+    .mobile-panel #mobileAboutMenu a:hover,
+    .mobile-panel #mobileAboutMenu a:focus-visible,
+    .mobile-panel #mobileAboutMenu a:hover > .nav-text,
+    .mobile-panel #mobileAboutMenu a:focus-visible > .nav-text{
+      color:var(--jsl-about-dropdown-blue) !important;
+      text-decoration:none !important;
+    }
+
+    .mobile-panel #mobileAboutMenu a:hover > .nav-text::after,
+    .mobile-panel #mobileAboutMenu a:focus-visible > .nav-text::after{
+      opacity:1 !important;
+      transform:scaleX(1) !important;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -6196,5 +7010,22 @@ body > header .nav-dropdown-menu a:focus-visible::after{
       }, { passive:true });
     })();
   </script>
+
+  <!-- Same header-logo zoom effect used by postedhiring1.html. -->
+  <style id="jsl-postedhiring-logo-zoom-effect">
+  body > header .logo img,
+  html body > header .logo img,
+  header .logo img{
+    transform:scale(1) !important;
+    transform-origin:center center !important;
+    transition:transform .22s ease, filter .22s ease !important;
+  }
+
+  body > header .logo:hover img,
+  html body > header .logo:hover img,
+  header .logo:hover img{
+    transform:scale(1.06) !important;
+  }
+  </style>
 </body>
 </html>

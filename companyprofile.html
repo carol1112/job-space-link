@@ -1,0 +1,5996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Company Profile | Job Space Link</title>
+<link rel="icon" href="data:," />
+
+<!-- ICONS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+<!-- OPTIONAL GLOBAL CSS -->
+<link rel="stylesheet" href="jobspacelink.css" />
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{
+  --hdrH:78px;
+  --bgA:#0ea5e9;
+  --bgB:#1e1b4b;
+  --bgC:#020617;
+  --glass:rgba(255,255,255,0.08);
+  --glass2:rgba(255,255,255,0.12);
+  --line:rgba(255,255,255,0.14);
+  --card:rgba(255,255,255,0.94);
+  --ink:#07142e;
+  --muted:#64748b;
+  --neon1:#00c6ff;
+  --neon2:#7c3aed;
+  --ok:#22c55e;
+  --bad:#ef4444;
+  --warn:#f59e0b;
+  --softShadow:0 24px 60px rgba(2,6,23,0.28);
+  --softShadow2:0 14px 32px rgba(2,6,23,0.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins","Segoe UI",Arial,sans-serif;}
+html,body{width:100%;min-height:100%;overflow-x:hidden;}
+body{
+  min-height:100vh;
+  color:var(--ink);
+  padding-bottom:80px;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(14,165,233,.95), rgba(30,27,75,.76) 54%, rgba(2,6,23,1) 100%),
+    radial-gradient(circle at 82% 18%, rgba(124,58,237,.38), transparent 54%),
+    radial-gradient(circle at 18% 92%, rgba(34,211,238,.20), transparent 48%);
+}
+
+/* ============================================================
+   HEADER - MATCHES DASHBOARD STYLE
+============================================================ */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--hdrH);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:0 16px 0 8px;
+  background:rgba(15,23,42,.96);
+  border-bottom:1px solid rgba(59,130,246,.30);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,.22);
+  z-index:1500;
+}
+.logo{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  min-width:0;
+  margin-left:-4px;
+  text-decoration:none;
+}
+.logo img{
+  height:76px;
+  width:auto;
+  max-width:170px;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 0 8px rgba(0,198,255,.35));
+}
+.logo-fallback{
+  display:none;
+  align-items:center;
+  gap:10px;
+  color:#fff;
+  font-weight:900;
+  letter-spacing:.02em;
+  white-space:nowrap;
+}
+.logo-fallback i{color:#38bdf8;}
+header nav{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:34px;
+  margin-left:18px;
+  white-space:nowrap;
+}
+header nav a{
+  height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:.88rem;
+  font-weight:700;
+  line-height:1;
+  text-shadow:0 0 10px rgba(56,189,248,.08);
+  transition:color .18s ease, text-shadow .18s ease;
+}
+header nav a i{
+  color:#38bdf8;
+  font-size:1rem;
+  filter:drop-shadow(0 0 7px rgba(56,189,248,.62));
+}
+header nav a:hover,
+header nav a[aria-current="page"]{
+  color:#ffffff;
+  text-shadow:0 0 12px rgba(0,198,255,.55);
+}
+.header-actions{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  white-space:nowrap;
+}
+.header-round-btn,
+.login-btn{
+  width:46px;
+  height:46px;
+  min-width:46px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#ffffff;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.15);
+  background:linear-gradient(135deg, rgba(30,41,83,.92), rgba(37,55,115,.92));
+  box-shadow:0 0 16px rgba(56,189,248,.11), inset 0 0 0 1px rgba(255,255,255,.03);
+  cursor:pointer;
+  transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+.header-round-btn:hover,
+.login-btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(56,189,248,.48);
+  box-shadow:0 0 22px rgba(56,189,248,.22), inset 0 0 0 1px rgba(255,255,255,.05);
+  filter:brightness(1.05);
+}
+.header-round-btn i,
+.login-btn i{
+  font-size:1rem;
+  color:#e8f9ff;
+  filter:drop-shadow(0 0 7px rgba(56,189,248,.44));
+}
+.login-btn span{display:none;}
+
+/* Disabled header shortcut icons: paper plane + heart */
+.header-round-btn.disabled-header-action,
+.header-round-btn[disabled],
+.header-round-btn[aria-disabled="true"]{
+  opacity:.46 !important;
+  cursor:not-allowed !important;
+  pointer-events:none !important;
+  background:linear-gradient(135deg, rgba(71,85,105,.68), rgba(51,65,85,.68)) !important;
+  border-color:rgba(148,163,184,.20) !important;
+  box-shadow:none !important;
+  filter:grayscale(1) brightness(.88) !important;
+}
+.header-round-btn.disabled-header-action:hover,
+.header-round-btn[disabled]:hover,
+.header-round-btn[aria-disabled="true"]:hover{
+  transform:none !important;
+  border-color:rgba(148,163,184,.20) !important;
+  box-shadow:none !important;
+  filter:grayscale(1) brightness(.88) !important;
+}
+.header-round-btn.disabled-header-action i,
+.header-round-btn[disabled] i,
+.header-round-btn[aria-disabled="true"] i{
+  color:#cbd5e1 !important;
+  filter:none !important;
+}
+
+.account-pill{
+  position:relative;
+  display:none;
+}
+.account-pill.active{display:block;}
+.account-trigger{
+  width:48px;
+  height:48px;
+  min-width:48px;
+  padding:0;
+  border-radius:999px;
+  border:1px solid rgba(0,198,255,.35);
+  background:rgba(15,23,42,.82);
+  box-shadow:0 0 18px rgba(0,198,255,.20);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  overflow:hidden;
+  transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.account-trigger:hover{
+  transform:translateY(-1px);
+  border-color:rgba(0,234,255,.70);
+  box-shadow:0 0 24px rgba(0,198,255,.34);
+}
+.account-logo{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border-radius:999px;
+  overflow:hidden;
+  background:linear-gradient(135deg,rgba(0,198,255,.24),rgba(124,58,237,.24));
+  border:1px solid rgba(255,255,255,.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.account-logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+.account-logo i{
+  color:#dbeafe;
+  font-size:1rem;
+}
+.account-copy,
+.account-trigger > .fa-chevron-down{
+  display:none !important;
+}
+.account-menu{
+  position:absolute;
+  right:0;
+  top:calc(100% + 12px);
+  width:242px;
+  display:none;
+  flex-direction:column;
+  padding:10px;
+  gap:7px;
+  border-radius:16px;
+  background:rgba(15,23,42,.98);
+  border:1px solid rgba(59,130,246,.34);
+  box-shadow:0 20px 44px rgba(2,6,23,.42);
+  backdrop-filter:blur(14px);
+}
+.account-pill.open .account-menu{display:flex;}
+.account-menu a,
+.account-menu button{
+  width:100%;
+  min-height:40px;
+  border:0;
+  cursor:pointer;
+  text-decoration:none;
+  color:#e5e7eb;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:.84rem;
+  font-weight:800;
+  text-align:left;
+}
+.account-menu a i,
+.account-menu button i{
+  width:18px;
+  color:#38bdf8;
+  text-align:center;
+}
+.account-menu a:hover,
+.account-menu button:hover{
+  background:rgba(0,198,255,.13);
+  color:#fff;
+}
+.nav-toggle{
+  display:none;
+  width:44px;
+  height:44px;
+  min-width:44px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg, rgba(0,198,255,.22), rgba(139,92,246,.22));
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 0 14px rgba(0,198,255,.10);
+}
+.nav-toggle i{
+  color:#e0f2fe;
+  font-size:1.05rem;
+}
+.mobile-panel{
+  position:fixed;
+  top:var(--hdrH);
+  left:0;
+  right:0;
+  z-index:1400;
+  display:none;
+  background:rgba(15,23,42,.98);
+  border-top:1px solid rgba(59,130,246,.18);
+  border-bottom:1px solid rgba(59,130,246,.26);
+  box-shadow:0 12px 34px rgba(0,0,0,.28);
+  padding:12px;
+  backdrop-filter:blur(12px);
+}
+.mobile-panel.open{display:block;}
+.mobile-panel a,
+.mobile-panel button{
+  width:100%;
+  min-height:44px;
+  margin-bottom:8px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  background:rgba(255,255,255,.04);
+  color:#e5e7eb;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:0 14px;
+  font-weight:800;
+  cursor:pointer;
+}
+.mobile-panel a i,
+.mobile-panel button i{
+  color:#38bdf8;
+  filter:drop-shadow(0 0 7px rgba(56,189,248,.54));
+}
+
+
+/* ABOUT DROPDOWN - DASHBOARD STYLE */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  height:40px;
+  flex:0 0 auto;
+}
+.nav-dropdown-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  height:40px;
+}
+.nav-dropdown .nav-main-link{
+  height:40px;
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  color:#e5e7eb;
+  text-decoration:none;
+  font-size:.88rem;
+  font-weight:700;
+  line-height:1;
+}
+.nav-dropdown .nav-main-link i{
+  color:#38bdf8;
+  font-size:1rem;
+  filter:drop-shadow(0 0 7px rgba(56,189,248,.62));
+}
+.nav-dropdown-toggle{
+  width:24px;
+  height:24px;
+  margin-left:4px;
+  border:0;
+  border-radius:999px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#e0f2fe;
+  background:rgba(56,189,248,.14);
+  box-shadow:0 0 9px rgba(56,189,248,.12);
+  transition:transform .16s ease, background .16s ease, color .16s ease;
+}
+.nav-dropdown-toggle i{
+  font-size:.68rem;
+  color:#e0f2fe;
+  filter:none;
+  transition:transform .18s ease;
+}
+.nav-dropdown.open .nav-dropdown-toggle,
+.nav-dropdown-toggle:hover{
+  background:rgba(56,189,248,.24);
+  color:#fff;
+}
+.nav-dropdown.open .nav-dropdown-toggle i{
+  transform:rotate(180deg);
+}
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 12px);
+  left:50%;
+  transform:translateX(-50%);
+  width:210px;
+  display:none;
+  flex-direction:column;
+  gap:6px;
+  padding:14px;
+  border-radius:14px;
+  background:rgba(15,23,42,.98);
+  border:1px solid rgba(59,130,246,.36);
+  box-shadow:0 18px 44px rgba(2,6,23,.42);
+  backdrop-filter:blur(14px);
+  z-index:1600;
+}
+.nav-dropdown.open .nav-dropdown-menu{
+  display:flex;
+}
+.nav-dropdown-menu::before{
+  content:"";
+  position:absolute;
+  top:-7px;
+  left:50%;
+  width:14px;
+  height:14px;
+  transform:translateX(-50%) rotate(45deg);
+  background:rgba(15,23,42,.98);
+  border-left:1px solid rgba(59,130,246,.28);
+  border-top:1px solid rgba(59,130,246,.28);
+}
+.nav-dropdown-menu a{
+  min-height:38px;
+  border-radius:10px;
+  padding:0 10px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+  color:#e5e7eb;
+  background:transparent;
+  border:0;
+  text-decoration:none;
+  font-size:.82rem;
+  font-weight:800;
+}
+.nav-dropdown-menu a i{
+  width:18px;
+  color:#38bdf8;
+  text-align:center;
+  filter:drop-shadow(0 0 7px rgba(56,189,248,.50));
+}
+.nav-dropdown-menu a:hover{
+  background:rgba(0,198,255,.12);
+  color:#fff;
+  text-shadow:none;
+}
+
+.mobile-about-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:8px;
+}
+.mobile-about-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.mobile-about-row > a{
+  flex:1 1 auto;
+  margin-bottom:0;
+}
+.mobile-about-toggle{
+  width:48px !important;
+  min-width:48px !important;
+  padding:0 !important;
+  justify-content:center !important;
+  margin-bottom:0 !important;
+}
+.mobile-about-toggle .fa-chevron-down{
+  transition:transform .18s ease;
+}
+.mobile-about-group.open .mobile-about-toggle .fa-chevron-down{
+  transform:rotate(180deg);
+}
+.mobile-about-submenu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding-left:14px;
+}
+.mobile-about-group.open .mobile-about-submenu{
+  display:flex;
+}
+.mobile-about-submenu a{
+  margin-bottom:0;
+  background:rgba(255,255,255,.03);
+}
+
+@media (min-width: 1024px) and (max-width: 1439px){
+  .nav-dropdown .nav-main-link{font-size:.78rem;}
+  .nav-dropdown .nav-main-link i{font-size:.92rem;}
+  .nav-dropdown-toggle{width:21px;height:21px;margin-left:2px;}
+}
+@media (min-width: 769px) and (max-width: 1023px){
+  .nav-dropdown .nav-main-link{font-size:.68rem;gap:2px;}
+  .nav-dropdown .nav-main-link i{font-size:.78rem;}
+  .nav-dropdown-toggle{width:19px;height:19px;margin-left:1px;}
+  .nav-dropdown-toggle i{font-size:.58rem;}
+}
+
+/* Dashboard-style header sizing */
+@media (min-width: 1440px){
+  header{gap:18px;padding:0 18px 0 8px;}
+  .logo img{height:78px;max-width:178px;}
+  header nav{gap:42px;margin-left:22px;}
+}
+@media (min-width: 1024px) and (max-width: 1439px){
+  :root{--hdrH:76px;}
+  header{gap:10px;padding:0 12px 0 6px;}
+  .logo img{height:66px;max-width:150px;}
+  header nav{gap:23px;margin-left:12px;}
+  header nav a{font-size:.78rem;}
+  header nav a i{font-size:.92rem;}
+  .header-round-btn,.login-btn{width:42px;height:42px;min-width:42px;}
+  .account-trigger{width:44px;height:44px;min-width:44px;}
+  .account-logo{width:38px;height:38px;min-width:38px;}
+}
+@media (min-width: 769px) and (max-width: 1023px){
+  :root{--hdrH:74px;}
+  header{gap:8px;padding:0 9px 0 5px;}
+  .logo img{height:58px;max-width:132px;}
+  header nav{gap:14px;margin-left:7px;}
+  header nav a{font-size:.68rem;gap:2px;}
+  header nav a i{font-size:.78rem;}
+  .header-actions{gap:6px;}
+  .header-round-btn,.login-btn{width:38px;height:38px;min-width:38px;}
+  .account-trigger{width:40px;height:40px;min-width:40px;}
+  .account-logo{width:34px;height:34px;min-width:34px;}
+}
+@media (max-width:900px){
+  header nav,
+  .header-actions{display:none;}
+  .nav-toggle{display:flex;}
+}
+@media (max-width:560px){
+  :root{--hdrH:70px;}
+  header{padding:0 10px 0 8px;}
+  .logo img{height:52px;max-width:118px;}
+}
+
+/* ============================================================
+   LAYOUT
+============================================================ */
+.page{
+  width:min(1380px, calc(100% - 24px));
+  margin:calc(var(--hdrH) + 18px) auto 0;
+}
+.hero{
+  border-radius:28px;
+  padding:22px;
+  color:#fff;
+  background:
+    linear-gradient(135deg, rgba(15,23,42,.78), rgba(2,6,23,.62)),
+    radial-gradient(circle at top left, rgba(0,198,255,.20), transparent 44%),
+    radial-gradient(circle at bottom right, rgba(124,58,237,.20), transparent 42%);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:var(--softShadow);
+  backdrop-filter:blur(12px);
+  overflow:hidden;
+  position:relative;
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:auto -120px -160px auto;
+  width:360px;
+  height:360px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,198,255,.14), transparent 64%);
+  pointer-events:none;
+}
+.hero-grid{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 380px;
+  gap:18px;
+  align-items:stretch;
+}
+.hero-title{
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+}
+.hero-icon{
+  width:62px;
+  height:62px;
+  border-radius:20px;
+  background:linear-gradient(135deg, rgba(0,198,255,.28), rgba(124,58,237,.28));
+  border:1px solid rgba(255,255,255,.16);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#e0f2fe;
+  font-size:1.55rem;
+  flex:0 0 auto;
+}
+.hero h1{
+  font-size:clamp(1.65rem,3vw,2.6rem);
+  line-height:1.05;
+  margin-bottom:8px;
+  letter-spacing:-.02em;
+}
+.hero p{
+  color:#dbeafe;
+  max-width:850px;
+  line-height:1.55;
+  font-weight:650;
+}
+.hero-actions{
+  margin-top:18px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.hero-card{
+  min-height:100%;
+  border-radius:24px;
+  padding:18px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 20px 46px rgba(2,6,23,.24);
+}
+.hero-company{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+.hero-company-logo{
+  width:72px;
+  height:72px;
+  border-radius:22px;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+}
+.hero-company-logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+.hero-company-logo i{font-size:1.7rem;color:#bfdbfe;}
+.hero-company-text{
+  min-width:0;
+}
+.hero-company-text h2{
+  font-size:1.05rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.hero-company-text p{
+  margin-top:4px;
+  color:#cbd5e1;
+  font-size:.84rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.completion{
+  margin-top:18px;
+}
+.completion-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:9px;
+  color:#e0f2fe;
+  font-weight:900;
+  font-size:.84rem;
+}
+.completion-bar{
+  width:100%;
+  height:12px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,.10);
+}
+.completion-fill{
+  width:0%;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  transition:width .25s ease;
+}
+.hero-stats{
+  margin-top:16px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.stat-mini{
+  padding:12px 8px;
+  border-radius:16px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.10);
+  text-align:center;
+}
+.stat-mini strong{
+  display:block;
+  color:#fff;
+  font-size:1.05rem;
+}
+.stat-mini span{
+  display:block;
+  color:#bfdbfe;
+  font-size:.72rem;
+  margin-top:4px;
+  font-weight:700;
+}
+
+.main-grid{
+  display:grid;
+  grid-template-columns:330px minmax(0,1fr);
+  gap:16px;
+  margin-top:16px;
+  align-items:start;
+}
+.side-card,
+.form-card{
+  border-radius:24px;
+  background:var(--card);
+  border:1px solid rgba(15,23,42,.10);
+  box-shadow:var(--softShadow2);
+}
+.side-card{
+  position:sticky;
+  top:calc(var(--hdrH) + 14px);
+  padding:16px;
+}
+.form-card{
+  padding:18px;
+}
+.logo-box{
+  border-radius:22px;
+  padding:14px;
+  background:linear-gradient(180deg,#f8fbff,#eef4ff);
+  border:1px solid rgba(15,23,42,.09);
+}
+.logo-preview{
+  width:100%;
+  aspect-ratio:1.25/1;
+  border-radius:20px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#dbeafe,#f1f5f9);
+  border:1px dashed rgba(15,23,42,.20);
+}
+.logo-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+.logo-preview i{
+  font-size:3rem;
+  color:#0b5cff;
+  opacity:.85;
+}
+.logo-upload-row{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+.file-input{display:none;}
+.side-note{
+  margin-top:14px;
+  padding:12px;
+  border-radius:16px;
+  background:#f8fafc;
+  border:1px solid rgba(15,23,42,.08);
+  color:#475569;
+  font-size:.82rem;
+  line-height:1.45;
+  font-weight:700;
+}
+.side-list{
+  margin-top:14px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.side-list a,
+.side-list button{
+  min-height:44px;
+  border:0;
+  border-radius:14px;
+  background:#f8fafc;
+  color:#07142e;
+  border:1px solid rgba(15,23,42,.08);
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:0 13px;
+  font-weight:900;
+  cursor:pointer;
+}
+.side-list a:hover,
+.side-list button:hover{
+  background:#eef4ff;
+  color:#0b5cff;
+}
+.status-box{
+  margin-top:14px;
+  padding:12px;
+  border-radius:16px;
+  background:#f8fafc;
+  border:1px solid rgba(15,23,42,.08);
+}
+.status-box h3{
+  font-size:.92rem;
+  margin-bottom:10px;
+}
+.status-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  color:#475569;
+  font-size:.83rem;
+  font-weight:800;
+}
+.status-row + .status-row{margin-top:8px;}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:.76rem;
+  font-weight:950;
+  border:1px solid rgba(15,23,42,.10);
+  background:#fff;
+  color:#334155;
+}
+.pill.ok{
+  color:#166534;
+  background:rgba(34,197,94,.12);
+  border-color:rgba(34,197,94,.28);
+}
+.pill.warn{
+  color:#92400e;
+  background:rgba(245,158,11,.13);
+  border-color:rgba(245,158,11,.30);
+}
+
+.form-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(15,23,42,.08);
+}
+.form-head h2{
+  color:#07142e;
+  font-size:1.35rem;
+  margin-bottom:5px;
+}
+.form-head p{
+  color:#64748b;
+  font-weight:700;
+  line-height:1.45;
+  font-size:.9rem;
+}
+.form-actions-top{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.section-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:18px 0 10px;
+  color:#07142e;
+  font-size:1rem;
+  font-weight:1000;
+}
+.section-title:first-of-type{margin-top:4px;}
+.section-title i{color:#0b5cff;}
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:10px;
+}
+.field{
+  grid-column:span 6;
+  background:#fff;
+  border:1px solid rgba(15,23,42,.10);
+  border-radius:16px;
+  padding:11px 12px;
+  min-width:0;
+}
+.field.span-3{grid-column:span 3;}
+.field.span-4{grid-column:span 4;}
+.field.span-8{grid-column:span 8;}
+.field.span-12{grid-column:span 12;}
+.field:focus-within{
+  border-color:rgba(0,198,255,.55);
+  box-shadow:0 0 0 4px rgba(0,198,255,.10);
+}
+.field label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#334155;
+  font-size:.78rem;
+  font-weight:950;
+  margin-bottom:7px;
+}
+.field label i{color:#0b5cff;}
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  border:0;
+  outline:none;
+  background:transparent;
+  color:#0f172a;
+  font-size:.96rem;
+  font-weight:650;
+}
+.field textarea{
+  min-height:110px;
+  resize:vertical;
+  line-height:1.48;
+}
+.field input::placeholder,
+.field textarea::placeholder{color:#94a3b8;}
+.toggle-row{
+  grid-column:span 12;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:10px;
+}
+.toggle-card{
+  min-height:66px;
+  border-radius:16px;
+  background:#fff;
+  border:1px solid rgba(15,23,42,.10);
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.toggle-copy strong{
+  display:block;
+  color:#07142e;
+  font-size:.92rem;
+}
+.toggle-copy span{
+  display:block;
+  margin-top:3px;
+  color:#64748b;
+  font-size:.78rem;
+  font-weight:700;
+}
+.switch{
+  position:relative;
+  width:50px;
+  min-width:50px;
+  height:28px;
+  display:inline-flex;
+}
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+.slider{
+  position:absolute;
+  cursor:pointer;
+  inset:0;
+  background:#cbd5e1;
+  border-radius:999px;
+  transition:.2s;
+}
+.slider::before{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  left:3px;
+  top:3px;
+  background:#fff;
+  border-radius:50%;
+  transition:.2s;
+  box-shadow:0 2px 6px rgba(15,23,42,.24);
+}
+.switch input:checked + .slider{
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+}
+.switch input:checked + .slider::before{
+  transform:translateX(22px);
+}
+
+/* ============================================================
+   BUTTONS + MESSAGES
+============================================================ */
+.btn{
+  min-height:42px;
+  border:0;
+  border-radius:14px;
+  padding:0 15px;
+  cursor:pointer;
+  font-size:.86rem;
+  font-weight:950;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  text-decoration:none;
+  transition:transform .15s ease, filter .15s ease, box-shadow .15s ease;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.03);
+}
+.btn:disabled{
+  opacity:.56;
+  cursor:not-allowed;
+  transform:none;
+  filter:none;
+}
+.btn-primary{
+  color:#fff;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+  box-shadow:0 12px 24px rgba(0,198,255,.18);
+}
+.btn-soft{
+  color:#063a5e;
+  background:rgba(0,198,255,.12);
+  border:1px solid rgba(0,198,255,.22);
+}
+.btn-gray{
+  color:#0f172a;
+  background:#e2e8f0;
+}
+.btn-danger{
+  color:#fff;
+  background:linear-gradient(90deg,#ef4444,#f97316);
+}
+.btn-warn{
+  color:#fff;
+  background:linear-gradient(90deg,#f97316,#facc15);
+}
+.btn-block{width:100%;}
+.action-row{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px solid rgba(15,23,42,.08);
+}
+#statusMsg{
+  display:none;
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  font-size:.86rem;
+  font-weight:850;
+  line-height:1.4;
+  border:1px solid rgba(15,23,42,.10);
+}
+#statusMsg.success{
+  display:block;
+  background:rgba(34,197,94,.12);
+  color:#14532d;
+  border-color:rgba(34,197,94,.25);
+}
+#statusMsg.error{
+  display:block;
+  background:rgba(239,68,68,.12);
+  color:#7f1d1d;
+  border-color:rgba(239,68,68,.25);
+}
+#statusMsg.info{
+  display:block;
+  background:rgba(0,198,255,.11);
+  color:#075985;
+  border-color:rgba(0,198,255,.25);
+}
+
+/* ============================================================
+   PREVIEW MODAL
+============================================================ */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:30000;
+  background:rgba(2,6,23,.78);
+  backdrop-filter:blur(8px);
+}
+.modal-backdrop.open{display:flex;}
+.modal-card{
+  width:min(960px,100%);
+  max-height:min(92vh,900px);
+  overflow:auto;
+  border-radius:26px;
+  background:#fff;
+  box-shadow:0 30px 80px rgba(2,6,23,.48);
+}
+.modal-top{
+  min-height:180px;
+  padding:22px;
+  color:#fff;
+  background:
+    linear-gradient(135deg, rgba(2,6,23,.88), rgba(15,23,42,.80)),
+    radial-gradient(circle at top left, rgba(0,198,255,.25), transparent 48%),
+    radial-gradient(circle at bottom right, rgba(124,58,237,.26), transparent 48%);
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px;
+}
+.modal-company{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  min-width:0;
+}
+.modal-logo{
+  width:96px;
+  height:96px;
+  border-radius:26px;
+  overflow:hidden;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+}
+.modal-logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+.modal-logo i{font-size:2.2rem;color:#bfdbfe;}
+.modal-title{
+  min-width:0;
+}
+.modal-title h2{
+  font-size:1.8rem;
+  line-height:1.1;
+  overflow-wrap:anywhere;
+}
+.modal-title p{
+  margin-top:8px;
+  color:#dbeafe;
+  font-weight:750;
+}
+.modal-close{
+  width:44px;
+  height:44px;
+  border:0;
+  border-radius:14px;
+  background:rgba(239,68,68,.18);
+  border:1px solid rgba(239,68,68,.35);
+  color:#fecaca;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+.modal-body{
+  padding:20px;
+}
+.preview-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:16px;
+}
+.preview-item{
+  padding:12px;
+  border-radius:16px;
+  background:#f8fafc;
+  border:1px solid rgba(15,23,42,.08);
+}
+.preview-item span{
+  display:block;
+  color:#64748b;
+  font-size:.76rem;
+  font-weight:900;
+  margin-bottom:5px;
+}
+.preview-item strong{
+  color:#07142e;
+  font-size:.92rem;
+  overflow-wrap:anywhere;
+}
+.preview-section{
+  padding:14px;
+  border-radius:18px;
+  background:#fff;
+  border:1px solid rgba(15,23,42,.08);
+  margin-bottom:12px;
+}
+.preview-section h3{
+  font-size:1rem;
+  color:#07142e;
+  margin-bottom:8px;
+}
+.preview-section p{
+  color:#475569;
+  font-weight:700;
+  line-height:1.55;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width:1080px){
+  .hero-grid,
+  .main-grid{grid-template-columns:1fr;}
+  .side-card{position:relative;top:auto;}
+  .hero-card{max-width:none;}
+}
+@media (max-width:900px){
+  .field,
+  .field.span-3,
+  .field.span-4,
+  .field.span-8{grid-column:span 12;}
+  .toggle-row{grid-template-columns:1fr;}
+  .form-head{flex-direction:column;}
+  .form-actions-top{justify-content:flex-start;}
+  .preview-grid{grid-template-columns:1fr;}
+}
+@media (max-width:560px){
+  :root{--hdrH:70px;}
+  header{padding:0 10px 0 8px;}
+  .logo img{height:52px;}
+  .page{width:calc(100% - 16px);margin-top:calc(var(--hdrH) + 10px);}
+  .hero,
+  .form-card,
+  .side-card{border-radius:20px;padding:14px;}
+  .hero-title{gap:12px;}
+  .hero-icon{width:50px;height:50px;border-radius:16px;}
+  .hero-stats{grid-template-columns:1fr;}
+  .action-row{justify-content:stretch;}
+  .action-row .btn{width:100%;}
+  .logo-upload-row{flex-direction:column;}
+  .modal-top{flex-direction:column;align-items:flex-start;}
+  .modal-company{flex-direction:column;align-items:flex-start;}
+}
+
+/* ============================================================
+   HEADER LOGO SIZE / OVERFLOW FIX
+   Keeps JOBSPACELINK.png contained inside the fixed header.
+============================================================ */
+header .logo{
+  height:100% !important;
+  width:clamp(112px, 11.5vw, 150px) !important;
+  max-width:150px !important;
+  flex:0 0 clamp(112px, 11.5vw, 150px) !important;
+  overflow:hidden !important;
+  margin-left:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+}
+header .logo img{
+  width:100% !important;
+  max-width:100% !important;
+  height:auto !important;
+  max-height:calc(var(--hdrH) - 24px) !important;
+  object-fit:contain !important;
+  object-position:left center !important;
+}
+header .logo-fallback{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size:.82rem;
+}
+@media (min-width:1440px){
+  header .logo{
+    width:158px !important;
+    max-width:158px !important;
+    flex-basis:158px !important;
+  }
+  header .logo img{
+    max-height:54px !important;
+  }
+}
+@media (min-width:1024px) and (max-width:1439px){
+  header .logo{
+    width:138px !important;
+    max-width:138px !important;
+    flex-basis:138px !important;
+  }
+  header .logo img{
+    max-height:48px !important;
+  }
+}
+@media (min-width:769px) and (max-width:1023px){
+  header .logo{
+    width:118px !important;
+    max-width:118px !important;
+    flex-basis:118px !important;
+  }
+  header .logo img{
+    max-height:42px !important;
+  }
+}
+@media (max-width:560px){
+  header .logo{
+    width:104px !important;
+    max-width:104px !important;
+    flex-basis:104px !important;
+  }
+  header .logo img{
+    max-height:38px !important;
+  }
+}
+
+
+
+/* ============================================================
+   GENERATED PDF FILE VIEWER - DASHBOARD FORMAT
+   Matches the applicant document viewer layout:
+   left content panel + PDF canvas + bottom controls.
+============================================================ */
+.pdf-viewer-card{
+  width:min(1380px, calc(100vw - 36px));
+  height:min(88vh, 860px);
+  max-height:88vh;
+  border-radius:18px;
+  overflow:hidden;
+  background:#001021;
+  border:1px solid rgba(0,198,255,.45);
+  box-shadow:0 30px 90px rgba(0,0,0,.58), 0 0 40px rgba(0,198,255,.10);
+  display:flex;
+  flex-direction:column;
+  color:#e5f7ff;
+}
+.pdf-viewer-header{
+  min-height:56px;
+  padding:10px 14px;
+  background:linear-gradient(180deg,#020b18,#06162a);
+  border-bottom:1px solid rgba(0,198,255,.28);
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:12px;
+}
+.pdf-viewer-title{
+  grid-column:2;
+  text-align:center;
+  font-weight:950;
+  color:#f8fbff;
+  font-size:.92rem;
+}
+.pdf-viewer-actions{
+  grid-column:3;
+  justify-self:end;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.pdf-viewer-btn{
+  min-height:34px;
+  border:0;
+  border-radius:11px;
+  padding:0 12px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  color:#dff7ff;
+  background:linear-gradient(135deg, rgba(0,198,255,.30), rgba(37,99,235,.34));
+  border:1px solid rgba(0,198,255,.32);
+  font-size:.76rem;
+  font-weight:900;
+  text-decoration:none;
+  box-shadow:0 8px 16px rgba(0,0,0,.22);
+  transition:transform .14s ease, filter .14s ease;
+}
+.pdf-viewer-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.pdf-viewer-btn:disabled{
+  opacity:.50;
+  cursor:not-allowed;
+  filter:grayscale(.45);
+  transform:none;
+}
+.pdf-viewer-btn.close{
+  background:linear-gradient(135deg, rgba(190,24,93,.82), rgba(127,29,29,.88));
+  border-color:rgba(248,113,113,.36);
+  color:#ffe4e6;
+}
+.pdf-viewer-btn.green{
+  background:linear-gradient(135deg, rgba(22,163,74,.76), rgba(21,128,61,.82));
+  border-color:rgba(134,239,172,.32);
+  color:#dcfce7;
+}
+.pdf-viewer-btn.gray{
+  background:linear-gradient(135deg, rgba(30,41,59,.88), rgba(15,23,42,.88));
+  border-color:rgba(148,163,184,.24);
+}
+.pdf-viewer-body{
+  min-height:0;
+  flex:1 1 auto;
+  display:grid;
+  grid-template-columns:252px minmax(0,1fr);
+  background:#010a16;
+}
+.pdf-viewer-card.content-hidden .pdf-viewer-body{
+  grid-template-columns:0 minmax(0,1fr);
+}
+.pdf-viewer-side{
+  min-width:0;
+  border-right:1px solid rgba(0,198,255,.22);
+  background:#000815;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  transition:width .18s ease, opacity .18s ease;
+}
+.pdf-viewer-card.content-hidden .pdf-viewer-side{
+  opacity:0;
+  pointer-events:none;
+}
+.pdf-side-company{
+  min-height:116px;
+  padding:18px 14px 12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-bottom:1px solid rgba(0,198,255,.18);
+}
+.pdf-side-logo{
+  width:76px;
+  height:76px;
+  min-width:76px;
+  border-radius:16px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#07142e,#0f172a);
+  border:1px solid rgba(0,198,255,.45);
+  box-shadow:0 0 18px rgba(0,198,255,.20);
+}
+.pdf-side-logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:#ffffff;
+  display:none;
+}
+.pdf-side-logo i{
+  font-size:1.7rem;
+  color:#c7eaff;
+}
+.pdf-side-copy{
+  min-width:0;
+}
+.pdf-side-copy strong{
+  display:block;
+  color:#f8fbff;
+  font-size:.92rem;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.pdf-side-copy span{
+  display:block;
+  margin-top:8px;
+  color:#dbeafe;
+  font-size:.78rem;
+  font-weight:750;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.pdf-side-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:12px 12px 10px;
+  border-bottom:1px solid rgba(0,198,255,.16);
+}
+.pdf-side-tab{
+  min-height:32px;
+  border:0;
+  border-radius:12px;
+  color:#dbeafe;
+  font-weight:950;
+  font-size:.74rem;
+  background:rgba(15,23,42,.70);
+  border:1px solid rgba(59,130,246,.22);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+.pdf-side-tab.active{
+  color:#fff;
+  background:linear-gradient(135deg, rgba(0,198,255,.62), rgba(14,116,144,.70));
+  border-color:rgba(0,198,255,.70);
+  box-shadow:0 0 18px rgba(0,198,255,.20);
+}
+.pdf-side-content{
+  padding:12px;
+  overflow:auto;
+}
+.pdf-file-card{
+  width:132px;
+  min-height:100px;
+  border-radius:14px;
+  border:1px solid rgba(0,198,255,.70);
+  background:rgba(5,17,34,.98);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04) inset, 0 0 18px rgba(0,198,255,.16);
+  color:#e6f7ff;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:10px 8px;
+  text-align:center;
+}
+.pdf-file-card:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+}
+.pdf-file-card i{
+  font-size:2.05rem;
+  color:#dbeafe;
+}
+.pdf-file-card span{
+  font-size:.72rem;
+  font-weight:850;
+  line-height:1.18;
+}
+.pdf-file-path{
+  margin-top:12px;
+  padding:10px;
+  border-radius:12px;
+  background:rgba(15,23,42,.76);
+  border:1px solid rgba(0,198,255,.18);
+  color:#b6d9f5;
+  font-size:.72rem;
+  font-weight:750;
+  line-height:1.36;
+  overflow-wrap:anywhere;
+}
+.pdf-viewer-main{
+  min-width:0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  background:#001120;
+}
+.pdf-stage{
+  flex:1 1 auto;
+  min-height:0;
+  padding:8px;
+  background:#001120;
+}
+.pdf-stage-inner{
+  width:100%;
+  height:100%;
+  overflow:auto;
+  border-radius:12px;
+  background:#001a2f;
+  border:1px solid rgba(0,198,255,.22);
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+}
+.pdf-frame-scale{
+  min-width:100%;
+  min-height:100%;
+  transform-origin:top center;
+}
+.pdf-frame-scale iframe{
+  width:100%;
+  height:100%;
+  min-height:680px;
+  border:0;
+  display:block;
+  background:#ffffff;
+}
+.pdf-viewer-controls{
+  min-height:54px;
+  padding:8px 12px;
+  border-top:1px solid rgba(0,198,255,.22);
+  background:#000815;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:10px;
+}
+.pdf-control-group{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pdf-control-group.center{
+  justify-self:center;
+}
+.pdf-zoom-pill{
+  min-height:34px;
+  min-width:48px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:11px;
+  background:rgba(15,23,42,.82);
+  border:1px solid rgba(99,102,241,.34);
+  color:#fff;
+  font-size:.72rem;
+  font-weight:950;
+}
+.pdf-open-tab{
+  min-height:34px;
+  border-radius:11px;
+  padding:0 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  color:#e0f2fe;
+  text-decoration:none;
+  font-weight:900;
+  font-size:.76rem;
+  background:linear-gradient(135deg, rgba(0,198,255,.30), rgba(37,99,235,.34));
+  border:1px solid rgba(0,198,255,.32);
+}
+@media (max-width:900px){
+  .pdf-viewer-card{
+    width:calc(100vw - 18px);
+    height:calc(100vh - 28px);
+    max-height:calc(100vh - 28px);
+  }
+  .pdf-viewer-header{
+    grid-template-columns:1fr;
+  }
+  .pdf-viewer-title,
+  .pdf-viewer-actions{
+    grid-column:1;
+    justify-self:center;
+  }
+  .pdf-viewer-body{
+    grid-template-columns:1fr;
+  }
+  .pdf-viewer-side{
+    display:none;
+  }
+  .pdf-viewer-controls{
+    grid-template-columns:1fr;
+  }
+  .pdf-control-group,
+  .pdf-control-group.center{
+    justify-self:center;
+  }
+}
+
+/* ============================================================
+   CLICK-TO-CLOSE SAVE / UPDATE SUCCESS POPUP
+============================================================ */
+.save-popup-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:40000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(2,6,23,.72);
+  backdrop-filter:blur(8px);
+}
+.save-popup-backdrop.open{
+  display:flex;
+}
+.save-popup-card{
+  width:min(440px,100%);
+  border-radius:24px;
+  background:#ffffff;
+  color:#07142e;
+  border:1px solid rgba(15,23,42,.10);
+  box-shadow:0 30px 90px rgba(2,6,23,.42);
+  padding:22px;
+  text-align:center;
+  position:relative;
+  animation:savePopIn .18s ease-out;
+}
+@keyframes savePopIn{
+  from{opacity:0;transform:translateY(10px) scale(.98);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+.save-popup-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:36px;
+  height:36px;
+  border:0;
+  border-radius:12px;
+  cursor:pointer;
+  color:#475569;
+  background:#f1f5f9;
+}
+.save-popup-icon{
+  width:70px;
+  height:70px;
+  margin:8px auto 14px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#14532d;
+  background:rgba(34,197,94,.14);
+  border:1px solid rgba(34,197,94,.25);
+  font-size:1.75rem;
+}
+.save-popup-card h3{
+  font-size:1.22rem;
+  margin-bottom:8px;
+}
+.save-popup-card p{
+  color:#334155;
+  font-weight:850;
+  line-height:1.45;
+  margin-bottom:16px;
+}
+.save-popup-ok{
+  min-height:42px;
+  min-width:132px;
+  border:0;
+  border-radius:14px;
+  cursor:pointer;
+  color:#fff;
+  font-weight:950;
+  background:linear-gradient(90deg,#00c6ff,#7c3aed);
+}
+
+
+
+/* ============================================================
+   LOGGED-IN ACCOUNT DROPDOWN - MARKED-UP DISPLAY
+   Order: Company Profile, Subscribe, Post Jobs, Log out
+============================================================ */
+.account-menu{
+  width:322px !important;
+  padding:14px !important;
+  gap:10px !important;
+  border-radius:22px !important;
+  background:linear-gradient(180deg, rgba(15,23,42,.99), rgba(2,6,23,.98)) !important;
+  border:1px solid rgba(0,198,255,.36) !important;
+  box-shadow:0 24px 58px rgba(2,6,23,.50), 0 0 0 1px rgba(255,255,255,.04) inset !important;
+}
+.account-menu-profile-card{
+  width:100%;
+  min-height:88px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:12px;
+  border-radius:18px;
+  background:rgba(3,18,40,.82);
+  border:1px solid rgba(0,198,255,.30);
+  box-shadow:0 0 20px rgba(0,198,255,.10) inset;
+}
+.account-menu-logo{
+  width:58px;
+  height:58px;
+  min-width:58px;
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.16);
+}
+.account-menu-logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:none;
+  background:#ffffff;
+}
+.account-menu-logo i{
+  color:#dbeafe;
+  font-size:1.2rem;
+}
+.account-menu-copy{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+}
+.account-menu-kicker{
+  color:#7dd3fc;
+  font-size:.70rem;
+  font-weight:900;
+  letter-spacing:.08em;
+  line-height:1;
+}
+.account-menu-copy strong{
+  color:#ffffff;
+  font-size:.86rem;
+  font-weight:950;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:210px;
+}
+.account-menu-copy > span:not(.account-menu-kicker){
+  color:#dbeafe;
+  font-size:.74rem;
+  font-weight:750;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:210px;
+}
+.account-menu a,
+.account-menu button{
+  min-height:43px !important;
+  border-radius:13px !important;
+  background:rgba(2,6,23,.58) !important;
+  border:1px solid rgba(0,198,255,.22) !important;
+  color:#f8fbff !important;
+  font-size:.83rem !important;
+  font-weight:950 !important;
+  box-shadow:0 8px 18px rgba(2,6,23,.14);
+}
+.account-menu a i,
+.account-menu button i{
+  color:#38bdf8 !important;
+  filter:drop-shadow(0 0 7px rgba(56,189,248,.45));
+}
+.account-menu a:hover,
+.account-menu button:hover{
+  background:rgba(0,198,255,.14) !important;
+  border-color:rgba(0,198,255,.42) !important;
+}
+.account-menu button#accountLogoutBtn{
+  margin-top:2px;
+  background:linear-gradient(135deg, #64748b, #475569) !important;
+  border-color:rgba(226,232,240,.25) !important;
+}
+.account-menu button#accountLogoutBtn i{
+  color:#ffffff !important;
+}
+@media (max-width:560px){
+  .account-menu{
+    width:min(322px, calc(100vw - 24px)) !important;
+    right:-4px !important;
+  }
+}
+
+
+
+/* ============================================================
+   ENHANCED COMPANY LOGO DISPLAY + GRAY LOGOUT BUTTONS
+   - Enlarges and centers the company logo in the logged-in account card.
+   - Removes the white logo background/letterbox effect.
+   - Makes the bottom page Log Out button gray to match the marked display.
+============================================================ */
+.account-menu-profile-card{
+  min-height:104px !important;
+  gap:16px !important;
+  padding:14px !important;
+  align-items:center !important;
+}
+.account-menu-logo{
+  width:72px !important;
+  height:72px !important;
+  min-width:72px !important;
+  border-radius:16px !important;
+  padding:4px !important;
+  background:linear-gradient(135deg,#020617,#111827) !important;
+  border:1px solid rgba(0,198,255,.48) !important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06) inset, 0 0 22px rgba(0,198,255,.20) !important;
+  overflow:hidden !important;
+}
+.account-menu-logo img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  background:transparent !important;
+  border-radius:12px !important;
+  display:none;
+}
+.account-menu-logo i{
+  font-size:1.45rem !important;
+}
+.account-menu-copy strong{
+  font-size:.92rem !important;
+  max-width:205px !important;
+}
+.account-menu-copy > span:not(.account-menu-kicker){
+  font-size:.78rem !important;
+  max-width:205px !important;
+}
+.account-logo{
+  background:linear-gradient(135deg,#020617,#111827) !important;
+  border-color:rgba(0,198,255,.48) !important;
+  box-shadow:0 0 16px rgba(0,198,255,.20) !important;
+}
+.account-logo img{
+  object-fit:contain !important;
+  object-position:center center !important;
+  background:transparent !important;
+  padding:2px !important;
+}
+#logoutBtn.btn-danger,
+.action-row #logoutBtn{
+  background:linear-gradient(135deg,#64748b,#475569) !important;
+  border:1px solid rgba(226,232,240,.28) !important;
+  color:#ffffff !important;
+  box-shadow:0 10px 20px rgba(71,85,105,.24) !important;
+}
+#logoutBtn.btn-danger:hover,
+.action-row #logoutBtn:hover{
+  background:linear-gradient(135deg,#758397,#536173) !important;
+  box-shadow:0 12px 24px rgba(71,85,105,.30) !important;
+}
+.side-list #sideLogoutBtn{
+  background:linear-gradient(135deg,#f1f5f9,#e2e8f0) !important;
+  color:#334155 !important;
+  border-color:rgba(100,116,139,.22) !important;
+}
+.side-list #sideLogoutBtn:hover{
+  background:linear-gradient(135deg,#e2e8f0,#cbd5e1) !important;
+  color:#0f172a !important;
+}
+@media (max-width:560px){
+  .account-menu-logo{
+    width:64px !important;
+    height:64px !important;
+    min-width:64px !important;
+  }
+  .account-menu-profile-card{
+    min-height:96px !important;
+  }
+}
+/* ============================================================
+   REMOVED MARKED QUICK ACTIONS
+   - Left side Post Jobs / Job Hiring / Dashboard / Log Out quick buttons removed.
+   - Bottom Job Hiring and Post Jobs buttons removed.
+============================================================ */
+.action-row{
+  gap:10px !important;
+}
+
+
+/* ============================================================
+   HERO MARKUP CLEANUP
+   Removes the marked Profile Completion / statistics display area
+   and keeps the right hero account card compact.
+============================================================ */
+.hero-grid{
+  align-items:start !important;
+}
+.hero-card{
+  min-height:0 !important;
+  align-self:start !important;
+}
+.hero-card .completion,
+.hero-card .hero-stats{
+  display:none !important;
+}
+@media (max-width:1080px){
+  .hero-card{
+    width:100%;
+  }
+}
+
+
+/* ============================================================
+   FINAL CHOOSE-PORTAL LIGHT HEADER + BACKGROUND PATCH
+   Applied to Company Profile only. Preserves all existing HTML,
+   Supabase logic, IDs, dropdowns, account/menu behavior, uploads,
+   preview/PDF behavior, and form submit handlers.
+============================================================ */
+:root{
+  --hdrH:78px;
+  --header-h:78px;
+  --bank-white:#ffffff;
+  --bank-soft:#f5f5f5;
+  --bank-soft-2:#f7f7f7;
+  --bank-line:#e6e8ec;
+  --bank-navy:#012169;
+  --bank-text:#1f2937;
+  --bank-muted:#4b5563;
+  --bank-link:#0057b8;
+  --bank-icon:#003a70;
+}
+
+*,
+*::before,
+*::after{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+html,
+body{
+  background:var(--bank-white) !important;
+  color:var(--bank-text) !important;
+}
+
+body{
+  background:var(--bank-white) !important;
+}
+
+body::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Restore Font Awesome after global font styling */
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far,
+.fa-brands,
+.fab,
+i[class^="fa-"],
+i[class*=" fa-"]{
+  font-family:"Font Awesome 6 Free" !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  line-height:1 !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa::before,
+.fas::before,
+.fa-solid::before,
+i[class^="fa-"]::before,
+i[class*=" fa-"]::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  font-style:normal !important;
+  font-variant:normal !important;
+  text-rendering:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+  -moz-osx-font-smoothing:grayscale !important;
+}
+
+.fa-solid,
+.fas,
+i.fa-solid,
+i.fas{font-weight:900 !important;}
+
+.fa-regular,
+.far,
+i.fa-regular,
+i.far,
+.fa-regular::before,
+.far::before,
+i.fa-regular::before,
+i.far::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:400 !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab,
+.fa-brands::before,
+.fab::before,
+i.fa-brands::before,
+i.fab::before{
+  font-family:"Font Awesome 6 Brands" !important;
+  font-weight:400 !important;
+}
+
+/* Header: Choose Portal light/white reference style */
+header{
+  height:var(--hdrH) !important;
+  min-height:var(--hdrH) !important;
+  background:var(--bank-white) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  padding:0 16px 0 8px !important;
+  gap:12px !important;
+  z-index:1500 !important;
+}
+
+.logo,
+header .logo{
+  margin-left:-4px !important;
+  min-width:140px !important;
+}
+
+.logo img,
+header .logo img{
+  height:80px !important;
+  max-width:180px !important;
+  filter:none !important;
+  object-fit:contain !important;
+}
+
+.logo-fallback{
+  color:var(--bank-navy) !important;
+  font-weight:700 !important;
+}
+
+.logo-fallback i{color:var(--bank-icon) !important;}
+
+header nav{
+  display:flex !important;
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:18px !important;
+  margin-left:7px !important;
+  white-space:nowrap !important;
+}
+
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown .nav-main-link{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:36px !important;
+  height:36px !important;
+  padding:0 8px !important;
+  gap:0 !important;
+  color:var(--bank-navy) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  font-size:0.84rem !important;
+  font-weight:500 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+  transform:none !important;
+  transition:color .2s ease, text-decoration-color .2s ease !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin:0 7px 0 0 !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  color:#0ea5e9 !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.26) !important;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.82), 0 0 12px rgba(14,165,233,0.30) !important;
+  text-shadow:0 0 10px rgba(14,165,233,0.46) !important;
+  filter:none !important;
+  opacity:1 !important;
+  transform:none !important;
+}
+
+header nav > a > i::before,
+header nav .nav-main-link > i::before,
+.nav-dropdown-menu a > i::before{
+  display:block !important;
+  color:inherit !important;
+  font-size:1rem !important;
+  line-height:1 !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown{
+  height:36px !important;
+  align-items:center !important;
+}
+
+.nav-dropdown-trigger{
+  height:36px !important;
+  gap:1px !important;
+  align-items:center !important;
+}
+
+.nav-dropdown-toggle{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  width:30px !important;
+  min-width:30px !important;
+  height:30px !important;
+  margin-left:2px !important;
+  border-radius:8px !important;
+  border:1px solid rgba(14,165,233,0.18) !important;
+  background:rgba(14,165,233,0.06) !important;
+  color:var(--bank-navy) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-toggle i,
+.nav-dropdown-toggle i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+  color:inherit !important;
+  font-size:.78rem !important;
+  line-height:1 !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown.open .nav-dropdown-toggle,
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  color:#000000 !important;
+  background:rgba(0,0,0,0.045) !important;
+  border-color:rgba(0,0,0,0.12) !important;
+  outline:none !important;
+}
+
+.nav-dropdown-menu{
+  top:calc(100% + 12px) !important;
+  left:0 !important;
+  transform:none !important;
+  min-width:220px !important;
+  width:auto !important;
+  padding:10px 0 !important;
+  gap:0 !important;
+  border-radius:14px !important;
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  z-index:1600 !important;
+}
+
+.nav-dropdown-menu::before{
+  display:none !important;
+  content:none !important;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{display:flex !important;}
+
+.nav-dropdown-menu a{
+  min-height:42px !important;
+  height:auto !important;
+  padding:10px 14px !important;
+  gap:0 !important;
+  justify-content:flex-start !important;
+  color:var(--bank-navy) !important;
+  background:var(--bank-white) !important;
+  border:0 !important;
+  font-size:.82rem !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.nav-dropdown-menu a > i{
+  width:24px !important;
+  min-width:24px !important;
+  height:24px !important;
+  margin-right:10px !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+/* Header action buttons: keep working IDs and dropdown behavior */
+.header-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  white-space:nowrap !important;
+}
+
+.header-round-btn{
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  border-radius:11px !important;
+  color:#ffffff !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  border:1px solid rgba(1,33,105,0.14) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.10) !important;
+}
+
+.header-round-btn i,
+.header-round-btn i::before{
+  color:var(--bank-icon) !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
+
+.header-round-btn.disabled-header-action,
+.header-round-btn[disabled],
+.header-round-btn[aria-disabled="true"]{
+  opacity:.48 !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+.login-btn,
+#headerLoginBtn{
+  width:auto !important;
+  min-width:76px !important;
+  height:36px !important;
+  min-height:36px !important;
+  padding:0 13px !important;
+  border-radius:10px !important;
+  gap:7px !important;
+  color:#ffffff !important;
+  text-decoration:none !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.92), rgba(139,92,246,0.92)) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.16) !important;
+  font-size:.82rem !important;
+  font-weight:700 !important;
+}
+
+.login-btn span,
+#headerLoginBtn span{
+  display:inline !important;
+  color:#ffffff !important;
+  font-weight:700 !important;
+}
+
+.login-btn i,
+.login-btn i::before,
+#headerLoginBtn i,
+#headerLoginBtn i::before{
+  color:#ffffff !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
+
+.login-btn:hover,
+.login-btn:focus-visible,
+#headerLoginBtn:hover,
+#headerLoginBtn:focus-visible{
+  transform:translateY(-2px) !important;
+  border-color:rgba(0,198,255,0.35) !important;
+  box-shadow:0 0 20px rgba(0,198,255,0.22) !important;
+  outline:none !important;
+}
+
+.account-trigger{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 10px 24px rgba(1,33,105,0.08) !important;
+}
+
+.account-logo{
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.account-logo i,
+.account-logo i::before{color:var(--bank-icon) !important;}
+
+.account-menu{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 14px 36px rgba(1,33,105,0.14) !important;
+  color:var(--bank-text) !important;
+}
+
+.account-menu-profile-card{
+  background:var(--bank-soft) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.account-menu-logo{
+  background:var(--bank-white) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:none !important;
+}
+
+.account-menu-logo i,
+.account-menu-logo i::before{color:var(--bank-icon) !important;}
+.account-menu-kicker{color:var(--bank-link) !important;}
+.account-menu-copy strong{color:var(--bank-navy) !important;}
+.account-menu-copy > span:not(.account-menu-kicker){color:var(--bank-muted) !important;}
+
+.account-menu a,
+.account-menu button{
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  color:var(--bank-navy) !important;
+  box-shadow:none !important;
+  font-weight:700 !important;
+}
+
+.account-menu a i,
+.account-menu button i,
+.account-menu a i::before,
+.account-menu button i::before{
+  color:var(--bank-icon) !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
+
+.account-menu a:hover,
+.account-menu button:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+  border-color:var(--bank-line) !important;
+}
+
+.account-menu button#accountLogoutBtn{
+  background:linear-gradient(135deg,#64748b,#475569) !important;
+  color:#ffffff !important;
+  text-decoration:none !important;
+}
+
+.account-menu button#accountLogoutBtn i,
+.account-menu button#accountLogoutBtn i::before{color:#ffffff !important;}
+
+.nav-toggle{
+  width:40px !important;
+  height:40px !important;
+  border-radius:10px !important;
+  background:linear-gradient(135deg, rgba(0,198,255,0.22), rgba(139,92,246,0.22)) !important;
+  color:var(--bank-icon) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 0 14px rgba(0,198,255,0.10) !important;
+}
+
+.nav-toggle i,
+.nav-toggle i::before{color:var(--bank-icon) !important;filter:none !important;}
+
+/* Mobile menu follows the same white/navy Choose Portal reference */
+.mobile-panel{
+  top:var(--hdrH) !important;
+  background:var(--bank-white) !important;
+  border-top:1px solid var(--bank-line) !important;
+  border-bottom:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.10) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.mobile-panel a,
+.mobile-panel button{
+  color:var(--bank-navy) !important;
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+  font-weight:500 !important;
+  text-shadow:none !important;
+}
+
+.mobile-panel a:hover,
+.mobile-panel button:hover{
+  color:#000000 !important;
+  background:var(--bank-white) !important;
+  text-decoration:underline !important;
+  text-underline-offset:4px !important;
+}
+
+.mobile-panel a i,
+.mobile-panel button i,
+.mobile-panel a i::before,
+.mobile-panel button i::before{
+  color:var(--bank-icon) !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
+
+.mobile-about-submenu a{background:var(--bank-white) !important;}
+
+/* Company page background and major content color sync */
+.page{background:transparent !important;}
+
+.hero{
+  color:var(--bank-text) !important;
+  background:var(--bank-white) !important;
+  border:1px solid var(--bank-line) !important;
+  box-shadow:0 12px 28px rgba(1,33,105,0.08) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+.hero::after{display:none !important;content:none !important;}
+
+.hero h1,
+.hero-company-text h2,
+.form-head h2,
+.section-title,
+.side-list a,
+.side-list button{
+  color:var(--bank-navy) !important;
+  text-shadow:none !important;
+}
+
+.hero p,
+.hero-company-text p,
+.form-head p,
+.side-note,
+.status-row,
+.toggle-copy span{
+  color:var(--bank-text) !important;
+  text-shadow:none !important;
+}
+
+.hero-icon,
+.video-kicker > i,
+.video-benefits li > i,
+.skip-now-link > i{
+  color:var(--bank-icon) !important;
+  background:rgba(14,165,233,0.10) !important;
+  border:1px solid rgba(14,165,233,0.22) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+
+.hero-card,
+.side-card,
+.form-card,
+.logo-box,
+.status-box,
+.side-note,
+.toggle-card,
+.field,
+.logo-preview{
+  background:var(--bank-white) !important;
+  border-color:var(--bank-line) !important;
+  box-shadow:0 8px 20px rgba(1,33,105,0.06) !important;
+}
+
+.logo-preview{
+  background:var(--bank-soft-2) !important;
+}
+
+.hero-company-logo,
+.stat-mini{
+  background:var(--bank-soft) !important;
+  border-color:var(--bank-line) !important;
+}
+
+.hero-company-logo i,
+.hero-company-logo i::before,
+.logo-preview i,
+.logo-preview i::before,
+.section-title i,
+.section-title i::before,
+.field label i,
+.field label i::before{
+  color:var(--bank-icon) !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
+
+.stat-mini strong{color:var(--bank-navy) !important;}
+.stat-mini span{color:var(--bank-text) !important;}
+
+.field label{
+  color:var(--bank-navy) !important;
+  font-weight:700 !important;
+}
+
+.field input,
+.field select,
+.field textarea{
+  color:#0f172a !important;
+  font-weight:500 !important;
+}
+
+.field input::placeholder,
+.field textarea::placeholder{color:#94a3b8 !important;}
+
+.btn,
+.btn span,
+.btn i{
+  font-family:Arial, Helvetica, "Segoe UI", sans-serif !important;
+}
+
+.btn i,
+.btn i::before{
+  font-family:"Font Awesome 6 Free" !important;
+  font-weight:900 !important;
+}
+
+/* Responsive Choose Portal header sizing */
+@media (min-width:1800px){
+  :root{--hdrH:84px !important;--header-h:84px !important;}
+  header{height:var(--hdrH) !important;min-height:var(--hdrH) !important;gap:18px !important;padding:0 24px 0 14px !important;}
+  .logo,header .logo{margin-left:-2px !important;}
+  .logo img,header .logo img{height:88px !important;max-width:190px !important;}
+  header nav{gap:22px !important;margin-left:10px !important;}
+  header nav > a,header nav .nav-main-link,.nav-dropdown .nav-main-link{height:38px !important;font-size:.94rem !important;}
+  .nav-dropdown,.nav-dropdown-trigger{height:38px !important;}
+  .login-btn,#headerLoginBtn{height:38px !important;min-height:38px !important;padding:0 14px !important;font-size:.86rem !important;}
+  .nav-toggle,.mobile-panel{display:none !important;}
+}
+
+@media (min-width:1440px) and (max-width:1799px){
+  :root{--hdrH:78px !important;--header-h:78px !important;}
+  header{height:var(--hdrH) !important;min-height:var(--hdrH) !important;gap:14px !important;padding:0 18px 0 10px !important;}
+  .logo,header .logo{margin-left:-3px !important;}
+  .logo img,header .logo img{height:80px !important;max-width:180px !important;}
+  header nav{gap:18px !important;margin-left:7px !important;}
+  header nav > a,header nav .nav-main-link,.nav-dropdown .nav-main-link{height:36px !important;font-size:.84rem !important;}
+  .nav-dropdown,.nav-dropdown-trigger{height:36px !important;}
+  .login-btn,#headerLoginBtn{height:36px !important;min-height:36px !important;padding:0 11px !important;font-size:.79rem !important;}
+  .nav-toggle,.mobile-panel{display:none !important;}
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  :root{--hdrH:76px !important;--header-h:76px !important;}
+  header{height:var(--hdrH) !important;min-height:var(--hdrH) !important;gap:9px !important;padding:0 12px 0 6px !important;}
+  .logo,header .logo{margin-left:-2px !important;min-width:118px !important;}
+  .logo img,header .logo img{height:66px !important;max-width:150px !important;}
+  header nav{gap:9px !important;margin-left:3px !important;}
+  header nav > a,header nav .nav-main-link,.nav-dropdown .nav-main-link{height:34px !important;padding-left:5px !important;padding-right:6px !important;font-size:.75rem !important;}
+  header nav > a > i,header nav .nav-main-link > i{width:20px !important;min-width:20px !important;height:20px !important;margin-right:5px !important;}
+  header nav > a > i::before,header nav .nav-main-link > i::before{font-size:.86rem !important;}
+  .nav-dropdown,.nav-dropdown-trigger{height:34px !important;}
+  .nav-dropdown-toggle{width:25px !important;min-width:25px !important;height:25px !important;}
+  .header-actions{gap:5px !important;}
+  .header-round-btn{width:32px !important;min-width:32px !important;height:32px !important;border-radius:8px !important;}
+  .login-btn,#headerLoginBtn{height:32px !important;min-height:32px !important;min-width:68px !important;padding:0 8px !important;font-size:.70rem !important;border-radius:8px !important;gap:5px !important;}
+  .account-trigger{width:38px !important;height:38px !important;min-width:38px !important;}
+  .account-logo{width:32px !important;height:32px !important;min-width:32px !important;}
+  .nav-toggle,.mobile-panel{display:none !important;}
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  :root{--hdrH:74px !important;--header-h:74px !important;}
+  header{height:var(--hdrH) !important;min-height:var(--hdrH) !important;gap:7px !important;padding:0 8px 0 5px !important;}
+  .logo,header .logo{margin-left:-2px !important;min-width:104px !important;}
+  .logo img,header .logo img{height:58px !important;max-width:132px !important;}
+  header nav{display:flex !important;gap:7px !important;margin-left:2px !important;}
+  .header-actions{display:flex !important;gap:4px !important;}
+  header nav > a,header nav .nav-main-link,.nav-dropdown .nav-main-link{height:31px !important;padding-left:3px !important;padding-right:4px !important;font-size:.66rem !important;}
+  header nav > a > i,header nav .nav-main-link > i{width:17px !important;min-width:17px !important;height:17px !important;margin-right:3px !important;border-radius:6px !important;}
+  header nav > a > i::before,header nav .nav-main-link > i::before{font-size:.72rem !important;}
+  .nav-dropdown,.nav-dropdown-trigger{height:31px !important;}
+  .nav-dropdown-toggle{width:20px !important;min-width:20px !important;height:20px !important;border-radius:6px !important;}
+  .nav-dropdown-toggle i,.nav-dropdown-toggle i::before{font-size:.58rem !important;}
+  .header-round-btn{width:30px !important;min-width:30px !important;height:30px !important;border-radius:8px !important;}
+  .login-btn,#headerLoginBtn{height:30px !important;min-height:30px !important;min-width:60px !important;padding:0 6px !important;font-size:.61rem !important;border-radius:8px !important;gap:4px !important;}
+  .account-trigger{width:34px !important;height:34px !important;min-width:34px !important;}
+  .account-logo{width:28px !important;height:28px !important;min-width:28px !important;}
+  .nav-toggle{display:none !important;}
+  .mobile-panel{display:none !important;}
+}
+
+@media (max-width:768px){
+  header nav,
+  .header-actions{display:none !important;}
+  .nav-toggle{display:inline-flex !important;}
+  .mobile-panel.open{display:block !important;}
+}
+
+@media (min-width:481px) and (max-width:768px){
+  :root{--hdrH:72px !important;--header-h:72px !important;}
+  header{height:var(--hdrH) !important;min-height:var(--hdrH) !important;padding:0 12px 0 8px !important;justify-content:space-between !important;align-items:center !important;}
+  .logo,header .logo{margin-left:0 !important;margin-right:0 !important;flex:0 0 auto !important;min-width:0 !important;}
+  .logo img,header .logo img{height:54px !important;max-width:128px !important;}
+  .nav-toggle{width:40px !important;height:40px !important;border-radius:10px !important;margin-left:auto !important;}
+  .mobile-panel{top:var(--hdrH) !important;padding:12px 14px 16px !important;}
+  .mobile-panel a,.mobile-panel button{font-size:.88rem !important;border-radius:11px !important;}
+}
+
+@media (max-width:480px){
+  :root{--hdrH:70px !important;--header-h:70px !important;}
+  header{height:var(--hdrH) !important;min-height:var(--hdrH) !important;padding:0 10px 0 8px !important;justify-content:space-between !important;align-items:center !important;}
+  .logo,header .logo{margin-left:0 !important;min-width:0 !important;}
+  .logo img,header .logo img{height:50px !important;max-width:118px !important;}
+  .nav-toggle{width:38px !important;height:38px !important;border-radius:9px !important;margin-left:auto !important;}
+  .mobile-panel{top:var(--hdrH) !important;padding:12px 12px 14px !important;}
+  .mobile-panel a,.mobile-panel button{font-size:.84rem !important;border-radius:10px !important;}
+}
+
+
+/* ============================================================
+   FINAL HEADER NAV PATCH - BLUE HOVER FONT + BLUE UNDERLINE
+   - Removes colored boxes/backgrounds from header nav icons.
+   - Removes dropdown chevron background/border.
+   - Uses blue (#0b5cff) for the hover font, icons, and underline.
+   - Applies the same underline to the About dropdown header and dropdown items.
+   - Preserves all links, dropdown JS behavior, mobile menu behavior, and IDs.
+============================================================ */
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown .nav-main-link,
+.nav-dropdown-menu a{
+  position:relative !important;
+  overflow:visible !important;
+  color:var(--bank-navy) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav > a[aria-current="page"],
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown:hover .nav-main-link,
+.nav-dropdown:focus-within .nav-main-link,
+.nav-dropdown.open .nav-main-link,
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible,
+.nav-dropdown-menu a[aria-current="page"]{
+  color:#0b5cff !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  outline:none !important;
+}
+
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-grid !important;
+  place-items:center !important;
+  flex:0 0 auto !important;
+  color:var(--bank-icon) !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  opacity:1 !important;
+  transform:none !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav > a[aria-current="page"] > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown:hover .nav-main-link > i,
+.nav-dropdown:focus-within .nav-main-link > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i,
+.nav-dropdown-menu a[aria-current="page"] > i{
+  color:#0b5cff !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+header nav > a::after,
+.nav-dropdown-trigger::after,
+.nav-dropdown-menu a::after{
+  content:"" !important;
+  position:absolute !important;
+  left:8px !important;
+  right:auto !important;
+  bottom:1px !important;
+  width:0 !important;
+  height:2px !important;
+  background:#0b5cff !important;
+  border-radius:999px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  transition:width .18s ease, opacity .18s ease !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav > a[aria-current="page"]::after{
+  width:calc(100% - 16px) !important;
+  opacity:1 !important;
+}
+
+.nav-dropdown-trigger{
+  position:relative !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+.nav-dropdown:hover .nav-dropdown-trigger::after,
+.nav-dropdown:focus-within .nav-dropdown-trigger::after,
+.nav-dropdown.open .nav-dropdown-trigger::after{
+  width:calc(100% - 8px) !important;
+  opacity:1 !important;
+}
+
+.nav-dropdown .nav-main-link::after{
+  display:none !important;
+  content:none !important;
+}
+
+.nav-dropdown-toggle,
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown.open .nav-dropdown-toggle{
+  color:var(--bank-navy) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  outline:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown:hover .nav-dropdown-toggle,
+.nav-dropdown:focus-within .nav-dropdown-toggle,
+.nav-dropdown.open .nav-dropdown-toggle{
+  color:#0b5cff !important;
+}
+
+.nav-dropdown-toggle i,
+.nav-dropdown-toggle i::before{
+  color:inherit !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+.nav-dropdown-menu a{
+  background:transparent !important;
+}
+
+.nav-dropdown-menu a::after{
+  left:14px !important;
+  bottom:7px !important;
+}
+
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after,
+.nav-dropdown-menu a[aria-current="page"]::after{
+  width:calc(100% - 28px) !important;
+  opacity:1 !important;
+}
+
+.mobile-panel a,
+.mobile-panel button,
+.mobile-about-submenu a{
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel a:hover,
+.mobile-panel button:hover,
+.mobile-panel a:focus-visible,
+.mobile-panel button:focus-visible{
+  background:transparent !important;
+  color:#0b5cff !important;
+  text-decoration:underline !important;
+  text-decoration-color:#0b5cff !important;
+  text-underline-offset:4px !important;
+}
+
+.mobile-panel a:hover i,
+.mobile-panel button:hover i,
+.mobile-panel a:focus-visible i,
+.mobile-panel button:focus-visible i{
+  color:#0b5cff !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+
+/* ============================================================
+   FINAL JOB SPACE LINK LOGO POSITION + SIZE PATCH
+   Moves the logo slightly to the right and makes it more visible,
+   while preserving all header links, dropdowns, scripts, Supabase
+   behavior, and the clean no-shadow logo styling.
+============================================================ */
+header .logo,
+.logo{
+  margin-left:12px !important;
+  width:176px !important;
+  max-width:176px !important;
+  min-width:176px !important;
+  flex:0 0 176px !important;
+  height:100% !important;
+  padding:0 !important;
+  overflow:visible !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  filter:none !important;
+  text-shadow:none !important;
+  outline:none !important;
+  transform:none !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+}
+
+header .logo img,
+.logo img{
+  width:100% !important;
+  max-width:100% !important;
+  height:auto !important;
+  max-height:calc(var(--hdrH) - 8px) !important;
+  object-fit:contain !important;
+  object-position:left center !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  filter:none !important;
+  text-shadow:none !important;
+  outline:none !important;
+  transform:scale(1) !important;
+  transform-origin:left center !important;
+  transition:transform .22s ease !important;
+}
+
+header .logo:hover,
+header .logo:focus,
+header .logo:focus-visible,
+header .logo:focus-within,
+.logo:hover,
+.logo:focus,
+.logo:focus-visible,
+.logo:focus-within{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  filter:none !important;
+  text-shadow:none !important;
+  outline:none !important;
+  transform:none !important;
+}
+
+header .logo:hover img,
+header .logo:focus-visible img,
+header .logo:focus-within img,
+.logo:hover img,
+.logo:focus-visible img,
+.logo:focus-within img{
+  transform:scale(1.08) !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
+
+header nav{
+  margin-left:10px !important;
+}
+
+@media (min-width:1440px){
+  header .logo,
+  .logo{
+    margin-left:14px !important;
+    width:190px !important;
+    max-width:190px !important;
+    min-width:190px !important;
+    flex-basis:190px !important;
+  }
+
+  header .logo img,
+  .logo img{
+    max-height:calc(var(--hdrH) - 6px) !important;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header .logo,
+  .logo{
+    margin-left:10px !important;
+    width:166px !important;
+    max-width:166px !important;
+    min-width:166px !important;
+    flex-basis:166px !important;
+  }
+
+  header .logo img,
+  .logo img{
+    max-height:calc(var(--hdrH) - 10px) !important;
+  }
+
+  header nav{
+    margin-left:8px !important;
+    gap:18px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header .logo,
+  .logo{
+    margin-left:8px !important;
+    width:140px !important;
+    max-width:140px !important;
+    min-width:140px !important;
+    flex-basis:140px !important;
+  }
+
+  header .logo img,
+  .logo img{
+    max-height:calc(var(--hdrH) - 12px) !important;
+  }
+
+  header nav{
+    margin-left:6px !important;
+    gap:10px !important;
+  }
+}
+
+@media (max-width:900px){
+  header .logo,
+  .logo{
+    margin-left:8px !important;
+  }
+}
+
+@media (max-width:560px){
+  header .logo,
+  .logo{
+    margin-left:6px !important;
+    width:128px !important;
+    max-width:128px !important;
+    min-width:128px !important;
+    flex-basis:128px !important;
+  }
+
+  header .logo img,
+  .logo img{
+    max-height:calc(var(--hdrH) - 12px) !important;
+  }
+}
+
+</style>
+</head>
+
+<body>
+<header>
+  <a class="logo" href="index.html" aria-label="Job Space Link">
+    <img src="JOBSPACELINK.png" alt="Job Space Link Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+    <span class="logo-fallback"><i class="fa-solid fa-link"></i> Job Space Link</span>
+  </a>
+
+  <nav>
+    <a href="home.html"><i class="fa-solid fa-house"></i>Home</a>
+    <div class="nav-dropdown" id="aboutDropdown">
+      <div class="nav-dropdown-trigger">
+        <a class="nav-main-link" href="about.html"><i class="fa-solid fa-circle-info"></i>About</a>
+        <button class="nav-dropdown-toggle" id="aboutDropdownToggle" type="button" aria-label="Open About menu" aria-expanded="false">
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="nav-dropdown-menu" id="aboutDropdownMenu">
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+      </div>
+    </div>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i>Job Hiring</a>
+    <a href="dashboard1.html"><i class="fa-solid fa-users"></i>Jobseeker</a>
+    <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i>Post Jobs</a>
+    <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i>Post Resume</a>
+  </nav>
+
+  <div class="header-actions">
+    <button class="header-round-btn disabled-header-action" type="button" title="Post Jobs disabled" aria-label="Post Jobs disabled" aria-disabled="true" disabled>
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+    <button class="header-round-btn disabled-header-action" type="button" title="Favorites disabled" aria-label="Favorites disabled" aria-disabled="true" disabled>
+      <i class="fa-solid fa-heart"></i>
+    </button>
+
+    <a class="login-btn" id="headerLoginBtn" href="index1.html" title="Login" aria-label="Login">
+      <i class="fa-solid fa-user"></i><span>Login</span>
+    </a>
+
+    <div class="account-pill" id="accountPill">
+      <button class="account-trigger" id="accountTrigger" type="button" aria-label="Employer account menu">
+        <span class="account-logo">
+          <img id="headerCompanyLogo" alt="Company Logo" />
+          <i id="headerCompanyIcon" class="fa-solid fa-building"></i>
+        </span>
+        <span class="account-copy">
+          <strong id="headerCompanyName">Company Account</strong>
+          <span id="headerCompanyEmail">employer@email.com</span>
+        </span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="account-menu" id="accountMenu">
+        <div class="account-menu-profile-card">
+          <div class="account-menu-logo">
+            <img id="accountMenuCompanyLogo" alt="Company Logo" />
+            <i id="accountMenuCompanyIcon" class="fa-solid fa-building"></i>
+          </div>
+          <div class="account-menu-copy">
+            <span class="account-menu-kicker">LOGGED IN ACCOUNT</span>
+            <strong id="accountMenuCompanyName">Company Account</strong>
+            <span id="accountMenuCompanyEmail">employer@email.com</span>
+          </div>
+        </div>
+        <a href="companyprofile.html"><i class="fa-solid fa-id-card"></i> Company Profile</a>
+        <a href="subscribe.html"><i class="fa-solid fa-credit-card"></i> Subscribe</a>
+        <a href="employer_dashboard.html"><i class="fa-solid fa-briefcase"></i> Post Jobs</a>
+        <button type="button" id="accountLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="nav-toggle" id="navToggle" type="button" aria-label="Open navigation">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</header>
+
+<div class="mobile-panel" id="mobilePanel">
+  <a href="home.html">Home <i class="fa-solid fa-house"></i></a>
+  <div class="mobile-about-group" id="mobileAboutGroup">
+    <div class="mobile-about-row">
+      <a href="about.html">About <i class="fa-solid fa-circle-info"></i></a>
+      <button class="mobile-about-toggle" id="mobileAboutToggle" type="button" aria-label="Open About menu">
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+    </div>
+    <div class="mobile-about-submenu">
+      <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-circle-check"></i></a>
+      <a href="how it works.html">How It Works <i class="fa-solid fa-diagram-project"></i></a>
+    </div>
+  </div>
+  <a href="postedhiring1.html">Job Hiring <i class="fa-solid fa-briefcase"></i></a>
+  <a href="dashboard1.html">Jobseeker <i class="fa-solid fa-users"></i></a>
+  <a href="postjob1.html">Post Jobs <i class="fa-solid fa-square-plus"></i></a>
+  <a href="applicantform1.html?source=jobspacelink">Post Resume <i class="fa-solid fa-file-arrow-up"></i></a>
+  <a href="companyprofile.html">Company Profile <i class="fa-solid fa-building"></i></a>
+  <a href="index1.html" id="mobileLoginLink">Login <i class="fa-solid fa-user"></i></a>
+  <button type="button" id="mobileLogoutBtn" style="display:none;">Log Out <i class="fa-solid fa-right-from-bracket"></i></button>
+</div>
+
+<main class="page">
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-title">
+          <div class="hero-icon"><i class="fa-solid fa-building-user"></i></div>
+          <div>
+            <h1>Company Profile</h1>
+            <p>
+              Build a professional employer profile for Job Space Link. Show your company logo, contact details,
+              industry, hiring specialties, benefits, and company overview to jobseekers and applicants.
+            </p>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="postjob1.html"><i class="fa-solid fa-square-plus"></i> Post a Job</a>
+          <button class="btn btn-gray" type="button" id="heroPreviewBtn" title="View the generated company PDF file"><i class="fa-solid fa-file-pdf"></i> View PDF File</button>
+        </div>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-company">
+          <div class="hero-company-logo">
+            <img id="heroCompanyLogo" alt="Company Logo" />
+            <i id="heroCompanyIcon" class="fa-solid fa-building"></i>
+          </div>
+          <div class="hero-company-text">
+            <h2 id="heroCompanyName">Your Company Name</h2>
+            <p id="heroCompanyEmail">Sign in or complete the profile below</p>
+          </div>
+        </div>
+
+        <!-- Profile completion bar and hero statistics removed per latest layout request. -->
+      </aside>
+    </div>
+  </section>
+
+  <div class="main-grid">
+    <aside class="side-card">
+      <div class="logo-box">
+        <div class="logo-preview">
+          <img id="companyLogoPreview" alt="Company Logo Preview" />
+          <i id="companyLogoPlaceholder" class="fa-solid fa-building"></i>
+        </div>
+
+        <div class="logo-upload-row">
+          <input class="file-input" type="file" id="companyLogoInput" accept="image/*" />
+          <button class="btn btn-soft btn-block" type="button" id="chooseLogoBtn"><i class="fa-solid fa-image"></i> Upload Logo</button>
+          <button class="btn btn-gray" type="button" id="removeLogoBtn" title="Remove logo"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+
+      <div class="side-note">
+        <i class="fa-solid fa-circle-info"></i>
+        Your logo and company details will be shown in the employer account area and the company profile preview.
+      </div>
+
+      <div class="status-box">
+        <h3><i class="fa-solid fa-shield-check"></i> Profile Status</h3>
+        <div class="status-row">
+          <span>Visibility</span>
+          <span class="pill warn" id="sideVisibility"><i class="fa-solid fa-eye-slash"></i> Draft</span>
+        </div>
+        <div class="status-row">
+          <span>Last Saved</span>
+          <span id="sideLastSaved">Not saved</span>
+        </div>
+      </div>
+
+      <!-- Side quick-action buttons removed per marked-up request. -->
+    </aside>
+
+    <section class="form-card">
+      <div class="form-head">
+        <div>
+          <h2>Employer / Company Details</h2>
+          <p>Complete this profile so applicants can understand your company, open roles, work environment, and contact information.</p>
+        </div>
+      </div>
+
+      <form id="companyProfileForm">
+        <h3 class="section-title"><i class="fa-solid fa-building"></i> Basic Company Information</h3>
+        <div class="form-grid">
+          <div class="field span-8">
+            <label for="companyName"><i class="fa-solid fa-signature"></i> Company Name</label>
+            <input id="companyName" name="companyName" type="text" placeholder="Example: Job Space Link" autocomplete="organization" />
+          </div>
+          <div class="field span-4">
+            <label for="industry"><i class="fa-solid fa-layer-group"></i> Industry</label>
+            <select id="industry" name="industry">
+              <option value="">Select industry</option>
+              <option>Accounting / Finance</option>
+              <option>Administrative Support</option>
+              <option>Business Process Outsourcing</option>
+              <option>Customer Service</option>
+              <option>Healthcare</option>
+              <option>Human Resources</option>
+              <option>Information Technology</option>
+              <option>Legal Services</option>
+              <option>Marketing / Creative</option>
+              <option>Real Estate</option>
+              <option>Remote Staffing</option>
+              <option>Sales</option>
+               <option>Automotive</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field span-12">
+            <label for="legalName"><i class="fa-solid fa-file-signature"></i> Legal Business Name</label>
+            <input id="legalName" name="legalName" type="text" placeholder="Registered business name" />
+          </div>
+
+          <div class="field span-6">
+            <label for="website"><i class="fa-solid fa-globe"></i> Website</label>
+            <input id="website" name="website" type="url" placeholder="https://yourcompany.com" autocomplete="url" />
+          </div>
+          <div class="field span-6">
+            <label for="contactEmail"><i class="fa-solid fa-envelope"></i> Company Email</label>
+            <input id="contactEmail" name="contactEmail" type="email" placeholder="hr@yourcompany.com" autocomplete="email" />
+          </div>
+        </div>
+
+        <h3 class="section-title"><i class="fa-solid fa-address-book"></i> Contact and Location</h3>
+        <div class="form-grid">
+          <div class="field span-4">
+            <label for="phone"><i class="fa-solid fa-phone"></i> Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="+1 555 000 0000" autocomplete="tel" />
+          </div>
+          <div class="field span-4">
+            <label for="country"><i class="fa-solid fa-earth-asia"></i> Country</label>
+            <input id="country" name="country" type="text" placeholder="United States" autocomplete="country-name" />
+          </div>
+          <div class="field span-4">
+            <label for="city"><i class="fa-solid fa-city"></i> City</label>
+            <input id="city" name="city" type="text" placeholder="City" autocomplete="address-level2" />
+          </div>
+          <div class="field span-8">
+            <label for="address"><i class="fa-solid fa-location-dot"></i> Address</label>
+            <input id="address" name="address" type="text" placeholder="Street address / office address" autocomplete="street-address" />
+          </div>
+          <div class="field span-4">
+            <label for="zipcode"><i class="fa-solid fa-map-pin"></i> Zip Code</label>
+            <input id="zipcode" name="zipcode" type="text" placeholder="Zip code" autocomplete="postal-code" />
+          </div>
+        </div>
+
+        <h3 class="section-title"><i class="fa-solid fa-comment-dots"></i> Company Story</h3>
+        <div class="form-grid">
+          <div class="field span-12">
+            <label for="companyOverview"><i class="fa-solid fa-align-left"></i> Company Overview</label>
+            <textarea id="companyOverview" name="companyOverview" placeholder="Tell jobseekers what your company does, your services, and why candidates should work with you."></textarea>
+          </div>
+          <div class="field span-12">
+            <label for="mission"><i class="fa-solid fa-bullseye"></i> Mission / Values</label>
+            <textarea id="mission" name="mission" placeholder="Describe your mission, values, and company culture."></textarea>
+          </div>
+        </div>
+
+        <h3 class="section-title"><i class="fa-solid fa-briefcase"></i> Hiring Information</h3>
+        <div class="form-grid">
+          <div class="field span-6">
+            <label for="specialties"><i class="fa-solid fa-list-check"></i> Hiring Specialties</label>
+            <textarea id="specialties" name="specialties" placeholder="Example: virtual assistants, bookkeepers, customer support, web developers"></textarea>
+          </div>
+          <div class="field span-6">
+            <label for="benefits"><i class="fa-solid fa-gift"></i> Benefits / Perks</label>
+            <textarea id="benefits" name="benefits" placeholder="Example: work from home, flexible hours, paid training, growth opportunities"></textarea>
+          </div>
+        </div>
+
+        <h3 class="section-title"><i class="fa-solid fa-share-nodes"></i> Social Links</h3>
+        <div class="form-grid">
+          <div class="field span-4">
+            <label for="linkedinUrl"><i class="fa-brands fa-linkedin"></i> LinkedIn</label>
+            <input id="linkedinUrl" name="linkedinUrl" type="url" placeholder="https://linkedin.com/company/..." />
+          </div>
+          <div class="field span-4">
+            <label for="facebookUrl"><i class="fa-brands fa-facebook"></i> Facebook</label>
+            <input id="facebookUrl" name="facebookUrl" type="url" placeholder="https://facebook.com/..." />
+          </div>
+          <div class="field span-4">
+            <label for="xUrl"><i class="fa-brands fa-x-twitter"></i> X / Twitter</label>
+            <input id="xUrl" name="xUrl" type="url" placeholder="https://x.com/..." />
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-card">
+              <div class="toggle-copy">
+                <strong>Publish Company Profile</strong>
+                <span>Show this profile publicly to jobseekers.</span>
+              </div>
+              <label class="switch">
+                <input id="isPublished" name="isPublished" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-card">
+              <div class="toggle-copy">
+                <strong>Actively Hiring</strong>
+                <span>Mark your company as currently hiring.</span>
+              </div>
+              <label class="switch">
+                <input id="isHiring" name="isHiring" type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div id="statusMsg"></div>
+
+        <div class="action-row">
+          <button class="btn btn-gray" type="button" id="previewBtn" title="View the generated company PDF file"><i class="fa-solid fa-file-pdf"></i> View PDF File</button>
+          <button class="btn btn-primary" type="submit" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save Company Profile</button>
+          <button class="btn btn-danger" type="button" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
+
+<div class="modal-backdrop" id="previewModal">
+  <div class="modal-card">
+    <div class="modal-top">
+      <div class="modal-company">
+        <div class="modal-logo">
+          <img id="modalCompanyLogo" alt="Company Logo" />
+          <i id="modalCompanyIcon" class="fa-solid fa-building"></i>
+        </div>
+        <div class="modal-title">
+          <h2 id="modalCompanyName">Company Name</h2>
+          <p id="modalCompanyLine">Industry â€¢ Location</p>
+        </div>
+      </div>
+      <button class="modal-close" type="button" id="closePreviewBtn" aria-label="Close preview">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="preview-grid">
+        <div class="preview-item"><span>Website</span><strong id="modalWebsite">Not provided</strong></div>
+        <div class="preview-item"><span>Email</span><strong id="modalEmail">Not provided</strong></div>
+        <div class="preview-item"><span>Phone</span><strong id="modalPhone">Not provided</strong></div>
+        <div class="preview-item"><span>Status</span><strong id="modalStatus">Draft</strong></div>
+      </div>
+
+      <div class="preview-section">
+        <h3>Company Overview</h3>
+        <p id="modalOverview">No company overview yet.</p>
+      </div>
+      <div class="preview-section">
+        <h3>Mission / Values</h3>
+        <p id="modalMission">No mission or values provided yet.</p>
+      </div>
+      <div class="preview-section">
+        <h3>Hiring Specialties</h3>
+        <p id="modalSpecialties">No hiring specialties provided yet.</p>
+      </div>
+      <div class="preview-section">
+        <h3>Benefits / Perks</h3>
+        <p id="modalBenefits">No benefits provided yet.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="pdfModal">
+  <div class="pdf-viewer-card" id="pdfViewerCard" role="dialog" aria-modal="true" aria-labelledby="pdfViewerTitle">
+    <div class="pdf-viewer-header">
+      <div></div>
+      <div class="pdf-viewer-title" id="pdfViewerTitle">Company PDF Viewer</div>
+      <div class="pdf-viewer-actions">
+        <button class="pdf-viewer-btn" type="button" id="pdfHideContentBtn">
+          <i class="fa-solid fa-eye-slash"></i> Hide Content
+        </button>
+        <button class="pdf-viewer-btn close" type="button" id="closePdfBtn" aria-label="Close PDF viewer">
+          <i class="fa-solid fa-xmark"></i> Close
+        </button>
+      </div>
+    </div>
+
+    <div class="pdf-viewer-body">
+      <aside class="pdf-viewer-side" id="pdfViewerSide">
+        <div class="pdf-side-company">
+          <div class="pdf-side-logo">
+            <img id="pdfViewerCompanyLogo" alt="Company Logo Thumbnail" />
+            <i id="pdfViewerCompanyIcon" class="fa-solid fa-building"></i>
+          </div>
+          <div class="pdf-side-copy">
+            <strong id="pdfViewerCompanyName">Company</strong>
+            <span id="pdfViewerCompanyMeta">Generated company profile PDF</span>
+          </div>
+        </div>
+
+        <div class="pdf-side-tabs">
+          <button class="pdf-side-tab active" type="button"><i class="fa-solid fa-folder-open"></i> FILES</button>
+          <button class="pdf-side-tab" type="button"><i class="fa-regular fa-file-lines"></i> PAGES</button>
+        </div>
+
+        <div class="pdf-side-content">
+          <button class="pdf-file-card" type="button" id="pdfFileCard" title="Open generated company PDF">
+            <i class="fa-regular fa-file-pdf"></i>
+            <span>Generated Company PDF</span>
+          </button>
+          <div class="pdf-file-path" id="pdfModalPath">
+            Save the company profile first to generate the PDF file.
+          </div>
+        </div>
+      </aside>
+
+      <section class="pdf-viewer-main">
+        <div class="pdf-stage">
+          <div class="pdf-stage-inner">
+            <div class="pdf-frame-scale" id="pdfFrameScale">
+              <iframe id="pdfFrame" title="Generated Company Profile PDF"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <div class="pdf-viewer-controls">
+          <div class="pdf-control-group">
+            <button class="pdf-viewer-btn gray" type="button" id="pdfPrevFileBtn" disabled>
+              <i class="fa-solid fa-arrow-left"></i> Previous File
+            </button>
+          </div>
+
+          <div class="pdf-control-group center">
+            <button class="pdf-viewer-btn" type="button" id="pdfZoomOutBtn">
+              <i class="fa-solid fa-magnifying-glass-minus"></i> Zoom Out
+            </button>
+            <span class="pdf-zoom-pill" id="pdfZoomText">100%</span>
+            <button class="pdf-viewer-btn" type="button" id="pdfZoomInBtn">
+              <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom In
+            </button>
+            <button class="pdf-viewer-btn" type="button" id="pdfResetZoomBtn">
+              <i class="fa-solid fa-rotate-right"></i> Reset
+            </button>
+            <button class="pdf-viewer-btn" type="button" id="pdfFitPageBtn">
+              <i class="fa-solid fa-arrows-left-right"></i> Fit Page
+            </button>
+            <a class="pdf-open-tab" id="pdfOpenNewTab" href="#" target="_blank" rel="noopener">
+              <i class="fa-solid fa-up-right-from-square"></i> Open
+            </a>
+            <button class="pdf-viewer-btn green" type="button" id="pdfDownloadBtn">
+              <i class="fa-solid fa-download"></i> Download
+            </button>
+          </div>
+
+          <div class="pdf-control-group">
+            <button class="pdf-viewer-btn gray" type="button" id="pdfNextFileBtn" disabled>
+              Next File <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="save-popup-backdrop" id="savePopup" role="dialog" aria-modal="true" aria-labelledby="savePopupTitle">
+  <div class="save-popup-card">
+    <button class="save-popup-close" type="button" id="savePopupClose" aria-label="Close message">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="save-popup-icon"><i class="fa-solid fa-circle-check"></i></div>
+    <h3 id="savePopupTitle">Success</h3>
+    <p id="savePopupMessage">Company profile successfully saved.</p>
+    <button class="save-popup-ok" type="button" id="savePopupOk">OK</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     COMPANY PROFILE SAVE FIX
+     - Correctly detects your existing global Supabase client from
+       supabase_config.js, even when window.supabase is already a client.
+     - Saves directly to public.employer_company_profiles using the exact
+       columns shown in your Supabase table.
+     - Logo upload is optional. If storage fails, the text/profile data still
+       saves to the table.
+  ============================================================ */
+  const COMPANY_PROFILE_TABLE = "employer_company_profiles";
+  const COMPANY_LOGO_BUCKET = "job_pdfs";
+  const COMPANY_PDF_BUCKET = "job_pdfs";
+  const LOCAL_PROFILE_KEY = "JSL_COMPANY_PROFILE_LOCAL";
+  const PROFILE_ROW_ID_KEY = "JSL_COMPANY_PROFILE_ROW_ID";
+  const PROFILE_PDF_URL_KEY = "JSL_COMPANY_PROFILE_PDF_URL";
+  const PROFILE_PDF_PATH_KEY = "JSL_COMPANY_PROFILE_PDF_PATH";
+
+  const EMPLOYER_SESSION_KEYS = [
+    "JSL_EMPLOYER_SESSION",
+    "JSL_EMPLOYER_ACCOUNT",
+    "JSL_LOGGED_IN_EMPLOYER",
+    "jobSpaceLink_employer_session",
+    "jobSpaceLink_employer_account",
+    "jobspacelink_employer_session",
+    "employerSession",
+    "employer_account",
+    "loggedInEmployer",
+    "currentEmployer",
+    "companySession",
+    "employer"
+  ];
+
+  let supabaseClient = null;
+  let currentEmployer = null;
+  let currentLogoFile = null;
+  let currentLogoUrl = "";
+  let pendingPdfLogoDataUrl = "";
+  let currentPdfUrl = "";
+  let currentPdfPath = "";
+  let currentProfileId = "";
+  let isSaving = false;
+  let missingProfileColumns = new Set();
+  let lastAuthUserId = "";
+  let hasExistingCompanyProfile = false;
+  let pdfViewerZoom = 1;
+  let currentPdfObjectUrl = "";
+
+  const $ = (id) => document.getElementById(id);
+
+  const fields = {
+    companyName: $("companyName"),
+    legalName: $("legalName"),
+    industry: $("industry"),
+    website: $("website"),
+    contactEmail: $("contactEmail"),
+    phone: $("phone"),
+    country: $("country"),
+    city: $("city"),
+    address: $("address"),
+    zipcode: $("zipcode"),
+    companyOverview: $("companyOverview"),
+    mission: $("mission"),
+    specialties: $("specialties"),
+    benefits: $("benefits"),
+    linkedinUrl: $("linkedinUrl"),
+    facebookUrl: $("facebookUrl"),
+    xUrl: $("xUrl"),
+    isPublished: $("isPublished"),
+    isHiring: $("isHiring")
+  };
+
+  function on(id, eventName, handler){
+    const el = $(id);
+    if (el) el.addEventListener(eventName, handler);
+  }
+
+  function safeText(value, fallback){
+    const v = value === undefined || value === null ? "" : String(value).trim();
+    return v || fallback || "";
+  }
+
+  function firstValue(){
+    for (let i = 0; i < arguments.length; i++){
+      const v = safeText(arguments[i], "");
+      if (v && v !== "null" && v !== "undefined") return v;
+    }
+    return "";
+  }
+
+  function normalizeEmail(value){
+    const raw = safeText(value, "").toLowerCase();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw) ? raw : "";
+  }
+
+  function normalizeUrl(url){
+    const v = safeText(url, "");
+    if (!v) return "";
+    if (/^https?:\/\//i.test(v)) return v;
+    return "https://" + v;
+  }
+
+  function numberOrNull(value){
+    const raw = safeText(value, "");
+    if (!raw) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function boolValue(value, fallback){
+    if (value === undefined || value === null || value === "") return !!fallback;
+    if (typeof value === "boolean") return value;
+    const text = String(value).trim().toLowerCase();
+    if (["true","1","yes","y","published","active","live"].includes(text)) return true;
+    if (["false","0","no","n","draft","inactive"].includes(text)) return false;
+    return !!value;
+  }
+
+  function isUuid(value){
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(safeText(value, ""));
+  }
+
+  function slugFolderName(value){
+    const raw = safeText(value, "company");
+    return raw
+      .replace(/[\\/:*?"<>|#%{}[\]^~`]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 90) || "company";
+  }
+
+  function showStatus(message, type){
+    const el = $("statusMsg");
+    if (!el) return;
+    el.className = type || "info";
+    el.textContent = message || "";
+    el.style.display = message ? "block" : "none";
+  }
+
+  function closeSavePopup(){
+    const popup = $("savePopup");
+    if (popup) popup.classList.remove("open");
+  }
+
+  function showSavePopup(message){
+    const popup = $("savePopup");
+    const messageEl = $("savePopupMessage");
+    if (messageEl) messageEl.textContent = message || "Company profile successfully saved.";
+    if (popup) popup.classList.add("open");
+  }
+
+  function updatePdfButtons(){
+    const hasPdf = !!safeText(currentPdfUrl || currentPdfPath, "");
+    ["previewBtn","heroPreviewBtn"].forEach(id => {
+      const btn = $(id);
+      if (!btn) return;
+      btn.disabled = false;
+      btn.title = hasPdf
+        ? "View the generated company PDF file"
+        : "Save Company Profile first to generate the PDF file.";
+      btn.classList.toggle("btn-soft", hasPdf);
+    });
+  }
+
+  function setPdfViewerZoom(zoom){
+    pdfViewerZoom = Math.max(0.50, Math.min(2.25, Number(zoom) || 1));
+    const scale = $("pdfFrameScale");
+    const zoomText = $("pdfZoomText");
+
+    if (scale) {
+      scale.style.transform = "scale(" + pdfViewerZoom + ")";
+      scale.style.width = (100 / pdfViewerZoom) + "%";
+      scale.style.height = (100 / pdfViewerZoom) + "%";
+    }
+
+    if (zoomText) zoomText.textContent = Math.round(pdfViewerZoom * 100) + "%";
+  }
+
+  function resetPdfViewerZoom(){
+    setPdfViewerZoom(1);
+  }
+
+  function clearPdfObjectUrl(){
+    if (currentPdfObjectUrl) {
+      try{ URL.revokeObjectURL(currentPdfObjectUrl); }catch(_){ }
+      currentPdfObjectUrl = "";
+    }
+  }
+
+  function closePdfModal(){
+    const modal = $("pdfModal");
+    const frame = $("pdfFrame");
+    if (frame) frame.removeAttribute("src");
+    if (modal) modal.classList.remove("open");
+    resetPdfViewerZoom();
+    clearPdfObjectUrl();
+
+    const card = $("pdfViewerCard");
+    const hideBtn = $("pdfHideContentBtn");
+    if (card) card.classList.remove("content-hidden");
+    if (hideBtn) hideBtn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide Content';
+  }
+
+  function togglePdfContentPanel(){
+    const card = $("pdfViewerCard");
+    const btn = $("pdfHideContentBtn");
+    if (!card || !btn) return;
+
+    const hidden = card.classList.toggle("content-hidden");
+    btn.innerHTML = hidden
+      ? '<i class="fa-solid fa-eye"></i> Show Content'
+      : '<i class="fa-solid fa-eye-slash"></i> Hide Content';
+  }
+
+  async function downloadCurrentPdf(){
+    const resolved = await resolvePdfDisplayUrl({ allowGenerate:true, forDownload:true });
+    const url = resolved && resolved.url ? resolved.url : "";
+
+    if (!url) {
+      showStatus("No generated PDF file was found yet. Click Save Company Profile first.", "error");
+      return;
+    }
+
+    const data = getFormData();
+    const filename = (slugFolderName(data.company_name || "company-profile").replace(/\s+/g, "-").toLowerCase() || "company-profile") + ".pdf";
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function addPdfViewerHash(url){
+    const raw = safeText(url, "");
+    if (!raw) return "";
+    if (raw.indexOf("#") >= 0) return raw;
+    return raw + "#toolbar=1&navpanes=0&view=FitH";
+  }
+
+  async function createObjectUrlFromBlob(blob){
+    clearPdfObjectUrl();
+    if (!blob) return "";
+    currentPdfObjectUrl = URL.createObjectURL(blob);
+    return currentPdfObjectUrl;
+  }
+
+  async function createObjectUrlFromStoragePath(storagePath){
+    const client = initSupabase();
+    const cleanPath = safeText(storagePath, "");
+    if (!client || !cleanPath) return "";
+
+    try{
+      const { data, error } = await client.storage.from(COMPANY_PDF_BUCKET).download(cleanPath);
+      if (error) throw error;
+      return await createObjectUrlFromBlob(data);
+    }catch(err){
+      console.warn("Could not download PDF blob from job_pdfs/" + cleanPath + ":", err);
+      return "";
+    }
+  }
+
+  async function createSignedPdfUrl(storagePath){
+    const client = initSupabase();
+    const cleanPath = safeText(storagePath, "");
+    if (!client || !cleanPath) return "";
+
+    try{
+      if (client.storage && client.storage.from) {
+        const { data, error } = await client.storage
+          .from(COMPANY_PDF_BUCKET)
+          .createSignedUrl(cleanPath, 60 * 60);
+
+        if (!error && data && data.signedUrl) return data.signedUrl;
+      }
+    }catch(err){
+      console.warn("Could not create signed PDF URL for job_pdfs/" + cleanPath + ":", err);
+    }
+
+    return "";
+  }
+
+  function getPublicPdfUrlFromPath(storagePath){
+    const client = initSupabase();
+    const cleanPath = safeText(storagePath, "");
+    if (!client || !cleanPath) return "";
+
+    try{
+      const publicRes = client.storage.from(COMPANY_PDF_BUCKET).getPublicUrl(cleanPath);
+      return publicRes && publicRes.data ? safeText(publicRes.data.publicUrl, "") : "";
+    }catch(err){
+      console.warn("Could not create public PDF URL for job_pdfs/" + cleanPath + ":", err);
+      return "";
+    }
+  }
+
+  async function findLatestGeneratedPdfPath(){
+    const client = initSupabase();
+    const data = getFormData();
+    const folder = slugFolderName(data.company_name || getEmployerCompanyName(currentEmployer) || "company");
+
+    if (!client || !folder) return "";
+
+    try{
+      const { data: files, error } = await client.storage
+        .from(COMPANY_PDF_BUCKET)
+        .list(folder, {
+          limit:100,
+          offset:0,
+          sortBy:{ column:"updated_at", order:"desc" }
+        });
+
+      if (error) throw error;
+
+      const pdf = (files || [])
+        .filter(item => item && /\.pdf$/i.test(item.name || ""))
+        .filter(item => /^company-profile-/i.test(item.name || "") || /profile/i.test(item.name || ""))
+        .sort((a,b) => {
+          const da = new Date(a.updated_at || a.created_at || a.last_accessed_at || 0).getTime();
+          const db = new Date(b.updated_at || b.created_at || b.last_accessed_at || 0).getTime();
+          return db - da;
+        })[0];
+
+      if (pdf && pdf.name) {
+        currentPdfPath = folder + "/" + pdf.name;
+        localStorage.setItem(PROFILE_PDF_PATH_KEY, currentPdfPath);
+        return currentPdfPath;
+      }
+    }catch(err){
+      console.warn("Could not search job_pdfs/" + folder + " for a generated company PDF:", err);
+    }
+
+    return "";
+  }
+
+  async function generateLocalPdfPreviewUrl(){
+    try{
+      pendingPdfLogoDataUrl = await captureCurrentLogoDataUrlForPdf(getFormData());
+      const data = Object.assign({}, getFormData(), {
+        logo_url: currentLogoUrl && !/^data:/i.test(currentLogoUrl) ? currentLogoUrl : "",
+        _logo_data_url_for_pdf: pendingPdfLogoDataUrl || "",
+        pdf_generated_at: new Date().toISOString()
+      });
+      const blob = await buildCompanyProfilePdfBlob(data);
+      pendingPdfLogoDataUrl = "";
+      const objectUrl = await createObjectUrlFromBlob(blob);
+      return objectUrl;
+    }catch(err){
+      pendingPdfLogoDataUrl = "";
+      console.warn("Could not generate local PDF preview:", err);
+      return "";
+    }
+  }
+
+  async function ensureGeneratedPdfForViewing(){
+    if (safeText(currentPdfUrl || currentPdfPath, "")) return true;
+
+    const companyName = safeText(fields.companyName && fields.companyName.value, "");
+    if (!companyName) return false;
+
+    const foundPath = await findLatestGeneratedPdfPath();
+    if (foundPath) return true;
+
+    try{
+      showStatus("Generating company PDF file for viewing...", "info");
+      pendingPdfLogoDataUrl = await captureCurrentLogoDataUrlForPdf(getFormData());
+
+      const data = Object.assign({}, getFormData(), {
+        logo_url: currentLogoUrl && !/^data:/i.test(currentLogoUrl) ? currentLogoUrl : "",
+        _logo_data_url_for_pdf: pendingPdfLogoDataUrl || "",
+        pdf_generated_at: new Date().toISOString()
+      });
+
+      const pdfResult = await uploadGeneratedCompanyPdf(data);
+      pendingPdfLogoDataUrl = "";
+
+      if (pdfResult && (pdfResult.url || pdfResult.path)) {
+        const client = initSupabase();
+        try{
+          await savePdfMetadataIfSupported(client, pdfResult, data, currentProfileId ? { column:"id", value:currentProfileId } : null);
+        }catch(metaErr){
+          console.warn("PDF metadata save after View PDF was skipped:", metaErr);
+        }
+        return true;
+      }
+    }catch(err){
+      pendingPdfLogoDataUrl = "";
+      console.warn("Could not upload PDF for viewing; trying local preview instead:", err);
+      const localUrl = await generateLocalPdfPreviewUrl();
+      if (localUrl) {
+        currentPdfUrl = localUrl;
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  async function resolvePdfDisplayUrl(options){
+    options = options || {};
+    const allowGenerate = !!options.allowGenerate;
+
+    if (allowGenerate) {
+      await ensureGeneratedPdfForViewing();
+    }
+
+    if (!safeText(currentPdfPath, "")) {
+      const storedPath = readStoredValue(PROFILE_PDF_PATH_KEY);
+      if (storedPath) currentPdfPath = storedPath;
+    }
+    if (!safeText(currentPdfUrl, "")) {
+      const storedUrl = readStoredValue(PROFILE_PDF_URL_KEY);
+      if (storedUrl) currentPdfUrl = storedUrl;
+    }
+    if (!safeText(currentPdfPath, "")) {
+      await findLatestGeneratedPdfPath();
+    }
+
+    if (safeText(currentPdfPath, "")) {
+      const signedUrl = await createSignedPdfUrl(currentPdfPath);
+      if (signedUrl) {
+        return {
+          url:signedUrl,
+          displayUrl:addPdfViewerHash(signedUrl),
+          path:currentPdfPath,
+          isObjectUrl:false
+        };
+      }
+
+      const objectUrl = await createObjectUrlFromStoragePath(currentPdfPath);
+      if (objectUrl) {
+        return {
+          url:objectUrl,
+          displayUrl:addPdfViewerHash(objectUrl),
+          path:currentPdfPath,
+          isObjectUrl:true
+        };
+      }
+
+      const publicUrl = getPublicPdfUrlFromPath(currentPdfPath);
+      if (publicUrl) {
+        currentPdfUrl = publicUrl;
+        localStorage.setItem(PROFILE_PDF_URL_KEY, publicUrl);
+        return {
+          url:publicUrl,
+          displayUrl:addPdfViewerHash(publicUrl),
+          path:currentPdfPath,
+          isObjectUrl:false
+        };
+      }
+    }
+
+    if (safeText(currentPdfUrl, "")) {
+      return {
+        url:currentPdfUrl,
+        displayUrl:addPdfViewerHash(currentPdfUrl),
+        path:currentPdfPath,
+        isObjectUrl:/^blob:/i.test(currentPdfUrl)
+      };
+    }
+
+    if (allowGenerate) {
+      const localUrl = await generateLocalPdfPreviewUrl();
+      if (localUrl) {
+        currentPdfUrl = localUrl;
+        return {
+          url:localUrl,
+          displayUrl:addPdfViewerHash(localUrl),
+          path:"",
+          isObjectUrl:true
+        };
+      }
+    }
+
+    return null;
+  }
+
+
+
+  function setSaveButtonMode(isUpdate, isWorking){
+    const btn = $("saveBtn");
+    if (!btn) return;
+
+    if (isWorking) {
+      btn.disabled = true;
+      btn.innerHTML = isUpdate
+        ? '<i class="fa-solid fa-spinner fa-spin"></i> Updating...'
+        : '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+      return;
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = isUpdate
+      ? '<i class="fa-solid fa-floppy-disk"></i> Update Company Profile'
+      : '<i class="fa-solid fa-floppy-disk"></i> Save Company Profile';
+  }
+
+  function updateSaveButtonLabel(){
+    setSaveButtonMode(!!(hasExistingCompanyProfile || currentProfileId), false);
+  }
+
+  function parseMaybeJson(value){
+    if (!value) return null;
+    if (typeof value === "object") return value;
+    try { return JSON.parse(value); } catch(_) { return null; }
+  }
+
+  function isSupabaseClient(candidate){
+    return !!candidate && typeof candidate.from === "function" && !!candidate.storage;
+  }
+
+  function readConfigValue(){
+    for (let i = 0; i < arguments.length; i++){
+      const key = arguments[i];
+      if (!key) continue;
+      const direct = window[key];
+      if (direct) return String(direct).trim();
+      try{
+        const local = localStorage.getItem(key);
+        if (local) return String(local).trim();
+      }catch(_){ }
+      try{
+        const session = sessionStorage.getItem(key);
+        if (session) return String(session).trim();
+      }catch(_){ }
+    }
+    return "";
+  }
+
+  function initSupabase(){
+    try{
+      const existingClients = [
+        supabaseClient,
+        window.jobSpaceSupabaseClient,
+        window.supabaseClient,
+        window.supabaseDb,
+        window.sb,
+        window.SUPABASE_CLIENT,
+        window.supabase
+      ];
+
+      for (const candidate of existingClients){
+        if (isSupabaseClient(candidate)) {
+          supabaseClient = candidate;
+          window.jobSpaceSupabaseClient = candidate;
+          window.supabaseClient = candidate;
+          return supabaseClient;
+        }
+      }
+
+      const namespaceCandidates = [
+        window.supabase,
+        window.Supabase,
+        window.supabaseJs,
+        window.__supabase
+      ];
+      const namespace = namespaceCandidates.find(item => item && typeof item.createClient === "function") || null;
+
+      const url = firstValue(
+        readConfigValue("SUPABASE_URL", "supabaseUrl", "supabase_url", "jobSpaceLink_supabase_url"),
+        window.SUPABASE_URL,
+        window.supabaseUrl,
+        window.supabase_url
+      );
+
+      const anonKey = firstValue(
+        readConfigValue("SUPABASE_ANON_KEY", "supabaseAnonKey", "supabaseKey", "supabase_anon_key", "jobSpaceLink_supabase_anon_key"),
+        window.SUPABASE_ANON_KEY,
+        window.supabaseAnonKey,
+        window.supabaseKey,
+        window.supabase_anon_key
+      );
+
+      if (!namespace || !url || !anonKey) {
+        console.warn("Supabase client was not created. Check supabase_config.js for SUPABASE_URL and SUPABASE_ANON_KEY.", {
+          hasNamespace: !!namespace,
+          hasUrl: !!url,
+          hasAnonKey: !!anonKey,
+          windowSupabaseIsClient: isSupabaseClient(window.supabase)
+        });
+        return null;
+      }
+
+      supabaseClient = namespace.createClient(url, anonKey);
+      window.jobSpaceSupabaseClient = supabaseClient;
+      window.supabaseClient = supabaseClient;
+      return supabaseClient;
+    }catch(err){
+      console.error("Supabase init failed:", err);
+      return null;
+    }
+  }
+
+  function readStoredObject(keys){
+    for (const storage of [sessionStorage, localStorage]){
+      for (const key of keys){
+        try{
+          const raw = storage.getItem(key);
+          const parsed = parseMaybeJson(raw);
+          if (parsed && typeof parsed === "object") return parsed;
+        }catch(_){ }
+      }
+    }
+    return null;
+  }
+
+  function readStoredValue(){
+    for (let i = 0; i < arguments.length; i++){
+      const key = arguments[i];
+      try{
+        const sv = sessionStorage.getItem(key);
+        if (sv) return sv;
+      }catch(_){ }
+      try{
+        const lv = localStorage.getItem(key);
+        if (lv) return lv;
+      }catch(_){ }
+    }
+    return "";
+  }
+
+  function getEmployerSession(){
+    const stored = readStoredObject(EMPLOYER_SESSION_KEYS);
+    if (stored && typeof stored === "object") return stored;
+
+    const looseEmail = firstValue(
+      readStoredValue("employer_email", "company_email", "email", "employerEmail", "companyEmail")
+    );
+
+    if (looseEmail) {
+      return {
+        email: looseEmail,
+        employer_email: looseEmail,
+        company_email: looseEmail,
+        user_id: readStoredValue("employer_user_id", "user_id", "supabase_user_id"),
+        company_name: firstValue(
+          readStoredValue("employer_company_name", "company_name", "business_name", "company"),
+          looseEmail
+        ),
+        company_logo_url: readStoredValue("employer_company_logo", "company_logo", "logo_url", "company_logo_url")
+      };
+    }
+
+    return null;
+  }
+
+  async function refreshEmployerFromAuth(){
+    const client = initSupabase();
+    if (!client || !client.auth || typeof client.auth.getSession !== "function") return currentEmployer;
+
+    try{
+      const res = await client.auth.getSession();
+      const session = res && res.data ? res.data.session : null;
+      const user = session && session.user ? session.user : null;
+      const email = normalizeEmail(user && user.email);
+      if (!email) return currentEmployer;
+
+      lastAuthUserId = safeText(user.id, "");
+      const metadata = user.user_metadata || {};
+      const merged = Object.assign({}, currentEmployer || {}, metadata, {
+        id: lastAuthUserId,
+        user_id: lastAuthUserId,
+        employer_user_id: lastAuthUserId,
+        email,
+        employer_email: email,
+        company_email: email
+      });
+
+      currentEmployer = merged;
+      return merged;
+    }catch(err){
+      console.warn("Could not read Supabase auth session:", err);
+      return currentEmployer;
+    }
+  }
+
+  function getEmployerEmail(account){
+    return normalizeEmail(
+      account && (
+        account.email ||
+        account.employer_email ||
+        account.company_email ||
+        account.contact_email ||
+        account.email_address ||
+        account.username
+      )
+    );
+  }
+
+  function getEmployerUserId(account){
+    return firstValue(
+      account && (
+        account.employer_user_id ||
+        account.user_id ||
+        account.userId ||
+        account.auth_user_id ||
+        account.id
+      ),
+      lastAuthUserId,
+      readStoredValue("employer_user_id", "user_id", "supabase_user_id")
+    );
+  }
+
+  function getEmployerCompanyName(account){
+    return firstValue(
+      account && (
+        account.company_name ||
+        account.employer_company_name ||
+        account.business_name ||
+        account.legal_name ||
+        account.name ||
+        account.full_name ||
+        account.company
+      ),
+      getEmployerEmail(account),
+      "Company Account"
+    );
+  }
+
+  function getEmployerLogo(account){
+    return firstValue(
+      account && (
+        account.company_logo_url ||
+        account.company_logo ||
+        account.logo_url ||
+        account.logo ||
+        account.employer_logo_url ||
+        account.business_logo ||
+        account.profile_picture_url ||
+        account.profile_image_url ||
+        account.photo_url ||
+        account.image_url
+      ),
+      readStoredValue("employer_company_logo", "company_logo", "logo_url", "company_logo_url")
+    );
+  }
+
+  function setImage(img, icon, url){
+    if (!img) return;
+    const goodUrl = safeText(url, "");
+    if (goodUrl) {
+      /*
+         Keep the displayed logo usable for generated PDF thumbnails.
+         Supabase public images normally allow anonymous CORS, so setting
+         this before src helps imageElementToDataUrl() convert the logo
+         into an embedded PDF-safe PNG instead of losing it.
+      */
+      try{
+        if (!/^data:/i.test(goodUrl) && !/^blob:/i.test(goodUrl)) {
+          img.crossOrigin = "anonymous";
+        } else {
+          img.removeAttribute("crossorigin");
+        }
+      }catch(_err){}
+      img.src = goodUrl;
+      img.style.display = "block";
+      if (icon) icon.style.display = "none";
+    } else {
+      img.removeAttribute("src");
+      img.removeAttribute("crossorigin");
+      img.style.display = "none";
+      if (icon) icon.style.display = "";
+    }
+  }
+
+  function updateAccountUI(){
+    const account = currentEmployer || getEmployerSession();
+    currentEmployer = account;
+    const email = getEmployerEmail(account);
+    const companyName = getEmployerCompanyName(account);
+    const logo = currentLogoUrl || getEmployerLogo(account);
+
+    const headerLoginBtn = $("headerLoginBtn");
+    const accountPill = $("accountPill");
+    const mobileLoginLink = $("mobileLoginLink");
+    const mobileLogoutBtn = $("mobileLogoutBtn");
+
+    if (account && email) {
+      if (headerLoginBtn) headerLoginBtn.style.display = "none";
+      if (accountPill) accountPill.classList.add("active");
+      if (mobileLoginLink) mobileLoginLink.style.display = "none";
+      if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
+    } else {
+      if (headerLoginBtn) headerLoginBtn.style.display = "inline-flex";
+      if (accountPill) accountPill.classList.remove("active");
+      if (mobileLoginLink) mobileLoginLink.style.display = "flex";
+      if (mobileLogoutBtn) mobileLogoutBtn.style.display = "none";
+    }
+
+    if ($("headerCompanyName")) $("headerCompanyName").textContent = companyName;
+    if ($("headerCompanyEmail")) $("headerCompanyEmail").textContent = email || "No employer session";
+    if ($("accountMenuCompanyName")) $("accountMenuCompanyName").textContent = companyName || "Company Account";
+    if ($("accountMenuCompanyEmail")) $("accountMenuCompanyEmail").textContent = email || "No employer session";
+    if ($("heroCompanyName")) $("heroCompanyName").textContent = safeText(fields.companyName.value, companyName || "Your Company Name");
+    if ($("heroCompanyEmail")) $("heroCompanyEmail").textContent = email || safeText(fields.contactEmail.value, "Sign in or complete the profile below");
+
+    setImage($("headerCompanyLogo"), $("headerCompanyIcon"), logo);
+    setImage($("accountMenuCompanyLogo"), $("accountMenuCompanyIcon"), logo);
+    setImage($("heroCompanyLogo"), $("heroCompanyIcon"), logo);
+  }
+
+  function getFormData(){
+    const account = currentEmployer || getEmployerSession();
+    const employerEmail = normalizeEmail(getEmployerEmail(account) || fields.contactEmail.value);
+    const contactEmail = normalizeEmail(fields.contactEmail.value) || employerEmail;
+    const companyName = safeText(fields.companyName.value, "");
+    const userId = getEmployerUserId(account);
+    const logoUrl = currentLogoUrl && !/^data:/i.test(currentLogoUrl) ? currentLogoUrl : "";
+
+    return {
+      employer_email: employerEmail,
+      employer_user_id: isUuid(userId) ? userId : null,
+      company_name: companyName,
+      legal_name: safeText(fields.legalName.value, ""),
+      industry: safeText(fields.industry.value, ""),
+      website: normalizeUrl(fields.website.value),
+      contact_email: contactEmail,
+      phone: safeText(fields.phone.value, ""),
+      country: safeText(fields.country.value, ""),
+      city: safeText(fields.city.value, ""),
+      address: safeText(fields.address.value, ""),
+      zipcode: safeText(fields.zipcode.value, ""),
+      company_overview: safeText(fields.companyOverview.value, ""),
+      mission: safeText(fields.mission.value, ""),
+      specialties: safeText(fields.specialties.value, ""),
+      benefits: safeText(fields.benefits.value, ""),
+      linkedin_url: normalizeUrl(fields.linkedinUrl.value),
+      facebook_url: normalizeUrl(fields.facebookUrl.value),
+      x_url: normalizeUrl(fields.xUrl.value),
+      logo_url: logoUrl,
+      pdf_url: safeText(currentPdfUrl, ""),
+      pdf_path: safeText(currentPdfPath, ""),
+      is_published: !!fields.isPublished.checked,
+      is_hiring: !!fields.isHiring.checked,
+      updated_at: new Date().toISOString()
+    };
+  }
+
+  function pickFromRecord(data){
+    data = data || {};
+    return {
+      id: data.id || data.profile_id || data.company_profile_id || "",
+      employer_email: firstValue(data.employer_email, data.company_email, data.email, data.contact_email),
+      employer_user_id: firstValue(data.employer_user_id, data.user_id),
+      company_name: firstValue(data.company_name, data.company, data.business_name, data.employer_company_name),
+      legal_name: firstValue(data.legal_name, data.legalName),
+      industry: firstValue(data.industry),
+      website: firstValue(data.website, data.company_website),
+      contact_email: firstValue(data.contact_email, data.company_email, data.email, data.employer_email),
+      phone: firstValue(data.phone, data.contact_phone),
+      country: firstValue(data.country),
+      city: firstValue(data.city),
+      address: firstValue(data.address, data.company_address),
+      zipcode: firstValue(data.zipcode, data.zip_code, data.zip),
+      company_overview: firstValue(data.company_overview, data.overview, data.description, data.about),
+      mission: firstValue(data.mission, data.values, data.company_mission),
+      specialties: firstValue(data.specialties, data.hiring_specialties),
+      benefits: firstValue(data.benefits, data.perks),
+      linkedin_url: firstValue(data.linkedin_url, data.linkedin),
+      facebook_url: firstValue(data.facebook_url, data.facebook),
+      x_url: firstValue(data.x_url, data.twitter_url, data.twitter),
+      logo_url: firstValue(data.logo_url, data.company_logo_url, data.company_logo, data.logo, data.image_url, data.photo_url),
+      pdf_url: firstValue(data.pdf_url, data.company_pdf_url, data.profile_pdf_url, data.generated_pdf_url, data.pdfFileUrl),
+      pdf_path: firstValue(data.pdf_path, data.company_pdf_path, data.profile_pdf_path, data.generated_pdf_path, data.pdfFilePath),
+      is_published: boolValue(firstValue(data.is_published, data.published), String(data.status || "").toLowerCase() === "published"),
+      is_hiring: data.is_hiring === undefined ? true : boolValue(data.is_hiring, true),
+      updated_at: data.updated_at || data.updatedAt || data.created_at || ""
+    };
+  }
+
+  function fillForm(data){
+    if (!data) return;
+
+    const row = pickFromRecord(data);
+    currentProfileId = safeText(row.id, currentProfileId);
+    if (currentProfileId) localStorage.setItem(PROFILE_ROW_ID_KEY, currentProfileId);
+    if (isUuid(row.employer_user_id)) lastAuthUserId = row.employer_user_id;
+
+    fields.companyName.value = row.company_name || "";
+    fields.legalName.value = row.legal_name || "";
+    fields.industry.value = row.industry || "";
+    fields.website.value = row.website || "";
+    fields.contactEmail.value = row.contact_email || row.employer_email || "";
+    fields.phone.value = row.phone || "";
+    fields.country.value = row.country || "";
+    fields.city.value = row.city || "";
+    fields.address.value = row.address || "";
+    fields.zipcode.value = row.zipcode || "";
+    fields.companyOverview.value = row.company_overview || "";
+    fields.mission.value = row.mission || "";
+    fields.specialties.value = row.specialties || "";
+    fields.benefits.value = row.benefits || "";
+    fields.linkedinUrl.value = row.linkedin_url || "";
+    fields.facebookUrl.value = row.facebook_url || "";
+    fields.xUrl.value = row.x_url || "";
+    fields.isPublished.checked = !!row.is_published;
+    fields.isHiring.checked = row.is_hiring === undefined ? true : !!row.is_hiring;
+
+    currentLogoFile = null;
+    currentLogoUrl = row.logo_url || getEmployerLogo(currentEmployer) || "";
+    currentPdfUrl = row.pdf_url || readStoredValue(PROFILE_PDF_URL_KEY) || "";
+    currentPdfPath = row.pdf_path || readStoredValue(PROFILE_PDF_PATH_KEY) || "";
+    updateLogoPreview(currentLogoUrl);
+    updateDynamicUI();
+    updatePdfButtons();
+
+    if (row.updated_at && $("sideLastSaved")) {
+      $("sideLastSaved").textContent = new Date(row.updated_at).toLocaleString();
+    }
+
+    hasExistingCompanyProfile = true;
+    updateSaveButtonLabel();
+  }
+
+  function updateLogoPreview(url){
+    setImage($("companyLogoPreview"), $("companyLogoPlaceholder"), url);
+    setImage($("heroCompanyLogo"), $("heroCompanyIcon"), url);
+    setImage($("headerCompanyLogo"), $("headerCompanyIcon"), url);
+  }
+
+  function calculateCompletion(data){
+    const required = [
+      "company_name",
+      "industry",
+      "website",
+      "contact_email",
+      "phone",
+      "country",
+      "city",
+      "company_overview",
+      "mission",
+      "specialties",
+      "benefits"
+    ];
+    if (currentLogoUrl) required.push("logo_url");
+    const done = required.filter(k => k === "logo_url" ? currentLogoUrl : safeText(data[k], "")).length;
+    return Math.round((done / required.length) * 100);
+  }
+
+  function updateDynamicUI(){
+    const data = getFormData();
+
+    if ($("heroCompanyName")) $("heroCompanyName").textContent = data.company_name || getEmployerCompanyName(currentEmployer) || "Your Company Name";
+    if ($("heroCompanyEmail")) $("heroCompanyEmail").textContent = getEmployerEmail(currentEmployer) || data.contact_email || "Sign in or complete the profile below";
+
+    const published = !!data.is_published;
+    if ($("sideVisibility")) {
+      $("sideVisibility").className = published ? "pill ok" : "pill warn";
+      $("sideVisibility").innerHTML = published
+        ? '<i class="fa-solid fa-eye"></i> Published'
+        : '<i class="fa-solid fa-eye-slash"></i> Draft';
+    }
+    updatePdfButtons();
+    updateAccountUI();
+  }
+
+  function getMissingColumnFromError(error){
+    const msg = safeText(error && (error.message || error.details || error.hint || error.code), "");
+    const patterns = [
+      /Could not find the '([^']+)' column/i,
+      /column "([^"]+)" of relation/i,
+      /column "([^"]+)" does not exist/i,
+      /'([^']+)' column of '([^']+)'/i,
+      /schema cache.*?['"]([^'"]+)['"]/i
+    ];
+
+    for (const pattern of patterns){
+      const match = msg.match(pattern);
+      if (match && match[1]) return match[1];
+    }
+    return "";
+  }
+
+  function isNoRowsError(error){
+    if (!error) return false;
+    const code = safeText(error.code, "");
+    const msg = safeText(error.message, "");
+    return code === "PGRST116" || /no rows/i.test(msg);
+  }
+
+  function cleanPayloadForKnownMissing(payload){
+    const out = {};
+    Object.keys(payload).forEach(key => {
+      const value = payload[key];
+      if (missingProfileColumns.has(key)) return;
+      if (value === undefined) return;
+      if (value === "") {
+        out[key] = null;
+        return;
+      }
+      out[key] = value;
+    });
+    return out;
+  }
+
+
+  function normalizePdfText(value){
+    return safeText(value, "")
+      .replace(/[â€œâ€]/g, '"')
+      .replace(/[â€˜â€™]/g, "'")
+      .replace(/[â€“â€”]/g, "-")
+      .replace(/[â€¢]/g, "-")
+      .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, " ");
+  }
+
+  function escapePdfText(value){
+    return normalizePdfText(value).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+  }
+
+  function splitPdfLines(value, maxChars){
+    const clean = normalizePdfText(value || "Not provided").replace(/\r/g, "");
+    const result = [];
+    clean.split("\n").forEach(paragraph => {
+      const words = paragraph.trim().split(/\s+/).filter(Boolean);
+      if (!words.length) {
+        result.push("");
+        return;
+      }
+
+      let line = "";
+      words.forEach(word => {
+        if ((line + " " + word).trim().length > maxChars) {
+          if (line) result.push(line);
+          line = word;
+        } else {
+          line = (line + " " + word).trim();
+        }
+      });
+      if (line) result.push(line);
+    });
+    return result.length ? result : ["Not provided"];
+  }
+
+  function formatPdfDate(date){
+    try{
+      return new Date(date || Date.now()).toLocaleString();
+    }catch(_){
+      return String(date || "");
+    }
+  }
+
+  function readFileAsDataUrl(file){
+    return new Promise((resolve) => {
+      if (!file) return resolve("");
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function fetchUrlAsDataUrl(url){
+    const src = safeText(url, "");
+    if (!src) return "";
+    if (/^data:image\//i.test(src)) return src;
+
+    try{
+      const res = await fetch(src, { mode:"cors", cache:"no-store" });
+      if (!res.ok) return "";
+      const blob = await res.blob();
+      if (!/^image\//i.test(blob.type || "")) return "";
+
+      return await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => resolve("");
+        reader.readAsDataURL(blob);
+      });
+    }catch(err){
+      console.warn("Logo thumbnail could not be loaded for PDF:", err);
+      return "";
+    }
+  }
+
+  function imageElementToDataUrl(img){
+    return new Promise((resolve) => {
+      try{
+        if (!img || !img.complete || !img.naturalWidth || !img.naturalHeight) return resolve("");
+        const canvas = document.createElement("canvas");
+        const maxSide = 520;
+        const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+        canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+        canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/png", 0.92));
+      }catch(err){
+        console.warn("Could not convert loaded logo element for PDF:", err);
+        resolve("");
+      }
+    });
+  }
+
+  function normalizeLogoDataUrlForPdf(dataUrl){
+    return new Promise((resolve) => {
+      const src = safeText(dataUrl, "");
+      if (!/^data:image\//i.test(src)) return resolve("");
+      const img = new Image();
+      img.onload = () => {
+        try{
+          const canvas = document.createElement("canvas");
+          const maxSide = 720;
+          const scale = Math.min(1, maxSide / Math.max(img.naturalWidth || 1, img.naturalHeight || 1));
+          canvas.width = Math.max(1, Math.round((img.naturalWidth || 1) * scale));
+          canvas.height = Math.max(1, Math.round((img.naturalHeight || 1) * scale));
+          const ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/png", 0.92));
+        }catch(err){
+          console.warn("Could not normalize logo for generated PDF:", err);
+          resolve(src);
+        }
+      };
+      img.onerror = () => resolve(src);
+      img.src = src;
+    });
+  }
+
+  async function captureCurrentLogoDataUrlForPdf(profileData){
+    const direct = safeText(profileData && (
+      profileData._logo_data_url_for_pdf ||
+      profileData.logo_data_url ||
+      profileData.company_logo_data_url
+    ), "");
+    if (/^data:image\//i.test(direct)) return await normalizeLogoDataUrlForPdf(direct);
+
+    if (pendingPdfLogoDataUrl && /^data:image\//i.test(pendingPdfLogoDataUrl)) {
+      return await normalizeLogoDataUrlForPdf(pendingPdfLogoDataUrl);
+    }
+
+    if (currentLogoFile) {
+      const fileDataUrl = await readFileAsDataUrl(currentLogoFile);
+      if (fileDataUrl) return await normalizeLogoDataUrlForPdf(fileDataUrl);
+    }
+
+    const previewImages = [
+      $("companyLogoPreview"),
+      $("heroCompanyLogo"),
+      $("headerCompanyLogo"),
+      $("accountMenuCompanyLogo")
+    ];
+
+    for (const img of previewImages){
+      const imageDataUrl = await imageElementToDataUrl(img);
+      if (imageDataUrl) return imageDataUrl;
+    }
+
+    return "";
+  }
+
+  async function resolveLogoDataUrlForPdf(profileData){
+    const captured = await captureCurrentLogoDataUrlForPdf(profileData);
+    if (captured) return captured;
+
+    const candidates = [
+      profileData && profileData.logo_url,
+      profileData && profileData.company_logo_url,
+      profileData && profileData.company_logo,
+      profileData && profileData.logo,
+      profileData && profileData.image_url,
+      profileData && profileData.photo_url,
+      currentLogoUrl,
+      getEmployerLogo(currentEmployer),
+      readStoredValue("employer_company_logo", "company_logo", "logo_url", "company_logo_url")
+    ].map(v => safeText(v, "")).filter(Boolean);
+
+    const seen = new Set();
+    for (const src of candidates){
+      if (seen.has(src)) continue;
+      seen.add(src);
+      const dataUrl = await fetchUrlAsDataUrl(src);
+      if (dataUrl) return await normalizeLogoDataUrlForPdf(dataUrl);
+    }
+    return "";
+  }
+
+  function getPdfImageFormat(dataUrl){
+    const s = safeText(dataUrl, "").toLowerCase();
+    if (s.startsWith("data:image/jpeg") || s.startsWith("data:image/jpg")) return "JPEG";
+    return "PNG";
+  }
+
+  function addContainedPdfImage(doc, dataUrl, x, y, boxW, boxH){
+    if (!dataUrl) return false;
+    try{
+      const props = doc.getImageProperties(dataUrl);
+      const imgW = Number(props && props.width) || boxW;
+      const imgH = Number(props && props.height) || boxH;
+      const scale = Math.min(boxW / imgW, boxH / imgH);
+      const drawW = imgW * scale;
+      const drawH = imgH * scale;
+      const drawX = x + ((boxW - drawW) / 2);
+      const drawY = y + ((boxH - drawH) / 2);
+      doc.addImage(dataUrl, getPdfImageFormat(dataUrl), drawX, drawY, drawW, drawH, undefined, "FAST");
+      return true;
+    }catch(err){
+      console.warn("Could not place company logo thumbnail inside generated PDF:", err);
+      return false;
+    }
+  }
+
+  function addWrappedPdfText(doc, textValue, x, y, maxWidth, lineHeight){
+    const lines = doc.splitTextToSize(normalizePdfText(textValue || "Not provided"), maxWidth);
+    lines.forEach(line => {
+      if (y > 272) {
+        doc.addPage();
+        y = 22;
+      }
+      doc.text(line, x, y);
+      y += lineHeight;
+    });
+    return y;
+  }
+
+  function addCompanyPdfSection(doc, title, body, y){
+    if (y > 246) {
+      doc.addPage();
+      y = 22;
+    }
+    doc.setTextColor(7, 20, 46);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text(title, 18, y);
+    doc.setDrawColor(0, 198, 255);
+    doc.setLineWidth(0.25);
+    doc.line(18, y + 3, 192, y + 3);
+    y += 10;
+
+    doc.setTextColor(71, 85, 105);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    y = addWrappedPdfText(doc, body || "Not provided", 18, y, 174, 5.2);
+    return y + 6;
+  }
+
+  async function buildCompanyProfilePdfBlob(profileData){
+    const jsPDF = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDF) {
+      return buildBasicCompanyProfilePdfBlob(profileData);
+    }
+
+    try{
+      const data = profileData || {};
+      const doc = new jsPDF({ orientation:"portrait", unit:"mm", format:"a4" });
+      const generatedAt = new Date();
+
+      const logoDataUrl = await resolveLogoDataUrlForPdf(data);
+
+      /*
+         PDF TOP BRAND HEADER
+         The generated company profile PDF must visibly show the company logo
+         thumbnail at the very top of the Company Profile page.
+      */
+      doc.setFillColor(2, 6, 23);
+      doc.rect(0, 0, 210, 58, "F");
+      doc.setFillColor(0, 198, 255);
+      doc.rect(0, 57.2, 210, 0.8, "F");
+
+      doc.setFillColor(248, 250, 252);
+      doc.roundedRect(16, 8, 46, 46, 5, 5, "F");
+      doc.setDrawColor(0, 198, 255);
+      doc.setLineWidth(0.55);
+      doc.roundedRect(16, 8, 46, 46, 5, 5, "S");
+
+      const logoPlacedInHeader = addContainedPdfImage(doc, logoDataUrl, 19, 11, 40, 36);
+      if (!logoPlacedInHeader) {
+        doc.setTextColor(15, 23, 42);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        doc.text("COMPANY", 22.5, 27);
+        doc.text("LOGO", 27, 35);
+      }
+
+      doc.setTextColor(203, 213, 225);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.text("COMPANY LOGO THUMBNAIL", 19, 51);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(20);
+      doc.text("Company Profile", 70, 18);
+
+      doc.setFontSize(13);
+      doc.text(normalizePdfText(data.company_name) || "Company Name", 70, 30);
+
+      doc.setTextColor(191, 219, 254);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.text("Generated: " + formatPdfDate(generatedAt), 70, 39);
+      doc.text("This generated PDF includes the company logo thumbnail at the top.", 70, 47);
+
+      let y = 68;
+
+      doc.setFillColor(239, 246, 255);
+      doc.setDrawColor(219, 234, 254);
+      doc.roundedRect(18, y, 174, 52, 3, 3, "FD");
+
+      doc.setTextColor(7, 20, 46);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text("Profile Summary", 24, y + 9);
+
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(191, 219, 254);
+      doc.roundedRect(151, y + 8, 32, 32, 3, 3, "FD");
+      const logoPlacedInSummary = addContainedPdfImage(doc, logoDataUrl, 153.5, y + 10.5, 27, 27);
+      if (!logoPlacedInSummary) {
+        doc.setTextColor(100, 116, 139);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(6.5);
+        doc.text("NO LOGO", 158, y + 25);
+      }
+      doc.setTextColor(71, 85, 105);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(6.4);
+      doc.text("Company Logo", 153.5, y + 45);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.8);
+      const summary = [
+        ["Company", data.company_name],
+        ["Legal Name", data.legal_name],
+        ["Industry", data.industry],
+        ["Website", data.website],
+        ["Email", data.contact_email || data.employer_email],
+        ["Phone", data.phone],
+        ["Status", data.is_published ? "Published" : "Draft"],
+        ["Actively Hiring", data.is_hiring ? "Yes" : "No"]
+      ];
+
+      let rowY = y + 18;
+      summary.forEach((pair, idx) => {
+        const colX = idx % 2 === 0 ? 24 : 86;
+        if (idx > 0 && idx % 2 === 0) rowY += 7;
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(30, 41, 59);
+        doc.text(pair[0] + ":", colX, rowY);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(71, 85, 105);
+        doc.text(doc.splitTextToSize(normalizePdfText(pair[1]) || "Not provided", 36)[0] || "Not provided", colX + 22, rowY);
+      });
+
+      y += 64;
+
+      y = addCompanyPdfSection(doc, "Contact and Location",
+        [
+          "Country: " + (data.country || "Not provided"),
+          "City: " + (data.city || "Not provided"),
+          "Address: " + (data.address || "Not provided"),
+          "Zip Code: " + (data.zipcode || "Not provided")
+        ].join("\n"),
+        y
+      );
+
+      y = addCompanyPdfSection(doc, "Company Overview", data.company_overview, y);
+      y = addCompanyPdfSection(doc, "Mission / Values", data.mission, y);
+      y = addCompanyPdfSection(doc, "Hiring Specialties", data.specialties, y);
+      y = addCompanyPdfSection(doc, "Benefits / Perks", data.benefits, y);
+      y = addCompanyPdfSection(doc, "Social Links",
+        [
+          "LinkedIn: " + (data.linkedin_url || "Not provided"),
+          "Facebook: " + (data.facebook_url || "Not provided"),
+          "X / Twitter: " + (data.x_url || "Not provided")
+        ].join("\n"),
+        y
+      );
+
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++){
+        doc.setPage(i);
+        doc.setTextColor(100, 116, 139);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.text("Job Space Link â€¢ Company Profile PDF", 18, 289);
+        doc.text("Page " + i + " of " + pageCount, 174, 289);
+      }
+
+      return doc.output("blob");
+    }catch(err){
+      console.warn("jsPDF generation failed. Using text-only PDF fallback:", err);
+      return buildBasicCompanyProfilePdfBlob(profileData);
+    }
+  }
+
+  function buildBasicCompanyProfilePdfBlob(profileData){
+    const data = profileData || {};
+    const generatedAt = new Date();
+    const pageWidth = 595;
+    const pageHeight = 842;
+    const marginX = 52;
+    const bottomY = 56;
+    const topY = 790;
+    let y = topY;
+    let commands = [];
+    const pageStreams = [];
+
+    function pushPage(){
+      if (commands.length) {
+        pageStreams.push(commands.join("\n"));
+        commands = [];
+      }
+      y = topY;
+    }
+
+    function ensureSpace(height){
+      if (y - height < bottomY) pushPage();
+    }
+
+    function textLine(value, size, x, gap){
+      const fontSize = size || 10;
+      const lineGap = gap === undefined ? fontSize + 6 : gap;
+      ensureSpace(lineGap + 4);
+      commands.push("BT /F1 " + fontSize + " Tf " + x + " " + y + " Td (" + escapePdfText(value) + ") Tj ET");
+      y -= lineGap;
+    }
+
+    function heading(value){
+      ensureSpace(34);
+      y -= 6;
+      commands.push("BT /F1 13 Tf " + marginX + " " + y + " Td (" + escapePdfText(value) + ") Tj ET");
+      y -= 18;
+      commands.push(String(marginX) + " " + (y + 8) + " " + (pageWidth - (marginX * 2)) + " 0.6 re f");
+    }
+
+    function field(label, value){
+      textLine(label + ": " + (normalizePdfText(value) || "Not provided"), 10, marginX, 15);
+    }
+
+    function paragraph(label, value){
+      heading(label);
+      splitPdfLines(value || "Not provided", 88).forEach(line => {
+        textLine(line || " ", 10, marginX, 14);
+      });
+      y -= 6;
+    }
+
+    textLine("COMPANY PROFILE", 22, marginX, 28);
+    textLine(normalizePdfText(data.company_name) || "Company Name", 16, marginX, 22);
+    textLine("Generated: " + formatPdfDate(generatedAt), 9, marginX, 16);
+    y -= 6;
+
+    heading("Basic Company Information");
+    field("Company Name", data.company_name);
+    field("Legal Business Name", data.legal_name);
+    field("Industry", data.industry);
+    field("Website", data.website);
+    field("Company Email", data.contact_email || data.employer_email);
+    field("Phone", data.phone);
+    field("Status", data.is_published ? "Published" : "Draft");
+    field("Actively Hiring", data.is_hiring ? "Yes" : "No");
+
+    heading("Contact and Location");
+    field("Country", data.country);
+    field("City", data.city);
+    field("Address", data.address);
+    field("Zip Code", data.zipcode);
+
+    paragraph("Company Overview", data.company_overview);
+    paragraph("Mission / Values", data.mission);
+    paragraph("Hiring Specialties", data.specialties);
+    paragraph("Benefits / Perks", data.benefits);
+
+    heading("Social Links");
+    field("LinkedIn", data.linkedin_url);
+    field("Facebook", data.facebook_url);
+    field("X / Twitter", data.x_url);
+
+    pushPage();
+
+    const encoder = new TextEncoder();
+    const objects = [];
+    objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+    objects[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+    const kids = [];
+    let nextId = 4;
+
+    pageStreams.forEach(stream => {
+      const contentId = nextId++;
+      const pageId = nextId++;
+      const length = encoder.encode(stream).length;
+      objects[contentId] = "<< /Length " + length + " >>\nstream\n" + stream + "\nendstream";
+      objects[pageId] = "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + pageWidth + " " + pageHeight + "] /Resources << /Font << /F1 3 0 R >> >> /Contents " + contentId + " 0 R >>";
+      kids.push(pageId + " 0 R");
+    });
+
+    objects[2] = "<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + kids.length + " >>";
+
+    let pdf = "%PDF-1.4\n";
+    const offsets = [0];
+
+    for (let i = 1; i < objects.length; i++){
+      offsets[i] = encoder.encode(pdf).length;
+      pdf += i + " 0 obj\n" + objects[i] + "\nendobj\n";
+    }
+
+    const xrefStart = encoder.encode(pdf).length;
+    pdf += "xref\n0 " + objects.length + "\n";
+    pdf += "0000000000 65535 f \n";
+    for (let i = 1; i < objects.length; i++){
+      pdf += String(offsets[i]).padStart(10, "0") + " 00000 n \n";
+    }
+    pdf += "trailer\n<< /Size " + objects.length + " /Root 1 0 R >>\nstartxref\n" + xrefStart + "\n%%EOF";
+
+    return new Blob([pdf], { type:"application/pdf" });
+  }
+
+  async function uploadGeneratedCompanyPdf(profileData){
+    const client = initSupabase();
+    if (!client) throw new Error("Supabase client is not ready. Check supabase_config.js.");
+
+    const companyName = safeText(profileData && profileData.company_name, "company");
+    const folder = slugFolderName(companyName);
+    const fileSlug = folder.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "company";
+    const profilePart = safeText(currentProfileId || (profileData && (profileData.id || profileData.profile_id || profileData.company_profile_id)), "");
+    const fileName = "company-profile-" + fileSlug + (profilePart ? "-" + profilePart : "") + "-" + Date.now() + ".pdf";
+    const path = folder + "/" + fileName;
+    const blob = await buildCompanyProfilePdfBlob(profileData || getFormData());
+
+    const { error } = await client.storage
+      .from(COMPANY_PDF_BUCKET)
+      .upload(path, blob, {
+        upsert: true,
+        cacheControl: "3600",
+        contentType: "application/pdf"
+      });
+
+    if (error) throw error;
+
+    const publicRes = client.storage.from(COMPANY_PDF_BUCKET).getPublicUrl(path);
+    currentPdfPath = path;
+    currentPdfUrl = publicRes && publicRes.data ? publicRes.data.publicUrl : "";
+
+    localStorage.setItem(PROFILE_PDF_URL_KEY, currentPdfUrl || "");
+    localStorage.setItem(PROFILE_PDF_PATH_KEY, currentPdfPath || "");
+
+    updatePdfButtons();
+
+    return {
+      path: currentPdfPath,
+      url: currentPdfUrl
+    };
+  }
+
+  async function savePdfMetadataIfSupported(client, pdfResult, savedRow, existingMatch){
+    if (!client || !pdfResult || (!pdfResult.url && !pdfResult.path)) return;
+
+    const rowId = safeText((savedRow && (savedRow.id || savedRow.profile_id || savedRow.company_profile_id)) || currentProfileId, "");
+    const match = rowId
+      ? { column:"id", value:rowId }
+      : existingMatch;
+
+    if (!match || !match.column || !match.value) return;
+
+    const payload = {
+      pdf_url: pdfResult.url || "",
+      pdf_path: pdfResult.path || "",
+      updated_at: new Date().toISOString()
+    };
+
+    try{
+      await writeProfilePayload(client, payload, match);
+    }catch(err){
+      const missing = getMissingColumnFromError(err);
+      if (missing) {
+        console.warn("PDF metadata column is not available on employer_company_profiles:", missing);
+        return;
+      }
+      console.warn("PDF metadata update skipped:", err);
+    }
+  }
+
+  async function ensureCurrentPdfUrl(){
+    const resolved = await resolvePdfDisplayUrl({ allowGenerate:false });
+    if (!resolved || !resolved.url) return "";
+
+    if (resolved.path) {
+      currentPdfPath = resolved.path;
+      localStorage.setItem(PROFILE_PDF_PATH_KEY, currentPdfPath);
+    } else if (!resolved.isObjectUrl && resolved.url && !/\/storage\/v1\/object\/sign\//i.test(resolved.url)) {
+      currentPdfUrl = resolved.url;
+      localStorage.setItem(PROFILE_PDF_URL_KEY, currentPdfUrl);
+    }
+
+    return resolved.url;
+  }
+
+  async function viewGeneratedPdf(){
+    const frame = $("pdfFrame");
+    const openLink = $("pdfOpenNewTab");
+    const pathLabel = $("pdfModalPath");
+    const fileCard = $("pdfFileCard");
+    const companyNameEl = $("pdfViewerCompanyName");
+    const companyMetaEl = $("pdfViewerCompanyMeta");
+
+    try{
+      showStatus("Opening generated company PDF file...", "info");
+      const resolved = await resolvePdfDisplayUrl({ allowGenerate:true, forView:true });
+
+      if (!resolved || !resolved.displayUrl) {
+        showStatus("No generated PDF file was found. Click Save Company Profile first, then click View PDF File again.", "error");
+        return;
+      }
+
+      const data = getFormData();
+      const companyName = data.company_name || getEmployerCompanyName(currentEmployer) || "Company";
+      const email = data.contact_email || data.employer_email || getEmployerEmail(currentEmployer) || "";
+      const meta = [data.industry || "Company Profile", email].filter(Boolean).join(" â€¢ ");
+
+      if (companyNameEl) companyNameEl.textContent = companyName;
+      if (companyMetaEl) companyMetaEl.textContent = meta || "Generated company profile PDF";
+
+      setImage($("pdfViewerCompanyLogo"), $("pdfViewerCompanyIcon"), currentLogoUrl || getEmployerLogo(currentEmployer) || "");
+
+      if (pathLabel) {
+        pathLabel.textContent = resolved.path
+          ? "job_pdfs/" + resolved.path
+          : "Generated Company PDF preview";
+      }
+
+      if (openLink) {
+        openLink.href = resolved.url;
+        openLink.removeAttribute("aria-disabled");
+      }
+
+      if (fileCard) {
+        fileCard.onclick = () => {
+          if (frame) frame.src = resolved.displayUrl;
+        };
+      }
+
+      if (frame) {
+        frame.removeAttribute("src");
+        setTimeout(() => {
+          frame.src = resolved.displayUrl;
+        }, 30);
+      }
+
+      resetPdfViewerZoom();
+      if ($("pdfModal")) $("pdfModal").classList.add("open");
+      showStatus("Generated PDF file loaded in the viewer.", "success");
+    }catch(err){
+      console.error("Could not open generated PDF:", err);
+      showStatus("Could not display the generated PDF file. Error: " + (err.message || err), "error");
+    }
+  }
+
+
+  async function uploadLogoIfNeeded(){
+    if (!currentLogoFile) return currentLogoUrl || "";
+
+    const client = initSupabase();
+    if (!client) throw new Error("Supabase client is not ready. Check supabase_config.js.");
+
+    const companyName = safeText(fields.companyName.value, "company");
+    const folder = slugFolderName(companyName);
+    const ext = (currentLogoFile.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "") || "png";
+    const fileName = "company-logo-" + Date.now() + "." + ext;
+    const path = folder + "/" + fileName;
+
+    const { error } = await client.storage
+      .from(COMPANY_LOGO_BUCKET)
+      .upload(path, currentLogoFile, {
+        upsert: true,
+        cacheControl: "3600",
+        contentType: currentLogoFile.type || "image/" + ext
+      });
+
+    if (error) throw error;
+
+    const publicRes = client.storage.from(COMPANY_LOGO_BUCKET).getPublicUrl(path);
+    currentLogoUrl = publicRes && publicRes.data ? publicRes.data.publicUrl : "";
+    return currentLogoUrl;
+  }
+
+  async function queryProfileByColumn(client, column, value){
+    if (!value || missingProfileColumns.has(column)) return null;
+
+    try{
+      const { data, error } = await client
+        .from(COMPANY_PROFILE_TABLE)
+        .select("*")
+        .eq(column, value)
+        .order("updated_at", { ascending:false, nullsFirst:false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        const missing = getMissingColumnFromError(error);
+        if (missing) {
+          missingProfileColumns.add(missing);
+          return null;
+        }
+        if (isNoRowsError(error)) return null;
+        throw error;
+      }
+
+      return data || null;
+    }catch(err){
+      const missing = getMissingColumnFromError(err);
+      if (missing) {
+        missingProfileColumns.add(missing);
+        return null;
+      }
+      throw err;
+    }
+  }
+
+  function getLoggedInProfileLookup(data){
+    const account = currentEmployer || getEmployerSession();
+    const email = normalizeEmail(
+      getEmployerEmail(account) ||
+      (data && (data.employer_email || data.contact_email)) ||
+      fields.contactEmail.value
+    );
+    const rawUserId = firstValue(
+      getEmployerUserId(account),
+      data && data.employer_user_id,
+      lastAuthUserId
+    );
+    const userId = isUuid(rawUserId) ? rawUserId : "";
+
+    return {
+      email,
+      userId
+    };
+  }
+
+  async function findLoggedInEmployerProfile(client, data){
+    if (!client) return null;
+
+    const lookup = getLoggedInProfileLookup(data || {});
+    const lookupPairs = [];
+
+    // Always prefer the real logged-in account identity. This prevents a
+    // stale row id or matching company name from loading another account's profile.
+    if (lookup.userId) lookupPairs.push(["employer_user_id", lookup.userId]);
+    if (lookup.email) {
+      lookupPairs.push(["employer_email", lookup.email]);
+      lookupPairs.push(["contact_email", lookup.email]);
+    }
+
+    for (const pair of lookupPairs){
+      const column = pair[0];
+      const value = pair[1];
+      const row = await queryProfileByColumn(client, column, value);
+      if (row) {
+        const rowId = safeText(row.id || row.profile_id || row.company_profile_id, "");
+        if (rowId) {
+          currentProfileId = rowId;
+          localStorage.setItem(PROFILE_ROW_ID_KEY, rowId);
+          return { row, column: "id", value: rowId, matchedBy: column };
+        }
+        return { row, column, value, matchedBy: column };
+      }
+    }
+
+    return null;
+  }
+
+  async function findExistingProfile(client, data){
+    if (!client) return null;
+
+    // First, match the logged-in employer identity from the database.
+    // This is the safest way to decide whether this page should update an existing row.
+    const accountMatch = await findLoggedInEmployerProfile(client, data || {});
+    if (accountMatch) return accountMatch;
+
+    // Only use the in-memory profile id after the current page has loaded/saved it.
+    // Do not read PROFILE_ROW_ID_KEY from localStorage here, because it can belong
+    // to a previously logged-in employer account.
+    const activeId = safeText(currentProfileId, "");
+    if (activeId && !missingProfileColumns.has("id")) {
+      const byId = await queryProfileByColumn(client, "id", activeId);
+      if (byId) return { row: byId, column: "id", value: activeId, matchedBy: "id" };
+    }
+
+    return null;
+  }
+
+  async function writeProfilePayload(client, originalPayload, existingMatch){
+    let payload = cleanPayloadForKnownMissing(originalPayload);
+    let lastError = null;
+
+    for (let attempt = 0; attempt < 20; attempt++){
+      try{
+        let response;
+        const updateMode = existingMatch && existingMatch.column && existingMatch.value && !missingProfileColumns.has(existingMatch.column);
+
+        if (updateMode) {
+          const updatePayload = Object.assign({}, payload);
+          delete updatePayload.created_at;
+          response = await client
+            .from(COMPANY_PROFILE_TABLE)
+            .update(updatePayload)
+            .eq(existingMatch.column, existingMatch.value)
+            .select("*")
+            .limit(1)
+            .maybeSingle();
+
+          if (!response.error && !response.data) {
+            existingMatch = null;
+            continue;
+          }
+        } else {
+          response = await client
+            .from(COMPANY_PROFILE_TABLE)
+            .insert(payload)
+            .select("*")
+            .limit(1)
+            .maybeSingle();
+        }
+
+        if (!response.error) {
+          return {
+            row: response.data || payload,
+            usedPayload: payload,
+            inserted: !updateMode
+          };
+        }
+
+        const missing = getMissingColumnFromError(response.error);
+        if (missing && Object.prototype.hasOwnProperty.call(payload, missing)) {
+          missingProfileColumns.add(missing);
+          delete payload[missing];
+          lastError = response.error;
+          continue;
+        }
+
+        throw response.error;
+      }catch(err){
+        const missing = getMissingColumnFromError(err);
+        if (missing && Object.prototype.hasOwnProperty.call(payload, missing)) {
+          missingProfileColumns.add(missing);
+          delete payload[missing];
+          lastError = err;
+          continue;
+        }
+        throw err;
+      }
+    }
+
+    throw lastError || new Error("Could not save profile after removing unsupported columns.");
+  }
+
+  function rememberSavedProfile(data, savedRow){
+    const normalizedSaved = Object.assign({}, data, savedRow || {});
+    const rowId = safeText((savedRow && (savedRow.id || savedRow.profile_id || savedRow.company_profile_id)) || currentProfileId, "");
+    if (rowId) {
+      currentProfileId = rowId;
+      localStorage.setItem(PROFILE_ROW_ID_KEY, rowId);
+    }
+
+    localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(normalizedSaved));
+    localStorage.setItem("employer_company_name", data.company_name || "");
+    localStorage.setItem("company_name", data.company_name || "");
+    localStorage.setItem("employer_company_logo", data.logo_url || "");
+    localStorage.setItem("company_logo", data.logo_url || "");
+    localStorage.setItem("logo_url", data.logo_url || "");
+    if (data.pdf_url) localStorage.setItem(PROFILE_PDF_URL_KEY, data.pdf_url);
+    if (data.pdf_path) localStorage.setItem(PROFILE_PDF_PATH_KEY, data.pdf_path);
+    localStorage.setItem("employer_email", data.employer_email || "");
+    localStorage.setItem("company_email", data.employer_email || "");
+    if (data.employer_user_id) localStorage.setItem("employer_user_id", data.employer_user_id);
+  }
+
+  async function saveProfile(event){
+    if (event) event.preventDefault();
+    if (isSaving) return;
+
+    const client = initSupabase();
+
+    currentEmployer = getEmployerSession();
+    await refreshEmployerFromAuth();
+
+    const companyName = safeText(fields.companyName.value, "");
+    const email = normalizeEmail(getEmployerEmail(currentEmployer) || fields.contactEmail.value);
+
+    if (!companyName) {
+      showStatus("Please enter the company name before saving.", "error");
+      fields.companyName.focus();
+      return;
+    }
+
+    if (!email) {
+      showStatus("Please enter a valid company email. This is required so the profile can be saved and loaded again.", "error");
+      fields.contactEmail.focus();
+      return;
+    }
+
+    if (!client) {
+      showStatus("Supabase is not connected. Check that supabase-js loads before supabase_config.js and that SUPABASE_URL / SUPABASE_ANON_KEY are defined.", "error");
+      return;
+    }
+
+    const saveStartedAsUpdate = !!(hasExistingCompanyProfile || currentProfileId);
+    isSaving = true;
+    setSaveButtonMode(saveStartedAsUpdate, true);
+    showStatus(saveStartedAsUpdate ? "Updating company profile..." : "Saving company profile...", "info");
+
+    let logoWarning = "";
+    let pdfWarning = "";
+    let pdfResult = null;
+
+    try{
+      pendingPdfLogoDataUrl = await captureCurrentLogoDataUrlForPdf(getFormData());
+
+      if (currentLogoFile) {
+        try{
+          await uploadLogoIfNeeded();
+        }catch(uploadError){
+          console.warn("Company logo upload skipped:", uploadError);
+          logoWarning = " Logo upload was skipped because storage is not ready, but the profile data was still saved.";
+          currentLogoUrl = "";
+        }
+      }
+
+      const data = getFormData();
+      data.employer_email = email;
+      data.contact_email = normalizeEmail(fields.contactEmail.value) || email;
+      data.employer_user_id = isUuid(getEmployerUserId(currentEmployer)) ? getEmployerUserId(currentEmployer) : null;
+      data.updated_at = new Date().toISOString();
+      data.created_at = new Date().toISOString();
+
+      const existing = await findExistingProfile(client, data);
+      const saved = await writeProfilePayload(client, data, existing);
+      const savedRow = saved.row || data;
+
+      rememberSavedProfile(data, savedRow);
+      currentLogoFile = null;
+      if ($("companyLogoInput")) $("companyLogoInput").value = "";
+      if ($("sideLastSaved")) $("sideLastSaved").textContent = new Date().toLocaleString();
+
+      try{
+        showStatus("Generating company PDF file and uploading it to job_pdfs...", "info");
+        const pdfProfileData = Object.assign({}, data, savedRow, {
+          logo_url: currentLogoUrl && !/^data:/i.test(currentLogoUrl) ? currentLogoUrl : "",
+          _logo_data_url_for_pdf: pendingPdfLogoDataUrl || "",
+          pdf_generated_at: new Date().toISOString()
+        });
+        pdfResult = await uploadGeneratedCompanyPdf(pdfProfileData);
+
+        data.pdf_url = pdfResult.url || "";
+        data.pdf_path = pdfResult.path || "";
+
+        await savePdfMetadataIfSupported(client, pdfResult, savedRow, existing);
+        rememberSavedProfile(data, Object.assign({}, savedRow, {
+          pdf_url: data.pdf_url,
+          pdf_path: data.pdf_path
+        }));
+      }catch(pdfError){
+        console.warn("Company PDF generation/upload skipped:", pdfError);
+        pdfWarning = " PDF generation/upload failed. Check the job_pdfs bucket permissions and storage policies.";
+      }
+
+      const didUpdate = saved && saved.inserted === false;
+      hasExistingCompanyProfile = true;
+      updateDynamicUI();
+      updateSaveButtonLabel();
+      updatePdfButtons();
+      pendingPdfLogoDataUrl = "";
+
+      const successMessage = didUpdate
+        ? "Company profile successfully updated."
+        : "Company profile successfully saved.";
+
+      const pdfMessage = pdfResult && pdfResult.path
+        ? " Generated PDF saved in job_pdfs/" + pdfResult.path + "."
+        : pdfWarning;
+
+      showStatus("", "info");
+      showSavePopup(successMessage + pdfMessage + logoWarning);
+    } catch(err) {
+      pendingPdfLogoDataUrl = "";
+      console.error("Company profile save failed:", err);
+      const fallbackData = getFormData();
+      localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(fallbackData));
+
+      let message = err && (err.message || err.details || err.hint) ? (err.message || err.details || err.hint) : String(err);
+      if (/row-level security|rls|violates row-level security/i.test(message)) {
+        message += " Supabase connected, but RLS is blocking INSERT/UPDATE on employer_company_profiles. Add an INSERT/UPDATE policy for anon or authenticated users, then save again.";
+      }
+      showStatus("Supabase save failed. Local copy was saved only. Error: " + message, "error");
+    } finally {
+      isSaving = false;
+      updateSaveButtonLabel();
+      updatePdfButtons();
+    }
+  }
+
+  async function loadProfile(){
+    const client = initSupabase();
+
+    currentEmployer = getEmployerSession();
+    await refreshEmployerFromAuth();
+
+    // This load always checks employer_company_profiles using the active logged-in
+    // employer identity. It intentionally ignores any locally cached profile row
+    // id so another account's previously loaded record cannot display here.
+    const lookup = getLoggedInProfileLookup({});
+
+    showStatus("Loading company profile from employer_company_profiles...", "info");
+
+    try{
+      if (client && (lookup.email || lookup.userId)) {
+        const existing = await findLoggedInEmployerProfile(client, {
+          employer_email: lookup.email,
+          contact_email: lookup.email,
+          employer_user_id: lookup.userId || null
+        });
+
+        if (existing && existing.row) {
+          fillForm(existing.row);
+          hasExistingCompanyProfile = true;
+          updateSaveButtonLabel();
+          showStatus("Company profile loaded from employer_company_profiles.", "success");
+          return;
+        }
+      }
+
+      // No database row exists for this logged-in employer. Show a clean blank form
+      // ready to insert a new employer_company_profiles record.
+      if ($("companyProfileForm")) $("companyProfileForm").reset();
+      currentLogoFile = null;
+      currentLogoUrl = "";
+      currentPdfUrl = "";
+      currentPdfPath = "";
+      currentProfileId = "";
+      hasExistingCompanyProfile = false;
+      localStorage.removeItem(PROFILE_ROW_ID_KEY);
+      sessionStorage.removeItem(PROFILE_ROW_ID_KEY);
+      localStorage.removeItem(PROFILE_PDF_URL_KEY);
+      sessionStorage.removeItem(PROFILE_PDF_URL_KEY);
+      localStorage.removeItem(PROFILE_PDF_PATH_KEY);
+      sessionStorage.removeItem(PROFILE_PDF_PATH_KEY);
+      updateLogoPreview("");
+      updateDynamicUI();
+      updateSaveButtonLabel();
+      updatePdfButtons();
+
+      if (!client) {
+        showStatus("Supabase is not connected. Blank form is ready, but database loading is unavailable.", "error");
+      } else if (!lookup.email && !lookup.userId) {
+        showStatus("No logged-in employer account was detected. Blank form is ready.", "info");
+      } else {
+        showStatus("No existing company profile found for this logged-in account. Blank form is ready to add a new record.", "info");
+      }
+    } catch(err) {
+      console.error("Could not load profile from employer_company_profiles:", err);
+      if ($("companyProfileForm")) $("companyProfileForm").reset();
+      currentLogoFile = null;
+      currentLogoUrl = "";
+      currentPdfUrl = "";
+      currentPdfPath = "";
+      currentProfileId = "";
+      hasExistingCompanyProfile = false;
+      localStorage.removeItem(PROFILE_ROW_ID_KEY);
+      sessionStorage.removeItem(PROFILE_ROW_ID_KEY);
+      localStorage.removeItem(PROFILE_PDF_URL_KEY);
+      sessionStorage.removeItem(PROFILE_PDF_URL_KEY);
+      localStorage.removeItem(PROFILE_PDF_PATH_KEY);
+      sessionStorage.removeItem(PROFILE_PDF_PATH_KEY);
+      updateLogoPreview("");
+      updateDynamicUI();
+      updateSaveButtonLabel();
+      updatePdfButtons();
+      showStatus("Could not load from employer_company_profiles. Blank form is ready. Error: " + (err.message || err), "error");
+    }
+  }
+
+  function prefillFromEmployerSession(){
+    currentEmployer = getEmployerSession();
+    if (!currentEmployer) {
+      updateAccountUI();
+      updateDynamicUI();
+      return;
+    }
+
+    const companyName = getEmployerCompanyName(currentEmployer);
+    const email = getEmployerEmail(currentEmployer);
+    const logo = getEmployerLogo(currentEmployer);
+
+    if (!safeText(fields.companyName.value, "") && companyName !== email) fields.companyName.value = companyName;
+    if (!safeText(fields.contactEmail.value, "")) fields.contactEmail.value = email;
+    if (!currentLogoUrl) currentLogoUrl = logo;
+
+    updateLogoPreview(currentLogoUrl);
+    updateAccountUI();
+    updateDynamicUI();
+  }
+
+  function clearForm(){
+    if ($("companyProfileForm")) $("companyProfileForm").reset();
+    currentLogoFile = null;
+    currentLogoUrl = "";
+    currentPdfUrl = "";
+    currentPdfPath = "";
+    currentProfileId = "";
+    hasExistingCompanyProfile = false;
+    localStorage.removeItem(PROFILE_ROW_ID_KEY);
+    sessionStorage.removeItem(PROFILE_ROW_ID_KEY);
+    localStorage.removeItem(PROFILE_PDF_URL_KEY);
+    sessionStorage.removeItem(PROFILE_PDF_URL_KEY);
+    localStorage.removeItem(PROFILE_PDF_PATH_KEY);
+    sessionStorage.removeItem(PROFILE_PDF_PATH_KEY);
+    updateLogoPreview("");
+    updateDynamicUI();
+    updateSaveButtonLabel();
+    updatePdfButtons();
+    showStatus("Form cleared. Click Save Company Profile to add a new company profile.", "info");
+  }
+
+  function openPreview(){
+    const data = getFormData();
+
+    $("modalCompanyName").textContent = data.company_name || "Company Name";
+    const location = [data.city, data.country].filter(Boolean).join(", ");
+    $("modalCompanyLine").textContent = [data.industry || "Industry", location || "Location"].filter(Boolean).join(" â€¢ ");
+
+    setImage($("modalCompanyLogo"), $("modalCompanyIcon"), currentLogoUrl && !/^data:/i.test(currentLogoUrl) ? currentLogoUrl : "");
+
+    $("modalWebsite").textContent = data.website || "Not provided";
+    $("modalEmail").textContent = data.contact_email || data.employer_email || "Not provided";
+    $("modalPhone").textContent = data.phone || "Not provided";
+    $("modalStatus").textContent = data.is_published ? "Published" : "Draft";
+
+    $("modalOverview").textContent = data.company_overview || "No company overview yet.";
+    $("modalMission").textContent = data.mission || "No mission or values provided yet.";
+    $("modalSpecialties").textContent = data.specialties || "No hiring specialties provided yet.";
+    $("modalBenefits").textContent = data.benefits || "No benefits provided yet.";
+
+    $("previewModal").classList.add("open");
+  }
+
+  function clearLoadedCompanyProfileRecord(){
+    currentEmployer = null;
+    currentLogoFile = null;
+    currentLogoUrl = "";
+    currentPdfUrl = "";
+    currentPdfPath = "";
+    currentProfileId = "";
+    lastAuthUserId = "";
+    hasExistingCompanyProfile = false;
+
+    if ($("companyProfileForm")) {
+      $("companyProfileForm").reset();
+    }
+    if ($("companyLogoInput")) {
+      $("companyLogoInput").value = "";
+    }
+
+    localStorage.removeItem(PROFILE_ROW_ID_KEY);
+    sessionStorage.removeItem(PROFILE_ROW_ID_KEY);
+    localStorage.removeItem(PROFILE_PDF_URL_KEY);
+    sessionStorage.removeItem(PROFILE_PDF_URL_KEY);
+    localStorage.removeItem(PROFILE_PDF_PATH_KEY);
+    sessionStorage.removeItem(PROFILE_PDF_PATH_KEY);
+    localStorage.removeItem(LOCAL_PROFILE_KEY);
+    sessionStorage.removeItem(LOCAL_PROFILE_KEY);
+
+    updateLogoPreview("");
+    updateAccountUI();
+    updateDynamicUI();
+    updateSaveButtonLabel();
+
+    if ($("previewModal")) {
+      $("previewModal").classList.remove("open");
+    }
+    if ($("pdfModal")) {
+      closePdfModal();
+    }
+    closePdfModal();
+  }
+
+  async function logoutEmployer(){
+    clearLoadedCompanyProfileRecord();
+
+    try{
+      const client = initSupabase();
+      if (client && client.auth && client.auth.signOut) {
+        await client.auth.signOut();
+      }
+    }catch(err){
+      console.warn("Supabase signOut skipped:", err);
+    }
+
+    EMPLOYER_SESSION_KEYS.forEach(key => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+
+    [
+      "employer_email",
+      "company_email",
+      "email",
+      "employerEmail",
+      "companyEmail",
+      "employer_company_name",
+      "company_name",
+      "business_name",
+      "company",
+      "employer_company_logo",
+      "company_logo",
+      "company_logo_url",
+      "logo_url",
+      "employer_user_id",
+      "user_id",
+      "supabase_user_id",
+      "JSL_EMPLOYER_SESSION",
+      "JSL_EMPLOYER_ACCOUNT",
+      "JSL_LOGGED_IN_EMPLOYER",
+      PROFILE_PDF_URL_KEY,
+      PROFILE_PDF_PATH_KEY
+    ].forEach(key => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+
+    clearLoadedCompanyProfileRecord();
+
+    window.location.replace("index1.html");
+  }
+
+  function attachEvents(){
+    on("navToggle", "click", () => {
+      const panel = $("mobilePanel");
+      if (panel) panel.classList.toggle("open");
+    });
+
+    const aboutDropdown = $("aboutDropdown");
+    const aboutDropdownToggle = $("aboutDropdownToggle");
+    const mobileAboutGroup = $("mobileAboutGroup");
+    const mobileAboutToggle = $("mobileAboutToggle");
+
+    if (aboutDropdownToggle && aboutDropdown) {
+      aboutDropdownToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const willOpen = !aboutDropdown.classList.contains("open");
+        aboutDropdown.classList.toggle("open", willOpen);
+        aboutDropdownToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        if ($("accountPill")) $("accountPill").classList.remove("open");
+      });
+    }
+
+    if (mobileAboutToggle && mobileAboutGroup) {
+      mobileAboutToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        mobileAboutGroup.classList.toggle("open");
+      });
+    }
+
+    on("accountTrigger", "click", (e) => {
+      e.stopPropagation();
+      const aboutDropdown = $("aboutDropdown");
+      const aboutDropdownToggle = $("aboutDropdownToggle");
+      if (aboutDropdown) aboutDropdown.classList.remove("open");
+      if (aboutDropdownToggle) aboutDropdownToggle.setAttribute("aria-expanded", "false");
+      if ($("accountPill")) $("accountPill").classList.toggle("open");
+    });
+
+    document.addEventListener("click", () => {
+      if ($("accountPill")) $("accountPill").classList.remove("open");
+      const aboutDropdown = $("aboutDropdown");
+      const aboutDropdownToggle = $("aboutDropdownToggle");
+      if (aboutDropdown) aboutDropdown.classList.remove("open");
+      if (aboutDropdownToggle) aboutDropdownToggle.setAttribute("aria-expanded", "false");
+    });
+
+    on("chooseLogoBtn", "click", () => {
+      const input = $("companyLogoInput");
+      if (input) input.click();
+    });
+
+    on("companyLogoInput", "change", () => {
+      const input = $("companyLogoInput");
+      const file = input && input.files ? input.files[0] : null;
+      if (!file) return;
+
+      currentLogoFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        currentLogoUrl = reader.result;
+        updateLogoPreview(currentLogoUrl);
+        updateDynamicUI();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    on("removeLogoBtn", "click", () => {
+      currentLogoFile = null;
+      currentLogoUrl = "";
+      if ($("companyLogoInput")) $("companyLogoInput").value = "";
+      updateLogoPreview("");
+      updateDynamicUI();
+    });
+
+    on("companyProfileForm", "submit", saveProfile);
+    on("previewBtn", "click", viewGeneratedPdf);
+    on("heroPreviewBtn", "click", viewGeneratedPdf);
+    on("closePreviewBtn", "click", () => $("previewModal").classList.remove("open"));
+    on("previewModal", "click", (e) => {
+      if (e.target === $("previewModal")) $("previewModal").classList.remove("open");
+    });
+    on("closePdfBtn", "click", closePdfModal);
+    on("pdfModal", "click", (e) => {
+      if (e.target === $("pdfModal")) closePdfModal();
+    });
+
+    on("pdfHideContentBtn", "click", togglePdfContentPanel);
+    on("pdfZoomOutBtn", "click", () => setPdfViewerZoom(pdfViewerZoom - 0.10));
+    on("pdfZoomInBtn", "click", () => setPdfViewerZoom(pdfViewerZoom + 0.10));
+    on("pdfResetZoomBtn", "click", resetPdfViewerZoom);
+    on("pdfFitPageBtn", "click", resetPdfViewerZoom);
+    on("pdfDownloadBtn", "click", downloadCurrentPdf);
+
+    on("savePopupClose", "click", closeSavePopup);
+    on("savePopupOk", "click", closeSavePopup);
+    on("savePopup", "click", (e) => {
+      if (e.target === $("savePopup")) closeSavePopup();
+    });
+
+    ["accountLogoutBtn","mobileLogoutBtn","logoutBtn"].forEach(id => {
+      on(id, "click", logoutEmployer);
+    });
+
+    Object.values(fields).forEach(el => {
+      if (!el) return;
+      el.addEventListener("input", updateDynamicUI);
+      el.addEventListener("change", updateDynamicUI);
+    });
+
+    window.addEventListener("storage", (e) => {
+      if (EMPLOYER_SESSION_KEYS.includes(e.key) || /employer|company|logo|email|user_id/i.test(e.key || "")) {
+        currentEmployer = getEmployerSession();
+        updateAccountUI();
+      }
+    });
+  }
+
+  async function boot(){
+    initSupabase();
+    attachEvents();
+    currentEmployer = getEmployerSession();
+    await refreshEmployerFromAuth();
+    updateAccountUI();
+    updateDynamicUI();
+    await loadProfile();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+
+</script>
+</body>
+</html>

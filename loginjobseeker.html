@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2778,6 +2781,72 @@ header nav .nav-main-link:focus-visible i,
   transform:none !important;
 }
 
+/* ============================================================
+   FINAL BLUE NAV + DROPDOWN HOVER COLOR
+   Underline, font, and icon use the same blue while all existing
+   navigation and dropdown behavior remains unchanged.
+============================================================ */
+:root{
+  --nav-hover-blue:#0b5cff;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown:hover .nav-main-link,
+.nav-dropdown.open .nav-main-link,
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible,
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:var(--nav-hover-blue) !important;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after,
+.nav-dropdown-menu a::after{
+  background:var(--nav-hover-blue) !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown:hover .nav-main-link i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown:hover .nav-dropdown-toggle,
+.nav-dropdown.open .nav-dropdown-toggle,
+.nav-dropdown-trigger:hover .nav-dropdown-toggle i,
+.nav-dropdown.open .nav-dropdown-toggle i,
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i,
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav a:focus-visible i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-main-link:focus-visible i,
+.mobile-panel .mnav-toggle:hover i,
+.mobile-panel .mnav-toggle:focus-visible i{
+  color:var(--nav-hover-blue) !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  text-decoration-color:var(--nav-hover-blue) !important;
+}
+
 </style>
 </head>
 <body>
@@ -3259,6 +3328,15 @@ function isPermissionError(error){
   );
 }
 
+function isMissingColumnError(error){
+  const message = String(error?.message || error?.details || error || "").toLowerCase();
+  return (
+    error?.code === "42703" ||
+    message.includes("column") &&
+    (message.includes("does not exist") || message.includes("not found"))
+  );
+}
+
 function pickFirst(row, keys){
   for (const key of keys){
     const value = safeText(row?.[key]);
@@ -3425,42 +3503,98 @@ async function resolveJobseekerIdentityByEmail(email){
   const client = requireSupabase();
   const normalizedEmail = normEmail(email);
 
-  const transactionResult = await client
-    .from("applicant_transaction_table")
-    .select("*")
-    .ilike("email", normalizedEmail)
-    .order("created_at", { ascending:false })
-    .limit(1)
-    .maybeSingle();
+  const emailColumns = [
+    "email", "applicant_email", "employee_email", "user_email", "login_email"
+  ];
+  let permissionBlocked = false;
 
-  if (transactionResult.error && !isPermissionError(transactionResult.error)){
-    throw new Error(transactionResult.error.message || "Unable to find the jobseeker profile record.");
+  async function findRowsByColumns(table, columns, value, exact=false){
+    const rows = [];
+    const seen = new Set();
+
+    for (const column of columns){
+      let query = client.from(table).select("*");
+      query = exact ? query.eq(column, value) : query.ilike(column, value);
+      const { data, error } = await query.limit(50);
+
+      if (error){
+        if (isPermissionError(error)) permissionBlocked = true;
+        /* Schemas differ between older applicant batches. A missing candidate
+           column is expected; continue with the remaining supported columns. */
+        if (isPermissionError(error) || isMissingColumnError(error)) continue;
+        throw new Error(error.message || `Unable to query ${table}.`);
+      }
+
+      for (const row of (data || [])){
+        const key = safeText(row?.id || row?.master_id || JSON.stringify(row));
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        rows.push(row);
+      }
+    }
+
+    return rows;
   }
 
+  function newestRow(rows){
+    return [...(rows || [])].sort((a, b) => {
+      const timeA = Date.parse(a?.updated_at || a?.created_at || "") || 0;
+      const timeB = Date.parse(b?.updated_at || b?.created_at || "") || 0;
+      if (timeA !== timeB) return timeB - timeA;
+      return (Number(b?.id) || 0) - (Number(a?.id) || 0);
+    })[0] || null;
+  }
+
+  /* Resolve the master record first. Its primary key is authoritative and
+     prevents a prior applicant's master ID from leaking into this login. */
+  const masterRows = await findRowsByColumns(
+    "applicant_master_table", emailColumns, normalizedEmail
+  );
+  const masterRow = masterRows.find(row =>
+    normEmail(pickFirst(row, emailColumns)) === normalizedEmail
+  ) || newestRow(masterRows);
+  const masterIdentity = normalizeApplicantIdentity(masterRow, "applicant_master_table");
+
+  let transactionRows = await findRowsByColumns(
+    "applicant_transaction_table", emailColumns, normalizedEmail
+  );
+
+  if (masterIdentity?.masterId){
+    const masterColumns = [
+      "master_id", "applicant_master_id", "applicant_master_table_id"
+    ];
+    transactionRows = transactionRows.concat(
+      await findRowsByColumns(
+        "applicant_transaction_table", masterColumns, masterIdentity.masterId, true
+      )
+    );
+  }
+
+  const transactionRow = newestRow(transactionRows);
   const transactionIdentity = normalizeApplicantIdentity(
-    transactionResult.data,
+    transactionRow ? {
+      ...transactionRow,
+      email: pickFirst(transactionRow, emailColumns) || normalizedEmail
+    } : null,
     "applicant_transaction_table"
   );
-  if (transactionIdentity) return transactionIdentity;
 
-  const masterResult = await client
-    .from("applicant_master_table")
-    .select("*")
-    .ilike("email", normalizedEmail)
-    .limit(1)
-    .maybeSingle();
-
-  if (masterResult.error && !isPermissionError(masterResult.error)){
-    const message = String(masterResult.error.message || "");
-    if (!message.toLowerCase().includes("column") || !message.toLowerCase().includes("email")){
-      throw new Error(message || "Unable to verify the jobseeker account.");
-    }
+  if (masterIdentity){
+    return {
+      ...masterIdentity,
+      transactionId: transactionIdentity?.transactionId || "",
+      userId: transactionIdentity?.userId || masterIdentity.userId || "",
+      name: transactionIdentity?.name || masterIdentity.name,
+      photoUrl: transactionIdentity?.photoUrl || masterIdentity.photoUrl || "",
+      transactionRow: transactionRow || null
+    };
   }
 
-  const masterIdentity = normalizeApplicantIdentity(masterResult.data, "applicant_master_table");
-  if (masterIdentity) return masterIdentity;
+  if (transactionIdentity && transactionIdentity.email === normalizedEmail){
+    return transactionIdentity;
+  }
 
-  if (isPermissionError(transactionResult.error) || isPermissionError(masterResult.error)){
+  if (permissionBlocked){
     throw new Error(
       "Supabase RLS blocked the jobseeker account lookup. Allow this login page to read the matching applicant record by email."
     );
@@ -3608,6 +3742,26 @@ function persistVerifiedJobseekerMarker(marker){
   setBoth(VERIFIED_JOBSEEKER_SESSION_KEY, serialized);
   setBoth("jobSpaceLink_jobseeker_session_authority", VERIFIED_JOBSEEKER_SESSION_KEY);
   setBoth("jobSpaceLink_jobseeker_verified", "true");
+
+  /* Do not redirect unless at least one same-origin storage area actually
+     contains the complete marker expected by postedhiring1.html. */
+  let confirmed = null;
+  for (const storage of [localStorage, sessionStorage]){
+    try{
+      const saved = safeJsonParse(storage.getItem(VERIFIED_JOBSEEKER_SESSION_KEY));
+      if (
+        saved?.verified === true &&
+        normEmail(saved?.email) === normEmail(marker.email) &&
+        safeText(saved?.master_id) === safeText(marker.master_id)
+      ){
+        confirmed = saved;
+        break;
+      }
+    }catch(_){ }
+  }
+  if (!confirmed){
+    throw new Error("The browser could not save the jobseeker session. Enable site storage and try again.");
+  }
   return marker;
 }
 
@@ -3616,6 +3770,11 @@ function persistVerifiedJobseekerMarker(marker){
 ========================================================== */
 const JOBSEEKER_LOGOUT_KEYS = [
   "jobSpaceLink_jobseeker_logged_out",
+  "jsl_jobseeker_logged_out",
+  "jobseeker_logged_out",
+  "jobSpaceLink_applicantform_logged_out",
+  "applicantform1_logged_out",
+  "applicant_form_logged_out",
   "jobSpaceLink_jobseeker_logout_at",
   "jobSpaceLink_jobseeker_logout_event",
   "jobSpaceLink_force_account_logout",
@@ -3811,7 +3970,42 @@ function broadcastJobseekerLogin(payload){
   }catch(_){ }
 }
 
+function clearPreviousJobseekerIdentityForLogin(nextEmail){
+  const normalizedNextEmail = normEmail(nextEmail);
+
+  /* Remove all shared identity fields before writing the new account. This is
+     essential when the next applicant has no photo, transaction row or Auth
+     user ID; otherwise those missing values are inherited from the previous
+     applicant and postedhiring1.html can resolve the wrong profile. */
+  [
+    VERIFIED_JOBSEEKER_SESSION_KEY,
+    ...JOBSEEKER_OBJECT_KEYS,
+    ...JOBSEEKER_EMAIL_KEYS,
+    ...JOBSEEKER_TRUE_KEYS,
+    ...JOBSEEKER_MASTER_KEYS,
+    ...JOBSEEKER_USER_ID_KEYS,
+    ...JOBSEEKER_NAME_KEYS,
+    ...JOBSEEKER_PHOTO_KEYS,
+    "jobSpaceLink_profile_transaction_id",
+    "view_profile_transaction_id",
+    "view_profile_tx_id",
+    "current_profile_transaction_id",
+    "transaction_id", "tx_id", "applicant_transaction_id",
+    "jobSpaceLink_jobseeker_login_event",
+    "jsl_global_auth_sync_v25",
+    "jsl_global_jobseeker_session_heartbeat_v25",
+    "jsl_avatar_url", "employee_avatar_url", "avatar_url",
+    "jobSpaceLink_profile_context", "jobSpaceLink_logged_in_account"
+  ].forEach(removeBoth);
+
+  /* Per-user caches are retained for other accounts, but the generic owner
+     pointers must always move to the account being logged in now. */
+  setBoth("jsl_last_login_owner", normalizedNextEmail);
+  setBoth("jsl_last_avatar_owner", normalizedNextEmail);
+}
+
 function persistJobseekerLogin(identity, authUser, hasPassword){
+  clearPreviousJobseekerIdentityForLogin(identity.email);
   clearJobseekerLogoutFlags();
 
   const marker = persistVerifiedJobseekerMarker(
@@ -3972,7 +4166,7 @@ form.addEventListener("submit", async (event)=>{
        the trusted jobseeker identity before postedhiring1.html loads. */
     setTimeout(()=>{
       window.location.replace(POST_LOGIN_REDIRECT_URL);
-    }, 80);
+    }, 220);
 
   }catch(error){
     showError(error?.message || "Unexpected jobseeker login error.");

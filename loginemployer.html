@@ -1,10 +1,23 @@
 
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Employer Login | Job Space Link</title>
+
+  <!--
+    EMPLOYERS LAST LOGIN FIX — RPC/RLS SAFE VERSION — 2026-08-18
+    - A successful Supabase employer login calls public.record_employer_login().
+    - The database function records last_login_at using PostgreSQL server time.
+    - The function uses auth.uid()/JWT email and SECURITY DEFINER, so the timestamp
+      can be recorded without exposing a service-role key in this browser page.
+    - Existing login, subscription, redirect, modal, header, and session behavior is preserved.
+    - Run setup-record-employer-login.sql ONCE in Supabase SQL Editor before testing.
+  -->
 
   <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
@@ -3730,6 +3743,192 @@ header nav .nav-main-link:focus-visible i,
   transform:none !important;
 }
 
+/* ============================================================
+   FINAL BLUE NAV HOVER + HEADER-SAFE LOGO
+   Keeps all existing links, dropdown controls, and JS behavior.
+============================================================ */
+:root{
+  --nav-hover-blue:#0b5cff;
+}
+
+/* Keep the logo fully contained inside the fixed header. */
+header .logo{
+  align-self:stretch !important;
+  max-height:var(--header-h) !important;
+  overflow:hidden !important;
+}
+
+header .logo img,
+body > header .logo img{
+  width:auto !important;
+  height:auto !important;
+  max-width:min(240px, 24vw) !important;
+  max-height:calc(var(--header-h) - 12px) !important;
+  object-fit:contain !important;
+  object-position:left center !important;
+}
+
+/* Desktop nav text, icons, caret, and underline become blue. */
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown:hover .nav-main-link,
+.nav-dropdown.open .nav-main-link,
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:var(--nav-hover-blue) !important;
+}
+
+header nav > a:hover i,
+header nav > a:focus-visible i,
+header nav .nav-main-link:hover i,
+header nav .nav-main-link:focus-visible i,
+.nav-dropdown:hover .nav-main-link i,
+.nav-dropdown.open .nav-main-link i,
+.nav-dropdown:hover .nav-dropdown-toggle i,
+.nav-dropdown.open .nav-dropdown-toggle i,
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle:hover i,
+.nav-dropdown-toggle:focus-visible i,
+.nav-dropdown-menu a:hover i,
+.nav-dropdown-menu a:focus-visible i{
+  color:var(--nav-hover-blue) !important;
+}
+
+header nav > a .nav-text::after,
+header nav .nav-main-link .nav-text::after,
+.nav-dropdown-menu a .nav-text::after,
+.mobile-panel .mnav a .nav-text::after,
+.mobile-panel .mnav-main-link .nav-text::after,
+.mobile-panel .mnav-toggle .nav-text::after{
+  background:var(--nav-hover-blue) !important;
+}
+
+/* Mobile nav uses the same blue hover treatment. */
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible,
+.mobile-panel .mnav a:hover i,
+.mobile-panel .mnav a:focus-visible i,
+.mobile-panel .mnav-main-link:hover i,
+.mobile-panel .mnav-main-link:focus-visible i,
+.mobile-panel .mnav-toggle:hover i,
+.mobile-panel .mnav-toggle:focus-visible i{
+  color:var(--nav-hover-blue) !important;
+}
+
+@media (max-width:768px){
+  header .logo img,
+  body > header .logo img{
+    max-width:min(210px, 58vw) !important;
+    max-height:calc(var(--header-h) - 16px) !important;
+  }
+}
+
+@media (max-width:480px){
+  header .logo img,
+  body > header .logo img{
+    max-width:min(180px, 56vw) !important;
+  }
+}
+
+/* ============================================================
+   ICON + TEXT BLUE UNDERLINE
+   The underline now runs from the icon through the nav label.
+============================================================ */
+
+/* Remove the older text-only underline. */
+header nav > a .nav-text::after,
+header nav .nav-main-link .nav-text::after,
+.nav-dropdown-menu a .nav-text::after,
+.mobile-panel .mnav a .nav-text::after,
+.mobile-panel .mnav-main-link .nav-text::after,
+.mobile-panel .mnav-toggle .nav-text::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Desktop links and dropdown links: underline the complete icon + text area. */
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown-menu a{
+  position:relative !important;
+  padding-bottom:7px !important;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after,
+.nav-dropdown-menu a::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:1px !important;
+  height:2px !important;
+  background:var(--nav-hover-blue) !important;
+  border-radius:999px !important;
+  opacity:1 !important;
+  box-shadow:none !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:transform 0.18s ease !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown:hover .nav-main-link::after,
+.nav-dropdown.open .nav-main-link::after,
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after{
+  transform:scaleX(1) !important;
+}
+
+/* Keep dropdown underline limited to its icon and label, not the whole menu row. */
+.nav-dropdown-menu a{
+  align-self:flex-start !important;
+  width:max-content !important;
+  max-width:calc(100% - 16px) !important;
+}
+
+/* Mobile: underline the left group containing both its icon and label. */
+.mobile-panel .mnav-left{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding-bottom:6px !important;
+}
+
+.mobile-panel .mnav-left::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  height:2px !important;
+  background:var(--nav-hover-blue) !important;
+  border-radius:999px !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:transform 0.18s ease !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left::after,
+.mobile-panel .mnav a:focus-visible .mnav-left::after,
+.mobile-panel .mnav-main-link:hover .mnav-left::after,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left::after{
+  transform:scaleX(1) !important;
+}
+
 </style>
 </head>
 
@@ -4103,6 +4302,28 @@ header nav .nav-main-link:focus-visible i,
     "jobSpaceLink_login_identity"
   ];
 
+  /* Canonical keys consumed first by Applicant Dashboard/dashboard1.html. */
+  const DASHBOARD_EMPLOYER_SESSION_KEY = "JSL_EMPLOYER_SESSION_V1";
+  const DASHBOARD_EMPLOYER_SESSION_EVENT_KEY = "JSL_EMPLOYER_SESSION_EVENT";
+  const DASHBOARD_EMPLOYER_WINDOW_PREFIX = "JSL_EMPLOYER_SESSION_V1::";
+  const DASHBOARD_EMPLOYER_LOGOUT_KEYS = [
+    "JSL_CANONICAL_EMPLOYER_LOGOUT_V2",
+    "JSL_employer_force_logged_out", "JSL_employer_force_logged_out_at",
+    "JSL_EMPLOYER_FORCE_LOGGED_OUT", "JSL_EMPLOYER_LOGOUT_PENDING",
+    "JSL_employer_logout_pending", "employer_force_logged_out",
+    "employerLoggedOut", "isEmployerLoggedOut", "JSL_employer_logout_event",
+    "JSL_EMPLOYER_LOGOUT_EVENT", "JSL_EMPLOYER_SIGNED_OUT",
+    "employer_logout_event", "JSL_POSTJOB1_EMPLOYER_LOGOUT_EVENT",
+    "JSL_POSTJOB1_FORCE_EMPLOYER_LOGOUT", "jobspacelink_employer_logout",
+    "JSL_POSTJOB1_TO_DASHBOARD1_EMPLOYER_LOGOUT",
+    "JSL_DASHBOARD1_EMPLOYER_LOGOUT_EVENT", "JSL_DASHBOARD1_EMPLOYER_LOGOUT_SYNC",
+    "JSL_DASHBOARD1_FORCE_EMPLOYER_LOGOUT", "JSL_EMPLOYER_LOGOUT_BROADCAST",
+    "jobspacelink-employer-logout-at", "jobspacelink-employer-global-logout-at",
+    "dashboard1_employer_logout_sync", "dashboard1_force_employer_logout"
+  ];
+  const CANONICAL_LOGOUT_COOKIE = "JSL_CANONICAL_EMPLOYER_LOGOUT_V3";
+  const CANONICAL_LOGIN_COOKIE = "JSL_CANONICAL_EMPLOYER_LOGIN_V3";
+
   /*
    * Temporary recovery payload used only when another page created its
    * Supabase client with a different storage key. The profile page removes
@@ -4265,8 +4486,28 @@ header nav .nav-main-link:focus-visible i,
   }
 
   function clearStoredEmployerIdentity(){
+    const dashboardIdentityKeys = [
+      DASHBOARD_EMPLOYER_SESSION_KEY, "JSL_EMPLOYER_SESSION_OBJECT",
+      "JSL_EMPLOYER_SESSION_KEEP", "jobspacelink_employer_account",
+      "jobspacelink_employer_profile", "jobspacelink_employer_session",
+      "jobspacelink_logged_in_employer", "loggedInEmployerData",
+      "loggedInEmployerProfile", "currentEmployer", "employerAccount",
+      "employerProfile", "employerData", "JSL_employerIdentity",
+      "JSL_loggedInEmployer", "jobSpaceLinkEmployerSession",
+      "loggedInEmployerEmail", "employerEmail", "companyEmail",
+      "loginEmployerEmail", "employer_email", "company_email",
+      "company_email_address", "jobspacelinkEmployerEmail",
+      "jobSpaceLinkEmployerEmail", "dashboardEmployerEmail",
+      "loggedInCompanyName", "companyName", "employerCompanyName",
+      "company_name", "employer_company_name", "jobspacelinkEmployerCompany",
+      "loggedInEmployerLogo", "employerLogo", "companyLogo", "company_logo",
+      "company_logo_url", "employer_logo_url", "jobspacelinkEmployerLogo",
+      "isEmployerLoggedIn", "employerLoggedIn", "jobspacelinkEmployerLoggedIn",
+      "JSL_EMPLOYER_LOGGED_IN"
+    ];
+
     for(const storage of [localStorage, sessionStorage]){
-      for(const key of EMPLOYER_SESSION_STORAGE_KEYS){
+      for(const key of [...EMPLOYER_SESSION_STORAGE_KEYS, ...dashboardIdentityKeys]){
         try{
           storage.removeItem(key);
         }catch(err){
@@ -4285,6 +4526,16 @@ header nav .nav-main-link:focus-visible i,
     }catch(err){
       console.warn("Unable to clear supplementary employer identity values:", err);
     }
+
+    /* Remove the dashboard's previous-account fallbacks. */
+    try{
+      document.cookie = `${encodeURIComponent(DASHBOARD_EMPLOYER_SESSION_KEY)}=; path=/; max-age=0; SameSite=Lax`;
+    }catch(_err){}
+    try{
+      const currentName = String(window.name || "");
+      const index = currentName.indexOf(DASHBOARD_EMPLOYER_WINDOW_PREFIX);
+      if(index >= 0) window.name = currentName.slice(0, index);
+    }catch(_err){}
   }
 
   async function ensurePersistedSupabaseSession(client, signInData){
@@ -4293,13 +4544,18 @@ header nav .nav-main-link:focus-visible i,
     }
 
     let session = signInData?.session || null;
+    const expectedUserId = String(signInData?.user?.id || session?.user?.id || "");
+    const expectedEmail = String(signInData?.user?.email || session?.user?.email || "").trim().toLowerCase();
+    const matchesExpected = candidate => !!candidate?.user?.id &&
+      (!expectedUserId || String(candidate.user.id) === expectedUserId) &&
+      (!expectedEmail || String(candidate.user.email || "").trim().toLowerCase() === expectedEmail);
 
     let sessionResult = await client.auth.getSession();
     if(sessionResult.error){
       throw sessionResult.error;
     }
 
-    if(!sessionResult.data?.session && session?.access_token && session?.refresh_token){
+    if(!matchesExpected(sessionResult.data?.session) && session?.access_token && session?.refresh_token){
       const restored = await client.auth.setSession({
         access_token: session.access_token,
         refresh_token: session.refresh_token
@@ -4317,11 +4573,15 @@ header nav .nav-main-link:focus-visible i,
       }
     }
 
-    const persistedSession = sessionResult.data?.session || session;
+    const persistedSession = matchesExpected(sessionResult.data?.session)
+      ? sessionResult.data.session
+      : matchesExpected(session)
+        ? session
+        : null;
 
-    if(!persistedSession?.user?.id){
+    if(!persistedSession?.user?.id || !matchesExpected(persistedSession)){
       throw new Error(
-        "Supabase did not create a persistent authenticated employer session."
+        "Supabase did not replace the previous account with the newly authenticated employer session."
       );
     }
 
@@ -4403,7 +4663,29 @@ header nav .nav-main-link:focus-visible i,
       employerRow
     );
 
+    /* Account switching must be a replacement, not a merge. Clear every
+       dashboard fallback belonging to the previous employer first. */
+    clearStoredEmployerIdentity();
+    for(const storage of [localStorage, sessionStorage]){
+      for(const key of DASHBOARD_EMPLOYER_LOGOUT_KEYS){
+        try{ storage.removeItem(key); }catch(_err){}
+      }
+    }
+    try{
+      document.cookie = `${CANONICAL_LOGOUT_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
+    }catch(_err){}
+
     const serialized = JSON.stringify(employerSession);
+    const canonicalLogin = JSON.stringify({
+      type:"login", action:"login", event:"SIGNED_IN", explicit:true,
+      role:"employer", source:"loginemployer.html",
+      email:employerSession.email, employer_email:employerSession.email,
+      user_id:employerSession.user_id,
+      at:Date.now(), saved_at:new Date().toISOString()
+    });
+    try{
+      document.cookie = `${CANONICAL_LOGIN_COOKIE}=${encodeURIComponent(canonicalLogin)}; path=/; max-age=${30 * 86400}; SameSite=Lax`;
+    }catch(_err){}
 
     for(const key of EMPLOYER_SESSION_STORAGE_KEYS){
       localStorage.setItem(key, serialized);
@@ -4413,6 +4695,31 @@ header nav .nav-main-link:focus-visible i,
       "jobSpaceLink_employer_session",
       serialized
     );
+
+    /* Write the dashboard's first-choice session to both storage areas, its
+       cookie fallback and window.name fallback using the NEW account only. */
+    localStorage.setItem(DASHBOARD_EMPLOYER_SESSION_KEY, serialized);
+    sessionStorage.setItem(DASHBOARD_EMPLOYER_SESSION_KEY, serialized);
+    localStorage.setItem("JSL_EMPLOYER_SESSION_KEEP", "true");
+    sessionStorage.setItem("JSL_EMPLOYER_SESSION_KEEP", "true");
+    try{
+      document.cookie = `${encodeURIComponent(DASHBOARD_EMPLOYER_SESSION_KEY)}=${encodeURIComponent(serialized)}; path=/; max-age=${30 * 86400}; SameSite=Lax`;
+    }catch(_err){}
+    try{
+      const currentName = String(window.name || "");
+      const index = currentName.indexOf(DASHBOARD_EMPLOYER_WINDOW_PREFIX);
+      window.name = (index >= 0 ? currentName.slice(0, index) : currentName) + DASHBOARD_EMPLOYER_WINDOW_PREFIX + serialized;
+    }catch(_err){}
+
+    const loginEvent = JSON.stringify({
+      ...employerSession,
+      type:"login",
+      action:"login",
+      source:"loginemployer.html",
+      saved_at:new Date().toISOString(),
+      nonce:String(Date.now()) + Math.random().toString(16).slice(2)
+    });
+    localStorage.setItem(DASHBOARD_EMPLOYER_SESSION_EVENT_KEY, loginEvent);
 
     localStorage.setItem(
       "jobSpaceLink_employer_user_id",
@@ -4434,6 +4741,18 @@ header nav .nav-main-link:focus-visible i,
       "jobSpaceLink_employer_auth_origin",
       window.location.origin
     );
+
+    saveSupabaseAuthHandoff(authSession);
+
+    const confirmed = (() => {
+      try{
+        const saved = JSON.parse(localStorage.getItem(DASHBOARD_EMPLOYER_SESSION_KEY) || "null");
+        return saved && String(saved.email || "").toLowerCase() === employerSession.email && saved.user_id === employerSession.user_id;
+      }catch(_err){ return false; }
+    })();
+    if(!confirmed){
+      throw new Error("The browser could not save the new employer session. Enable site storage and try again.");
+    }
 
     try{
       window.dispatchEvent(
@@ -4938,26 +5257,177 @@ header nav .nav-main-link:focus-visible i,
   /* ============================================================
      DATABASE QUERIES
   ============================================================ */
-  async function fetchEmployerAccountRecord(userId){
+  /*
+   * EMPLOYERS LOGIN METADATA SYNC
+   * -----------------------------
+   * The previous page only SELECTed public.employers after Auth login.
+   * It never wrote last_login_at, which is why older/successful accounts could
+   * continue showing NULL in that column.
+   *
+   * Lookup order:
+   *   1. Auth user UUID -> employers.user_id
+   *   2. Auth email     -> employers.email
+   *
+   * The email fallback allows an existing employer row whose user_id is still
+   * NULL to be safely linked to the authenticated Supabase user after the
+   * password has already been verified by Supabase Auth.
+   */
+  async function fetchEmployerAccountRecord(userId, email = ""){
     const client = getSupabaseClient();
-    if(!client || !userId) return null;
+    if(!client) return null;
 
-    const { data, error } = await client
-      .from("employers")
-      .select("*")
-      .eq("user_id", userId)
-      .maybeSingle();
+    const normalizedUserId = String(userId || "").trim();
+    const normalizedEmail = String(email || "").trim().toLowerCase();
 
-    if(error){
-      console.error("Employers lookup error:", error);
+    const tableNames = [
+      "employers",
+      "employer_accounts",
+      "employer_table",
+      "employer_master_table",
+      "employer_company_profiles"
+    ];
+    const userIdColumns = ["user_id", "auth_user_id", "auth_uid", "uid"];
+    const emailColumns = [
+      "email", "employer_email", "company_email", "contact_email", "email_address"
+    ];
+
+    async function findFirst(table, columns, value, useIlike){
+      if(!value) return null;
+      for(const column of columns){
+        try{
+          let query = client.from(table).select("*");
+          query = useIlike ? query.ilike(column, value) : query.eq(column, value);
+          const { data, error } = await query.limit(1);
+          if(error) continue; /* Missing table/column or RLS: try next supported shape. */
+          if(Array.isArray(data) && data.length){
+            return { ...data[0], __employer_source_table:table };
+          }
+        }catch(_err){}
+      }
       return null;
     }
 
-    return data || null;
+    /* Auth UUID is strongest; email supports legacy rows not linked to Auth. */
+    for(const table of tableNames){
+      const byUser = await findFirst(table, userIdColumns, normalizedUserId, false);
+      if(byUser) return byUser;
+    }
+
+    for(const table of tableNames){
+      const byEmail = await findFirst(table, emailColumns, normalizedEmail, true);
+      if(byEmail) return byEmail;
+    }
+
+    return null;
   }
 
-  async function employerProfileExists(userId){
-    return !!(await fetchEmployerAccountRecord(userId));
+  async function updateEmployerSuccessfulLogin(user, employerRecord){
+    const client = getSupabaseClient();
+
+    if(!client || !user?.id || !employerRecord){
+      return {
+        ok:false,
+        record:employerRecord || null,
+        reason:"missing_login_context"
+      };
+    }
+
+    /*
+     * IMPORTANT RLS FIX
+     * -----------------
+     * Do NOT update public.employers directly from the browser here.
+     *
+     * public.employers has RLS enabled. A normal browser UPDATE can be silently
+     * filtered to zero rows when the current UPDATE/SELECT policies do not permit
+     * the mutation. The previous implementation allowed the login flow to continue,
+     * so the employer reached the dashboard even though last_login_at stayed NULL.
+     *
+     * This version calls a narrow SECURITY DEFINER database function instead.
+     * The function:
+     *   - requires a real authenticated Supabase user (auth.uid())
+     *   - obtains the authenticated email from the JWT
+     *   - only updates the employers row owned by that authenticated UUID
+     *   - may link a legacy NULL user_id row only when its email matches the JWT
+     *   - writes PostgreSQL server time to last_login_at and updated_at
+     *
+     * Run setup-record-employer-login.sql once in Supabase SQL Editor.
+     */
+    /* The RPC targets public.employers. Accounts resolved from another
+       supported employer table are still valid logins; their timestamp update
+       is optional and must not cancel authentication. */
+    if(employerRecord.__employer_source_table && employerRecord.__employer_source_table !== "employers"){
+      return {
+        ok:true,
+        record:employerRecord,
+        reason:"timestamp_not_supported_for_source_table",
+        timestamp_saved:false
+      };
+    }
+
+    let rpcResult;
+    try{
+      rpcResult = await client.rpc("record_employer_login");
+    }catch(error){
+      rpcResult = { error, data:null };
+    }
+
+    if(rpcResult.error){
+      console.error(
+        "record_employer_login RPC failed. Run setup-record-employer-login.sql and verify the authenticated session:",
+        rpcResult.error
+      );
+
+      return {
+        ok:true,
+        record:employerRecord,
+        reason:"record_employer_login_rpc_failed",
+        error:rpcResult.error,
+        timestamp_saved:false
+      };
+    }
+
+    const rpcData = rpcResult.data || {};
+    if(rpcData.ok !== true){
+      console.error("record_employer_login did not update an employer row:", rpcData);
+
+      return {
+        ok:true,
+        record:employerRecord,
+        reason:rpcData.reason || "employer_row_not_updated",
+        rpcData,
+        timestamp_saved:false
+      };
+    }
+
+    /*
+     * Re-read the employer after the server-side write so the browser session
+     * receives the current database values. If SELECT is temporarily restricted,
+     * keep the already-found record but merge the server-returned timestamps.
+     */
+    const refreshedRecord = await fetchEmployerAccountRecord(
+      user.id,
+      user.email || employerRecord.email || currentEmployerEmail
+    );
+
+    const mergedRecord = refreshedRecord || {
+      ...employerRecord,
+      user_id: employerRecord.user_id || user.id,
+      password_set: true,
+      last_login_at: rpcData.last_login_at || employerRecord.last_login_at || null,
+      updated_at: rpcData.updated_at || employerRecord.updated_at || null
+    };
+
+    return {
+      ok:true,
+      record:mergedRecord,
+      employer_id:rpcData.employer_id || employerRecord.id || null,
+      last_login_at:rpcData.last_login_at || mergedRecord.last_login_at || null,
+      updated_at:rpcData.updated_at || mergedRecord.updated_at || null
+    };
+  }
+
+  async function employerProfileExists(userId, email = ""){
+    return !!(await fetchEmployerAccountRecord(userId, email));
   }
 
   async function addUniqueRows(target, seen, rows){
@@ -5313,7 +5783,10 @@ header nav .nav-main-link:focus-visible i,
 
     setLoginButtonLoading(true, "Checking profile...");
 
-    const employerRecord = await fetchEmployerAccountRecord(user.id);
+    let employerRecord = await fetchEmployerAccountRecord(
+      user.id,
+      currentEmployerEmail
+    );
 
     if(!employerRecord){
       if(client?.auth?.signOut) await client.auth.signOut();
@@ -5329,9 +5802,45 @@ header nav .nav-main-link:focus-visible i,
       };
 
       openModal(
-        "This Supabase Auth account is not connected to an employers-table record. Sign up first or update employers.user_id with this Auth user UUID."
+        "This Supabase Auth account is not connected to an employers-table record. Sign up first or create/update the employers row for this authenticated email."
       );
       return;
+    }
+
+    /*
+     * Record the successful employer login immediately after:
+     *   - Supabase Auth password verification succeeded, and
+     *   - a matching employers-table row was found.
+     *
+     * This updates last_login_at for EVERY successful login, not only the
+     * first login of the day. It is separate from the subscription
+     * last_login_date marker used for once-per-day subscription deduction.
+     */
+    setLoginButtonLoading(true, "Updating login record...");
+
+    const employerLoginUpdate = await updateEmployerSuccessfulLogin(
+      user,
+      employerRecord
+    );
+
+    /* Authentication, employer profile and subscription remain the access
+       authorities. A maintenance timestamp failure is reported in the console
+       but must not turn a valid password into a failed login. */
+    if(!employerLoginUpdate?.ok){
+      console.warn("Employer last_login_at update skipped:", employerLoginUpdate?.reason || "unknown");
+    }
+
+    if(employerLoginUpdate.record){
+      employerRecord = employerLoginUpdate.record;
+    }
+
+    if(employerLoginUpdate?.timestamp_saved === false){
+      console.warn("Employer authenticated; optional last_login_at update was not saved:", employerLoginUpdate.reason);
+    }else{
+      console.info(
+        "Employer last login recorded:",
+        employerLoginUpdate?.last_login_at || "(timestamp returned by database)"
+      );
     }
 
     const browserSession = persistEmployerBrowserSession(

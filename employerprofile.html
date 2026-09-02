@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -93,6 +94,15 @@
       max-width:155px;
       object-fit:contain;
       filter:none;
+      transform:scale(1);
+      transform-origin:left center;
+      transition:transform .28s cubic-bezier(.2,.7,.2,1), filter .28s ease;
+      will-change:transform;
+    }
+    .brand:hover img:not(.logo-broken),
+    .brand:focus-visible img:not(.logo-broken){
+      transform:scale(1.10);
+      filter:drop-shadow(0 8px 16px rgba(11,92,255,.20));
     }
     .brand-text-fallback{
       display:none;
@@ -208,6 +218,7 @@
     }
     .nav-menu.open .nav-dropdown{display:grid;gap:3px}
     .nav-dropdown a{
+      position:relative;
       display:flex;
       align-items:center;
       gap:11px;
@@ -217,6 +228,21 @@
       font-size:.9rem;
       font-weight:700;
       transition:background .18s ease,color .18s ease,transform .18s ease;
+    }
+    .nav-dropdown a::after{
+      content:"";
+      position:absolute;
+      left:13px;
+      right:13px;
+      bottom:7px;
+      height:2px;
+      border-radius:999px;
+      background:#0b5cff;
+      opacity:0;
+      transform:scaleX(.35);
+      transform-origin:center;
+      pointer-events:none;
+      transition:opacity .18s ease,transform .18s ease;
     }
     .nav-dropdown a i{
       width:19px;
@@ -228,6 +254,11 @@
       color:#0b5cff;
       background:#eef6ff;
       transform:translateX(2px);
+    }
+    .nav-dropdown a:hover::after,
+    .nav-dropdown a:focus-visible::after{
+      opacity:1;
+      transform:scaleX(1);
     }
 
     .topbar-right{gap:10px;flex:0 0 auto}
@@ -358,6 +389,7 @@
     .dropdown-profile strong{color:#063f73;font-size:.9rem;margin-bottom:4px}
     .dropdown-profile span{color:#667085;font-size:.75rem}
     .dropdown-link{
+      position:relative;
       width:100%;
       display:flex;
       align-items:center;
@@ -372,7 +404,24 @@
       font-weight:750;
     }
     .dropdown-link i{width:18px;color:#0b5cff;text-align:center}
-    .dropdown-link:hover{color:#0b5cff;background:#eef6ff}
+    .dropdown-link::after{
+      content:"";
+      position:absolute;
+      left:12px;
+      right:12px;
+      bottom:5px;
+      height:2px;
+      border-radius:999px;
+      background:#0b5cff;
+      transform:scaleX(0);
+      transform-origin:left center;
+      transition:transform .18s ease;
+      pointer-events:none;
+    }
+    .dropdown-link:hover,
+    .dropdown-link:focus-visible{color:#0b5cff;background:#eef6ff}
+    .dropdown-link:hover::after,
+    .dropdown-link:focus-visible::after{transform:scaleX(1)}
 
     .mobile-menu-btn{
       display:none;
@@ -1431,15 +1480,15 @@
       :root{--header-h:66px}.brand img{height:56px;max-width:116px}.mobile-menu-btn{width:40px;height:40px}.profile-hero{padding:18px}.hero-copy h1{font-size:1.65rem}.stat-grid{grid-template-columns:1fr}.form-actions,.modal-footer{flex-direction:column}.form-actions>* ,.modal-footer>*{width:100%}.job-card-actions{width:100%;justify-content:flex-start}.job-item-side{grid-template-columns:1fr}.job-item-actions{width:100%;justify-self:stretch}.job-edit-btn{width:100%}.toast{left:12px;right:12px;bottom:12px;max-width:none}
     }
 
-    /* Overview statistics: jobs, statuses, and Applied records */
+    /* Overview statistics: jobs, statuses, and Applicant Response positions */
     #overviewSection .overview-stat-grid{
       grid-template-columns:repeat(3,minmax(0,1fr));
     }
-    #overviewSection .overview-application-card{
+    #overviewSection .overview-response-card{
       border-color:#b9cdf0;
       background:linear-gradient(145deg,#ffffff,#eef5ff);
     }
-    #overviewSection .overview-application-card .stat-icon{
+    #overviewSection .overview-response-card .stat-icon{
       color:#0b5cff;
       background:#dbeafe;
     }
@@ -1683,7 +1732,7 @@
     line-height:1.15 !important;
   }
 
-  #overviewSection .overview-application-card{
+  #overviewSection .overview-response-card{
     min-height:66px !important;
   }
 
@@ -1978,6 +2027,8 @@
             <span id="dropdownCompanyEmail">employer@jobspacelink.com</span>
           </div>
           <button class="dropdown-link" type="button" data-section-target="overview"><i class="fa-regular fa-address-card"></i> View company profile</button>
+          <a class="dropdown-link" href="subscribe.html"><i class="fa-regular fa-credit-card"></i> Subscribe</a>
+          <a class="dropdown-link" href="subscriptionstatus.html"><i class="fa-solid fa-clipboard-check"></i> Subscription Status</a>
           <a class="dropdown-link" href="postedjobs.html"><i class="fa-solid fa-list-check"></i> Posted Jobs</a>
           <button class="dropdown-link" id="logoutButton" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</button>
         </div>
@@ -2127,7 +2178,7 @@
             <article class="stat-card"><span class="stat-icon"><i class="fa-solid fa-door-open"></i></span><strong id="overviewOpenJobs">0</strong><span>Open positions</span></article>
             <article class="stat-card"><span class="stat-icon"><i class="fa-solid fa-pause"></i></span><strong id="overviewPausedJobs">0</strong><span>Paused positions</span></article>
             <article class="stat-card"><span class="stat-icon"><i class="fa-solid fa-lock"></i></span><strong id="overviewClosedJobs">0</strong><span>Closed positions</span></article>
-            <article class="stat-card overview-application-card"><span class="stat-icon"><i class="fa-solid fa-file-circle-check"></i></span><strong id="overviewApplications">0</strong><span>Applications received</span><small class="overview-stat-note">Marked Applied in staff_requirements</small></article>
+            <article class="stat-card overview-response-card"><span class="stat-icon"><i class="fa-solid fa-file-circle-check"></i></span><strong id="overviewApplicantResponse">0</strong><span>Applicant Response</span><small class="overview-stat-note">Positions marked Applied or Favorite in staff_requirements</small></article>
             <article class="stat-card"><span class="stat-icon"><i class="fa-solid fa-percent"></i></span><strong id="overviewCompletion">0%</strong><span>Profile completed</span></article>
           </div>
 
@@ -3887,6 +3938,98 @@
         marker.includes("application submitted");
     }
 
+    /*
+      Match the Posted Jobs page exactly:
+      - Favorite comes from the same staff_requirements favorite fields.
+      - Applied comes from the row marker or linked application history.
+      - Each posted position is counted only once even when both are present.
+    */
+    function normalizedFavoriteMarker(value) {
+      if (value === true || value === 1) return true;
+      if (value === false || value === 0 || value == null) return false;
+      const marker = clean(value).toLowerCase();
+      if (!marker) return false;
+      return [
+        "1",
+        "true",
+        "yes",
+        "favorite",
+        "favourite",
+        "saved",
+        "added",
+        "heart",
+        "hearted"
+      ].includes(marker) ||
+        marker.startsWith("favorite") ||
+        marker.startsWith("favourite");
+    }
+
+    function hasFavoriteMarker(row = {}) {
+      const fields = [
+        "favorite_heart_status",
+        "favourite_heart_status",
+        "favorite_status",
+        "favourite_status",
+        "is_favorite",
+        "is_favourite",
+        "favorited",
+        "favourited",
+        "saved",
+        "heart_status"
+      ];
+
+      let explicitStatusFound = false;
+
+      for (const field of fields) {
+        if (!Object.prototype.hasOwnProperty.call(row, field)) continue;
+
+        const raw = row[field];
+
+        if (
+          clean(raw) !== "" ||
+          typeof raw === "boolean" ||
+          typeof raw === "number"
+        ) {
+          explicitStatusFound = true;
+        }
+
+        if (normalizedFavoriteMarker(raw)) return true;
+      }
+
+      if (explicitStatusFound) return false;
+
+      return Boolean(
+        clean(
+          pick(row, [
+            "favorite_email_address",
+            "favourite_email_address",
+            "favorite_email",
+            "favorited_by_email"
+          ])
+        )
+      );
+    }
+
+    function jobIsFavorite(job = {}) {
+      return hasFavoriteMarker(job);
+    }
+
+    function jobHasAppliedMark(job = {}) {
+      return hasAppliedMarker(job) || applicationCountForJob(job) > 0;
+    }
+
+    /*
+      This is the same Applicant Response rule used by postedjobs.html:
+      a position qualifies when it has an Applied response or a Favorite.
+    */
+    function jobHasApplicantResponse(job = {}) {
+      return jobHasAppliedMark(job) || jobIsFavorite(job);
+    }
+
+    function applicantResponseTotal() {
+      return state.jobs.filter(jobHasApplicantResponse).length;
+    }
+
     function isAppliedSourceRow(row = {}) {
       const source = clean(
         pick(row, [
@@ -4025,6 +4168,28 @@
       return seen.size;
     }
 
+    function applicationCountForJob(job) {
+      const identifiers = new Set(
+        jobIdentifierEntries(job).map(([, value]) =>
+          clean(value).toLowerCase()
+        )
+      );
+
+      if (!identifiers.size) return 0;
+
+      const matching = state.applicationRows.filter(row => {
+        const reference = applicationJobReference(row);
+
+        if (reference && identifiers.has(reference)) return true;
+
+        return jobIdentifierEntries(row).some(([, value]) =>
+          identifiers.has(clean(value).toLowerCase())
+        );
+      });
+
+      return countAppliedStaffRequirementRows(matching);
+    }
+
     function normalizedJobStatus(value) {
       const lower = clean(value).toLowerCase();
       if (["pause", "paused"].includes(lower)) return "pause";
@@ -4113,7 +4278,7 @@
       const open = jobs.filter(job => normalizedJobStatus(jobStatus(job)) === "open");
       const paused = jobs.filter(job => normalizedJobStatus(jobStatus(job)) === "pause");
       const closed = jobs.filter(job => normalizedJobStatus(jobStatus(job)) === "close");
-      const applications = Number(state.applicationTotal) || 0;
+      const applicantResponses = applicantResponseTotal();
 
       const activeFilter = ["open", "pause", "close"].includes(state.jobFilter)
         ? state.jobFilter
@@ -4147,7 +4312,7 @@
       setText("#overviewOpenJobs", open.length);
       setText("#overviewPausedJobs", paused.length);
       setText("#overviewClosedJobs", closed.length);
-      setText("#overviewApplications", applications);
+      setText("#overviewApplicantResponse", applicantResponses);
       setText("#jobsTotal", jobs.length);
       setText("#jobsOpen", open.length);
       setText("#jobsPaused", paused.length);
@@ -4428,7 +4593,7 @@
         if (showMessage) {
           showStatus(
             "jobsStatus",
-            `${state.jobs.length} posted job record${state.jobs.length === 1 ? "" : "s"} and ${state.applicationTotal} applied record${state.applicationTotal === 1 ? "" : "s"} loaded from staff_requirements. The selected status filter remains active.`,
+            `${state.jobs.length} posted job record${state.jobs.length === 1 ? "" : "s"} and ${applicantResponseTotal()} Applicant Response position${applicantResponseTotal() === 1 ? "" : "s"} loaded from staff_requirements. The selected status filter remains active.`,
             "success"
           );
         }
@@ -8875,5 +9040,266 @@
 
     document.addEventListener("DOMContentLoaded", initialize);
   </script>
+<!-- ============================================================
+     TABLET HEADER + STICKY PROFILE CONTROLS FIX
+     Employer Profile | 769px–1023px
+     CSS-only: all existing IDs, authentication, Supabase, dropdown,
+     zoom, fit-page, full-page, reset, PDF and form behavior remain.
+=============================================================== -->
+<style id="jsl-employer-profile-tablet-header-controls-fix-20260828">
+@media (min-width:769px) and (max-width:1023px){
+  :root{--header-h:72px !important;}
+
+  /* Remove the initial space between the fixed header and controls. */
+  html body > main.page-shell{
+    padding-top:0 !important;
+  }
+
+  html body > header.topbar{
+    height:72px !important;
+    min-height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:4px !important;
+    padding:0 5px 0 4px !important;
+    overflow:visible !important;
+    z-index:5000 !important;
+  }
+
+  html body > header.topbar > .topbar-left{
+    flex:1 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:4px !important;
+    margin:0 !important;
+    overflow:visible !important;
+  }
+
+  html body > header.topbar .brand{
+    flex:0 0 70px !important;
+    width:70px !important;
+    min-width:70px !important;
+    max-width:70px !important;
+    height:72px !important;
+    margin:0 !important;
+    overflow:hidden !important;
+  }
+
+  html body > header.topbar .brand img{
+    width:auto !important;
+    height:50px !important;
+    max-width:70px !important;
+    max-height:50px !important;
+    object-fit:contain !important;
+    transform:none !important;
+  }
+
+  html body > header.topbar .nav-links{
+    flex:1 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:2px !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+    white-space:nowrap !important;
+    font-size:clamp(.54rem,.75vw,.64rem) !important;
+  }
+
+  html body > header.topbar .nav-item,
+  html body > header.topbar .nav-menu-btn{
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    min-height:42px !important;
+    gap:2px !important;
+    margin:0 !important;
+    padding:0 1px !important;
+    font-size:inherit !important;
+    letter-spacing:-.015em !important;
+    white-space:nowrap !important;
+  }
+
+  html body > header.topbar .nav-item i,
+  html body > header.topbar .nav-menu-btn i{
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    margin:0 !important;
+    font-size:.70rem !important;
+  }
+
+  html body > header.topbar .nav-menu{
+    flex:0 0 auto !important;
+    min-width:0 !important;
+    height:42px !important;
+    overflow:visible !important;
+  }
+
+  html body > header.topbar .nav-dropdown-toggle{
+    flex:0 0 18px !important;
+    width:18px !important;
+    min-width:18px !important;
+    height:42px !important;
+    margin-left:-2px !important;
+    padding:0 !important;
+  }
+
+  html body > header.topbar > .topbar-right{
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:206px !important;
+    height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:4px !important;
+    margin:0 0 0 auto !important;
+    padding:0 !important;
+    overflow:visible !important;
+    transform:none !important;
+  }
+
+  html body > header.topbar .header-action{
+    position:relative !important;
+    flex:0 0 30px !important;
+    width:30px !important;
+    min-width:30px !important;
+    max-width:30px !important;
+    height:30px !important;
+    min-height:30px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border-radius:9px !important;
+    transform:none !important;
+  }
+
+  html body > header.topbar .header-action i,
+  html body > header.topbar .favorite-action i{
+    font-size:.82rem !important;
+  }
+
+  html body > header.topbar .account-menu{
+    position:relative !important;
+    flex:0 0 138px !important;
+    width:138px !important;
+    min-width:138px !important;
+    max-width:138px !important;
+    margin:0 !important;
+    overflow:visible !important;
+  }
+
+  html body > header.topbar .account-trigger{
+    width:138px !important;
+    min-width:138px !important;
+    max-width:138px !important;
+    height:38px !important;
+    min-height:38px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:5px !important;
+    margin:0 !important;
+    padding:3px 7px 3px 4px !important;
+    border-radius:10px !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body > header.topbar .header-logo{
+    flex:0 0 30px !important;
+    width:30px !important;
+    min-width:30px !important;
+    max-width:30px !important;
+    height:30px !important;
+    min-height:30px !important;
+    max-height:30px !important;
+    border-radius:8px !important;
+  }
+
+  /* Restore the company name hidden by the older max-width:1080px rule. */
+  html body > header.topbar .account-copy{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    display:grid !important;
+    align-items:center !important;
+    text-align:left !important;
+    overflow:hidden !important;
+  }
+
+  html body > header.topbar .account-copy strong{
+    display:block !important;
+    min-width:0 !important;
+    max-width:86px !important;
+    overflow:hidden !important;
+    color:#fff !important;
+    font-size:.62rem !important;
+    font-weight:850 !important;
+    line-height:1.1 !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+  }
+
+  html body > header.topbar .account-copy small{
+    display:none !important;
+  }
+
+  html body > header.topbar .account-caret{
+    flex:0 0 auto !important;
+    margin-left:auto !important;
+    font-size:.58rem !important;
+  }
+
+  html body > header.topbar .mobile-menu-btn,
+  html body > .mobile-drawer{
+    display:none !important;
+  }
+
+  /* Sticky Zoom / Fit Page / Full Page / Reset controls. */
+  html body .profile-page-viewer > #profileViewControls.profile-view-controls-bar{
+    position:sticky !important;
+    top:var(--header-h) !important;
+    z-index:900 !important;
+    width:min(100%,820px) !important;
+    margin:0 auto 20px !important;
+    background:rgba(255,255,255,.98) !important;
+    isolation:isolate !important;
+  }
+
+  html body .profile-page-viewer:fullscreen > #profileViewControls.profile-view-controls-bar{
+    top:0 !important;
+  }
+}
+
+/* Desktop: keep the same profile controls visible below the fixed header. */
+@media (min-width:1024px){
+  html body .profile-page-viewer > #profileViewControls.profile-view-controls-bar{
+    position:sticky !important;
+    top:var(--header-h) !important;
+    z-index:900 !important;
+    width:min(100%,820px) !important;
+    background:rgba(255,255,255,.98) !important;
+    isolation:isolate !important;
+  }
+
+  html body .profile-page-viewer:fullscreen > #profileViewControls.profile-view-controls-bar{
+    top:0 !important;
+  }
+}
+</style>
+
 </body>
 </html>

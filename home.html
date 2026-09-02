@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2257,6 +2258,104 @@ header .auth-buttons a:focus-visible > i{
 }
 
 </style>
+
+<!-- ============================================================
+     FINAL HEADER LOGO CONTAINMENT PATCH
+     - Prevents the Job Space Link logo from overflowing outside
+       the fixed header at every responsive breakpoint.
+     - Keeps all links, dropdowns, auth buttons, mobile menu,
+       hover behavior, animations, and JavaScript unchanged.
+============================================================ -->
+<style id="jsl-final-header-logo-containment">
+  /*
+    Keep only the logo inside its own header-height box.
+    We DO NOT hide overflow on the whole header because that could
+    clip navigation dropdown menus.
+  */
+  header .logo{
+    height:100% !important;
+    max-height:100% !important;
+    min-height:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+    padding-top:5px !important;
+    padding-bottom:5px !important;
+  }
+
+  header .logo img{
+    width:auto !important;
+    height:auto !important;
+    max-height:calc(var(--header-h) - 10px) !important;
+    max-width:160px !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+    display:block !important;
+    margin:0 !important;
+  }
+
+  /*
+    Preserve existing logo zoom/hover effects, but clip the enlarged
+    image to the logo container so it can never extend outside header.
+  */
+  header .logo:hover img,
+  header .logo:focus-visible img{
+    transform-origin:left center !important;
+  }
+
+  /* 1440px+ */
+  @media (min-width:1440px){
+    header .logo img{
+      max-height:calc(var(--header-h) - 12px) !important;
+      max-width:150px !important;
+    }
+  }
+
+  /* 1024px - 1439px */
+  @media (min-width:1024px) and (max-width:1439px){
+    header .logo img{
+      max-height:calc(var(--header-h) - 12px) !important;
+      max-width:138px !important;
+    }
+  }
+
+  /* 769px - 1023px */
+  @media (min-width:769px) and (max-width:1023px){
+    header .logo img{
+      max-height:calc(var(--header-h) - 14px) !important;
+      max-width:126px !important;
+    }
+  }
+
+  /* 481px - 768px */
+  @media (min-width:481px) and (max-width:768px){
+    header .logo{
+      padding-top:6px !important;
+      padding-bottom:6px !important;
+    }
+
+    header .logo img{
+      max-height:calc(var(--header-h) - 16px) !important;
+      max-width:min(122px, calc(100vw - 76px)) !important;
+    }
+  }
+
+  /* 480px and below */
+  @media (max-width:480px){
+    header .logo{
+      padding-top:6px !important;
+      padding-bottom:6px !important;
+    }
+
+    header .logo img{
+      max-height:calc(var(--header-h) - 18px) !important;
+      max-width:min(108px, calc(100vw - 70px)) !important;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -2718,6 +2817,1233 @@ header .auth-buttons a:focus-visible > i{
   tick();
 })();
 </script>
+
+
+<style id="final-marked-header-nav-underline-hover-2026-06-12">
+/* ============================================================
+   FINAL MARKED HEADER NAV UNDERLINE HOVER PATCH 2026-06-12
+   Matches the marked screenshot:
+   - No hover background/box/glow on desktop nav links
+   - Text + icon turn black on hover/open/focus
+   - Clean black underline under the nav text/link
+   - Dropdown options use the same underline-only hover style
+   - Keeps all href links, dropdown JS, login/mobile behavior unchanged
+============================================================ */
+
+/* Desktop header nav: reset old hover boxes/glow layers */
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown .nav-main-link{
+  position:relative !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  overflow:visible !important;
+  isolation:auto !important;
+  text-decoration:none !important;
+  text-underline-offset:6px !important;
+  text-decoration-thickness:2px !important;
+  text-decoration-color:#000000 !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before,
+.nav-dropdown .nav-main-link::before{
+  display:none !important;
+  opacity:0 !important;
+  content:none !important;
+  background:transparent !important;
+}
+
+/* Marked hover style: black text/icon + underline only */
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration-line:underline !important;
+  text-decoration-style:solid !important;
+  text-decoration-color:#000000 !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* About caret hover should not create any icon background */
+.nav-dropdown-toggle,
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible,
+.nav-dropdown-toggle > i,
+.nav-dropdown-toggle:hover > i,
+.nav-dropdown-toggle:focus-visible > i{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Dropdown menu items: same underline-only hover style */
+.nav-dropdown-menu a{
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration:none !important;
+  text-underline-offset:6px !important;
+  text-decoration-thickness:2px !important;
+  text-decoration-color:#000000 !important;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transform:none !important;
+  text-decoration-line:underline !important;
+  text-decoration-style:solid !important;
+  text-decoration-color:#000000 !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+}
+
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Mobile menu uses the same underline feedback, without changing open/close behavior */
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  transform:none !important;
+  text-decoration-line:underline !important;
+  text-decoration-style:solid !important;
+  text-decoration-color:#000000 !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:6px !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i,
+.mobile-panel .mnav-toggle:hover > i,
+.mobile-panel .mnav-toggle:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+
+/* ============================================================
+   FINAL REFINED SINGLE-LINE NAV UNDERLINE PATCH 2026-06-12
+   - Keeps nav icon + nav label on one line.
+   - Replaces text-only underline with one black underline under
+     the full header nav item, including icon + label.
+   - Applies the same underline-only hover to dropdown nav options.
+   - Removes hover background, glow, border, and transform from nav items.
+   - CSS-only: all links, dropdown JS, mobile menu, login, and behavior remain unchanged.
+============================================================ */
+header nav > a,
+header nav .nav-main-link,
+.nav-dropdown-menu a{
+  position:relative !important;
+  display:inline-flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-wrap:nowrap !important;
+  white-space:nowrap !important;
+  gap:6px !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+  overflow:visible !important;
+  isolation:auto !important;
+}
+
+header nav > a > i,
+header nav .nav-main-link > i,
+.nav-dropdown-menu a > i{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  margin:0 !important;
+  line-height:1 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+header nav .nav-text,
+.nav-dropdown-menu .nav-text{
+  display:inline-flex !important;
+  align-items:center !important;
+  flex:0 0 auto !important;
+  min-width:0 !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+}
+
+header nav > a::before,
+header nav .nav-main-link::before,
+.nav-dropdown-menu a::before{
+  display:none !important;
+  content:none !important;
+  opacity:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after,
+.nav-dropdown-menu a::after{
+  content:"" !important;
+  position:absolute !important;
+  left:4px !important;
+  right:4px !important;
+  bottom:2px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#000000 !important;
+  opacity:0 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:transform .18s ease, opacity .18s ease !important;
+  pointer-events:none !important;
+}
+
+.nav-dropdown-menu a::after{
+  left:12px !important;
+  right:12px !important;
+  bottom:6px !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link,
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#000000 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown.open .nav-main-link::after,
+.nav-dropdown-menu a:hover::after,
+.nav-dropdown-menu a:focus-visible::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#000000 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-trigger{
+  display:inline-flex !important;
+  align-items:center !important;
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  white-space:nowrap !important;
+  gap:2px !important;
+}
+
+/* Keep dropdown caret separate and clean, without adding a box/background. */
+.nav-dropdown-toggle,
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle:focus-visible{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.nav-dropdown-toggle > i,
+.nav-dropdown-toggle:hover > i,
+.nav-dropdown-toggle:focus-visible > i{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+@media (min-width:769px){
+  header nav > a,
+  header nav .nav-main-link{
+    min-height:36px !important;
+    height:36px !important;
+    padding:0 4px 2px !important;
+  }
+
+  .nav-dropdown-menu a{
+    min-height:36px !important;
+    padding:10px 12px 12px !important;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav > a,
+  header nav .nav-main-link{
+    gap:4px !important;
+    padding-left:2px !important;
+    padding-right:2px !important;
+  }
+
+  header nav > a::after,
+  header nav .nav-main-link::after{
+    left:2px !important;
+    right:2px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav > a,
+  header nav .nav-main-link{
+    gap:3px !important;
+    padding-left:1px !important;
+    padding-right:1px !important;
+  }
+
+  header nav > a::after,
+  header nav .nav-main-link::after{
+    left:1px !important;
+    right:1px !important;
+  }
+}
+
+/* Mobile menu gets the same underline-only behavior without changing layout. */
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link{
+  position:relative !important;
+  text-decoration:none !important;
+  transform:none !important;
+}
+
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::after{
+  content:"" !important;
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:7px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#000000 !important;
+  opacity:0 !important;
+  transform:scaleX(0) !important;
+  transform-origin:center !important;
+  transition:transform .18s ease, opacity .18s ease !important;
+  pointer-events:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible{
+  color:#000000 !important;
+  background:var(--choose-white, #ffffff) !important;
+  text-decoration:none !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+.mobile-panel .mnav a:hover::after,
+.mobile-panel .mnav a:focus-visible::after,
+.mobile-panel .mnav-main-link:hover::after,
+.mobile-panel .mnav-main-link:focus-visible::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+
+
+/* ============================================================
+   FINAL ABOUT DROPDOWN VERTICAL ALIGNMENT PATCH 2026-06-12
+   Keeps About header link + caret vertically centered with the
+   rest of the nav links while preserving all dropdown behavior.
+============================================================ */
+@media (min-width:769px){
+  header nav .nav-dropdown{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    align-self:center !important;
+    height:36px !important;
+    min-height:36px !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    vertical-align:middle !important;
+  }
+
+  header nav .nav-dropdown-trigger{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    gap:2px !important;
+    height:36px !important;
+    min-height:36px !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    vertical-align:middle !important;
+  }
+
+  header nav .nav-dropdown .nav-main-link{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    gap:6px !important;
+    height:36px !important;
+    min-height:36px !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 4px 2px !important;
+    vertical-align:middle !important;
+  }
+
+  header nav .nav-dropdown .nav-main-link > i,
+  header nav .nav-dropdown .nav-main-link .nav-text{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    vertical-align:middle !important;
+  }
+
+  header nav .nav-dropdown-toggle,
+  header nav .nav-dropdown-toggle:hover,
+  header nav .nav-dropdown-toggle:focus-visible{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    align-self:center !important;
+    flex:0 0 22px !important;
+    width:22px !important;
+    min-width:22px !important;
+    height:36px !important;
+    min-height:36px !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 0 2px !important;
+    vertical-align:middle !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    transform:none !important;
+  }
+
+  header nav .nav-dropdown-toggle > i,
+  header nav .nav-dropdown-toggle:hover > i,
+  header nav .nav-dropdown-toggle:focus-visible > i{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:100% !important;
+    height:100% !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    vertical-align:middle !important;
+    transform:none !important;
+  }
+
+  .nav-dropdown-menu{
+    top:calc(100% + 8px) !important;
+    left:0 !important;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav .nav-dropdown,
+  header nav .nav-dropdown-trigger,
+  header nav .nav-dropdown .nav-main-link,
+  header nav .nav-dropdown-toggle{
+    height:34px !important;
+    min-height:34px !important;
+  }
+
+  header nav .nav-dropdown .nav-main-link{
+    gap:4px !important;
+    padding:0 2px 2px !important;
+  }
+
+  header nav .nav-dropdown-toggle{
+    flex-basis:18px !important;
+    width:18px !important;
+    min-width:18px !important;
+    padding-bottom:2px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav .nav-dropdown,
+  header nav .nav-dropdown-trigger,
+  header nav .nav-dropdown .nav-main-link,
+  header nav .nav-dropdown-toggle{
+    height:31px !important;
+    min-height:31px !important;
+  }
+
+  header nav .nav-dropdown .nav-main-link{
+    gap:3px !important;
+    padding:0 1px 2px !important;
+  }
+
+  header nav .nav-dropdown-toggle{
+    flex-basis:15px !important;
+    width:15px !important;
+    min-width:15px !important;
+    padding-bottom:2px !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL ABOUT DROPDOWN SAME-PLACEMENT PATCH 2026-06-12
+   Places the About dropdown options like the reference image:
+   directly under the About header item, slightly aligned to the
+   left of the About text/caret, with options stacked vertically.
+   Links, dropdown open/close script, mobile menu, and login behavior
+   remain unchanged.
+============================================================ */
+@media (min-width:769px){
+  header nav .nav-dropdown{
+    position:relative !important;
+    overflow:visible !important;
+    z-index:3200 !important;
+  }
+
+  header nav .nav-dropdown-trigger{
+    position:relative !important;
+    overflow:visible !important;
+  }
+
+  header nav .nav-dropdown-menu,
+  .nav-dropdown-menu{
+    position:absolute !important;
+    top:calc(100% + 8px) !important;
+    left:-28px !important;
+    right:auto !important;
+    transform:none !important;
+    min-width:220px !important;
+    width:220px !important;
+    max-width:calc(100vw - 32px) !important;
+    display:none !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+    padding:10px 0 !important;
+    margin:0 !important;
+    border-radius:14px !important;
+    z-index:4000 !important;
+    overflow:visible !important;
+  }
+
+  header nav .nav-dropdown.open .nav-dropdown-menu,
+  .nav-dropdown.open .nav-dropdown-menu{
+    display:flex !important;
+  }
+
+  header nav .nav-dropdown-menu a,
+  .nav-dropdown-menu a{
+    width:auto !important;
+    min-width:0 !important;
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:12px !important;
+    padding:12px 20px 14px 26px !important;
+    margin:0 8px !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+
+  header nav .nav-dropdown-menu a > i,
+  .nav-dropdown-menu a > i{
+    width:18px !important;
+    min-width:18px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    margin:0 !important;
+  }
+
+  header nav .nav-dropdown-menu a .nav-text,
+  .nav-dropdown-menu a .nav-text{
+    display:inline-flex !important;
+    align-items:center !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+}
+
+@media (min-width:1440px){
+  header nav .nav-dropdown-menu,
+  .nav-dropdown-menu{
+    left:-28px !important;
+    top:calc(100% + 8px) !important;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  header nav .nav-dropdown-menu,
+  .nav-dropdown-menu{
+    left:-22px !important;
+    top:calc(100% + 8px) !important;
+    width:214px !important;
+    min-width:214px !important;
+  }
+
+  header nav .nav-dropdown-menu a,
+  .nav-dropdown-menu a{
+    padding:11px 18px 13px 22px !important;
+    gap:10px !important;
+  }
+}
+
+@media (min-width:769px) and (max-width:1023px){
+  header nav .nav-dropdown-menu,
+  .nav-dropdown-menu{
+    left:-16px !important;
+    top:calc(100% + 8px) !important;
+    width:200px !important;
+    min-width:200px !important;
+  }
+
+  header nav .nav-dropdown-menu a,
+  .nav-dropdown-menu a{
+    padding:10px 15px 12px 18px !important;
+    gap:9px !important;
+    font-size:0.72rem !important;
+  }
+}
+
+
+
+/* ============================================================
+   FINAL POSTED JOBS HEADER NAV STYLE
+   Applies the Posted Jobs navigation font, colors, dropdown style,
+   and hover effects while preserving all Home page behavior.
+============================================================ */
+
+/* Desktop navigation typography and default colors */
+header nav{
+  color:#063f73 !important;
+  font-family:Inter, Arial, Helvetica, sans-serif !important;
+  font-weight:700 !important;
+}
+
+header nav > a,
+header nav .nav-main-link{
+  position:relative !important;
+  color:#063f73 !important;
+  font-family:Inter, Arial, Helvetica, sans-serif !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  overflow:visible !important;
+  transition:color .18s ease, transform .18s ease !important;
+}
+
+/* Posted Jobs blue nav icons */
+header nav > a > i,
+header nav .nav-main-link > i{
+  color:#06477f !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  transition:color .18s ease !important;
+}
+
+/* Replace all older black/text underlines with the Posted Jobs blue bar */
+header nav > a::before,
+header nav .nav-main-link::before{
+  display:none !important;
+  content:none !important;
+}
+
+header nav > a::after,
+header nav .nav-main-link::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  left:3px !important;
+  right:3px !important;
+  bottom:5px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:#0b5cff !important;
+  opacity:0 !important;
+  transform:scaleX(.35) !important;
+  transform-origin:center !important;
+  transition:opacity .18s ease, transform .18s ease !important;
+  pointer-events:none !important;
+}
+
+header nav > a:hover,
+header nav > a:focus-visible,
+header nav .nav-main-link:hover,
+header nav .nav-main-link:focus-visible,
+.nav-dropdown.open .nav-main-link{
+  color:#0b5cff !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:translateY(-1px) !important;
+}
+
+header nav > a:hover::after,
+header nav > a:focus-visible::after,
+header nav .nav-main-link:hover::after,
+header nav .nav-main-link:focus-visible::after,
+.nav-dropdown.open .nav-main-link::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
+
+header nav > a:hover > i,
+header nav > a:focus-visible > i,
+header nav .nav-main-link:hover > i,
+header nav .nav-main-link:focus-visible > i,
+.nav-dropdown.open .nav-main-link > i{
+  color:#0b5cff !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+/* About caret uses the same Posted Jobs blue interaction */
+header nav .nav-dropdown-toggle{
+  color:#063f73 !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transition:color .18s ease, background .18s ease !important;
+}
+
+header nav .nav-dropdown-toggle > i{
+  color:currentColor !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+header nav .nav-dropdown-toggle:hover,
+header nav .nav-dropdown-toggle:focus-visible,
+.nav-dropdown.open .nav-dropdown-toggle{
+  color:#0b5cff !important;
+  background:#eef6ff !important;
+}
+
+header nav .nav-dropdown-toggle:hover > i,
+header nav .nav-dropdown-toggle:focus-visible > i,
+.nav-dropdown.open .nav-dropdown-toggle > i{
+  color:#0b5cff !important;
+}
+
+/* Posted Jobs dropdown surface and typography */
+header nav .nav-dropdown-menu,
+.nav-dropdown-menu{
+  background:#ffffff !important;
+  border:1px solid #d9e2ee !important;
+  border-radius:12px !important;
+  box-shadow:0 18px 42px rgba(15,23,42,.16) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+header nav .nav-dropdown-menu a,
+.nav-dropdown-menu a{
+  color:#063f73 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  font-family:Inter, Arial, Helvetica, sans-serif !important;
+  font-size:.9rem !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  box-shadow:none !important;
+  transition:color .18s ease, background .18s ease, transform .18s ease !important;
+}
+
+header nav .nav-dropdown-menu a::before,
+header nav .nav-dropdown-menu a::after,
+.nav-dropdown-menu a::before,
+.nav-dropdown-menu a::after{
+  display:none !important;
+  content:none !important;
+  opacity:0 !important;
+}
+
+header nav .nav-dropdown-menu a > i,
+.nav-dropdown-menu a > i{
+  color:#0b5cff !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+header nav .nav-dropdown-menu a:hover,
+header nav .nav-dropdown-menu a:focus-visible,
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible{
+  color:#0b5cff !important;
+  background:#eef6ff !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  transform:translateX(2px) !important;
+}
+
+header nav .nav-dropdown-menu a:hover > i,
+header nav .nav-dropdown-menu a:focus-visible > i,
+.nav-dropdown-menu a:hover > i,
+.nav-dropdown-menu a:focus-visible > i{
+  color:#0b5cff !important;
+}
+
+/* Mobile menu follows the Posted Jobs mobile navigation style */
+.mobile-panel{
+  background:#ffffff !important;
+  border-top:1px solid #dfe6ef !important;
+  border-bottom:1px solid #dfe6ef !important;
+  box-shadow:0 18px 34px rgba(15,23,42,.14) !important;
+}
+
+.mobile-panel .mnav a,
+.mobile-panel .mnav-main-link,
+.mobile-panel .mnav-toggle{
+  color:#063f73 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  font-family:Inter, Arial, Helvetica, sans-serif !important;
+  font-weight:750 !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+  box-shadow:none !important;
+  transition:color .18s ease, background .18s ease, transform .18s ease !important;
+}
+
+.mobile-panel .mnav a::before,
+.mobile-panel .mnav a::after,
+.mobile-panel .mnav-main-link::before,
+.mobile-panel .mnav-main-link::after{
+  display:none !important;
+  content:none !important;
+  opacity:0 !important;
+}
+
+.mobile-panel .mnav-left > i,
+.mobile-panel .mnav-toggle > i,
+.mobile-panel .mnav a .fa-arrow-right,
+.mobile-panel .mnav-main-link .fa-arrow-right{
+  color:#0b5cff !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+}
+
+.mobile-panel .mnav a:hover,
+.mobile-panel .mnav a:focus-visible,
+.mobile-panel .mnav-main-link:hover,
+.mobile-panel .mnav-main-link:focus-visible,
+.mobile-panel .mnav-toggle:hover,
+.mobile-panel .mnav-toggle:focus-visible{
+  color:#0b5cff !important;
+  background:#eef6ff !important;
+  border-color:transparent !important;
+  text-decoration:none !important;
+  box-shadow:none !important;
+  transform:translateX(2px) !important;
+}
+
+.mobile-panel .mnav a:hover .mnav-left > i,
+.mobile-panel .mnav a:focus-visible .mnav-left > i,
+.mobile-panel .mnav-main-link:hover .mnav-left > i,
+.mobile-panel .mnav-main-link:focus-visible .mnav-left > i,
+.mobile-panel .mnav-toggle:hover > i,
+.mobile-panel .mnav-toggle:focus-visible > i{
+  color:#0b5cff !important;
+}
+
+.mobile-panel .mnav-submenu a{
+  color:#063f73 !important;
+  background:transparent !important;
+}
+
+
+/* ============================================================
+   FINAL ABOUT DROPDOWN HOVER UNDERLINE PATCH 2026-08-10
+   - Adds an underline only to the About dropdown option text.
+   - Underline automatically matches the hovered font color.
+   - Keeps existing dropdown background, icons, links, responsive
+     layout, open/close behavior, and JavaScript unchanged.
+============================================================ */
+header nav .nav-dropdown-menu a:hover .nav-text,
+header nav .nav-dropdown-menu a:focus-visible .nav-text,
+.nav-dropdown-menu a:hover .nav-text,
+.nav-dropdown-menu a:focus-visible .nav-text{
+  text-decoration-line:underline !important;
+  text-decoration-style:solid !important;
+  text-decoration-color:currentColor !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:4px !important;
+}
+
+/* Keep the same visual feedback for the About submenu on mobile. */
+.mobile-panel .mnav-submenu a:hover .nav-text,
+.mobile-panel .mnav-submenu a:focus-visible .nav-text{
+  text-decoration-line:underline !important;
+  text-decoration-style:solid !important;
+  text-decoration-color:currentColor !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:4px !important;
+}
+
+</style>
+
+<!-- ============================================================
+     AUTHORITATIVE APPLICANT FORM HEADER MATCH
+     Remote Work Opportunities | 769px–1023px
+     CSS-only: existing links, dropdowns, animation and page logic remain.
+=============================================================== -->
+<style id="jsl-remote-work-applicant-form-tablet-header-20260828">
+@media (min-width:769px) and (max-width:1023px){
+  :root{
+    --header-h:72px !important;
+    --hdrH:72px !important;
+    --jsl-af-ink:#063f73;
+    --jsl-af-icon:#06477f;
+  }
+
+  html body{padding-top:72px !important;}
+
+  html body > header{
+    position:fixed !important;
+    inset:0 0 auto 0 !important;
+    width:100% !important;
+    max-width:100vw !important;
+    height:72px !important;
+    min-height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:12px !important;
+    padding:0 6px 0 4px !important;
+    color:var(--jsl-af-ink) !important;
+    background:#fff !important;
+    border:0 !important;
+    border-bottom:1px solid #dfe6ef !important;
+    border-radius:0 !important;
+    box-shadow:0 2px 10px rgba(15,23,42,.06) !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    overflow:visible !important;
+    transform:none !important;
+    z-index:1500 !important;
+  }
+
+  html body > header > .logo{
+    order:1 !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:70px !important;
+    max-width:132px !important;
+    height:72px !important;
+    min-height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body > header > .logo img{
+    display:block !important;
+    width:auto !important;
+    height:50px !important;
+    max-width:132px !important;
+    max-height:50px !important;
+    margin:0 !important;
+    padding:0 !important;
+    object-fit:contain !important;
+    object-position:left center !important;
+    filter:none !important;
+    transform:none !important;
+  }
+
+  html body > header > nav{
+    order:2 !important;
+    flex:0 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:72px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:6px !important;
+    margin:0 auto 0 6px !important;
+    padding:0 !important;
+    color:var(--jsl-af-ink) !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    visibility:visible !important;
+    opacity:1 !important;
+  }
+
+  html body > header > nav > a,
+  html body > header > nav .nav-main-link{
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:48px !important;
+    min-height:48px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    margin:0 !important;
+    padding:0 2px !important;
+    border:0 !important;
+    border-radius:0 !important;
+    color:var(--jsl-af-ink) !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    text-decoration:none !important;
+    white-space:nowrap !important;
+    font-family:Inter,Arial,Helvetica,sans-serif !important;
+    font-size:.72rem !important;
+    font-weight:700 !important;
+    line-height:1 !important;
+    letter-spacing:0 !important;
+    transform:none !important;
+  }
+
+  html body > header > nav > a > i,
+  html body > header > nav .nav-main-link > i{
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    color:var(--jsl-af-icon) !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    font-size:.78rem !important;
+    line-height:1 !important;
+    transform:none !important;
+  }
+
+  html body > header > nav .nav-dropdown,
+  html body > header > nav .nav-dropdown-trigger,
+  html body > header > nav .nav-dropdown .nav-main-link{
+    height:48px !important;
+    min-height:48px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+  }
+
+  html body > header > nav .nav-dropdown-toggle{
+    flex:0 0 24px !important;
+    width:24px !important;
+    min-width:24px !important;
+    height:48px !important;
+    min-height:48px !important;
+    margin-left:-3px !important;
+    padding:0 !important;
+  }
+
+  html body > header > .auth-buttons{
+    order:20 !important;
+    position:relative !important;
+    inset:auto !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:78px !important;
+    max-width:none !important;
+    height:auto !important;
+    min-height:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:4px !important;
+    margin:0 0 0 auto !important;
+    padding:0 !important;
+    overflow:visible !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    transform:none !important;
+  }
+
+  html body > header > .auth-buttons > a.admin,
+  html body > header > .auth-buttons > a.jobseeker-auth{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:auto !important;
+    min-width:78px !important;
+    max-width:none !important;
+    height:32px !important;
+    min-height:32px !important;
+    gap:5px !important;
+    padding:0 10px !important;
+    border-radius:9px !important;
+    font-size:.78rem !important;
+    letter-spacing:0 !important;
+    visibility:visible !important;
+    opacity:1 !important;
+  }
+
+  html body > header > .auth-buttons > a i{
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    margin:0 !important;
+    font-size:.86rem !important;
+  }
+
+  html body > header > .nav-toggle,
+  html body > header + .mobile-panel,
+  html body > .mobile-panel{
+    display:none !important;
+  }
+}
+
+/* ============================================================
+   POSTEDHIRING1 HEADER LOGO ZOOM EFFECT
+============================================================ */
+body > header .logo img,
+html body > header .logo img,
+header .logo img{
+  transform:scale(1) !important;
+  transform-origin:center center !important;
+  transition:transform .22s ease, filter .22s ease !important;
+}
+
+body > header .logo:hover img,
+html body > header .logo:hover img,
+header .logo:hover img{
+  transform:scale(1.06) !important;
+}
+</style>
 
 </body>
 </html>

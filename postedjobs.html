@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -156,6 +158,7 @@
     }
     .nav-menu.open .nav-dropdown{display:grid;gap:3px}
     .nav-dropdown a{
+      position:relative;
       display:flex;
       align-items:center;
       gap:11px;
@@ -166,7 +169,32 @@
       font-weight:700;
     }
     .nav-dropdown a i{width:19px;color:#0b5cff;text-align:center}
-    .nav-dropdown a:hover{color:#0b5cff;background:#eef6ff;transform:translateX(2px)}
+    .nav-dropdown a::after{
+      content:"";
+      position:absolute;
+      left:13px;
+      right:13px;
+      bottom:7px;
+      height:2px;
+      border-radius:999px;
+      background:#0b5cff;
+      opacity:0;
+      transform:scaleX(.35);
+      transform-origin:center;
+      pointer-events:none;
+      transition:opacity .18s ease,transform .18s ease;
+    }
+    .nav-dropdown a:hover{
+      color:#0b5cff;
+      background:#eef6ff;
+      text-decoration:none;
+      transform:translateX(2px);
+    }
+    .nav-dropdown a:hover::after,
+    .nav-dropdown a:focus-visible::after{
+      opacity:1;
+      transform:scaleX(1);
+    }
 
     .topbar-right{gap:10px;flex:0 0 auto}
     .header-action{
@@ -260,6 +288,7 @@
     .dropdown-profile strong{color:#063f73;font-size:.9rem;margin-bottom:4px}
     .dropdown-profile span{color:#667085;font-size:.75rem}
     .dropdown-link{
+      position:relative;
       width:100%;
       display:flex;
       align-items:center;
@@ -274,7 +303,24 @@
       font-weight:750;
     }
     .dropdown-link i{width:18px;color:#0b5cff;text-align:center}
-    .dropdown-link:hover{color:#0b5cff;background:#eef6ff}
+    .dropdown-link::after{
+      content:"";
+      position:absolute;
+      left:12px;
+      right:12px;
+      bottom:5px;
+      height:2px;
+      border-radius:999px;
+      background:#0b5cff;
+      transform:scaleX(0);
+      transform-origin:left center;
+      transition:transform .18s ease;
+      pointer-events:none;
+    }
+    .dropdown-link:hover,
+    .dropdown-link:focus-visible{color:#0b5cff;background:#eef6ff}
+    .dropdown-link:hover::after,
+    .dropdown-link:focus-visible::after{transform:scaleX(1)}
     .mobile-menu-btn{
       display:none;
       width:42px;
@@ -819,6 +865,117 @@
       .stats-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
       .location-view{grid-template-columns:minmax(290px,.78fr) minmax(430px,1.22fr)}
     }
+
+    /* ============================================================
+       769px-1023px HEADER OVERLAP FIX
+       Keep the existing <=900px hamburger behavior. On the
+       desktop-style 901px-1023px portion, compress the nav and
+       logged-in action/account cluster so the paper-plane and heart
+       buttons cannot overlap the navigation links.
+    ============================================================ */
+    @media (min-width:769px) and (max-width:1023px){
+      .topbar{
+        gap:6px;
+        padding-left:8px;
+        padding-right:8px;
+      }
+
+      .topbar-left{
+        flex:1 1 auto;
+        min-width:0;
+        gap:8px;
+      }
+
+      .brand{
+        flex:0 0 auto;
+        min-width:92px;
+      }
+
+      .brand img{
+        height:54px;
+        max-width:100px;
+      }
+
+      .nav-links{
+        flex:1 1 auto;
+        min-width:0;
+        gap:5px;
+        font-size:.62rem;
+      }
+
+      .nav-item,
+      .nav-menu-btn{
+        min-height:38px;
+        gap:4px;
+        padding-left:1px;
+        padding-right:1px;
+        flex:0 1 auto;
+      }
+
+      .nav-item i,
+      .nav-menu-btn i{
+        font-size:.76rem;
+      }
+
+      .nav-dropdown-toggle{
+        width:18px;
+        height:38px;
+        flex-basis:18px;
+        margin-left:-2px;
+      }
+
+      .nav-caret{
+        font-size:.58rem!important;
+      }
+
+      .topbar-right{
+        flex:0 0 auto;
+        gap:4px;
+        margin-left:0;
+      }
+
+      .header-action{
+        width:32px;
+        height:32px;
+        flex:0 0 32px;
+        border-radius:9px;
+      }
+
+      .header-action i{
+        font-size:.76rem;
+      }
+
+      .account-menu{
+        flex:0 0 auto;
+        min-width:0;
+      }
+
+      .account-trigger{
+        width:148px;
+        min-width:132px;
+        max-width:148px;
+        min-height:36px;
+        gap:6px;
+        padding:3px 7px 3px 4px;
+        border-radius:10px;
+      }
+
+      .header-logo{
+        width:30px;
+        height:30px;
+        flex:0 0 30px;
+        border-radius:8px;
+      }
+
+      .account-copy strong{
+        font-size:.68rem;
+      }
+
+      .account-caret{
+        font-size:.58rem;
+      }
+    }
+
     @media(max-width:900px){
       :root{
         --header-h:72px;
@@ -859,6 +1016,105 @@
       .page-head{padding:9px}.page-head h1{font-size:1.2rem}
       .page-head .stats-grid{grid-template-columns:1fr}
       .toast{left:12px;right:12px;bottom:12px;max-width:none}
+    }
+
+    /* Coordinated sticky controls for Grid, Table and Location views. */
+    :root{
+      --sticky-gap:0px;
+      --controls-overlap:16px;
+      --page-head-sticky-h:0px;
+      --toolbar-sticky-h:0px;
+      --results-meta-sticky-h:0px;
+    }
+    .page-shell{
+      display:block;
+      gap:0;
+      row-gap:0;
+      padding-top:0!important;
+    }
+    .page-head{
+      position:sticky;
+      top:var(--header-h);
+      z-index:720;
+      margin:0;
+      border-bottom:0;
+      border-bottom-left-radius:0;
+      border-bottom-right-radius:0;
+      box-shadow:none;
+    }
+    .jobs-panel{
+      overflow:visible;
+      margin:calc(0px - var(--controls-overlap)) 0 0;
+      border-top:0;
+      border-top-left-radius:0;
+      border-top-right-radius:0;
+    }
+    .toolbar{
+      position:sticky;
+      top:calc(var(--header-h) + var(--page-head-sticky-h) - var(--controls-overlap));
+      z-index:710;
+      margin:0;
+      border-top:0;
+      box-shadow:none;
+    }
+    .results-meta{
+      position:sticky;
+      top:calc(var(--header-h) + var(--page-head-sticky-h) + var(--toolbar-sticky-h) - var(--controls-overlap));
+      z-index:705;
+      margin:-1px 0 0;
+      box-shadow:none;
+    }
+    .content-area{
+      overflow:visible;
+      margin:0;
+      padding:0 16px 16px;
+    }
+
+    /* Table rows scroll below the sticky controls; its column header stays visible. */
+    .table-wrap{
+      max-height:calc(100vh - var(--header-h) - var(--page-head-sticky-h) - var(--toolbar-sticky-h) - var(--results-meta-sticky-h) - 36px);
+      min-height:260px;
+      margin:0;
+      overflow:auto;
+      overscroll-behavior:contain;
+      scrollbar-gutter:stable;
+      border-top:0;
+      border-radius:0 0 12px 12px;
+    }
+    .jobs-table thead{position:relative;z-index:5}
+    .jobs-table th{
+      top:0;
+      z-index:6;
+      min-height:54px;
+      padding:13px 12px;
+      border-right:1px solid rgba(255,255,255,.20);
+      border-bottom:2px solid #1688f8;
+      color:#ffffff;
+      background:linear-gradient(135deg,#06a9ea 0%,#2878ef 48%,#7042ee 100%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 4px 10px rgba(30,64,175,.18);
+      text-align:center;
+      font-size:.75rem;
+      font-weight:850;
+      line-height:1.15;
+      letter-spacing:0;
+      text-transform:none;
+      white-space:normal;
+      vertical-align:middle;
+      text-shadow:0 1px 2px rgba(15,23,42,.28);
+    }
+    .jobs-table th:first-child{text-align:left}
+    .jobs-table th:last-child{border-right:0}
+
+    /* On small screens, keep the primary controls usable without covering the page. */
+    @media(max-width:620px){
+      :root{--controls-overlap:0px}
+      .page-head{position:relative;top:auto;z-index:auto}
+      .toolbar{top:var(--header-h)}
+      .results-meta{top:calc(var(--header-h) + var(--toolbar-sticky-h))}
+      .content-area{padding:0 12px 12px}
+      .table-wrap{
+        max-height:calc(100vh - var(--header-h) - var(--toolbar-sticky-h) - var(--results-meta-sticky-h) - 30px);
+      }
     }
   </style>
 </head>
@@ -920,6 +1176,8 @@
         <div class="account-dropdown">
           <div class="dropdown-profile"><strong id="dropdownCompanyName">Employer Account</strong><span id="dropdownCompanyEmail">employer@jobspacelink.com</span></div>
           <a class="dropdown-link" href="employerprofile.html"><i class="fa-regular fa-address-card"></i> View company profile</a>
+          <a class="dropdown-link" href="subscribe.html"><i class="fa-regular fa-credit-card"></i> Subscribe</a>
+          <a class="dropdown-link" href="subscriptionstatus.html"><i class="fa-solid fa-clipboard-check"></i> Subscription Status</a>
           <a class="dropdown-link" href="postedjobs.html"><i class="fa-solid fa-list-check"></i> Posted Jobs</a>
           <button class="dropdown-link" id="logoutButton" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</button>
         </div>
@@ -2402,8 +2660,30 @@
       });
     }
 
+    function initializeStickyControls() {
+      const root = document.documentElement;
+      const pageHead = $(".page-head");
+      const toolbar = $(".toolbar");
+      const resultsMeta = $(".results-meta");
+
+      const updateStickySizes = () => {
+        const compact = window.matchMedia("(max-width:620px)").matches;
+        root.style.setProperty("--page-head-sticky-h", `${compact ? 0 : Math.ceil(pageHead?.getBoundingClientRect().height || 0)}px`);
+        root.style.setProperty("--toolbar-sticky-h", `${Math.ceil(toolbar?.getBoundingClientRect().height || 0)}px`);
+        root.style.setProperty("--results-meta-sticky-h", `${Math.ceil(resultsMeta?.getBoundingClientRect().height || 0)}px`);
+      };
+
+      updateStickySizes();
+      window.addEventListener("resize", updateStickySizes, { passive:true });
+      if ("ResizeObserver" in window) {
+        const stickyResizeObserver = new ResizeObserver(updateStickySizes);
+        [pageHead, toolbar, resultsMeta].filter(Boolean).forEach(element => stickyResizeObserver.observe(element));
+      }
+    }
+
     async function initialize() {
       setText("#currentYear", new Date().getFullYear());
+      initializeStickyControls();
       bindEvents();
       renderViewButtons();
       state.session = readEmployerSession();
