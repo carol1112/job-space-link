@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8345,7 +8339,17 @@ const TABLES = {
 const EDGE_DASHBOARD = "applicant-dashboard-api";
 const EDGE_CONTACT = "send-applicant-contact-email";
 const PLATFORM_SENDER_EMAIL = "info@jobspacelink.com";
+const CONTACT_PLACEHOLDER_DOMAINS = new Set([
+  "example.com",
+  "example.net",
+  "example.org",
+  "invalid"
+]);
 const CACHE_KEY = "JSL_NEW_APPLICANT_DASHBOARD_CACHE_V3_LATEST_TRANSACTION_NAME";
+const CACHE_DB_NAME = "JSL_APPLICANT_DASHBOARD_CACHE";
+const CACHE_DB_VERSION = 1;
+const CACHE_STORE_NAME = "dashboard_cache";
+const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 /* V2 deliberately invalidates the old email/alternate-key interaction cache.
    Interaction state is now scoped by employer email + company and keyed only
    by the applicant's current master ID. */
@@ -8454,13 +8458,29 @@ const EMPLOYER_EXTRA_EMAIL_KEYS = ["currentEmployerEmail","contact_email","conta
 const EMPLOYER_EXTRA_COMPANY_KEYS = ["loggedInCompanyName","jobspacelinkEmployerCompanyName","businessName","business_name","company","business","name"];
 const EMPLOYER_EXTRA_LOGO_KEYS = ["loggedInCompanyLogo","company_logo","companyLogoUrl","logo_url","logoUrl","logo","image_url","imageUrl","avatar_url","avatarUrl","photo_url","photoUrl","business_logo_url","company_profile_picture_url","companyProfilePicture","company_profile_logo_url","company_logo_path","logo_path","picture_url","pictureUrl"];
 
+function directoryPageFromLocation(){
+  try{
+    const page=Number.parseInt(new URL(window.location.href).searchParams.get("directory_page") || "1",10);
+    return Number.isInteger(page) && page > 0 ? page : 1;
+  }catch(_err){
+    return 1;
+  }
+}
+
+const initialDirectoryPage=directoryPageFromLocation();
 const state = {
   employer:{ email:"", company:"", logo:"", loggedIn:false },
-  applicants:[], filtered:[], currentView:"table", page:1,
+  applicants:[], filtered:[], currentView:"table", page:initialDirectoryPage,
+  /* The requested page is kept separately from the rendered/clamped page.
+     Logged-out auth repaint and background refresh paths are allowed to redraw
+     the directory, but they must not silently replace a user's page choice. */
+  requestedPage:initialDirectoryPage,
   showContactedOnly:false, showFavoritesOnly:false,
   favorites:new Map(), contacts:new Map(),
   contactTarget:null, map:null, leafletLoaded:false, markers:[], markerByKey:new Map(), activeLocationKey:"", locationHoverTimer:null, googleMapSeq:0,
-  paginationLocked:false
+  applicantLoadRequestId:0,
+  applicantsLoading:false,
+  contactSendInProgress:false
 };
 
 const $ = (id) => document.getElementById(id);
@@ -8589,6 +8609,8 @@ function toggleContactedFilter(){
   if(!state.employer.loggedIn) return;
   state.showContactedOnly = !state.showContactedOnly;
   state.page = 1;
+  state.requestedPage = 1;
+  syncDirectoryPageUrl(1,{replace:true});
   updateInteractionFilterButtons();
   applyFilters();
 }
@@ -8596,6 +8618,8 @@ function toggleFavoriteFilter(){
   if(!state.employer.loggedIn) return;
   state.showFavoritesOnly = !state.showFavoritesOnly;
   state.page = 1;
+  state.requestedPage = 1;
+  syncDirectoryPageUrl(1,{replace:true});
   updateInteractionFilterButtons();
   applyFilters();
 }
@@ -9067,96 +9091,329 @@ async function selectAll(table){
   if(!client) return [];
 
   /*
-     Full-record loader:
-     - No artificial 50,000-row ceiling.
-     - Uses the primary id as a stable cursor instead of offset/range paging.
-     - Does NOT assume that a short response means the table is finished; Supabase
-       projects can enforce a server-side maximum row count smaller than our request.
-     - Stops only after the API returns no rows, the exact visible-row count is met,
-       or the cursor can no longer advance.
+     Fast full-record loader:
+     - The first request gets both the first records and the exact visible count.
+     - Remaining 1,000-row ranges load in parallel instead of waiting for one
+       request after another. This removes most of the logged-out startup delay.
+     - Every range uses the same id ordering, so merging and pagination remain stable.
+     - If an exact count is unavailable, it safely falls back to sequential ranges.
   */
-  const rows=[];
-  const seenIds=new Set();
   const pageSize=1000;
-  let cursor=null;
-  let expectedTotal=null;
-  let batch=0;
+  const firstResult=await client
+    .from(table)
+    .select("*",{count:"exact"})
+    .order("id",{ascending:false})
+    .range(0,pageSize-1);
 
-  while(true){
-    let query = batch===0
-      ? client.from(table).select("*",{count:"exact"})
-      : client.from(table).select("*");
-
-    query=query.order("id",{ascending:false}).limit(pageSize);
-    if(cursor !== null && cursor !== "") query=query.lt("id",cursor);
-
-    const {data,error,count}=await query;
-    if(error){
-      console.warn(`Load ${table} batch ${batch + 1} failed:`, error?.message || error);
-      break;
-    }
-
-    if(batch===0 && Number.isFinite(Number(count))) expectedTotal=Number(count);
-
-    const page=Array.isArray(data)?data:[];
-    if(!page.length) break;
-
-    let added=0;
-    for(const row of page){
-      const id=clean(row?.id);
-      if(id && seenIds.has(id)) continue;
-      if(id) seenIds.add(id);
-      rows.push(row);
-      added += 1;
-    }
-
-    if(expectedTotal !== null && rows.length >= expectedTotal) break;
-
-    const nextCursor=clean(page[page.length - 1]?.id);
-    if(!nextCursor || nextCursor===cursor || added===0){
-      console.warn(`Load ${table} stopped because the id cursor could not advance.`);
-      break;
-    }
-
-    cursor=nextCursor;
-    batch += 1;
+  if(firstResult.error){
+    console.warn(`Load ${table} first batch failed:`, firstResult.error?.message || firstResult.error);
+    return [];
   }
 
+  const firstPage=Array.isArray(firstResult.data)?firstResult.data:[];
+  const exactCount=Number(firstResult.count);
+  const hasExactCount=firstResult.count!==null && typeof firstResult.count!=="undefined" && Number.isFinite(exactCount) && exactCount >= 0;
+  const effectivePageSize=(hasExactCount && exactCount>firstPage.length && firstPage.length>0)
+    ? firstPage.length
+    : pageSize;
+  const pages=[firstPage];
+
+  if(hasExactCount && exactCount > firstPage.length){
+    const requests=[];
+    for(let from=effectivePageSize; from<exactCount; from+=effectivePageSize){
+      const to=Math.min(from+effectivePageSize-1,exactCount-1);
+      requests.push(
+        client
+          .from(table)
+          .select("*")
+          .order("id",{ascending:false})
+          .range(from,to)
+          .then(result=>{
+            if(result.error){
+              console.warn(`Load ${table} range ${from}-${to} failed:`, result.error?.message || result.error);
+              return [];
+            }
+            return Array.isArray(result.data)?result.data:[];
+          })
+      );
+    }
+    pages.push(...await Promise.all(requests));
+  }else if(!hasExactCount && firstPage.length===pageSize){
+    let from=pageSize;
+    while(true){
+      const to=from+pageSize-1;
+      const result=await client.from(table).select("*").order("id",{ascending:false}).range(from,to);
+      if(result.error){
+        console.warn(`Load ${table} range ${from}-${to} failed:`, result.error?.message || result.error);
+        break;
+      }
+      const page=Array.isArray(result.data)?result.data:[];
+      if(!page.length) break;
+      pages.push(page);
+      if(page.length<pageSize) break;
+      from+=pageSize;
+    }
+  }
+
+  const rows=[];
+  const seen=new Set();
+  pages.flat().forEach((row,index)=>{
+    const id=clean(row?.id);
+    const key=id || `row-${index}`;
+    if(seen.has(key)) return;
+    seen.add(key);
+    rows.push(row);
+  });
   return rows;
 }
 async function callEdge(action,payload={}){
-  if(!window.supabase?.functions?.invoke) throw new Error("Edge Functions unavailable");
-  const {data,error}=await window.supabase.functions.invoke(EDGE_DASHBOARD,{body:{action,payload}});
+  const client=supa();
+  if(!client?.functions?.invoke) throw new Error("Edge Functions unavailable");
+  const {data,error}=await client.functions.invoke(EDGE_DASHBOARD,{body:{action,payload}});
   if(error) throw error; if(data?.error) throw new Error(data.details || data.error); return data || {};
 }
 
-function loadCache(){
+function contactRecipientCheck(value){
+  const email=lower(value);
+  if(!isEmail(email)){
+    return {ok:false,email,message:"This applicant does not have a valid email address."};
+  }
+  const domain=email.split("@").pop();
+  const placeholder=
+    CONTACT_PLACEHOLDER_DOMAINS.has(domain) ||
+    domain.endsWith(".example") ||
+    domain.endsWith(".invalid") ||
+    domain.endsWith(".test") ||
+    domain.endsWith(".localhost");
+  if(placeholder){
+    return {
+      ok:false,
+      email,
+      message:`${email} is a sample/placeholder address. Replace it with the applicant's real email before sending.`
+    };
+  }
+  return {ok:true,email,message:""};
+}
+
+function contactFunctionBody(payload){
+  /*
+     Keep both shapes for compatibility with existing deployed functions:
+       1) dedicated function reads body.to/body.subject/body.message
+       2) dashboard router reads body.action/body.payload
+     The dedicated email function is called first and is never retried after a
+     service error, preventing accidental duplicate messages.
+  */
+  const emailPayload={...payload,action:"send_contact_email"};
+  return {...emailPayload,payload:emailPayload};
+}
+
+function functionResponseMessage(data){
+  if(typeof data === "string") return clean(data);
+  if(!data || typeof data !== "object") return "";
+  const nestedError=typeof data.error === "object" ? data.error : null;
+  return clean(
+    nestedError?.message ||
+    nestedError?.details ||
+    data.error ||
+    data.message ||
+    data.details ||
+    data.hint
+  );
+}
+
+async function detailedFunctionError(error,functionName){
+  const response=error?.context;
+  const status=Number(response?.status || error?.status || 0);
+  let detail="";
+
+  if(response){
+    try{
+      const readable=typeof response.clone === "function" ? response.clone() : response;
+      const contentType=clean(readable?.headers?.get?.("content-type")).toLowerCase();
+      if(contentType.includes("application/json")){
+        detail=functionResponseMessage(await readable.json());
+      }else if(typeof readable?.text === "function"){
+        const text=clean(await readable.text());
+        if(text){
+          try{ detail=functionResponseMessage(JSON.parse(text)) || text; }
+          catch(_parseError){ detail=text; }
+        }
+      }
+    }catch(_readError){
+      /* Fall back to the SDK error message below. */
+    }
+  }
+
+  detail=detail || clean(error?.message) || `${functionName} failed.`;
+  const output=new Error(detail);
+  output.status=status;
+  output.functionName=functionName;
+  return output;
+}
+
+function missingFunctionError(error){
+  const message=lower(error?.message);
+  return Number(error?.status) === 404 ||
+    /function[^\n]*(not found|does not exist)|route[^\n]*not found|404/.test(message);
+}
+
+async function invokeFunctionWithDetails(functionName,body){
+  const client=supa();
+  if(!client?.functions?.invoke){
+    throw new Error("Supabase email service is unavailable. Check supabase_config.js and reload the page.");
+  }
+
+  const {data,error}=await client.functions.invoke(functionName,{body});
+  if(error) throw await detailedFunctionError(error,functionName);
+
+  const failed=data?.success === false || data?.ok === false || !!data?.error;
+  if(failed){
+    const output=new Error(functionResponseMessage(data) || `${functionName} rejected the email request.`);
+    output.status=Number(data?.status || data?.statusCode || 0);
+    output.functionName=functionName;
+    throw output;
+  }
+  return data || {success:true};
+}
+
+async function sendContactEmailRequest(payload){
+  const body=contactFunctionBody(payload);
+  try{
+    return await invokeFunctionWithDetails(EDGE_CONTACT,body);
+  }catch(contactError){
+    /* A missing dedicated function is safe to route through the existing
+       dashboard API. Other failures are not retried because the provider may
+       already have accepted the email. */
+    if(!missingFunctionError(contactError)) throw contactError;
+    return invokeFunctionWithDetails(EDGE_DASHBOARD,{
+      action:"send_contact_email",
+      payload:{...payload,action:"send_contact_email"}
+    });
+  }
+}
+
+function friendlyContactError(error){
+  const raw=clean(error?.message);
+  const message=lower(raw);
+  const status=Number(error?.status || 0);
+
+  if(status === 401 || status === 403 || /unauthori[sz]ed|forbidden|invalid jwt|jwt expired/.test(message)){
+    return "Email authorization failed. Log in again, then retry.";
+  }
+  if(status === 404 || /not found|does not exist/.test(message)){
+    return "The contact-email function is not deployed. Deploy send-applicant-contact-email in this Supabase project.";
+  }
+  if(/resend_api_key|api key|missing secret|environment variable/.test(message)){
+    return "The email service key is missing or invalid. Check the Edge Function RESEND_API_KEY secret.";
+  }
+  if(/domain|sender|from address|verify|verification/.test(message)){
+    return `The sender ${PLATFORM_SENDER_EMAIL} is not approved by the email provider. Verify the jobspacelink.com sending domain.`;
+  }
+  if(/rate limit|too many requests|429/.test(message)){
+    return "The email service rate limit was reached. Wait briefly, then retry once.";
+  }
+  if(/edge function returned a non-2xx status code/i.test(raw)){
+    return "The email function rejected the request. Check its Supabase log and confirm the email-provider key and sending domain.";
+  }
+  return raw || "The email could not be sent. Please try again.";
+}
+
+function openApplicantCacheDatabase(){
+  return new Promise((resolve,reject)=>{
+    if(!window.indexedDB){ reject(new Error("IndexedDB unavailable")); return; }
+    const request=indexedDB.open(CACHE_DB_NAME,CACHE_DB_VERSION);
+    request.onupgradeneeded=()=>{
+      const db=request.result;
+      if(!db.objectStoreNames.contains(CACHE_STORE_NAME)) db.createObjectStore(CACHE_STORE_NAME,{keyPath:"id"});
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error || new Error("Unable to open applicant cache"));
+  });
+}
+async function readApplicantCacheDatabase(){
+  const db=await openApplicantCacheDatabase();
+  try{
+    return await new Promise((resolve,reject)=>{
+      const tx=db.transaction(CACHE_STORE_NAME,"readonly");
+      const request=tx.objectStore(CACHE_STORE_NAME).get(CACHE_KEY);
+      request.onsuccess=()=>resolve(request.result || null);
+      request.onerror=()=>reject(request.error || new Error("Unable to read applicant cache"));
+    });
+  }finally{ db.close(); }
+}
+async function writeApplicantCacheDatabase(applicants){
+  const db=await openApplicantCacheDatabase();
+  try{
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(CACHE_STORE_NAME,"readwrite");
+      tx.objectStore(CACHE_STORE_NAME).put({
+        id:CACHE_KEY,
+        saved_at:Date.now(),
+        complete:true,
+        total_count:applicants.length,
+        applicants
+      });
+      tx.oncomplete=()=>resolve();
+      tx.onerror=()=>reject(tx.error || new Error("Unable to save applicant cache"));
+      tx.onabort=()=>reject(tx.error || new Error("Applicant cache save aborted"));
+    });
+  }finally{ db.close(); }
+}
+function compactApplicantForCache(app){
+  const cached={...app};
+  delete cached.rawMaster;
+  delete cached.rawTx;
+  return cached;
+}
+function useCachedApplicants(cached, message){
+  if(cached?.complete!==true || !Array.isArray(cached.applicants) || !cached.applicants.length) return false;
+  state.applicants=cached.applicants;
+  showStatus(message || "Showing saved applicant records. Refreshing latest data...");
+  populateFilters();
+  applyFilters();
+  return true;
+}
+async function loadCache(){
   try{
     ["JSL_NEW_APPLICANT_DASHBOARD_CACHE_V1","JSL_NEW_APPLICANT_DASHBOARD_CACHE_V2"].forEach(key=>localStorage.removeItem(key));
   }catch(_err){}
   const cached=safeJson(localStorage.getItem(CACHE_KEY) || "");
-  if(cached?.complete===true && cached?.applicants?.length){
-    state.applicants=cached.applicants;
-    showStatus("Showing complete cached applicant records. Refreshing latest data...");
-    populateFilters();
-    applyFilters();
-  }else if(cached){
+  let loaded=useCachedApplicants(cached,"Showing saved applicant records. Refreshing latest data...");
+  if(!loaded && cached){
     /* Older dashboard builds cached only the first 1,000 applicants. Discard that
        partial cache so it cannot make the dashboard appear capped at 100 pages. */
     try{ localStorage.removeItem(CACHE_KEY); }catch(_err){}
   }
+
+  try{
+    const persistent=await readApplicantCacheDatabase();
+    const savedAt=Number(persistent?.saved_at || 0);
+    const isFresh=savedAt>0 && (Date.now()-savedAt)<=CACHE_MAX_AGE_MS;
+    if(persistent?.complete===true && (!loaded || Number(persistent.total_count || 0)>=state.applicants.length)){
+      loaded=useCachedApplicants(
+        persistent,
+        isFresh
+          ? "Applicant records loaded instantly from the saved directory. Refreshing latest data..."
+          : "Saved applicant records displayed immediately. Checking for updates..."
+      ) || loaded;
+    }
+  }catch(_err){
+    /* LocalStorage remains a safe fallback in browsers that disable IndexedDB. */
+  }
+  return loaded;
 }
 function saveCache(){
+  const compact=state.applicants.map(compactApplicantForCache);
+  writeApplicantCacheDatabase(compact).catch(()=>{});
   try{
-    /* Never save a 1,000-record subset as if it were the complete dashboard dataset.
-       Small datasets can still use the existing fast local cache. Large datasets are
-       always rebuilt from Supabase so pagination reflects every available record. */
+    /* Keep a small localStorage fallback. The complete directory, including large
+       datasets, is saved in IndexedDB so logged-out visits can paint immediately. */
     if(state.applicants.length <= 1000){
       localStorage.setItem(CACHE_KEY, JSON.stringify({
         saved_at:new Date().toISOString(),
         complete:true,
         total_count:state.applicants.length,
-        applicants:state.applicants
+        applicants:compact
       }));
     }else{
       localStorage.removeItem(CACHE_KEY);
@@ -9167,23 +9424,92 @@ function saveCache(){
 }
 async function loadApplicants(options={}){
   const background=!!options.background;
+  const requestId=++state.applicantLoadRequestId;
+  const startedAt=performance.now();
+  state.applicantsLoading=true;
   /* A manual Refresh must discover newly uploaded/replaced profile pictures. */
   try{ applicantPictureResolveCache.clear(); }catch(_error){}
   try{ applicantPictureRootListCache.clear(); }catch(_error){}
   if(!background) showStatus(state.applicants.length ? "Refreshing applicant records..." : "Loading applicant records from Supabase...");
   let masterRows=[], txRows=[];
-  try{
-    const edge=await callEdge("get_applicants",{});
-    if(Array.isArray(edge?.masters)) masterRows=edge.masters;
-    if(Array.isArray(edge?.transactions)) txRows=edge.transactions;
-    if(Array.isArray(edge?.applicants) && !txRows.length) txRows=edge.applicants;
-  }catch(err){ console.warn("Applicant Edge load skipped:", err?.message || err); }
-  const [directMasters,directTx]=await Promise.all([selectAll(TABLES.master),selectAll(TABLES.transaction)]);
+
+  /* Start direct public reads immediately. The optional Edge Function runs only
+     as a concurrent fallback and never delays successful direct data loading. */
+  const edgeFallback=callEdge("get_applicants",{})
+    .then(data=>data || null)
+    .catch(err=>{
+      console.warn("Applicant Edge fallback skipped:",err?.message || err);
+      return null;
+    });
+  const [directMasters,directTx]=await Promise.all([
+    selectAll(TABLES.master),
+    selectAll(TABLES.transaction)
+  ]);
   if(directMasters.length) masterRows=directMasters;
   if(directTx.length) txRows=directTx;
-  state.applicants=mergeRows(masterRows,txRows);
-  saveCache(); populateFilters(); applyFilters();
-  showStatus(`Applicant records loaded: ${state.applicants.length.toLocaleString()} active profiles • ${totalPages().toLocaleString()} page${totalPages()===1?"":"s"} • Last refresh: ${new Date().toLocaleTimeString()}`, "ok");
+
+  if(!masterRows.length || !txRows.length){
+    const edge=await edgeFallback;
+    if(!masterRows.length && Array.isArray(edge?.masters)) masterRows=edge.masters;
+    if(!txRows.length && Array.isArray(edge?.transactions)) txRows=edge.transactions;
+    if(!txRows.length && Array.isArray(edge?.applicants)) txRows=edge.applicants;
+  }
+
+  /* Ignore a slower, older refresh if the user already started a newer one. */
+  if(requestId!==state.applicantLoadRequestId) return;
+  const refreshedApplicants=mergeRows(masterRows,txRows);
+  /* A logged-out direct/RLS response may be only a public subset. Never replace
+     an already-painted complete cached directory with that smaller transient
+     subset: doing so collapses the page count and forces the UI back to page 1.
+     The Edge result below can still replace the cache when it is complete. */
+  const retainedCompleteLoggedOutDirectory =
+    background &&
+    !state.employer.loggedIn &&
+    state.applicants.length > refreshedApplicants.length;
+
+  if(!retainedCompleteLoggedOutDirectory){
+    state.applicants=refreshedApplicants;
+    populateFilters();
+    applyFilters();
+    saveCache();
+  }
+  state.applicantsLoading=false;
+  const elapsed=Math.max(0,(performance.now()-startedAt)/1000);
+  showStatus(
+    retainedCompleteLoggedOutDirectory
+      ? `Applicant records ready: ${state.applicants.length.toLocaleString()} active profiles • ${totalPages().toLocaleString()} page${totalPages()===1?"":"s"} • Checking public updates in background...`
+      : `Applicant records loaded: ${state.applicants.length.toLocaleString()} active profiles • ${totalPages().toLocaleString()} page${totalPages()===1?"":"s"} • ${elapsed.toFixed(1)}s • Last refresh: ${new Date().toLocaleTimeString()}`,
+    "ok"
+  );
+
+  /* Logged-out row-level access can occasionally expose a smaller direct result
+     than the authenticated view. Let the already-running public Edge request
+     expand the directory in the background when it contains more applicants.
+     The requested page is preserved, so the controls never jump back to page 1. */
+  if(masterRows.length && txRows.length){
+    edgeFallback.then(edge=>{
+      if(!edge || requestId!==state.applicantLoadRequestId) return;
+      const edgeMasters=Array.isArray(edge.masters)?edge.masters:[];
+      const edgeTransactions=Array.isArray(edge.transactions)
+        ? edge.transactions
+        : Array.isArray(edge.applicants)
+          ? edge.applicants
+          : [];
+      const candidateMasters=edgeMasters.length>masterRows.length?edgeMasters:masterRows;
+      const candidateTransactions=edgeTransactions.length>txRows.length?edgeTransactions:txRows;
+      if(candidateMasters===masterRows && candidateTransactions===txRows) return;
+
+      const expanded=mergeRows(candidateMasters,candidateTransactions);
+      /* A result smaller than the visible complete directory is still partial.
+         Equal-size results are accepted so updated rows are not missed. */
+      if(expanded.length<state.applicants.length) return;
+      state.applicants=expanded;
+      populateFilters();
+      applyFilters();
+      saveCache();
+      showStatus(`Applicant records loaded: ${state.applicants.length.toLocaleString()} active profiles • ${totalPages().toLocaleString()} page${totalPages()===1?"":"s"} • Public directory synchronized • Last refresh: ${new Date().toLocaleTimeString()}`,"ok");
+    }).catch(()=>{});
+  }
 }
 
 function renderLoggedOutDashboardImmediately(){
@@ -9281,7 +9607,7 @@ function applyFilters(options={}){
      filter/search changes should return to page 1. Background updates preserve the
      user's selected page and clamp it only when the filtered page count shrinks. */
   const resetPage = options === true || options?.resetPage === true;
-  const previousPage = state.page;
+  const previousPage = state.page || 1;
 
   updateSearchFieldState();
   const q=normalizeText(els.searchInput.value), name=normalizeText(els.nameFilter.value), zip=normalizeText(els.zipcodeFilter.value);
@@ -9304,7 +9630,17 @@ function applyFilters(options={}){
     return true;
   });
 
-  state.page = resetPage ? 1 : clampPage(previousPage);
+  /* Page is the single source of truth in both auth states. The previous
+     duplicate page mirror could be rewritten by logged-out/session repaint
+     paths and then force every render back to page 1. */
+  if(resetPage){
+    state.requestedPage = 1;
+    state.page = 1;
+    syncDirectoryPageUrl(1,{replace:true});
+  }else{
+    const requested = Number.parseInt(String(state.requestedPage),10);
+    state.page = clampPage(Number.isInteger(requested) ? requested : previousPage);
+  }
   updateFilterLabels();
   render();
 }
@@ -9321,6 +9657,8 @@ function resetFilters(){
   state.showFavoritesOnly=false;
   state.activeLocationKey="";
   state.page=1;
+  state.requestedPage=1;
+  syncDirectoryPageUrl(1,{replace:true});
   updateInteractionFilterButtons();
   updateFilterLabels();
   renderAllFilterOptions();
@@ -9329,6 +9667,11 @@ function resetFilters(){
   applyFilters();
 }
 function pageSizeForView(){
+  /* Phone Table view is page-by-page: render one complete table record,
+     then place its pagination directly below the table scroller. */
+  if(state.currentView === "table" && window.matchMedia?.("(max-width: 480px)")?.matches){
+    return 1;
+  }
   return state.currentView === "grid" ? GRID_PAGE_SIZE : PAGE_SIZE;
 }
 function totalPages(){
@@ -9338,6 +9681,24 @@ function clampPage(page){
   const parsed = Number.parseInt(String(page), 10);
   const requested = Number.isFinite(parsed) ? parsed : 1;
   return Math.min(Math.max(1, requested), totalPages());
+}
+function directoryPageHref(page){
+  try{
+    const url=new URL(window.location.href);
+    const target=Math.max(1,Number.parseInt(String(page),10) || 1);
+    if(target===1) url.searchParams.delete("directory_page");
+    else url.searchParams.set("directory_page",String(target));
+    return `${url.pathname}${url.search}${url.hash}`;
+  }catch(_err){
+    return `?directory_page=${Math.max(1,Number.parseInt(String(page),10) || 1)}`;
+  }
+}
+function syncDirectoryPageUrl(page,options={}){
+  try{
+    const href=directoryPageHref(page);
+    if(options.replace) window.history.replaceState({directoryPage:page},"",href);
+    else window.history.pushState({directoryPage:page},"",href);
+  }catch(_err){}
 }
 function pageItems(){
   const size = pageSizeForView();
@@ -9356,16 +9717,89 @@ function scrollCurrentViewToTop(){
   panel.scrollTop = 0;
   if(state.currentView === "table") panel.scrollLeft = 0;
 }
-function setPage(page){
-  const nextPage = clampPage(page);
+function setPage(page,options={}){
+  const requested = Number.parseInt(String(page),10);
+  if(!Number.isInteger(requested)) return false;
+  const nextPage = clampPage(requested);
+  state.requestedPage = nextPage;
   if(nextPage === state.page){
+    if(options.updateHistory !== false) syncDirectoryPageUrl(nextPage,{replace:true});
     scrollCurrentViewToTop();
-    return;
+    return true;
   }
   state.page = nextPage;
   render();
+  if(options.updateHistory !== false) syncDirectoryPageUrl(nextPage);
   window.requestAnimationFrame(scrollCurrentViewToTop);
+  return true;
 }
+
+/* One authoritative pagination path for logged-in and logged-out states.
+   A single delegated listener is attached to the stable pagination container;
+   repainting its buttons cannot detach or duplicate this handler. */
+function activatePaginationControl(event, buttonOrPage){
+  const button = buttonOrPage?.dataset
+    ? buttonOrPage
+    : event?.target?.closest?.("#pagination button[data-page]");
+  if(button?.disabled) return false;
+
+  const rawPage = button?.dataset?.page ?? buttonOrPage;
+  const requested = Number.parseInt(String(rawPage),10);
+  if(!Number.isInteger(requested)) return false;
+
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  setPage(requested);
+  return false;
+}
+
+function bindPaginationControls(){
+  if(!els.pagination || els.pagination.dataset.paginationBound === "true") return;
+  els.pagination.dataset.paginationBound = "true";
+
+  /* Mouse paging is committed on pointerdown, before the legacy document click
+     listeners run. Click remains the keyboard/touch path. Because controls are
+     real links, the browser can still load ?directory_page=N if JavaScript ever
+     fails before the successful render is committed. */
+  const activateFromEvent=event=>{
+    if(event.type === "pointerdown" && ((event.pointerType && event.pointerType !== "mouse") || event.button !== 0)) return;
+    const control=event.target?.closest?.(".pagination-control[data-page]");
+    if(!control || !els.pagination.contains(control) || control.getAttribute("aria-disabled") === "true") return;
+
+    try{
+      const rendered=setPage(control.dataset.page);
+      if(!rendered) return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }catch(error){
+      /* Do not cancel the link when an unexpected record-specific render error
+         occurs; its URL fallback reloads the exact requested page. */
+      console.error("Applicant directory page render failed; using page-link fallback.",error);
+    }
+  };
+
+  els.pagination.addEventListener("pointerdown",activateFromEvent,true);
+  els.pagination.addEventListener("click",activateFromEvent,true);
+  window.addEventListener("popstate",()=>{
+    const requested=directoryPageFromLocation();
+    state.requestedPage=requested;
+    state.page=clampPage(requested);
+    render();
+    window.requestAnimationFrame(scrollCurrentViewToTop);
+  });
+}
+
+window.JSLApplicantDashboardPagination = {
+  activate:activatePaginationControl,
+  go(page){ return activatePaginationControl(null,page); },
+  first(){ return activatePaginationControl(null,1); },
+  previous(){ return activatePaginationControl(null,Math.max(1,state.page-1)); },
+  next(){ return activatePaginationControl(null,Math.min(totalPages(),state.page+1)); },
+  last(){ return activatePaginationControl(null,totalPages()); },
+  current(){ return state.page; },
+  total(){ return totalPages(); }
+};
 
 function normalizeMasterId(value){
   const id=clean(value);
@@ -9485,16 +9919,72 @@ function openContact(app){
   openModal("contactModal");
 }
 async function sendContact(){
-  const app=state.contactTarget; if(!app) return;
+  const app=state.contactTarget;
+  if(!app || state.contactSendInProgress) return;
+  if(!requireEmployer("contact applicants")) return;
   const subject=clean(els.contactSubject.value), message=clean(els.contactMessage.value);
   if(!subject || !message){ els.contactStatus.className="send-status error"; els.contactStatus.textContent="Please enter a subject and message."; return; }
-  els.sendContactBtn.disabled=true; els.contactStatus.className="send-status"; els.contactStatus.textContent="Sending email...";
-  const payload={action:"send_contact_email", applicant_master_id:app.master_id, master_id:app.master_id, applicant_email:app.email, to:app.email, recipient_email:app.email, applicant_name:app.full_name, subject, message, text:message, html:buildEmailHtml(app,message), employer_email:state.employer.email, reply_to:state.employer.email, employer_company_name:state.employer.company, company_name:state.employer.company, sender_email:PLATFORM_SENDER_EMAIL, from_email:PLATFORM_SENDER_EMAIL, from_name:"Job Space Link", contact_status:"contacted", contacted_at:new Date().toISOString()};
-  try{ try{ await callEdge("send_contact_email",payload); }catch(e1){ if(!window.supabase?.functions?.invoke) throw e1; const {data,error}=await window.supabase.functions.invoke(EDGE_CONTACT,{body:payload}); if(error || data?.error || data?.success===false) throw (error || new Error(data?.error || data?.message || "Email failed")); }
-    await upsertInteraction(TABLES.contacts,{employer_email:state.employer.email, applicant_master_id:app.master_id},{employer_email:state.employer.email, employer_company_name:state.employer.company, applicant_master_id:app.master_id, applicant_email:app.email, applicant_name:app.full_name, contact_status:"contacted", contacted_at:new Date().toISOString(), last_message_subject:subject, last_message_preview:message.slice(0,500)}).catch(err=>console.warn("Direct contact save warning:",err?.message||err));
+  const recipient=contactRecipientCheck(app.email);
+  if(!recipient.ok){
+    els.contactStatus.className="send-status error";
+    els.contactStatus.textContent=recipient.message;
+    return;
+  }
+
+  state.contactSendInProgress=true;
+  els.sendContactBtn.disabled=true;
+  els.contactStatus.className="send-status";
+  els.contactStatus.textContent="Sending email...";
+  const contactedAt=new Date().toISOString();
+  const payload={
+    applicant_master_id:app.master_id,
+    master_id:app.master_id,
+    applicant_email:recipient.email,
+    to:recipient.email,
+    recipient_email:recipient.email,
+    applicant_name:app.full_name,
+    subject,
+    message,
+    text:message,
+    html:buildEmailHtml(app,message),
+    employer_email:state.employer.email,
+    reply_to:state.employer.email,
+    replyTo:state.employer.email,
+    employer_company_name:state.employer.company,
+    company_name:state.employer.company,
+    sender_email:PLATFORM_SENDER_EMAIL,
+    from_email:PLATFORM_SENDER_EMAIL,
+    from_name:"Job Space Link",
+    contact_status:"contacted",
+    contacted_at:contactedAt
+  };
+
+  try{
+    await sendContactEmailRequest(payload);
+    await upsertInteraction(
+      TABLES.contacts,
+      {employer_email:state.employer.email,applicant_master_id:app.master_id},
+      {
+        employer_email:state.employer.email,
+        employer_company_name:state.employer.company,
+        applicant_master_id:app.master_id,
+        applicant_email:recipient.email,
+        applicant_name:app.full_name,
+        contact_status:"contacted",
+        contacted_at:contactedAt,
+        last_message_subject:subject,
+        last_message_preview:message.slice(0,500)
+      }
+    ).catch(err=>console.warn("Direct contact save warning:",err?.message||err));
     setInteraction(state.contacts,app,"contacted"); saveInteractionCache(); applyFilters(); els.contactStatus.className="send-status ok"; els.contactStatus.textContent="Successfully sent and marked as contacted."; setTimeout(()=>closeModal("contactModal"),900);
-  }catch(err){ els.contactStatus.className="send-status error"; els.contactStatus.textContent="Unable to send email: "+(err.message||err); }
-  finally{ els.sendContactBtn.disabled=false; }
+  }catch(err){
+    console.error("Contact email failed:",err);
+    els.contactStatus.className="send-status error";
+    els.contactStatus.textContent="Unable to send email: "+friendlyContactError(err);
+  }finally{
+    state.contactSendInProgress=false;
+    els.sendContactBtn.disabled=false;
+  }
 }
 function requireEmployer(action){ if(state.employer.loggedIn) return true; els.loginModalText.textContent=`Please log in as an employer to ${action}.`; openModal("loginModal"); return false; }
 function openPdf(app){
@@ -9995,6 +10485,12 @@ function handleApplicantPictureError(image){
   void resolveApplicantPictureElement(image);
 }
 
+/* picHTML uses native inline load/error attributes. Publish only these two
+   callbacks so those attributes resolve correctly outside this private IIFE;
+   otherwise every rendered page can emit ReferenceError events while paging. */
+window.handleApplicantPictureLoad=handleApplicantPictureLoad;
+window.handleApplicantPictureError=handleApplicantPictureError;
+
 function picHTML(app){
   const candidates=applicantPictureCandidates(app);
   const applicantInitials=initials(app?.full_name || "Applicant");
@@ -10099,8 +10595,15 @@ function renderPagination(){
   const current = state.page;
   const pages = [];
 
-  pages.push(`<button type="button" class="page-nav page-first" data-page="1" aria-label="First page" ${current===1?"disabled":""}><i class="fa-solid fa-angles-left" aria-hidden="true"></i> First</button>`);
-  pages.push(`<button type="button" class="page-nav page-prev" data-page="${Math.max(1,current-1)}" aria-label="Previous page" ${current===1?"disabled":""}><i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Prev</button>`);
+  const control=(page,label,className,options={})=>{
+    const disabled=!!options.disabled;
+    const active=!!options.active;
+    const ariaLabel=escapeHTML(options.ariaLabel || clean(label.replace(/<[^>]*>/g," ")) || `Go to page ${page}`);
+    return `<a class="pagination-control ${className || ""}${active?" active":""}${disabled?" disabled":""}" href="${escapeHTML(directoryPageHref(page))}" data-page="${page}" role="button" aria-label="${ariaLabel}" ${active?'aria-current="page"':''} ${disabled?'aria-disabled="true" tabindex="-1"':''}>${label}</a>`;
+  };
+
+  pages.push(control(1,'<i class="fa-solid fa-angles-left" aria-hidden="true"></i> First',"page-nav page-first",{ariaLabel:"First page",disabled:current===1}));
+  pages.push(control(Math.max(1,current-1),'<i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Prev',"page-nav page-prev",{ariaLabel:"Previous page",disabled:current===1}));
 
   paginationPageNumbers(total,current).forEach(item=>{
     if(typeof item !== "number"){
@@ -10108,11 +10611,11 @@ function renderPagination(){
       return;
     }
     const active = item === current;
-    pages.push(`<button type="button" class="page-number${active?" active":""}" data-page="${item}" aria-label="Go to page ${item}" ${active?'aria-current="page"':''}>${item}</button>`);
+    pages.push(control(item,String(item),"page-number",{ariaLabel:`Go to page ${item}`,active}));
   });
 
-  pages.push(`<button type="button" class="page-nav page-next" data-page="${Math.min(total,current+1)}" aria-label="Next page" ${current===total?"disabled":""}>Next <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>`);
-  pages.push(`<button type="button" class="page-nav page-last" data-page="${total}" aria-label="Last page" ${current===total?"disabled":""}>Last <i class="fa-solid fa-angles-right" aria-hidden="true"></i></button>`);
+  pages.push(control(Math.min(total,current+1),'Next <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>',"page-nav page-next",{ariaLabel:"Next page",disabled:current===total}));
+  pages.push(control(total,'Last <i class="fa-solid fa-angles-right" aria-hidden="true"></i>',"page-nav page-last",{ariaLabel:"Last page",disabled:current===total}));
 
   const size = pageSizeForView();
   const firstRecord = state.filtered.length ? ((current - 1) * size) + 1 : 0;
@@ -10160,7 +10663,13 @@ function setView(view, options={}){
   els.tableBtn.classList.toggle("active",view==="table");
   els.gridBtn.classList.toggle("active",view==="grid");
   els.locationBtn.classList.toggle("active",view==="location");
-  state.page = preservePage ? clampPage(state.page) : 1;
+  if(preservePage){
+    state.page = clampPage(state.requestedPage || state.page);
+  }else{
+    state.page = 1;
+    state.requestedPage = 1;
+    syncDirectoryPageUrl(1,{replace:true});
+  }
   render();
   if(view==="table"){
     const scroll = els.tablePanel.querySelector(".table-scroll");
@@ -11434,6 +11943,8 @@ function bind(){
     document.body.classList.remove("mobile-menu-open");
   };
 
+  bindPaginationControls();
+
   els.aboutNavToggle.onclick=(e)=>{e.preventDefault();els.aboutNavDropdown.classList.toggle("open");};
   els.navToggle.onclick=()=>{
     const isOpen = !els.mobilePanel.classList.contains("open");
@@ -11539,20 +12050,6 @@ function bind(){
     applyFilters({resetPage:true});
   }));
   els.tableBtn.onclick=()=>setView("table"); els.gridBtn.onclick=()=>setView("grid"); els.locationBtn.onclick=()=>setView("location");
-  els.pagination.addEventListener("click",e=>{
-    const button = e.target.closest("button[data-page]");
-    if(!button || button.disabled || !els.pagination.contains(button)) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    const requestedPage = Number.parseInt(button.dataset.page, 10);
-    if(!Number.isInteger(requestedPage) || state.paginationLocked) return;
-
-    state.paginationLocked = true;
-    setPage(requestedPage);
-    window.setTimeout(()=>{ state.paginationLocked = false; }, 180);
-  });
   document.querySelectorAll("[data-close-modal]").forEach(btn=>btn.onclick=()=>closeModal(btn.dataset.closeModal));
   document.querySelectorAll(".modal").forEach(modal=>modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(modal.id); }));
   document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeFilterDropdowns(); closeMobilePanel(); document.querySelectorAll(".modal.open").forEach(m=>closeModal(m.id)); } });
@@ -12285,7 +12782,9 @@ async function init(){
   }
   bindNavigationSessionPersistence();
   bind();
-  loadCache();
+  /* Read the persistent directory cache before network/auth work. On repeat visits
+     this paints records and working pagination in a few milliseconds. */
+  await loadCache();
 
   /* No stored employer identity: paint the public/logged-out dashboard now.
      Do not block the visible page on large Supabase applicant queries. */
@@ -12294,20 +12793,19 @@ async function init(){
     renderLoggedOutDashboardImmediately();
     setView(state.currentView || "table", {preservePage:true});
 
+    /* Begin the public applicant request now, in parallel with employer-session
+       checking. Logged-out users no longer wait for auth resolution before the
+       first database request starts. */
+    const publicApplicantsPromise=loadApplicants({background:true}).catch(err=>{
+      console.warn("Background logged-out applicant refresh skipped:",err?.message||err);
+    });
+
     (async()=>{
       try{
         await resolveEmployer();
         await loadInteractions();
-        if(state.employer.loggedIn){
-          await loadApplicants();
-          setView(state.currentView || "table", {preservePage:true});
-        }else{
-          /* Preserve public applicant visibility when the network responds,
-             but never return the UI to a blocking Loading state. */
-          loadApplicants({background:true}).catch(err=>{
-            console.warn("Background logged-out applicant refresh skipped:",err?.message||err);
-          });
-        }
+        await publicApplicantsPromise;
+        setView(state.currentView || "table", {preservePage:true});
       }catch(err){
         console.warn("Logged-out background initialization skipped:",err?.message||err);
       }
@@ -22393,6 +22891,1697 @@ body > header .logo:hover img,
 html body > header .logo:hover img,
 header .logo:hover img{
   transform:scale(1.06) !important;
+}
+</style>
+
+<!-- ============================================================
+     FINAL LOGGED-OUT PAGINATION INTERACTION GUARANTEE — 2026-09-02
+     Keeps the records/pagination layer interactive in every auth state.
+     JavaScript page changes use the same authoritative controller for
+     logged-in and logged-out users.
+=============================================================== -->
+<style id="jsl-final-logged-out-pagination-interaction-20260902">
+html body .results-area,
+html body #pagination.pagination{
+  pointer-events:auto !important;
+}
+
+html body #pagination.pagination{
+  isolation:isolate !important;
+  z-index:260000 !important;
+}
+
+html body #pagination.pagination button:not(:disabled):not([aria-current="page"]){
+  pointer-events:auto !important;
+  touch-action:manipulation !important;
+  cursor:pointer !important;
+}
+</style>
+
+<!-- Resilient link-based pagination keeps the exact button appearance while
+     providing a real URL fallback for every page control. -->
+<style id="jsl-resilient-pagination-controls-20260902">
+html body #pagination .pagination-control{
+  min-width:38px!important;
+  height:32px!important;
+  padding:0 8px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  flex:0 0 auto!important;
+  border:1px solid #29466f!important;
+  border-radius:10px!important;
+  color:#ffffff!important;
+  background:#142642!important;
+  box-shadow:0 1px 2px rgba(15,23,42,.18)!important;
+  font-size:.8rem!important;
+  font-weight:900!important;
+  line-height:1!important;
+  text-decoration:none!important;
+  text-shadow:none!important;
+  white-space:nowrap!important;
+  cursor:pointer!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  user-select:none!important;
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease!important;
+}
+
+html body #pagination .pagination-control.active,
+html body #pagination .pagination-control[aria-current="page"]{
+  color:#ffffff!important;
+  background:linear-gradient(135deg,#39c9ff 0%,#5b5ff7 100%)!important;
+  border-color:#4cc8ff!important;
+  box-shadow:0 4px 12px rgba(57,201,255,.28),0 0 0 1px rgba(91,95,247,.12)!important;
+  transform:none!important;
+  pointer-events:none!important;
+}
+
+html body #pagination .pagination-control:hover:not([aria-disabled="true"]):not([aria-current="page"]),
+html body #pagination .pagination-control:focus-visible:not([aria-disabled="true"]){
+  color:#ffffff!important;
+  background:linear-gradient(135deg,#22bff4 0%,#5966f4 100%)!important;
+  border-color:#50d2ff!important;
+  box-shadow:0 5px 14px rgba(34,191,244,.28),0 0 0 2px rgba(80,210,255,.18)!important;
+  transform:translateY(-1px)!important;
+  outline:none!important;
+}
+
+html body #pagination .pagination-control[aria-disabled="true"]{
+  color:#ffffff!important;
+  background:#142642!important;
+  border-color:#29466f!important;
+  opacity:.45!important;
+  box-shadow:none!important;
+  transform:none!important;
+  cursor:not-allowed!important;
+  pointer-events:none!important;
+}
+
+html body #pagination .pagination-control:active:not([aria-disabled="true"]):not([aria-current="page"]){
+  transform:translateY(0) scale(.98)!important;
+}
+
+@media (max-width:480px){
+  html body #pagination .pagination-control{
+    min-width:32px!important;
+    height:30px!important;
+    padding:0 5px!important;
+    border-radius:9px!important;
+    font-size:.76rem!important;
+  }
+}
+</style>
+
+<!-- ============================================================
+     FINAL MOBILE PHONE RESPONSIVE LAYOUT 2026-09-08
+     Target: @media (max-width: 480px)
+     CSS-only layout refinement. Existing authentication, Supabase,
+     filtering, pagination, Table/Grid/Location, contact, favorites,
+     PDF viewer, navigation, and account behavior remain unchanged.
+============================================================ -->
+<style id="jsl-final-mobile-phone-responsive-20260908">
+@media (max-width:480px){
+  :root{
+    --header-h:60px!important;
+    --mobile-gutter:8px;
+    --mobile-touch:44px;
+    --mobile-navy:#082b60;
+    --mobile-blue:#0b5cff;
+    --mobile-line:#dce5f0;
+    --mobile-surface:#ffffff;
+    --mobile-soft:#f5f8fc;
+  }
+
+  html{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:hidden!important;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+
+  html body{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:100%!important;
+    margin:0!important;
+    padding-top:var(--header-h)!important;
+    padding-bottom:max(12px,env(safe-area-inset-bottom))!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+  }
+
+  html body *,
+  html body *::before,
+  html body *::after{
+    box-sizing:border-box!important;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea{
+    touch-action:manipulation;
+  }
+
+  /* Header: keep the logo, logged-in quick filters, and menu button separate. */
+  html body > header,
+  html body header{
+    position:fixed!important;
+    inset:0 0 auto 0!important;
+    width:100%!important;
+    max-width:100vw!important;
+    height:var(--header-h)!important;
+    min-height:var(--header-h)!important;
+    padding:0 8px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    overflow:visible!important;
+    z-index:300000!important;
+  }
+
+  html body header nav,
+  html body header .auth-buttons{
+    display:none!important;
+  }
+
+  html body header .logo,
+  html body > header .logo{
+    position:absolute!important;
+    top:50%!important;
+    left:8px!important;
+    right:auto!important;
+    width:auto!important;
+    height:var(--header-h)!important;
+    max-height:var(--header-h)!important;
+    margin:0!important;
+    padding:6px 0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    transform:translateY(-50%)!important;
+    transform-origin:left center!important;
+    overflow:hidden!important;
+    z-index:300002!important;
+  }
+
+  html body.employer-logged-out header .logo{
+    max-width:calc(100vw - 64px)!important;
+  }
+
+  html body.employer-logged-in header .logo{
+    max-width:calc(100vw - 134px)!important;
+  }
+
+  html body header .logo img,
+  html body > header .logo img{
+    width:auto!important;
+    height:auto!important;
+    max-width:104px!important;
+    max-height:46px!important;
+    object-fit:contain!important;
+    object-position:left center!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  html body header .logo:hover img,
+  html body header .logo:focus-visible img{
+    transform:none!important;
+  }
+
+  html body .nav-toggle,
+  html body #navToggle{
+    position:absolute!important;
+    top:50%!important;
+    right:8px!important;
+    left:auto!important;
+    width:40px!important;
+    min-width:40px!important;
+    max-width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    max-height:40px!important;
+    margin:0!important;
+    padding:0!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border-radius:11px!important;
+    transform:translateY(-50%)!important;
+    z-index:300010!important;
+  }
+
+  html body.employer-logged-in #mobileHeaderInteractionFilterWrap.mobile-header-interaction-filter-wrap{
+    position:absolute!important;
+    top:50%!important;
+    right:54px!important;
+    left:auto!important;
+    width:auto!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,34px)!important;
+    gap:4px!important;
+    align-items:center!important;
+    transform:translateY(-50%)!important;
+    z-index:300008!important;
+  }
+
+  html body #mobileHeaderInteractionFilterWrap .interaction-filter-btn{
+    width:34px!important;
+    min-width:34px!important;
+    max-width:34px!important;
+    height:34px!important;
+    min-height:34px!important;
+    max-height:34px!important;
+    padding:0!important;
+    border-radius:10px!important;
+    font-size:.8rem!important;
+  }
+
+  /* Full-width, scrollable phone menu that stays below the fixed header. */
+  html body .mobile-panel,
+  html body #mobilePanel{
+    position:fixed!important;
+    top:var(--header-h)!important;
+    right:0!important;
+    bottom:auto!important;
+    left:0!important;
+    width:100%!important;
+    max-width:100vw!important;
+    max-height:calc(100vh - var(--header-h))!important;
+    max-height:calc(100dvh - var(--header-h))!important;
+    padding:8px 8px max(14px,env(safe-area-inset-bottom))!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+    z-index:299900!important;
+  }
+
+  html body .mobile-panel .mnav{
+    width:100%!important;
+    display:grid!important;
+    gap:6px!important;
+  }
+
+  html body .mobile-panel .mnav > a,
+  html body .mobile-panel .mnav-main-link,
+  html body .mobile-panel .mnav-toggle,
+  html body .mobile-panel .mobile-account-menu a,
+  html body .mobile-panel .mobile-account-menu button{
+    min-height:var(--mobile-touch)!important;
+    padding:10px 12px!important;
+    font-size:.86rem!important;
+    line-height:1.25!important;
+  }
+
+  html body .mobile-panel .mobile-account-card{
+    min-height:58px!important;
+    padding:9px 10px!important;
+  }
+
+  html body.mobile-menu-open{
+    overflow:hidden!important;
+  }
+
+  /* Let the page use the full phone width without edge clipping. */
+  html body .dashboard-shell{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    margin:0!important;
+    padding:6px!important;
+    overflow:visible!important;
+    border-radius:0!important;
+  }
+
+  html body .dashboard-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    margin:0!important;
+    padding:6px!important;
+    overflow:visible!important;
+    border-radius:12px!important;
+  }
+
+  html body .dashboard-sticky-top{
+    position:relative!important;
+    top:auto!important;
+    width:100%!important;
+    margin:0 0 8px!important;
+    padding:8px!important;
+    overflow:visible!important;
+    border-radius:12px!important;
+    z-index:18000!important;
+  }
+
+  /* Primary controls: title/search full width, then paired dropdowns. */
+  html body .controls{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    align-items:stretch!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+
+  html body .controls > .inline-directory-title,
+  html body .controls > #mainSearchField,
+  html body .controls > .search-field,
+  html body .controls > .toolbar-actions-box{
+    grid-column:1 / -1!important;
+  }
+
+  html body .controls > .country-filter-unit{
+    grid-column:1!important;
+  }
+
+  html body .controls > .industry-filter-unit{
+    grid-column:2!important;
+  }
+
+  html body .controls > *,
+  html body .controls .filter-unit{
+    min-width:0!important;
+    width:100%!important;
+  }
+
+  html body .controls .inline-directory-title{
+    height:40px!important;
+    min-height:40px!important;
+    max-height:40px!important;
+    padding:0 11px!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    border-radius:10px!important;
+    font-size:.95rem!important;
+  }
+
+  html body .controls #mainSearchField,
+  html body .controls .search-field,
+  html body .controls .filter-trigger,
+  html body .controls .reset-btn,
+  html body .controls .view-btn,
+  html body .controls .location-btn,
+  html body .controls .refresh-btn{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:var(--mobile-touch)!important;
+    min-height:var(--mobile-touch)!important;
+    max-height:var(--mobile-touch)!important;
+    border-radius:10px!important;
+    font-size:.8rem!important;
+    line-height:1.15!important;
+  }
+
+  html body .controls #mainSearchField,
+  html body .controls .search-field{
+    padding:0 0 0 11px!important;
+  }
+
+  html body .controls #searchInput{
+    min-width:0!important;
+    width:100%!important;
+    height:100%!important;
+    padding:0 7px 0 0!important;
+    font-size:16px!important;
+  }
+
+  html body .controls #searchInput::placeholder{
+    font-size:.78rem!important;
+  }
+
+  html body .controls #searchActionBtn,
+  html body .controls .search-action{
+    flex:0 0 44px!important;
+    width:44px!important;
+    min-width:44px!important;
+    max-width:44px!important;
+    height:100%!important;
+    min-height:100%!important;
+    max-height:100%!important;
+    padding:0!important;
+    border-radius:0 10px 10px 0!important;
+  }
+
+  html body .controls #searchActionBtn span,
+  html body .controls .search-action span{
+    display:none!important;
+  }
+
+  html body .controls .filter-trigger{
+    padding:0 10px!important;
+    gap:6px!important;
+  }
+
+  html body .controls .filter-trigger .filter-label{
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+
+  html body .controls .toolbar-actions-box{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-auto-rows:var(--mobile-touch)!important;
+    gap:7px!important;
+    width:100%!important;
+    min-width:0!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:7px!important;
+    overflow:visible!important;
+    border-radius:11px!important;
+  }
+
+  html body .controls .toolbar-actions-box .view-switch{
+    display:contents!important;
+  }
+
+  html body .toolbar-actions-box #resetBtn{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+
+  html body .toolbar-actions-box #tableBtn{
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+
+  html body .toolbar-actions-box #gridBtn{
+    grid-column:3!important;
+    grid-row:1!important;
+  }
+
+  html body .toolbar-actions-box #locationBtn{
+    grid-column:1 / 3!important;
+    grid-row:2!important;
+  }
+
+  html body .toolbar-actions-box #refreshBtn{
+    grid-column:3!important;
+    grid-row:2!important;
+  }
+
+  /* Main dropdowns stay aligned beneath their own controls. */
+  html body .controls .filter-unit{
+    position:relative!important;
+    overflow:visible!important;
+  }
+
+  html body .controls .filter-unit.open{
+    z-index:220000!important;
+  }
+
+  html body .controls .filter-unit .filter-panel{
+    position:absolute!important;
+    top:calc(100% + 6px)!important;
+    left:0!important;
+    right:auto!important;
+    width:min(300px,calc(100vw - 28px))!important;
+    min-width:min(300px,calc(100vw - 28px))!important;
+    max-width:calc(100vw - 28px)!important;
+    max-height:min(360px,55vh)!important;
+    padding:8px!important;
+    overflow:auto!important;
+    border-radius:12px!important;
+    z-index:220001!important;
+  }
+
+  html body .controls .industry-filter-unit .filter-panel{
+    right:0!important;
+    left:auto!important;
+  }
+
+  /* Advanced filters remain one swipeable row to avoid a very tall form. */
+  html body .filters,
+  html body .filters:has(.filter-unit.open){
+    position:relative!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:stretch!important;
+    gap:8px!important;
+    margin:8px 0 0!important;
+    padding:7px 7px 11px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    overscroll-behavior-x:contain!important;
+    scroll-snap-type:x proximity!important;
+    scroll-padding-inline:7px!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:thin!important;
+    border-radius:11px!important;
+    z-index:19000!important;
+  }
+
+  html body .filters::-webkit-scrollbar{
+    height:6px!important;
+  }
+
+  html body .filters > .input,
+  html body .filters > .filter-unit,
+  html body .filters > #nameFilter,
+  html body .filters > #zipcodeFilter{
+    flex:0 0 168px!important;
+    width:168px!important;
+    min-width:168px!important;
+    max-width:168px!important;
+    scroll-snap-align:start!important;
+  }
+
+  html body .filters .input,
+  html body .filters .select,
+  html body .filters .date-input,
+  html body .filters .filter-trigger{
+    width:100%!important;
+    height:var(--mobile-touch)!important;
+    min-height:var(--mobile-touch)!important;
+    max-height:var(--mobile-touch)!important;
+    padding:0 11px!important;
+    border-radius:10px!important;
+    font-size:.84rem!important;
+    line-height:1.15!important;
+  }
+
+  html body .filters > input{
+    font-size:16px!important;
+  }
+
+  html body .filters .filter-trigger .filter-label{
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+
+  /* Advanced dropdowns use the phone viewport, so no menu is cut off. */
+  html body .filters .filter-unit.open .filter-panel{
+    position:fixed!important;
+    top:calc(var(--header-h) + 8px)!important;
+    right:8px!important;
+    left:8px!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    max-height:calc(100vh - var(--header-h) - 16px)!important;
+    max-height:calc(100dvh - var(--header-h) - 16px)!important;
+    padding:9px!important;
+    overflow:auto!important;
+    border-radius:13px!important;
+    z-index:310000!important;
+  }
+
+  html body .filter-panel .filter-option{
+    min-height:42px!important;
+    padding:10px 11px!important;
+    font-size:.88rem!important;
+    line-height:1.25!important;
+  }
+
+  html body #dateFilter.specific-date-input{
+    width:100%!important;
+    min-width:0!important;
+    height:44px!important;
+    min-height:44px!important;
+    font-size:16px!important;
+  }
+
+  /* The hidden status element must not create unwanted mobile spacing. */
+  html body #statusLine.status-line{
+    margin:0!important;
+    padding:0!important;
+    min-height:0!important;
+    height:0!important;
+  }
+
+  /* Results use normal page scrolling instead of nested phone scroll areas. */
+  html body .results-area{
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    overflow:visible!important;
+    border-radius:12px!important;
+  }
+
+  html body .view-panel,
+  html body .view-panel.active{
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+
+  /* Table view becomes readable applicant cards on a phone. */
+  html body #tablePanel .table-scroll{
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:8px!important;
+    overflow:visible!important;
+    border-radius:12px 12px 0 0!important;
+    scrollbar-gutter:auto!important;
+  }
+
+  html body #tablePanel table{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    border:0!important;
+  }
+
+  html body #tablePanel thead{
+    position:absolute!important;
+    width:1px!important;
+    height:1px!important;
+    margin:-1px!important;
+    padding:0!important;
+    overflow:hidden!important;
+    clip:rect(0 0 0 0)!important;
+    clip-path:inset(50%)!important;
+    white-space:nowrap!important;
+  }
+
+  html body #tablePanel tbody{
+    display:grid!important;
+    width:100%!important;
+    gap:10px!important;
+  }
+
+  html body #tablePanel tbody tr{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    border:1px solid var(--mobile-line)!important;
+    border-radius:13px!important;
+    background:var(--mobile-surface)!important;
+    box-shadow:0 5px 16px rgba(15,23,42,.08)!important;
+  }
+
+  html body #tablePanel tbody td,
+  html body #tablePanel tbody td.name-cell{
+    width:100%!important;
+    min-width:0!important;
+    min-height:40px!important;
+    display:grid!important;
+    grid-template-columns:minmax(104px,42%) minmax(0,1fr)!important;
+    align-items:center!important;
+    gap:10px!important;
+    margin:0!important;
+    padding:8px 10px!important;
+    border:0!important;
+    border-bottom:1px solid #edf1f6!important;
+    background:#ffffff!important;
+    color:var(--mobile-navy)!important;
+    text-align:right!important;
+    font-size:.8rem!important;
+    line-height:1.3!important;
+    overflow-wrap:anywhere!important;
+  }
+
+  html body #tablePanel tbody td:last-child{
+    border-bottom:0!important;
+  }
+
+  html body #tablePanel tbody td::before{
+    color:#52657c!important;
+    font-size:.72rem!important;
+    line-height:1.2!important;
+    font-weight:800!important;
+    letter-spacing:.015em!important;
+    text-align:left!important;
+  }
+
+  html body #tablePanel tbody td:nth-child(1)::before{content:"Picture";}
+  html body #tablePanel tbody td:nth-child(2)::before{content:"Name";}
+  html body #tablePanel tbody td:nth-child(3)::before{content:"Age";}
+  html body #tablePanel tbody td:nth-child(4)::before{content:"Gender";}
+  html body #tablePanel tbody td:nth-child(5)::before{content:"Position";}
+  html body #tablePanel tbody td:nth-child(6)::before{content:"Industries";}
+  html body #tablePanel tbody td:nth-child(7)::before{content:"Location";}
+  html body #tablePanel tbody td:nth-child(8)::before{content:"Zip Code";}
+  html body #tablePanel tbody td:nth-child(9)::before{content:"Desired Salary";}
+  html body #tablePanel tbody td:nth-child(10)::before{content:"Employment Status";}
+  html body #tablePanel tbody td:nth-child(11)::before{content:"Contact";}
+  html body #tablePanel tbody td:nth-child(12)::before{content:"Favorites";}
+  html body #tablePanel tbody td:nth-child(13)::before{content:"View PDF";}
+  html body #tablePanel tbody td:nth-child(14)::before{content:"Date";}
+
+  html body #tablePanel tbody td > *,
+  html body #tablePanel tbody td .private-chip,
+  html body #tablePanel tbody td .action-btn,
+  html body #tablePanel tbody td .heart-btn,
+  html body #tablePanel tbody td .pic{
+    justify-self:end!important;
+    max-width:100%!important;
+  }
+
+  html body #tablePanel tbody td.name-cell .subtext{
+    text-align:right!important;
+  }
+
+  html body #tablePanel tbody td.empty{
+    display:block!important;
+    padding:28px 14px!important;
+    text-align:center!important;
+  }
+
+  html body #tablePanel tbody td.empty::before{
+    content:none!important;
+    display:none!important;
+  }
+
+  html body #tablePanel .pic{
+    width:52px!important;
+    height:52px!important;
+    border-radius:13px!important;
+  }
+
+  html body #tablePanel .action-btn{
+    min-height:36px!important;
+    height:auto!important;
+    padding:7px 9px!important;
+    white-space:normal!important;
+  }
+
+  html body #tablePanel .heart-btn{
+    width:38px!important;
+    min-width:38px!important;
+    height:38px!important;
+  }
+
+  /* Grid view remains one clean column and grows with its content. */
+  html body #gridPanel .grid-wrap{
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+    margin:0!important;
+    padding:8px!important;
+    overflow:visible!important;
+  }
+
+  html body #gridPanel .app-card,
+  html body #gridPanel .grid-app-card{
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    padding:11px!important;
+    overflow:hidden!important;
+    border-radius:13px!important;
+  }
+
+  html body #gridPanel .app-card-top,
+  html body #gridPanel .grid-card-top{
+    grid-template-columns:54px minmax(0,1fr)!important;
+    gap:10px!important;
+    min-height:56px!important;
+  }
+
+  html body #gridPanel .app-card .pic{
+    width:54px!important;
+    height:54px!important;
+    border-radius:13px!important;
+  }
+
+  html body #gridPanel .card-line,
+  html body #gridPanel .grid-card-line{
+    display:grid!important;
+    grid-template-columns:minmax(88px,38%) minmax(0,1fr)!important;
+    align-items:start!important;
+    gap:8px!important;
+    min-height:38px!important;
+    padding:8px 0!important;
+    font-size:.78rem!important;
+  }
+
+  html body #gridPanel .card-line span,
+  html body #gridPanel .grid-card-value{
+    width:100%!important;
+    max-width:100%!important;
+    text-align:right!important;
+    overflow-wrap:anywhere!important;
+  }
+
+  html body #gridPanel .card-actions,
+  html body #gridPanel .grid-card-actions{
+    display:flex!important;
+    align-items:center!important;
+    gap:7px!important;
+    flex-wrap:wrap!important;
+  }
+
+  html body #gridPanel .action-btn{
+    min-height:38px!important;
+  }
+
+  /* Location view stacks cards and map without desktop-width overflow. */
+  html body #locationPanel .location-layout{
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+    margin:0!important;
+    padding:8px!important;
+    overflow:visible!important;
+  }
+
+  html body #locationPanel .location-list{
+    width:100%!important;
+    min-height:0!important;
+    max-height:340px!important;
+    padding:0 3px 8px 0!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+  }
+
+  html body #locationPanel .location-grid-card{
+    width:100%!important;
+    min-width:0!important;
+    padding:10px!important;
+    overflow:hidden!important;
+    border-radius:13px!important;
+  }
+
+  html body #locationPanel .card-line{
+    gap:8px!important;
+    font-size:.78rem!important;
+  }
+
+  html body #locationPanel .card-line span{
+    min-width:0!important;
+    max-width:62%!important;
+    text-align:right!important;
+    overflow-wrap:anywhere!important;
+  }
+
+  html body #locationPanel .map-box,
+  html body #locationPanel #locationMap,
+  html body #locationPanel #googleMapFrame{
+    position:relative!important;
+    top:auto!important;
+    width:100%!important;
+    height:280px!important;
+    min-height:280px!important;
+    max-height:280px!important;
+    border-radius:13px!important;
+  }
+
+  html body #locationPanel .map-placeholder{
+    padding:18px!important;
+    font-size:.82rem!important;
+    line-height:1.4!important;
+  }
+
+  html body #locationPanel .google-map-info{
+    right:7px!important;
+    bottom:7px!important;
+    left:7px!important;
+    padding:8px 9px!important;
+    font-size:.7rem!important;
+  }
+
+  /* Pagination remains centered and wraps safely on very narrow screens. */
+  html body #pagination.pagination{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:48px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    flex-wrap:wrap!important;
+    gap:6px!important;
+    margin:0!important;
+    padding:9px 6px max(9px,env(safe-area-inset-bottom))!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    z-index:20000!important;
+  }
+
+  html body #pagination .pagination-control,
+  html body #pagination button{
+    min-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+    padding:0 7px!important;
+    border-radius:9px!important;
+    font-size:.76rem!important;
+  }
+
+  html body #pagination .page-info{
+    flex:0 0 100%!important;
+    width:100%!important;
+    padding:2px 0 0!important;
+    text-align:center!important;
+    font-size:.74rem!important;
+  }
+
+  /* Standard dialogs fill the available phone viewport cleanly. */
+  html body .modal:not(.jsl-pdf-modal){
+    padding:8px!important;
+    align-items:center!important;
+    overflow:hidden!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-card{
+    width:100%!important;
+    max-width:100%!important;
+    max-height:calc(100vh - 16px)!important;
+    max-height:calc(100dvh - 16px)!important;
+    margin:0!important;
+    overflow:auto!important;
+    border-radius:15px!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-head{
+    position:sticky!important;
+    top:0!important;
+    z-index:3!important;
+    min-height:54px!important;
+    padding:9px 10px!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-head h2{
+    min-width:0!important;
+    font-size:.92rem!important;
+    line-height:1.25!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-close{
+    width:40px!important;
+    min-width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    flex:0 0 40px!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-body{
+    padding:11px!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-body input,
+  html body .modal:not(.jsl-pdf-modal) .modal-body textarea{
+    font-size:16px!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-body textarea{
+    min-height:120px!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-actions{
+    position:sticky!important;
+    bottom:0!important;
+    z-index:3!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    padding:9px 11px 11px!important;
+  }
+
+  html body .modal:not(.jsl-pdf-modal) .modal-actions button{
+    width:100%!important;
+    min-height:44px!important;
+    margin:0!important;
+  }
+
+  /* PDF viewer uses the full phone screen and scrollable control rows. */
+  html body #pdfModal.jsl-pdf-modal{
+    padding:0!important;
+  }
+
+  html body #pdfModal .jsl-pdf-dialog{
+    width:100vw!important;
+    max-width:100vw!important;
+    height:100vh!important;
+    height:100dvh!important;
+    max-height:100vh!important;
+    max-height:100dvh!important;
+    margin:0!important;
+    border:0!important;
+    border-radius:0!important;
+  }
+
+  html body #pdfModal .jsl-pdf-header{
+    padding:8px!important;
+    gap:8px!important;
+  }
+
+  html body #pdfModal .jsl-pdf-identity{
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  html body #pdfModal .jsl-pdf-avatar{
+    width:42px!important;
+    min-width:42px!important;
+    height:42px!important;
+    flex-basis:42px!important;
+  }
+
+  html body #pdfModal .jsl-pdf-title-line,
+  html body #pdfModal .jsl-pdf-meta{
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+
+  html body #pdfModal .jsl-pdf-header-actions{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+
+  html body #pdfModal .jsl-pdf-top-btn{
+    width:100%!important;
+    min-width:0!important;
+    min-height:40px!important;
+    padding:6px!important;
+    font-size:.68rem!important;
+  }
+
+  html body #pdfModal .jsl-pdf-sidebar{
+    width:min(270px,88vw)!important;
+  }
+
+  html body #pdfModal .jsl-pdf-scroll{
+    padding:8px 8px 18px!important;
+  }
+
+  html body #pdfModal .jsl-pdf-toolbar{
+    display:flex!important;
+    flex-flow:column nowrap!important;
+    align-items:stretch!important;
+    gap:6px!important;
+    max-height:132px!important;
+    padding:7px!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+  }
+
+  html body #pdfModal .jsl-pdf-toolbar-group{
+    width:max-content!important;
+    min-width:100%!important;
+    flex:0 0 auto!important;
+    justify-content:flex-start!important;
+    gap:6px!important;
+  }
+
+  html body #pdfModal .jsl-pdf-tool-btn,
+  html body #pdfModal .jsl-pdf-tool-value{
+    min-height:38px!important;
+    padding:6px 8px!important;
+    font-size:.68rem!important;
+    white-space:nowrap!important;
+  }
+
+  /* Avoid sticky touch-hover zoom obscuring nearby mobile controls. */
+  html body .pic:hover,
+  html body #tablePanel .pic:hover,
+  html body #gridPanel .pic:hover,
+  html body #locationPanel .pic:hover,
+  html body.employer-logged-in .pic:hover{
+    transform:none!important;
+    box-shadow:none!important;
+  }
+}
+
+@media (max-width:360px){
+  html body.employer-logged-in header .logo{
+    max-width:calc(100vw - 124px)!important;
+  }
+
+  html body header .logo img,
+  html body > header .logo img{
+    max-width:94px!important;
+  }
+
+  html body.employer-logged-in #mobileHeaderInteractionFilterWrap.mobile-header-interaction-filter-wrap{
+    right:52px!important;
+    grid-template-columns:repeat(2,31px)!important;
+    gap:3px!important;
+  }
+
+  html body #mobileHeaderInteractionFilterWrap .interaction-filter-btn{
+    width:31px!important;
+    min-width:31px!important;
+    max-width:31px!important;
+    height:31px!important;
+    min-height:31px!important;
+    max-height:31px!important;
+  }
+
+  html body .dashboard-shell,
+  html body .dashboard-card{
+    padding:4px!important;
+  }
+
+  html body .dashboard-sticky-top{
+    padding:6px!important;
+  }
+
+  html body .controls,
+  html body .controls .toolbar-actions-box{
+    gap:5px!important;
+  }
+
+  html body .controls .reset-btn,
+  html body .controls .view-btn,
+  html body .controls .location-btn,
+  html body .controls .refresh-btn{
+    padding:0 5px!important;
+    gap:4px!important;
+    font-size:.72rem!important;
+  }
+
+  html body #tablePanel tbody td,
+  html body #tablePanel tbody td.name-cell{
+    grid-template-columns:minmax(94px,40%) minmax(0,1fr)!important;
+    gap:7px!important;
+    padding:8px!important;
+  }
+}
+</style>
+
+<!-- ============================================================
+     FINAL PHONE TWO-ROW CONTROLS + FULL TABLE SCROLLER
+     2026-09-08 — applies only at max-width:480px.
+=============================================================== -->
+<script id="jsl-mobile-horizontal-filter-row-organizer-20260908">
+(function(){
+  "use strict";
+
+  const phoneQuery = window.matchMedia("(max-width: 480px)");
+  const controls = document.querySelector(".controls");
+  const filters = document.querySelector(".filters");
+  const toolbar = controls?.querySelector(".toolbar-actions-box");
+  const movableFilters = [
+    document.getElementById("mainSearchField"),
+    controls?.querySelector(".country-filter-unit"),
+    controls?.querySelector(".industry-filter-unit")
+  ].filter(Boolean);
+
+  if(!controls || !filters || !toolbar || movableFilters.length !== 3) return;
+
+  const originalPositions = movableFilters.map(function(element, index){
+    const anchor = document.createComment("phone-filter-anchor-" + index);
+    element.parentNode.insertBefore(anchor, element);
+    return { element, anchor };
+  });
+
+  function usePhoneRows(){
+    const fragment = document.createDocumentFragment();
+    originalPositions.forEach(function(item){ fragment.appendChild(item.element); });
+    filters.insertBefore(fragment, filters.firstChild);
+  }
+
+  function restoreOriginalRows(){
+    originalPositions.forEach(function(item){
+      if(item.anchor.parentNode){
+        item.anchor.parentNode.insertBefore(item.element, item.anchor.nextSibling);
+      }
+    });
+  }
+
+  function refreshPageAfterBreakpointChange(){
+    try{
+      if(typeof state !== "undefined"){
+        state.page = 1;
+        state.requestedPage = 1;
+      }
+      if(typeof render === "function") render();
+    }catch(_error){}
+  }
+
+  let previousPhoneState = null;
+  function synchronizeRows(){
+    const isPhone = phoneQuery.matches;
+    if(isPhone === previousPhoneState) return;
+    previousPhoneState = isPhone;
+    if(isPhone) usePhoneRows();
+    else restoreOriginalRows();
+    refreshPageAfterBreakpointChange();
+  }
+
+  synchronizeRows();
+  if(typeof phoneQuery.addEventListener === "function"){
+    phoneQuery.addEventListener("change", synchronizeRows);
+  }else if(typeof phoneQuery.addListener === "function"){
+    phoneQuery.addListener(synchronizeRows);
+  }
+})();
+</script>
+
+<style id="jsl-final-phone-horizontal-filters-table-columns-20260908">
+@media (max-width:480px){
+  /* First row: Title, Reset, Table, Grid, Location and Refresh. */
+  html body .dashboard-sticky-top > .controls,
+  html body .controls{
+    display:grid!important;
+    grid-template-columns:minmax(88px,1.22fr) minmax(0,4.78fr)!important;
+    grid-template-rows:42px!important;
+    grid-auto-rows:42px!important;
+    gap:6px!important;
+    width:100%!important;
+    min-width:0!important;
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+    margin:0!important;
+    padding:0!important;
+    align-items:stretch!important;
+    overflow:visible!important;
+  }
+
+  html body .controls > .inline-directory-title{
+    grid-column:1!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+    margin:0!important;
+    padding:0 7px!important;
+    gap:5px!important;
+    font-size:clamp(.62rem,2.5vw,.78rem)!important;
+    line-height:1.05!important;
+    overflow:hidden!important;
+  }
+
+  html body .controls > .inline-directory-title span{
+    min-width:0!important;
+    white-space:normal!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  html body .controls > .toolbar-actions-box{
+    grid-column:2!important;
+    grid-row:1!important;
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    grid-template-rows:42px!important;
+    grid-auto-rows:42px!important;
+    gap:4px!important;
+    width:100%!important;
+    min-width:0!important;
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    border:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  html body .controls .toolbar-actions-box .view-switch{
+    display:contents!important;
+  }
+
+  html body .controls .toolbar-actions-box #resetBtn{grid-column:1!important;grid-row:1!important;}
+  html body .controls .toolbar-actions-box #tableBtn{grid-column:2!important;grid-row:1!important;}
+  html body .controls .toolbar-actions-box #gridBtn{grid-column:3!important;grid-row:1!important;}
+  html body .controls .toolbar-actions-box #locationBtn{grid-column:4!important;grid-row:1!important;}
+  html body .controls .toolbar-actions-box #refreshBtn{grid-column:5!important;grid-row:1!important;}
+
+  html body .controls .toolbar-actions-box #resetBtn,
+  html body .controls .toolbar-actions-box #tableBtn,
+  html body .controls .toolbar-actions-box #gridBtn,
+  html body .controls .toolbar-actions-box #locationBtn,
+  html body .controls .toolbar-actions-box #refreshBtn{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+    margin:0!important;
+    padding:0 3px!important;
+    gap:3px!important;
+    border-radius:9px!important;
+    font-size:clamp(.55rem,1.85vw,.7rem)!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  html body .controls .toolbar-actions-box button i{
+    flex:0 0 auto!important;
+    font-size:.68rem!important;
+  }
+
+  /* Second row: all search/filter controls in one horizontal scroller. */
+  html body .dashboard-sticky-top > .filters,
+  html body .dashboard-sticky-top > .filters:has(.filter-unit.open),
+  html body .filters,
+  html body .filters:has(.filter-unit.open){
+    position:relative!important;
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:stretch!important;
+    gap:7px!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:62px!important;
+    min-height:62px!important;
+    max-height:62px!important;
+    margin:7px 0 0!important;
+    padding:5px 6px 11px!important;
+    overflow-x:scroll!important;
+    overflow-y:hidden!important;
+    overscroll-behavior-x:contain!important;
+    scroll-snap-type:x proximity!important;
+    scroll-padding-inline:6px!important;
+    scrollbar-gutter:stable!important;
+    -webkit-overflow-scrolling:touch!important;
+    border:1px solid rgba(56,189,248,.26)!important;
+    border-radius:11px!important;
+    z-index:19000!important;
+  }
+
+  html body .filters > *,
+  html body .filters > .input,
+  html body .filters > .filter-unit,
+  html body .filters > #mainSearchField,
+  html body .filters > #nameFilter,
+  html body .filters > #zipcodeFilter{
+    flex:0 0 158px!important;
+    width:158px!important;
+    min-width:158px!important;
+    max-width:158px!important;
+    height:44px!important;
+    min-height:44px!important;
+    max-height:44px!important;
+    margin:0!important;
+    scroll-snap-align:start!important;
+  }
+
+  html body .filters > #mainSearchField{
+    flex-basis:220px!important;
+    width:220px!important;
+    min-width:220px!important;
+    max-width:220px!important;
+  }
+
+  html body .filters > #mainSearchField,
+  html body .filters > .search-field{
+    display:flex!important;
+    align-items:center!important;
+    padding:0 0 0 10px!important;
+    overflow:hidden!important;
+    border-radius:10px!important;
+  }
+
+  html body .filters #searchInput{
+    width:100%!important;
+    min-width:0!important;
+    height:100%!important;
+    padding:0 7px 0 0!important;
+    font-size:16px!important;
+  }
+
+  html body .filters #searchActionBtn{
+    flex:0 0 44px!important;
+    width:44px!important;
+    min-width:44px!important;
+    max-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+    max-height:44px!important;
+  }
+
+  html body .filters #searchActionBtn span{
+    display:none!important;
+  }
+
+  html body .filters::-webkit-scrollbar{
+    width:0!important;
+    height:9px!important;
+  }
+
+  html body .filters::-webkit-scrollbar-track{
+    background:#e6edf6!important;
+    border-radius:999px!important;
+  }
+
+  html body .filters::-webkit-scrollbar-thumb{
+    background:linear-gradient(90deg,#0ea5e9,#5b5ff7)!important;
+    border:2px solid #e6edf6!important;
+    border-radius:999px!important;
+  }
+
+  html body .filters{
+    scrollbar-width:auto!important;
+    scrollbar-color:#0ea5e9 #e6edf6!important;
+  }
+
+  /* Keep every existing table column and expose it with horizontal scrolling. */
+  html body.view-table-active .results-area,
+  html body .results-area:has(#tablePanel.active){
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    gap:0!important;
+    overflow:visible!important;
+  }
+
+  html body #tablePanel.active,
+  html body #tablePanel.view-panel.active{
+    order:1!important;
+    display:block!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    overflow:visible!important;
+  }
+
+  html body #tablePanel.active .table-scroll,
+  html body #tablePanel .table-scroll{
+    position:relative!important;
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:0 0 10px!important;
+    overflow-x:scroll!important;
+    overflow-y:visible!important;
+    overscroll-behavior-x:contain!important;
+    scrollbar-gutter:stable!important;
+    -webkit-overflow-scrolling:touch!important;
+    border-radius:12px 12px 0 0!important;
+  }
+
+  html body #tablePanel table{
+    display:table!important;
+    width:1540px!important;
+    min-width:1540px!important;
+    max-width:none!important;
+    table-layout:auto!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+  }
+
+  html body #tablePanel thead{
+    position:static!important;
+    display:table-header-group!important;
+    width:auto!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    clip:auto!important;
+    clip-path:none!important;
+    white-space:normal!important;
+  }
+
+  html body #tablePanel thead tr,
+  html body #tablePanel tbody tr{
+    display:table-row!important;
+    width:auto!important;
+    min-width:0!important;
+    overflow:visible!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  html body #tablePanel tbody{
+    display:table-row-group!important;
+    width:auto!important;
+  }
+
+  html body #tablePanel thead th,
+  html body #tablePanel tbody td,
+  html body #tablePanel tbody td.name-cell{
+    display:table-cell!important;
+    width:auto!important;
+    min-width:96px!important;
+    max-width:none!important;
+    min-height:0!important;
+    height:auto!important;
+    margin:0!important;
+    padding:10px 8px!important;
+    border-right:1px solid #e6edf5!important;
+    border-bottom:1px solid #e6edf5!important;
+    background:#ffffff!important;
+    color:var(--mobile-navy)!important;
+    text-align:left!important;
+    vertical-align:middle!important;
+    font-size:.76rem!important;
+    line-height:1.25!important;
+    white-space:normal!important;
+    overflow-wrap:normal!important;
+  }
+
+  html body #tablePanel thead th{
+    position:sticky!important;
+    top:0!important;
+    z-index:3!important;
+    min-width:104px!important;
+    background:#eef5ff!important;
+    color:#082b60!important;
+    font-size:.72rem!important;
+    font-weight:900!important;
+    white-space:nowrap!important;
+  }
+
+  html body #tablePanel tbody td::before{
+    content:none!important;
+    display:none!important;
+  }
+
+  html body #tablePanel tbody td > *,
+  html body #tablePanel tbody td .private-chip,
+  html body #tablePanel tbody td .action-btn,
+  html body #tablePanel tbody td .heart-btn,
+  html body #tablePanel tbody td .pic{
+    justify-self:auto!important;
+    max-width:none!important;
+  }
+
+  html body #tablePanel tbody td.name-cell .subtext{
+    text-align:left!important;
+  }
+
+  html body #tablePanel tbody td.empty{
+    display:table-cell!important;
+    width:auto!important;
+    padding:28px 14px!important;
+    text-align:center!important;
+  }
+
+  html body #tablePanel .table-scroll::-webkit-scrollbar{
+    width:0!important;
+    height:12px!important;
+  }
+
+  html body #tablePanel .table-scroll::-webkit-scrollbar-track{
+    background:#dfe8f3!important;
+    border-radius:999px!important;
+  }
+
+  html body #tablePanel .table-scroll::-webkit-scrollbar-thumb{
+    background:linear-gradient(90deg,#0ea5e9,#5b5ff7)!important;
+    border:3px solid #dfe8f3!important;
+    border-radius:999px!important;
+  }
+
+  html body #tablePanel .table-scroll{
+    scrollbar-width:auto!important;
+    scrollbar-color:#0ea5e9 #dfe8f3!important;
+  }
+
+  /* Pagination stays in normal flow immediately below the table scroller. */
+  html body .results-area > #pagination.pagination,
+  html body #tablePanel.active ~ #pagination.pagination{
+    position:static!important;
+    inset:auto!important;
+    order:2!important;
+    flex:0 0 auto!important;
+    clear:both!important;
+    width:100%!important;
+    min-width:0!important;
+    height:auto!important;
+    min-height:48px!important;
+    margin:0!important;
+    padding:8px 5px max(9px,env(safe-area-inset-bottom))!important;
+    transform:none!important;
+  }
+}
+
+@media (max-width:380px){
+  html body .controls{
+    grid-template-columns:minmax(76px,1.05fr) minmax(0,4.95fr)!important;
+    gap:4px!important;
+  }
+
+  html body .controls > .toolbar-actions-box{
+    gap:3px!important;
+  }
+
+  html body .controls .toolbar-actions-box #resetBtn,
+  html body .controls .toolbar-actions-box #tableBtn,
+  html body .controls .toolbar-actions-box #gridBtn,
+  html body .controls .toolbar-actions-box #locationBtn,
+  html body .controls .toolbar-actions-box #refreshBtn{
+    padding:0!important;
+    font-size:0!important;
+  }
+
+  html body .controls .toolbar-actions-box button i{
+    margin:0!important;
+    font-size:.78rem!important;
+  }
+
+  html body .controls .toolbar-actions-box #refreshBtn span{
+    display:none!important;
+  }
 }
 </style>
 
