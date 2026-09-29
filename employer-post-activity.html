@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applicants for Posted Jobs | Job Space Link</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+<style>
+:root{font-family:Arial,Helvetica,"Segoe UI",sans-serif;color:#1f2937;background:#fff;--panel:#fff;--line:#e1e9f3;--muted:#566984}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#fff;color:#1f2937}a{color:inherit}button{font:inherit;cursor:pointer}
+main{max-width:1240px;margin:auto;padding:32px 20px 65px}.intro span{text-transform:uppercase;letter-spacing:.14em;font-size:.76rem;color:#0b5cff;font-weight:800}.intro h1{font-size:clamp(1.8rem,4vw,2.9rem);margin:8px 0;color:#122950}.intro p{max-width:770px;line-height:1.6;color:var(--muted);margin:0}
+.topline{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:25px 0 15px}.identity{color:#385475;overflow-wrap:anywhere}.refresh{border:1px solid #0b5cff;background:#0b5cff;color:#fff;border-radius:9px;padding:9px 13px;font-weight:700}.refresh:hover{background:#0849ca}.pager button{border:1px solid #c7d9ed;background:#f5f9ff;color:#123b78;border-radius:9px;padding:9px 13px}.pager button:not(:disabled):hover{background:#e9f3ff}.refresh:disabled,.pager button:disabled{opacity:.5;cursor:not-allowed}
+.layout{display:grid;grid-template-columns:minmax(280px,34%) minmax(0,1fr);gap:15px;align-items:start}.panel{border:1px solid var(--line);background:#fff;border-radius:17px;padding:20px;box-shadow:0 8px 24px #1e3a5f0c;min-width:0}.heading{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:15px}.heading h2{margin:0;font-size:1.17rem;color:#122950}.muted{color:var(--muted);font-size:.89rem}
+.jobs{display:grid;gap:8px}.job{width:100%;text-align:left;border:1px solid #dae5f2;border-radius:12px;background:#f9fcff;color:#173a66;padding:13px}.job:hover,.job[aria-current="true"]{border-color:#0b5cff;background:#ecf4ff}.job strong,.job small{display:block;overflow-wrap:anywhere}.job strong{font-size:1rem}.job small{margin-top:7px;color:#526881;line-height:1.45}.pager{display:flex;gap:9px;align-items:center;justify-content:space-between;margin-top:15px}.pager span{font-size:.87rem;color:#526881;text-align:center}
+.person{border:1px solid #dae5f2;border-radius:12px;background:#f9fcff;padding:16px;margin:10px 0}.person h3{margin:0;font-size:1.08rem;color:#173a66;overflow-wrap:anywhere}.status{min-height:1.5em;color:#4c637d;margin:0 0 12px}.status.error{color:#b42335}.empty{padding:30px 14px;border:1px dashed #b6cbe1;border-radius:11px;color:#4d647d;text-align:center}.explain{font-size:.86rem;line-height:1.55;color:#63748a;margin:20px 0}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.panel{padding:16px}}
+/* Shared white Job Space Link header; employer account matches the dashboard. */
+:root{--header-h:86px;--navy:#012169}
+[hidden]{display:none!important}button:focus-visible,a:focus-visible{outline:3px solid #60a5fa;outline-offset:3px}
+.site-header{position:fixed;inset:0 0 auto;display:flex;align-items:center;flex-direction:row;justify-content:initial;gap:16px;height:var(--header-h);min-height:var(--header-h);padding:0 clamp(18px,4vw,78px) 0 8px;background:#fff;color:var(--navy);border-bottom:1px solid #e6e8ec;box-shadow:none;z-index:30}
+.logo{display:flex;align-items:center;flex:none}.logo img{height:82px;max-width:172px;object-fit:contain}
+.site-nav{display:flex;align-items:center;gap:18px;min-width:0;flex:1;margin-left:10px;white-space:nowrap}.site-nav>a,.nav-main-link{display:inline-flex;align-items:center;gap:10px;min-height:38px;padding:0 4px;color:var(--navy);text-decoration:none;font-size:.89rem;font-weight:500}.site-nav>a:hover,.nav-main-link:hover{color:#0b5cff;text-decoration:underline;text-underline-offset:5px}.site-nav a i{width:22px;color:#003a70;text-align:center}
+.nav-dropdown{position:relative;display:inline-flex;align-items:center;gap:2px}.nav-dropdown-toggle{border:0;background:transparent;color:var(--navy);padding:6px 3px}.nav-dropdown-menu{position:absolute;left:0;top:calc(100% + 12px);min-width:218px;padding:8px;display:none;border:1px solid #e6e8ec;border-radius:12px;background:#fff;box-shadow:0 15px 35px #0121691a;z-index:40}.nav-dropdown.open .nav-dropdown-menu,.nav-dropdown:hover .nav-dropdown-menu,.nav-dropdown:focus-within .nav-dropdown-menu{display:grid}.nav-dropdown-menu a{display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:8px;color:var(--navy);text-decoration:none;font-size:.84rem}.nav-dropdown-menu a:hover{background:#f4f8ff;color:#0b5cff}
+.auth-buttons{flex:none;display:flex;align-items:center}.account-menu{position:relative;display:flex;align-items:center;gap:10px}.quick-links{display:flex;align-items:center;gap:8px}.quick-link{height:41px;width:41px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #bce4fa;border-radius:12px;background:#f4fbff;color:#003a70;text-decoration:none}.quick-link:hover{background:#dff2ff;color:#0b5cff}
+.account-toggle{height:42px;min-width:88px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 14px;border:1px solid #bce4fa;border-radius:11px;background:linear-gradient(90deg,#15b8f2,#5261fa);color:#fff;font-weight:700}.account-toggle.logged-in{min-width:185px;max-width:230px;justify-content:flex-start;padding-left:5px}.account-toggle img{width:44px;height:44px;flex:none;border:2px solid #fff;border-radius:50%;object-fit:cover;background:#fff}.account-toggle .account-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.account-panel{position:absolute;top:calc(100% + 9px);right:0;width:min(285px,calc(100vw - 24px));border:1px solid #d6e3f3;border-radius:14px;padding:12px;background:#fff;box-shadow:0 18px 42px #0121692e;z-index:41;color:var(--navy)}.account-summary{border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:10px;background:#f8fbff}.account-summary strong{display:block;color:#123b78;font-size:.92rem;overflow-wrap:anywhere}.account-links{display:grid;gap:5px}.account-links a,.account-links button{display:flex;align-items:center;gap:12px;width:100%;min-height:38px;padding:8px 12px;border:1px solid #dce3ec;border-radius:9px;background:#fff;color:var(--navy);text-decoration:none;text-align:left;font-size:.84rem}.account-links a:hover,.account-links button:hover{background:#f4f8ff}.account-links i{width:18px;text-align:center}
+.nav-toggle{display:none;align-items:center;justify-content:center;width:41px;height:41px;margin-left:auto;border:1px solid #bce4fa;border-radius:10px;background:#eef8ff;color:var(--navy)}
+.mobile-panel{display:none;position:fixed;top:var(--header-h);left:0;right:0;max-height:calc(100dvh - var(--header-h));overflow-y:auto;padding:13px 16px 19px;background:#fff;border-bottom:1px solid #e6e8ec;box-shadow:0 12px 30px #01216920;z-index:29;color:var(--navy)}.mobile-panel.open{display:block}.mnav{display:grid;gap:8px}.mnav>a,.mobile-subnav>a,.mobile-about-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border:1px solid #e6e8ec;border-radius:10px;background:#f5f5f5;color:var(--navy);text-decoration:none;font-weight:500}.mnav a:hover{background:#edf5ff;color:#0b5cff}.mnav-label{display:inline-flex;align-items:center;gap:10px}.mnav-label i{color:#003a70}.mobile-about-row{display:grid;grid-template-columns:minmax(0,1fr) 43px;gap:8px}.mobile-about-toggle{border:1px solid #e6e8ec;border-radius:10px;background:#f5f5f5;color:var(--navy)}.mobile-subnav{display:none;gap:8px;margin:8px 0 0 14px}.mobile-about-group.open .mobile-subnav{display:grid}.mobile-account{margin-top:8px;padding:12px;border:1px solid #e6e8ec;border-radius:12px;background:#fff}.mobile-account-label{color:#173f7a;text-transform:uppercase;font-size:.73rem;font-weight:800;margin-bottom:8px}.mobile-account-name{overflow-wrap:anywhere;font-weight:700;margin-bottom:7px}.mobile-account a,.mobile-account button{display:flex;align-items:center;gap:10px;width:100%;padding:10px;border:0;border-radius:9px;background:transparent;color:var(--navy);text-decoration:none;text-align:left;font-size:.88rem}.mobile-account a:hover,.mobile-account button:hover{background:#f4f8ff}
+main{max-width:1800px;padding:calc(var(--header-h) + 32px) 26px 65px}.layout{grid-template-columns:minmax(0,1fr) minmax(285px,340px);gap:18px}.jobs{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.job{display:flex;flex-direction:column;min-width:0;min-height:130px;padding:15px}.job[aria-current="true"]{box-shadow:inset 0 0 0 1px #69baff}.job small{margin-top:auto;padding-top:10px}.empty{grid-column:1/-1}
+@media(min-width:769px) and (max-width:1279px){.site-header{padding-right:18px}.site-nav{gap:7px}.site-nav .nav-text{display:none}.site-nav>a,.nav-main-link{font-size:1.02rem;justify-content:center;width:33px}.logo img{max-width:156px}.account-toggle.logged-in{min-width:145px;max-width:175px}}
+@media(max-width:1180px){.jobs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.layout{grid-template-columns:1fr}}
+@media(max-width:768px){:root{--header-h:70px}.site-header{padding:0 12px;align-items:center;flex-direction:row}.logo img{height:55px;max-width:170px}.site-nav,.auth-buttons{display:none}.nav-toggle{display:inline-flex}main{padding-top:calc(var(--header-h) + 27px)}}
+@media(max-width:480px){.logo img{height:49px;max-width:155px}main{padding-left:16px;padding-right:16px}.jobs{grid-template-columns:1fr}.job{min-height:0}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="home.html" aria-label="Job Space Link home"><img src="JOBSPACELINK.png" alt="Job Space Link Logo"></a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <a href="home.html"><i class="fa-solid fa-house" aria-hidden="true"></i><span class="nav-text">Home</span></a>
+    <div class="nav-dropdown" id="aboutNavDropdown">
+      <a href="about.html" class="nav-main-link"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span class="nav-text">About</span></a>
+      <button type="button" class="nav-dropdown-toggle" id="aboutNavToggle" aria-label="Toggle About menu" aria-expanded="false" aria-controls="aboutNavMenu"><i class="fa-solid fa-caret-down" aria-hidden="true"></i></button>
+      <div class="nav-dropdown-menu" id="aboutNavMenu"><a href="why choose us.html"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>Why Choose Us</a><a href="how it works.html"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i>How It Works</a></div>
+    </div>
+    <a href="postedhiring1.html"><i class="fa-solid fa-briefcase" aria-hidden="true"></i><span class="nav-text">Job Hiring</span></a>
+    <a href="dashboard1.html"><i class="fa-solid fa-users" aria-hidden="true"></i><span class="nav-text">Jobseeker</span></a>
+    <a href="postjob1.html"><i class="fa-solid fa-square-plus" aria-hidden="true"></i><span class="nav-text">Post Jobs</span></a>
+    <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up" aria-hidden="true"></i><span class="nav-text">Post Resume</span></a>
+  </nav>
+  <div class="auth-buttons"><div class="account-menu" id="accountMenu">
+    <div class="quick-links" id="quickLinks" hidden>
+      <a class="quick-link" href="dashboard1.html#contactedFilterBtn" aria-label="Applicant Directory contacted filters" title="Contacted applicants"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></a>
+      <a class="quick-link" href="dashboard1.html#favoriteFilterBtn" aria-label="Applicant Directory favorite filters" title="Favorite applicants"><i class="fa-regular fa-heart" aria-hidden="true"></i></a>
+    </div>
+    <button type="button" class="account-toggle" id="accountToggle" aria-label="Login as an employer" aria-expanded="false" aria-controls="accountPanel"><img id="accountLogo" alt="Company logo" hidden><i id="accountIcon" class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span class="account-label" id="accountLabel">Login</span></button>
+    <div class="account-panel" id="accountPanel" hidden>
+      <div class="account-summary"><strong id="accountName">Employer</strong></div>
+      <div class="account-links">
+        <a href="employerprofile.html"><i class="fa-solid fa-id-card" aria-hidden="true"></i>View Company Profile</a>
+        <a href="paymentmethod.html"><i class="fa-solid fa-wallet" aria-hidden="true"></i>Billing Account</a>
+        <a href="subscribe.html"><i class="fa-solid fa-credit-card" aria-hidden="true"></i>Subscribe</a>
+        <a href="subscriptionstatus.html"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>Subscription Status</a>
+        <a href="postedjobs.html"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>Posted Jobs</a>
+        <a href="employer-post-activity.html"><i class="fa-solid fa-users-viewfinder" aria-hidden="true"></i>Job Applications</a>
+        <button type="button" id="headerLogout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Log out</button>
+      </div>
+    </div>
+  </div></div>
+  <button type="button" class="nav-toggle" id="navToggle" aria-label="Open mobile menu" aria-expanded="false" aria-controls="mobilePanel"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+</header>
+<div class="mobile-panel" id="mobilePanel" hidden><nav class="mnav" aria-label="Mobile navigation">
+  <a href="home.html"><span class="mnav-label"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+  <div class="mobile-about-group" id="mobileAboutGroup"><div class="mobile-about-row"><a href="about.html" class="mobile-about-link"><span class="mnav-label"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>About</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a><button type="button" class="mobile-about-toggle" id="mobileAboutToggle" aria-label="Toggle About submenu" aria-expanded="false" aria-controls="mobileAboutMenu"><i class="fa-solid fa-caret-down" aria-hidden="true"></i></button></div><div class="mobile-subnav" id="mobileAboutMenu"><a href="why choose us.html"><span class="mnav-label"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>Why Choose Us</span></a><a href="how it works.html"><span class="mnav-label"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i>How It Works</span></a></div></div>
+  <a href="postedhiring1.html"><span class="mnav-label"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>Job Hiring</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+  <a href="dashboard1.html"><span class="mnav-label"><i class="fa-solid fa-users" aria-hidden="true"></i>Jobseeker</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+  <a href="postjob1.html"><span class="mnav-label"><i class="fa-solid fa-square-plus" aria-hidden="true"></i>Post Jobs</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+  <a href="applicantform1.html?source=jobspacelink"><span class="mnav-label"><i class="fa-solid fa-file-arrow-up" aria-hidden="true"></i>Post Resume</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+  <div class="mobile-account"><div class="mobile-account-label">Employer Account</div><div id="mobileAccountName" class="mobile-account-name" hidden></div><a href="loginemployer.html" id="mobileLogin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>Login</a><div id="mobileLoggedIn" hidden><a href="employerprofile.html"><i class="fa-solid fa-id-card" aria-hidden="true"></i>View Company Profile</a><a href="paymentmethod.html"><i class="fa-solid fa-wallet" aria-hidden="true"></i>Billing Account</a><a href="subscribe.html"><i class="fa-solid fa-credit-card" aria-hidden="true"></i>Subscribe</a><a href="subscriptionstatus.html"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>Subscription Status</a><a href="postedjobs.html"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>Posted Jobs</a><a href="employer_post_activity.html"><i class="fa-solid fa-users-viewfinder" aria-hidden="true"></i>Applications</a><button type="button" id="mobileLogout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Log out</button></div></div>
+</nav></div>
+<main>
+  <div class="intro"><span>Employer account</span><h1>Applicants for your posted jobs</h1><p>Only posted jobs with applications appear here. Select a job to see the full names of jobseekers who applied.</p></div>
+  <div class="topline"><span class="identity" id="identity">Checking your account…</span><button type="button" class="refresh" id="refresh"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> Refresh</button></div>
+  <div class="status" id="status" role="status" aria-live="polite">Loading your postings…</div>
+  <div class="layout">
+    <section class="panel" aria-labelledby="jobsHeading"><div class="heading"><h2 id="jobsHeading">Posted jobs with applicants</h2><span class="muted" id="jobTotal"></span></div><div class="jobs" id="jobs"></div><div class="pager"><button id="jobPrev" type="button">Previous</button><span id="jobPageInfo"></span><button id="jobNext" type="button">Next</button></div></section>
+    <section class="panel" aria-labelledby="peopleHeading"><div class="heading"><h2 id="peopleHeading">Applicants</h2><span class="muted" id="peopleTotal"></span></div><div id="people"></div><div class="pager"><button id="peoplePrev" type="button">Previous</button><span id="peoplePageInfo"></span><button id="peopleNext" type="button">Next</button></div></section>
+  </div>
+  <p class="explain">Only jobseekers with a saved application for the selected posting appear here.</p>
+</main>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const clean = value => String(value == null ? "" : value).trim();
+  const lower = value => clean(value).toLowerCase();
+  let client, loading = false, signedIn = false, requestVersion = 0;
+  const current = {jobPage:0, peoplePage:0, jobId:null, jobTotal:0, peopleTotal:0};
+  const JOBS_PER_PAGE = 20;
+  let appliedJobCache = null;
+  function status(message, error = false) { $("status").textContent = message; $("status").classList.toggle("error", error); }
+  function readableError(error){
+    const message = clean(error?.message);
+    if (error?.code === "57014" || /cancel(?:ing|ling) statement|statement timeout|timed out/i.test(message))
+      return "The request took too long. Please refresh and try again.";
+    return message || "Unable to load activity.";
+  }
+  function empty(target, message){ const box = document.createElement("div"); box.className="empty"; box.textContent=message; $(target).replaceChildren(box); }
+  function employerMarker(){
+    for (const store of [localStorage, sessionStorage]) {
+      try { const marker = JSON.parse(store.getItem("JSL_EMPLOYER_SESSION_V1") || "null");
+        if (marker && marker.loggedIn !== false && (marker.loggedIn === true || marker.authenticated === true) && lower(marker.email || marker.company_email)) return marker;
+      } catch (_) {}
+    }
+    return null;
+  }
+  function getClient(){
+    const value = [window.supabaseClient, window.client, window.sb, window.supabase].find(item => item?.rpc && item?.auth?.getUser);
+    if (!value) throw new Error("Supabase is not configured. Check supabase_config.js.");
+    return value;
+  }
+  function closeAccount(){ $("accountPanel").hidden = true; $("accountToggle").setAttribute("aria-expanded","false"); }
+  function closeMobile(){ $("mobilePanel").hidden = true; $("mobilePanel").classList.remove("open"); $("navToggle").setAttribute("aria-expanded","false"); $("navToggle").setAttribute("aria-label","Open mobile menu"); }
+  function displayAccount(marker){
+    signedIn = !!marker;
+    const name = clean(marker?.company_name || marker?.companyName || marker?.company) || "Employer";
+    $("accountName").textContent = name;
+    $("mobileAccountName").textContent = name;
+    $("mobileAccountName").hidden = !signedIn;
+    $("mobileLoggedIn").hidden = !signedIn;
+    $("mobileLogin").hidden = signedIn;
+    $("quickLinks").hidden = !signedIn;
+    $("accountToggle").classList.toggle("logged-in",signedIn);
+    $("accountToggle").setAttribute("aria-label",signedIn ? "Open employer account menu" : "Login as an employer");
+    $("accountLabel").textContent = signedIn ? name : "Login";
+    const logo = signedIn ? clean(marker.company_logo_url || marker.company_profile_url || marker.logo_url) : "";
+    $("accountLogo").hidden = !logo;
+    $("accountIcon").hidden = !!logo;
+    $("accountIcon").className = signedIn ? "fa-solid fa-building-user" : "fa-solid fa-right-to-bracket";
+    if (logo) {
+      $("accountLogo").src = logo;
+      $("accountLogo").onerror = () => { $("accountLogo").hidden = true; $("accountIcon").hidden = false; };
+    } else $("accountLogo").removeAttribute("src");
+    if (!signedIn) closeAccount();
+  }
+  async function jobsWithApplicants(owner, version){
+    if (appliedJobCache?.owner === owner) return appliedJobCache.jobs;
+    const fetchPage = async page => {
+      const {data, error} = await client.rpc("jsl_employer_post_activity", {
+        p_job_page:page, p_job_id:null, p_people_page:0, p_filter:"applied"
+      });
+      if (error) throw error;
+      return data || {};
+    };
+    const first = await fetchPage(0);
+    if (version !== requestVersion) return null;
+    const totalPages = Math.max(1, Math.ceil(Number(first.job_total || 0) / JOBS_PER_PAGE));
+    const pages = [first];
+    // The existing RPC pages all postings. Scan each page once so jobs with
+    // zero applications cannot leave gaps or inflate the filtered page count.
+    for (let start = 1; start < totalPages; start += 4) {
+      const last = Math.min(totalPages, start + 4);
+      status(`Checking posted jobs for applicants (${last} of ${totalPages} pages)…`);
+      const batch = await Promise.all(Array.from({length:last - start}, (_, index) => fetchPage(start + index)));
+      if (version !== requestVersion) return null;
+      pages.push(...batch);
+    }
+    const seen = new Set();
+    const jobs = pages.flatMap(page => Array.isArray(page.jobs) ? page.jobs : [])
+      .filter(job => {
+        const id = Number(job.id);
+        if (!Number.isSafeInteger(id) || id <= 0 || Number(job.applied_count) <= 0 || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      })
+      .sort((a,b) => Number(b.id) - Number(a.id));
+    appliedJobCache = {owner, jobs};
+    return jobs;
+  }
+  function renderJobs(data){
+    const jobs = Array.isArray(data.jobs) ? data.jobs.filter(item => Number(item.applied_count) > 0) : [];
+    current.jobTotal = Number(data.job_total || 0);
+    $("jobTotal").textContent = current.jobTotal + (current.jobTotal === 1 ? " job with applicants" : " jobs with applicants");
+    $("jobs").replaceChildren();
+    if (!jobs.length) empty("jobs", "No posted jobs have applications yet.");
+    else for (const item of jobs) {
+      const button = document.createElement("button"); button.type = "button"; button.className = "job";
+      button.setAttribute("aria-current", String(Number(item.id) === Number(current.jobId)));
+      const title = document.createElement("strong"); title.textContent = clean(item.title) || "Job #" + item.id;
+      const detail = document.createElement("small"); detail.textContent = `#${item.id} · ${item.job_status || "Status unavailable"} · ${item.applied_count || 0} applied`;
+      button.append(title,detail); button.addEventListener("click", () => { if (loading) return; if (Number(item.id) !== Number(current.jobId)) {current.jobId = Number(item.id); current.peoplePage = 0; load();} });
+      $("jobs").append(button);
+    }
+    const pages = Math.max(1, Math.ceil(current.jobTotal / JOBS_PER_PAGE));
+    $("jobPageInfo").textContent = `Page ${current.jobPage + 1} of ${pages}`;
+    $("jobPrev").disabled = loading || current.jobPage <= 0;
+    $("jobNext").disabled = loading || current.jobPage + 1 >= pages;
+  }
+  function renderPeople(data){
+    current.peopleTotal = Number(data.people_total || 0);
+    $("peopleTotal").textContent = current.peopleTotal + (current.peopleTotal === 1 ? " person" : " people");
+    const people = Array.isArray(data.people) ? data.people.filter(item => item.has_applied === true) : [];
+    $("people").replaceChildren();
+    if (!people.length) empty("people", current.jobId ? "No jobseekers have applied for this job yet." : "Choose a posted job with applicants to view names.");
+    else for (const item of people) {
+      const card = document.createElement("article"); card.className = "person";
+      const title = document.createElement("h3");
+      const fullName = clean(item.name);
+      title.textContent = fullName && !/^Applicant\s*#\d+$/i.test(fullName) ? fullName : "Name unavailable";
+      card.append(title);
+      $("people").append(card);
+    }
+    const pages = Math.max(1, Math.ceil(current.peopleTotal / 20));
+    $("peoplePageInfo").textContent = `Page ${current.peoplePage + 1} of ${pages}`;
+    $("peoplePrev").disabled = loading || current.peoplePage <= 0;
+    $("peopleNext").disabled = loading || current.peoplePage + 1 >= pages;
+  }
+  async function load(){
+    if (loading) return;
+    loading = true; const version = ++requestVersion; $("refresh").disabled = true;
+    for (const id of ["jobPrev","jobNext","peoplePrev","peopleNext"]) $(id).disabled = true;
+    status("Checking your secure employer account and fetching activity…");
+    let verified = false;
+    try {
+      if (localStorage.getItem("JSL_EMPLOYER_AUTHORITATIVE_LOGOUT_V5") || sessionStorage.getItem("JSL_EMPLOYER_AUTHORITATIVE_LOGOUT_V5")) throw new Error("Please log in as an employer to view posted job activity.");
+      const marker = employerMarker();
+      if (!marker) throw new Error("Please log in as an employer to view posted job activity.");
+      client ||= getClient();
+      const {data: authData, error: authError} = await client.auth.getUser();
+      if (version !== requestVersion) return;
+      if (authError || !authData?.user || lower(authData.user.email) !== lower(marker.email || marker.company_email)) throw new Error("Your secure employer session does not match the displayed account. Please log in again.");
+      verified = true; displayAccount(marker);
+      const owner = lower(authData.user.email);
+      $("identity").textContent = "Signed in as " + (clean(marker.company_name || marker.companyName || marker.company) || "Employer");
+      const appliedJobs = await jobsWithApplicants(owner, version);
+      if (version !== requestVersion) return;
+      const total = appliedJobs.length;
+      current.jobPage = Math.min(current.jobPage, Math.max(0, Math.ceil(total / JOBS_PER_PAGE) - 1));
+      const visibleJobs = appliedJobs.slice(current.jobPage * JOBS_PER_PAGE, (current.jobPage + 1) * JOBS_PER_PAGE);
+      if (!visibleJobs.some(job => Number(job.id) === Number(current.jobId))) {
+        current.jobId = visibleJobs.length ? Number(visibleJobs[0].id) : null;
+        current.peoplePage = 0;
+      }
+      let peopleData = {people_total:0, people:[]};
+      if (current.jobId !== null) {
+        const {data, error} = await client.rpc("jsl_employer_post_activity", {
+          p_job_page:0, p_job_id:current.jobId, p_people_page:current.peoplePage, p_filter:"applied"
+        });
+        if (version !== requestVersion) return;
+        if (error) throw error;
+        peopleData = data || peopleData;
+      }
+      renderJobs({job_total:total, jobs:visibleJobs}); renderPeople(peopleData);
+      status(total ? "Showing posted jobs with applicants." : "No posted jobs have applications yet.");
+    } catch (error) {
+      if (version !== requestVersion) return;
+      status(readableError(error), true);
+      current.jobTotal = 0; current.peopleTotal = 0;
+      $("jobTotal").textContent = ""; $("peopleTotal").textContent = "";
+      $("jobPageInfo").textContent = ""; $("peoplePageInfo").textContent = "";
+      empty("jobs", "Your posted jobs are unavailable right now."); empty("people", "No jobseeker activity is available.");
+      if (!verified) { displayAccount(null); $("identity").textContent = "Employer sign-in required"; }
+    } finally { if (version === requestVersion) {loading = false; $("refresh").disabled = false;
+      $("jobPrev").disabled = current.jobPage <= 0; $("jobNext").disabled = current.jobPage + 1 >= Math.max(1,Math.ceil(current.jobTotal / JOBS_PER_PAGE));
+      $("peoplePrev").disabled = current.peoplePage <= 0; $("peopleNext").disabled = current.peoplePage + 1 >= Math.max(1,Math.ceil(current.peopleTotal / 20)); }
+    }
+  }
+  async function logout(){
+    if (!signedIn) return;
+    ++requestVersion; loading = false; closeAccount(); closeMobile();i
+    appliedJobCache = null;
+    const marker = employerMarker(), at = Date.now();
+    const event = JSON.stringify({type:"employer-logout",action:"employer-logout",state:"logged-out",status:"logged-out",role:"employer",authoritative:true,at,source:"employer_post_activity.html"});
+    for (const store of [localStorage,sessionStorage]) {
+      try { store.removeItem("JSL_EMPLOYER_SESSION_V1"); store.setItem("JSL_EMPLOYER_AUTHORITATIVE_LOGOUT_V5",event); } catch (_) {}
+    }
+    displayAccount(null); $("identity").textContent = "Employer sign-in required";
+    current.jobTotal = 0; current.peopleTotal = 0; current.jobId = null; current.jobPage = 0; current.peoplePage = 0;
+    $("jobTotal").textContent = ""; $("peopleTotal").textContent = ""; $("jobPageInfo").textContent = ""; $("peoplePageInfo").textContent = "";
+    empty("jobs","Log in as an employer to see your posted jobs."); empty("people","Log in to see applicants.");
+    status("You have been logged out."); $("refresh").disabled = false;
+    for (const id of ["jobPrev","jobNext","peoplePrev","peopleNext"]) $(id).disabled = true;
+    try {
+      const {data} = await client?.auth?.getUser() || {};
+      if (marker && lower(data?.user?.email) === lower(marker.email || marker.company_email)) await client.auth.signOut({scope:"local"});
+    } catch (_) {}
+  }
+  $("accountToggle").addEventListener("click",() => { if (!signedIn) { window.location.href = "loginemployer.html"; return; } const panel = $("accountPanel"); panel.hidden = !panel.hidden; $("accountToggle").setAttribute("aria-expanded",String(!panel.hidden)); });
+  $("navToggle").addEventListener("click",() => { const panel = $("mobilePanel"); panel.hidden = !panel.hidden; panel.classList.toggle("open",!panel.hidden); $("navToggle").setAttribute("aria-expanded",String(!panel.hidden)); $("navToggle").setAttribute("aria-label",panel.hidden ? "Open mobile menu" : "Close mobile menu"); });
+  $("aboutNavToggle").addEventListener("click",() => { const node = $("aboutNavDropdown"); node.classList.toggle("open"); $("aboutNavToggle").setAttribute("aria-expanded",String(node.classList.contains("open"))); });
+  $("mobileAboutToggle").addEventListener("click",() => { const node = $("mobileAboutGroup"); node.classList.toggle("open"); $("mobileAboutToggle").setAttribute("aria-expanded",String(node.classList.contains("open"))); });
+  document.addEventListener("click",event => { if (!$("accountMenu").contains(event.target)) closeAccount(); if (!$("aboutNavDropdown").contains(event.target)){ $("aboutNavDropdown").classList.remove("open"); $("aboutNavToggle").setAttribute("aria-expanded","false"); } if (!$("mobilePanel").contains(event.target) && !$("navToggle").contains(event.target)) closeMobile(); });
+  document.addEventListener("keydown",event => { if (event.key === "Escape") { closeAccount(); closeMobile(); $("aboutNavDropdown").classList.remove("open"); $("aboutNavToggle").setAttribute("aria-expanded","false"); } });
+  window.addEventListener("resize",() => { if (window.innerWidth > 768) closeMobile(); });
+  $("headerLogout").addEventListener("click",logout); $("mobileLogout").addEventListener("click",logout);
+  $("refresh").addEventListener("click",() => { appliedJobCache = null; load(); });
+  for (const [id,change,kind] of [["jobPrev",-1,"job"],["jobNext",1,"job"],["peoplePrev",-1,"people"],["peopleNext",1,"people"]]) $(id).addEventListener("click", () => {
+    if (loading) return;
+    if (kind === "job") { current.jobPage += change; current.jobId = null; current.peoplePage = 0; }
+    else current.peoplePage += change;
+    load();
+  });
+  load();
+})();
+</script>
+</body></html>

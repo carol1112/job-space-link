@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Manage card, U.S. bank account, and PayPal payment methods for Job Space Link employer subscriptions." />
+  <title>Payment Methods | Job Space Link</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase_config.js"></script>
+  <script src="https://js.braintreegateway.com/web/3.146.0/js/client.min.js"></script>
+  <script src="https://js.braintreegateway.com/web/3.146.0/js/hosted-fields.min.js"></script>
+  <script src="https://js.braintreegateway.com/web/3.146.0/js/us-bank-account.min.js"></script>
+
+  <style>
+    :root{
+      --header-h:78px;
+      --jsl-blue:#0b5cff;
+      --jsl-blue-dark:#0648c9;
+      --jsl-sky:#28a7ff;
+      --jsl-navy:#0f2f66;
+      --jsl-bg:#eef5ff;
+      --panel:#fff;
+      --line:#d8e5f5;
+      --muted:#667892;
+      --text:#183153;
+      --success:#159447;
+      --danger:#d9363e;
+      --paypal-navy:#003087;
+      --paypal-blue:#0070e0;
+      --paypal-gold:#ffc439;
+      --shadow:0 18px 48px rgba(28,72,128,.12);
+      --shadow-soft:0 8px 24px rgba(28,72,128,.09);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      min-height:100vh;
+      padding-top:var(--header-h);
+      color:var(--text);
+      background:
+        radial-gradient(circle at 7% 8%,rgba(40,167,255,.15),transparent 28rem),
+        radial-gradient(circle at 92% 12%,rgba(11,92,255,.10),transparent 30rem),
+        linear-gradient(180deg,#f8fbff 0%,var(--jsl-bg) 46%,#eaf3ff 100%);
+      font-family:"Poppins","Segoe UI",Arial,sans-serif;
+      overflow-x:hidden;
+    }
+    body::before{content:"";position:fixed;inset:var(--header-h) 0 auto;height:5px;background:linear-gradient(90deg,var(--jsl-blue-dark),var(--jsl-blue),var(--jsl-sky));z-index:900;pointer-events:none}
+    button,input,select,textarea{font:inherit}
+    button,a{touch-action:manipulation}
+    [hidden]{display:none!important}
+
+    .site-header{position:fixed;inset:0 0 auto;height:var(--header-h);z-index:1000;display:flex;align-items:center;gap:18px;padding:0 18px 0 8px;background:rgba(255,255,255,.97);border-bottom:1px solid #dbe8f7;backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(26,70,125,.09)}
+    .brand{display:flex;align-items:center;flex:0 0 auto;text-decoration:none}
+    .brand img{display:block;width:auto;height:78px;object-fit:contain;transition:transform .25s ease,filter .25s ease}
+    .brand:hover img{transform:scale(1.07);filter:drop-shadow(0 7px 12px rgba(11,92,255,.18))}
+    .desktop-nav{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+    .desktop-nav a{color:#203a5e;text-decoration:none;font-size:.88rem;font-weight:750;padding:12px 2px 10px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .18s ease,border-color .18s ease}
+    .desktop-nav a i{margin-right:3px;color:#33577f}
+    .desktop-nav a:hover,.desktop-nav a:focus-visible{color:var(--jsl-blue);border-bottom-color:var(--jsl-blue);outline:none}
+    .account-area{position:relative;margin-left:auto}
+    .account-button{min-height:43px;max-width:240px;display:flex;align-items:center;gap:9px;padding:6px 12px;color:#12325a;background:linear-gradient(135deg,#f6faff,#e9f3ff);border:1px solid #bfd5f3;border-radius:13px;cursor:pointer;font-weight:800;box-shadow:0 5px 14px rgba(25,79,144,.08)}
+    .account-button:hover,.account-button:focus-visible{border-color:#78aef6;box-shadow:0 0 0 4px rgba(11,92,255,.10);outline:none}
+    .account-logo{width:36px;height:36px;flex:0 0 36px;border-radius:10px;object-fit:contain;padding:2px;background:#fff;border:1px solid #d4e4f5}
+    .account-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .account-menu{position:absolute;right:0;top:calc(100% + 10px);width:270px;padding:10px;background:#fff;border:1px solid #d6e4f4;border-radius:16px;box-shadow:0 22px 58px rgba(22,62,111,.20);display:none}
+    .account-menu.open{display:block}
+    .account-summary{padding:10px 11px 13px;border-bottom:1px solid var(--line);margin-bottom:7px}
+    .account-summary strong,.account-summary span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .account-summary span{margin-top:4px;color:var(--muted);font-size:.78rem}
+    .account-menu a,.account-menu button{width:100%;display:flex;align-items:center;gap:10px;padding:11px;border:0;border-radius:10px;background:transparent;color:#244567;text-decoration:none;text-align:left;cursor:pointer;font-weight:650}
+    .account-menu a i,.account-menu button i{width:18px;color:#436789}
+    .account-menu a:hover,.account-menu button:hover{background:#edf5ff;color:var(--jsl-blue)}
+    .mobile-toggle{display:none;width:42px;height:42px;border-radius:12px;border:1px solid #b8d1f3;background:#eef6ff;color:var(--jsl-blue);cursor:pointer}
+    .mobile-panel{display:none;position:fixed;z-index:990;top:var(--header-h);left:0;right:0;padding:12px;background:rgba(255,255,255,.99);border-bottom:1px solid #d6e4f4;box-shadow:0 18px 40px rgba(22,62,111,.14)}
+    .mobile-panel.open{display:grid;gap:7px}
+    .mobile-panel a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:12px;background:#f5f9ff;color:#244567;text-decoration:none;font-weight:700;border:1px solid #e2edf9}
+
+    .page-shell{width:min(1180px,calc(100% - 32px));margin:36px auto 56px}
+    .hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:24px;padding:26px 28px;background:linear-gradient(135deg,#fff 0%,#f6faff 56%,#edf6ff 100%);border:1px solid #d7e6f7;border-radius:24px;box-shadow:var(--shadow-soft);position:relative;overflow:hidden}
+    .hero::after{content:"";position:absolute;right:-70px;top:-90px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(40,167,255,.16),rgba(40,167,255,0) 68%);pointer-events:none}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:9px;color:var(--jsl-blue);font-size:.78rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
+    h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1.08;letter-spacing:-.04em;color:#153760}
+    .hero p{max-width:720px;margin-top:12px;color:#60748f;line-height:1.7}
+    .security-pill{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid #bfe4cc;border-radius:999px;background:#effaf3;color:#16733b;font-size:.82rem;font-weight:850;box-shadow:0 6px 18px rgba(21,148,71,.08)}
+
+    .notice{display:none;align-items:flex-start;gap:11px;padding:14px 16px;margin-bottom:18px;border-radius:14px;border:1px solid transparent;line-height:1.5;box-shadow:0 6px 16px rgba(25,70,124,.05)}
+    .notice.show{display:flex}.notice.info{background:#edf7ff;border-color:#bee1fb;color:#235f8a}.notice.success{background:#effaf3;border-color:#bfe4cc;color:#176c39}.notice.error{background:#fff1f2;border-color:#f2c7cb;color:#9f2630}
+    .content-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align-items:start}
+    .stack,.side-stack{display:contents}
+    .stack>.card:first-child{grid-column:1;grid-row:2}
+    .stack>.card:nth-child(2){grid-column:1;grid-row:3}
+    .billing-account-card{grid-column:1;grid-row:1}
+    .billing-account-card>.card-body{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(330px,1.08fr) minmax(280px,.9fr);gap:18px;align-items:start}
+    .billing-account-card .summary-company,.billing-account-card .signed-in-record{margin-bottom:0}
+    .billing-summary-block{min-width:0}
+    .billing-summary-block .help-link{margin-top:12px}
+    .card{background:rgba(255,255,255,.97);border:1px solid #d9e6f5;border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+    .card-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid #e2ebf6;background:linear-gradient(180deg,#fff,#f9fbfe)}
+    .card-title{display:flex;align-items:center;gap:11px}.card-title>i{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;color:var(--jsl-blue);background:#edf5ff;border:1px solid #d8e9fb}
+    .card-title h2{font-size:1.04rem;color:#18385f}.card-title p{margin-top:3px;color:var(--muted);font-size:.79rem}
+    .card-body{padding:22px}
+
+    .method-list{display:grid;gap:12px}
+    .method-empty{padding:28px 18px;text-align:center;border:1px dashed #bfd3ea;border-radius:16px;color:var(--muted);background:#f9fbfe}
+    .method-empty i{display:block;margin-bottom:10px;font-size:1.55rem;color:var(--jsl-blue)}
+    .saved-method{display:flex;align-items:center;gap:13px;padding:14px;border:1px solid #dbe7f4;border-radius:16px;background:#fbfdff;transition:.18s ease}
+    .saved-method:hover{border-color:#bdd6f4;box-shadow:0 8px 20px rgba(31,85,149,.07)}
+    .method-icon{display:grid;place-items:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:linear-gradient(135deg,#eaf4ff,#f4f9ff);font-size:1.15rem;color:var(--jsl-blue);border:1px solid #d7e8fb}
+    .method-copy{min-width:0;flex:1}.method-copy strong,.method-copy span{display:block}.method-copy strong{color:#1c3d64}.method-copy span{margin-top:4px;color:var(--muted);font-size:.78rem}
+    .default-badge,.verified-badge{display:inline-flex!important;width:max-content;margin-top:7px!important;padding:4px 8px;border-radius:999px;font-size:.68rem!important;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+    .default-badge{background:#e9f8ef;color:#168445!important}.verified-badge{background:#edf5ff;color:#0b5cff!important}
+    .method-actions{display:flex;gap:6px}.icon-button{width:36px;height:36px;border:1px solid #cfddec;border-radius:10px;background:#fff;color:#315679;cursor:pointer}.icon-button:hover{border-color:#7eb2f4;color:var(--jsl-blue);background:#f4f9ff}.icon-button.danger:hover{border-color:#ef9aa0;color:#c92933;background:#fff5f5}
+
+    .payment-choice{display:grid;grid-template-columns:minmax(190px,.72fr) minmax(0,1.28fr);gap:14px;align-items:center;margin-bottom:20px;padding:15px;border:1px solid #cfe0f4;border-radius:16px;background:linear-gradient(135deg,#f9fcff,#eef6ff)}
+    .payment-choice label{display:flex;align-items:center;gap:9px;color:#214b76;font-size:.82rem;font-weight:900}.payment-choice label i{color:var(--jsl-blue)}
+    .payment-choice select{width:100%;height:49px;padding:0 42px 0 14px;border:1px solid #9fc3ef;border-radius:12px;background:#fff;color:#18395f;font-weight:850;outline:none;cursor:pointer}.payment-choice select:focus{border-color:var(--jsl-blue);box-shadow:0 0 0 4px rgba(11,92,255,.10)}
+    .payment-choice-note{grid-column:1/-1;color:#617994;font-size:.76rem;line-height:1.5}.payment-choice-note strong{color:#204b78}
+
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+    .field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:.78rem;font-weight:850;color:#355575}
+    .field input,.field select{width:100%;height:47px;padding:0 13px;border:1px solid #cddced;border-radius:12px;background:#fff;color:#183153;outline:none;transition:border-color .18s ease,box-shadow .18s ease}
+    .field input:focus,.field select:focus{border-color:#6ca9f4;box-shadow:0 0 0 4px rgba(11,92,255,.09)}.field input::placeholder{color:#93a4b9}
+    .method-panel{margin-top:18px;padding:18px;border:1px solid #dce8f5;border-radius:16px;background:#fbfdff}
+    .panel-heading{display:flex;align-items:flex-start;gap:10px;margin-bottom:15px}.panel-heading i{margin-top:2px;color:var(--jsl-blue)}.panel-heading strong,.panel-heading span{display:block}.panel-heading span{margin-top:4px;color:var(--muted);font-size:.76rem;line-height:1.45}
+    .hosted-field{height:47px;padding:12px 13px;border:1px solid #cddced;border-radius:12px;background:#fff;transition:border-color .18s ease,box-shadow .18s ease}
+    .hosted-field iframe{width:100%;height:100%;border:0}
+    .hosted-field.braintree-hosted-fields-focused{border-color:#6ca9f4;box-shadow:0 0 0 4px rgba(11,92,255,.09)}
+    .hosted-field.braintree-hosted-fields-invalid{border-color:#df646b}.hosted-field.braintree-hosted-fields-valid{border-color:#49a86c}
+    .processor-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;color:#68809a;font-size:.75rem}.processor-status i{margin-right:6px;color:var(--jsl-blue)}
+    .processor-retry,.setup-button{flex:0 0 auto;padding:7px 11px;border:1px solid #9dc3f2;border-radius:9px;background:#fff;color:var(--jsl-blue);font-size:.72rem;font-weight:850;cursor:pointer}.processor-retry:hover,.processor-retry:focus-visible,.setup-button:hover,.setup-button:focus-visible{border-color:var(--jsl-blue);background:#edf5ff;outline:none}.processor-retry:disabled,.setup-button:disabled{cursor:wait;opacity:.65}
+    /* Keep the card diagnostics available to JavaScript, but hide the developer/test panel from the normal employer UI. */
+    #cardSetupCheck{display:none!important}
+    .setup-check{margin-bottom:16px;padding:14px;border:1px solid #cfe0f4;border-radius:14px;background:#f7fbff}
+    .setup-check-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.setup-check-head strong{display:block;color:#1d4774;font-size:.83rem}.setup-check-head span{display:block;margin-top:3px;color:#70849a;font-size:.7rem}
+    .setup-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.setup-step{display:grid;grid-template-columns:22px minmax(0,1fr);gap:7px;align-items:start;padding:9px;border:1px solid #dbe7f4;border-radius:10px;background:#fff}.setup-step>i{margin-top:2px;color:#8ca0b5}.setup-step span,.setup-step strong{display:block}.setup-step span{color:#6d8197;font-size:.65rem}.setup-step strong{margin-top:2px;color:#294d71;font-size:.69rem;line-height:1.35;overflow-wrap:anywhere}.setup-step[data-status="working"]>i{color:var(--jsl-blue)}.setup-step[data-status="pass"]{border-color:#b8dfc6;background:#f3fbf6}.setup-step[data-status="pass"]>i{color:var(--success)}.setup-step[data-status="fail"]{border-color:#efc0c4;background:#fff5f6}.setup-step[data-status="fail"]>i{color:var(--danger)}
+    .setup-message{margin-top:10px;color:#58718c;font-size:.72rem;line-height:1.5}.setup-message.error{color:#a52b35}.setup-message.success{color:#17703b}
+    .sandbox-guide{margin-top:13px;border:1px solid #bcd8f5;border-radius:12px;background:#f1f7ff;overflow:hidden}.sandbox-guide summary{padding:11px 13px;color:#1c5487;font-size:.77rem;font-weight:900;cursor:pointer}.sandbox-guide-body{padding:0 13px 13px;color:#486986;font-size:.73rem;line-height:1.55}.sandbox-guide-body ol{margin:8px 0 10px 18px}.test-values{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.test-value{padding:8px;border:1px solid #c9def4;border-radius:9px;background:#fff}.test-value span,.test-value code{display:block}.test-value span{color:#71859a;font-size:.62rem}.test-value code{margin-top:3px;color:#143f6d;font-size:.72rem;font-weight:800;overflow-wrap:anywhere}
+    .ach-authorization{margin-top:16px;padding:14px;border:1px solid #b9d4f4;border-radius:14px;background:#f1f7ff}
+    .ach-authorization h3{font-size:.84rem;color:#214b76}.ach-authorization p{margin-top:8px;color:#4f6883;font-size:.72rem;line-height:1.62;white-space:pre-line}
+    .consent-check{display:flex;align-items:flex-start;gap:10px;margin-top:13px;padding-top:12px;border-top:1px solid #cedff2;color:#294f75;font-size:.78rem;font-weight:750;line-height:1.45;cursor:pointer}
+    .consent-check input{width:18px;height:18px;flex:0 0 18px;margin-top:1px;accent-color:var(--jsl-blue)}
+    .provider-box{display:flex;align-items:flex-start;gap:11px;margin-top:17px;padding:13px;border:1px solid #c5e2f7;border-radius:13px;background:#f0f9ff;color:#436781;font-size:.8rem;line-height:1.55}
+    .provider-box i{margin-top:2px;color:var(--jsl-blue)}.provider-box strong{color:#1e527c}
+    .primary-button{width:100%;min-height:49px;margin-top:18px;display:flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--jsl-blue-dark),var(--jsl-blue) 58%,var(--jsl-sky));color:#fff;font-weight:900;cursor:pointer;box-shadow:0 14px 28px rgba(11,92,255,.23);transition:transform .18s ease,filter .18s ease,box-shadow .18s ease}
+    .primary-button:hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:0 17px 32px rgba(11,92,255,.28)}.primary-button:disabled{cursor:not-allowed;opacity:.55;transform:none;box-shadow:none}
+    .primary-button.paypal-button{background:var(--paypal-gold);color:var(--paypal-navy);box-shadow:0 14px 28px rgba(0,48,135,.18)}
+
+    .billing-fields-block{margin-bottom:18px;padding:16px;border:1px solid #cfe0f4;border-radius:15px;background:#f8fbff}
+    .billing-panel-heading{margin-bottom:14px!important}
+    .method-panel[hidden]{display:none!important}
+
+    .summary-company{display:flex;align-items:center;gap:13px;margin-bottom:18px}
+    .company-mark{display:grid;place-items:center;width:58px;height:58px;flex:0 0 58px;border-radius:15px;background:#edf5ff;color:var(--jsl-blue);font-size:1.2rem;border:1px solid #d6e8fb;overflow:hidden}
+    .company-mark img{width:100%;height:100%;display:block;object-fit:cover;background:#fff}
+    .summary-company strong,.summary-company span{display:block}
+    .summary-company strong{color:#18395f}
+    .summary-company span{color:var(--muted);font-size:.78rem;margin-top:4px;word-break:break-word}
+    .signed-in-record{margin-bottom:16px;padding:14px;border:1px solid #bcd7f5;border-radius:15px;background:linear-gradient(135deg,#f7fbff,#edf5ff)}
+    .signed-in-record-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#0b5cff;font-size:.76rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em}
+    .signed-in-record-grid{display:grid;gap:8px}
+    .signed-in-record-row{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;align-items:start;font-size:.78rem}
+    .signed-in-record-row span{color:#6b7f97;font-weight:700}
+    .signed-in-record-row strong{color:#18395f;min-width:0;overflow-wrap:anywhere;font-weight:800}
+    .signed-in-record.logged-out{border-style:dashed;background:#fbfdff}
+    .summary-list{display:grid;border:1px solid #dce7f3;border-radius:15px;overflow:hidden}.summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border-bottom:1px solid #e3ecf6;font-size:.82rem;background:#fbfdff}.summary-row:last-child{border-bottom:0}.summary-row span{color:var(--muted)}.summary-row strong{text-align:right;color:#204366}
+    .help-link{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:11px;border:1px solid #cbdbea;border-radius:12px;color:var(--jsl-blue);text-decoration:none;font-size:.8rem;font-weight:800;background:#fafdff}.help-link:hover{border-color:#82b3f0;background:#f1f7ff}
+    .confirm-dialog{width:min(430px,calc(100% - 28px));border:1px solid #cbdcf0;border-radius:20px;padding:0;background:#fff;color:#183153;box-shadow:0 28px 80px rgba(22,62,111,.25)}
+    .confirm-dialog::backdrop{background:rgba(22,42,72,.45);backdrop-filter:blur(5px)}.dialog-body{padding:24px}.dialog-body h3{font-size:1.2rem;color:#18395f}.dialog-body p{margin-top:10px;color:var(--muted);line-height:1.6}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}.dialog-button{padding:10px 14px;border-radius:10px;border:1px solid #cad9e8;background:#fff;color:#244567;cursor:pointer;font-weight:800}.dialog-button.danger{border:0;background:#d9363e;color:#fff}
+    footer{padding:24px 16px 32px;text-align:center;color:#6e8197;font-size:.76rem}
+
+    @media(max-width:1000px){.desktop-nav{gap:8px}.desktop-nav a{font-size:.78rem}.billing-account-card>.card-body{grid-template-columns:repeat(2,minmax(0,1fr))}.billing-account-card .summary-company{grid-column:1/-1}}
+    @media(max-width:780px){:root{--header-h:68px}.site-header{padding:0 12px 0 5px}.brand img{height:66px}.desktop-nav,.account-area{display:none}.mobile-toggle{display:grid;place-items:center;margin-left:auto}.page-shell{width:min(100% - 22px,680px);margin-top:26px}.hero{align-items:flex-start;flex-direction:column;padding:22px}.payment-choice{grid-template-columns:1fr}.payment-choice-note{grid-column:auto}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.billing-account-card>.card-body{grid-template-columns:1fr}.billing-account-card .summary-company{grid-column:auto}.card-head,.card-body{padding:18px}.saved-method{align-items:flex-start}.method-actions{flex-direction:column}.setup-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.test-values{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:480px){.page-shell{width:min(100% - 16px,680px)}h1{font-size:1.75rem}.hero{padding:19px 17px;border-radius:18px}.hero p{font-size:.88rem}.card{border-radius:17px}.card-head{align-items:flex-start}.saved-method{flex-wrap:wrap}.method-copy{min-width:calc(100% - 64px)}.method-actions{width:100%;flex-direction:row;justify-content:flex-end}.summary-row{align-items:flex-start;flex-direction:column}.summary-row strong{text-align:left}.method-panel{padding:14px}.setup-check-head{align-items:flex-start;flex-direction:column}.setup-button{width:100%}.setup-steps,.test-values{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="home.html" aria-label="Job Space Link home"><img src="JOBSPACELINK.png" alt="Job Space Link" /></a>
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="home.html"><i class="fa-solid fa-house"></i> Home</a>
+      <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+      <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i> Job Hiring</a>
+      <a href="dashboard1.html"><i class="fa-solid fa-users"></i> Jobseeker</a>
+      <a href="postjob1.html"><i class="fa-solid fa-square-plus"></i> Post Jobs</a>
+      <a href="applicantform1.html?source=jobspacelink"><i class="fa-solid fa-file-arrow-up"></i> Post Resume</a>
+    </nav>
+
+    <div class="account-area" id="accountArea">
+      <button type="button" class="account-button" id="accountButton" aria-expanded="false" aria-controls="accountMenu">
+        <img class="account-logo" id="accountLogo" src="JOBSPACELINK.png" alt="Account logo" />
+        <span class="account-name" id="accountName">Employer Login</span>
+        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+      </button>
+      <div class="account-menu" id="accountMenu" aria-hidden="true">
+        <div class="account-summary"><strong id="menuCompany">No login account</strong><span id="menuEmail">Sign in to manage payment methods</span></div>
+        <a href="employerprofile.html"><i class="fa-regular fa-address-card"></i> View company profile</a>
+        <a href="paymentmethod.html"><i class="fa-solid fa-wallet"></i> Billing Account</a>
+        <a href="postedjobs.html"><i class="fa-solid fa-list-check"></i> Posted Jobs</a>
+        <a href="subscribe.html"><i class="fa-solid fa-credit-card"></i> Subscribe</a>
+        <a href="subscriptionstatus.html"><i class="fa-solid fa-clipboard-check"></i> Subscription Status</a>
+        <a href="employer-post-activity.html"><i class="fa-solid fa-users-viewfinder"></i> Job Applications</a>
+        <a href="loginemployer.html" id="loginMenuLink"><i class="fa-solid fa-right-to-bracket"></i> Employer Login</a>
+        <button type="button" id="logoutButton" hidden><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+      </div>
+    </div>
+
+    <button type="button" class="mobile-toggle" id="mobileToggle" aria-expanded="false" aria-controls="mobilePanel" aria-label="Open navigation"><i class="fa-solid fa-bars"></i></button>
+  </header>
+
+  <div class="mobile-panel" id="mobilePanel" aria-hidden="true">
+    <a href="home.html"><span><i class="fa-solid fa-house"></i> Home</span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postedhiring1.html"><span><i class="fa-solid fa-briefcase"></i> Job Hiring</span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="dashboard1.html"><span><i class="fa-solid fa-users"></i> Jobseeker Directory</span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="postjob1.html"><span><i class="fa-solid fa-square-plus"></i> Post Jobs</span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="subscriptionstatus.html"><span><i class="fa-solid fa-clipboard-check"></i> Subscription Status</span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="loginemployer.html"><span><i class="fa-solid fa-building-user"></i> Employer Login</span><i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><i class="fa-solid fa-shield-halved"></i> U.S. employer billing</div>
+        <h1>Payment methods</h1>
+        <p>Add a credit or debit card, a verified U.S. bank account for ACH, or a PayPal Wallet for Job Space Link employer subscriptions.</p>
+      </div>
+      <div class="security-pill"><i class="fa-solid fa-lock"></i> Tokenized by PayPal &amp; Braintree</div>
+    </section>
+
+    <div class="notice" id="pageNotice" role="status" aria-live="polite"></div>
+
+    <div class="content-grid">
+      <div class="stack">
+        <section class="card" aria-labelledby="savedMethodsTitle">
+          <div class="card-head">
+            <div class="card-title"><i class="fa-solid fa-wallet"></i><div><h2 id="savedMethodsTitle">Saved payment methods</h2><p>Choose the default method used for employer billing.</p></div></div>
+            <button type="button" class="icon-button" id="refreshMethodsButton" aria-label="Refresh payment methods" title="Refresh"><i class="fa-solid fa-rotate"></i></button>
+          </div>
+          <div class="card-body"><div class="method-list" id="methodList"><div class="method-empty"><i class="fa-solid fa-spinner fa-spin"></i>Loading payment methods...</div></div></div>
+        </section>
+
+        <section class="card" aria-labelledby="addMethodTitle">
+          <div class="card-head"><div class="card-title"><i class="fa-solid fa-circle-plus"></i><div><h2 id="addMethodTitle">Add a payment method</h2><p>Choose one secure option for U.S. employer billing.</p></div></div></div>
+          <div class="card-body">
+            <div class="payment-choice">
+              <label for="paymentMethodSelect"><i class="fa-solid fa-wallet"></i> Choose payment method</label>
+              <select id="paymentMethodSelect" aria-describedby="paymentChoiceNote">
+                <option value="card" selected>Credit or debit card — recommended</option>
+                <option value="ach">U.S. bank account (ACH)</option>
+                <option value="paypal">PayPal Wallet</option>
+              </select>
+              <p class="payment-choice-note" id="paymentChoiceNote"><strong>Credit or debit card:</strong> enter the card securely without leaving Job Space Link.</p>
+            </div>
+
+            <form id="paymentMethodForm" autocomplete="on">
+              <div class="billing-fields-block" id="billingFieldsBlock">
+                <div class="panel-heading billing-panel-heading">
+                  <i class="fa-solid fa-file-invoice-dollar"></i>
+                  <div>
+                    <strong>Billing details</strong>
+                    <span>These details belong to the payment method currently selected above.</span>
+                  </div>
+                </div>
+                <div class="form-grid">
+                  <div class="field"><label for="billingName">Billing or company name</label><input id="billingName" name="billing_name" type="text" autocomplete="organization" placeholder="Company name" required /></div>
+                  <div class="field"><label for="billingEmail">Billing email</label><input id="billingEmail" name="billing_email" type="email" autocomplete="email" inputmode="email" placeholder="billing@company.com" required /></div>
+                  <div class="field"><label for="billingPhone">Phone number</label><input id="billingPhone" name="billing_phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+1 555 000 0000" required /></div>
+                  <div class="field"><label for="billingCountry">Country</label><select id="billingCountry" name="billing_country" autocomplete="country" required><option value="US" selected>United States</option></select></div>
+                  <div class="field full"><label for="billingAddress">Street address</label><input id="billingAddress" name="billing_address" type="text" autocomplete="street-address" placeholder="123 Main Street, Suite 400" required /></div>
+                  <div class="field"><label for="billingCity">City</label><input id="billingCity" name="billing_city" type="text" autocomplete="address-level2" placeholder="City" required /></div>
+                  <div class="field"><label for="billingRegion">State</label><input id="billingRegion" name="billing_region" type="text" autocomplete="address-level1" maxlength="30" placeholder="State or two-letter code" required /></div>
+                  <div class="field"><label for="billingPostal">ZIP code</label><input id="billingPostal" name="billing_postal" type="text" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{5}(-[0-9]{4})?" placeholder="12345" required /></div>
+                  <div class="field"><label for="methodNickname">Method nickname <span style="color:#7f8da3;font-weight:500">(optional)</span></label><input id="methodNickname" name="nickname" type="text" maxlength="40" placeholder="Example: Hiring card" /></div>
+                </div>
+              </div>
+
+              <section class="method-panel" id="cardPanel" data-panel="card" aria-labelledby="cardPanelTitle">
+                <div id="cardBillingSlot"></div>
+                <div class="setup-check" id="cardSetupCheck">
+                  <div class="setup-check-head">
+                    <div><strong>Secure card setup check</strong><span>This checks configuration only. It does not charge or save a card.</span></div>
+                    <button type="button" class="setup-button" id="checkCardSetupButton"><i class="fa-solid fa-stethoscope"></i> Check card setup</button>
+                  </div>
+                  <div class="setup-steps" aria-live="polite">
+                    <div class="setup-step" id="checkPageAddress" data-status="waiting"><i class="fa-regular fa-circle"></i><div><span>Page address</span><strong>Waiting</strong></div></div>
+                    <div class="setup-step" id="checkEmployerLogin" data-status="waiting"><i class="fa-regular fa-circle"></i><div><span>Employer login</span><strong>Waiting</strong></div></div>
+                    <div class="setup-step" id="checkClientToken" data-status="waiting"><i class="fa-regular fa-circle"></i><div><span>Edge Function</span><strong>Waiting</strong></div></div>
+                    <div class="setup-step" id="checkHostedFields" data-status="waiting"><i class="fa-regular fa-circle"></i><div><span>Secure fields</span><strong>Waiting</strong></div></div>
+                  </div>
+                  <p class="setup-message" id="cardSetupMessage">Log in as an employer, then this page will prepare the secure card fields automatically.</p>
+                  <details class="sandbox-guide" id="sandboxTestGuide" hidden>
+                    <summary><i class="fa-solid fa-flask"></i> Braintree Sandbox test values</summary>
+                    <div class="sandbox-guide-body">
+                      <ol>
+                        <li>Use Braintree <strong>Sandbox</strong> credentials in the Edge Function.</li>
+                        <li>Open this page through Live Server or HTTPS, not directly as a <code>file://</code>.</li>
+                        <li>Type each value into its matching secure field. <strong>Save card</strong> enables after all three card fields are valid.</li>
+                        <li>Confirm the masked card appears under Saved payment methods and in the Braintree Sandbox Control Panel.</li>
+                      </ol>
+                      <div class="test-values">
+                        <div class="test-value"><span>Visa test card</span><code>4111 1111 1111 1111</code></div>
+                        <div class="test-value"><span>Expiration</span><code>12/2030</code></div>
+                        <div class="test-value"><span>CVV</span><code>123</code></div>
+                        <div class="test-value"><span>ZIP code</span><code>95113</code></div>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+                <div class="panel-heading"><i class="fa-solid fa-shield-halved"></i><div><strong id="cardPanelTitle">Secure card details</strong><span>Card data is entered in Braintree Hosted Fields and is never sent to Job Space Link or Supabase.</span></div></div>
+                <div class="form-grid">
+                  <div class="field full"><label for="cardNumber">Card number</label><div class="hosted-field" id="cardNumber" aria-label="Card number"></div></div>
+                  <div class="field"><label for="cardExpiration">Expiration date</label><div class="hosted-field" id="cardExpiration" aria-label="Expiration date"></div></div>
+                  <div class="field"><label for="cardCvv">Security code (CVV)</label><div class="hosted-field" id="cardCvv" aria-label="Security code"></div></div>
+                </div>
+                <div class="processor-status">
+                  <span id="cardProcessorStatus"><i class="fa-solid fa-spinner fa-spin"></i>Waiting for your employer account…</span>
+                  <button type="button" class="processor-retry" id="retryCardFieldsButton" hidden><i class="fa-solid fa-rotate-right"></i> Retry secure fields</button>
+                </div>
+              </section>
+
+              <section class="method-panel" id="achPanel" data-panel="ach" aria-labelledby="achPanelTitle" hidden>
+                <div id="achBillingSlot"></div>
+                <div class="panel-heading"><i class="fa-solid fa-building-columns"></i><div><strong id="achPanelTitle">U.S. bank account</strong><span>Braintree tokenizes the account in your browser and performs a network verification before it can be saved.</span></div></div>
+                <div class="form-grid">
+                  <div class="field"><label for="achBankName">Financial institution</label><input id="achBankName" type="text" maxlength="120" placeholder="Bank name" required disabled /></div>
+                  <div class="field"><label for="achAccountType">Account type</label><select id="achAccountType" required disabled><option value="checking">Checking</option><option value="savings">Savings</option></select></div>
+                  <div class="field"><label for="achOwnership">Ownership type</label><select id="achOwnership" required disabled><option value="business" selected>Business</option><option value="personal">Personal / sole proprietor</option></select></div>
+                  <div class="field" id="achBusinessField"><label for="achBusinessName">Account holder business name</label><input id="achBusinessName" type="text" maxlength="255" autocomplete="organization" placeholder="Legal business name" required disabled /></div>
+                  <div class="field" id="achFirstNameField" hidden><label for="achFirstName">Account holder first name</label><input id="achFirstName" type="text" maxlength="255" autocomplete="given-name" placeholder="First name" disabled /></div>
+                  <div class="field" id="achLastNameField" hidden><label for="achLastName">Account holder last name</label><input id="achLastName" type="text" maxlength="255" autocomplete="family-name" placeholder="Last name" disabled /></div>
+                  <div class="field"><label for="achRouting">Routing number</label><input id="achRouting" type="text" inputmode="numeric" autocomplete="off" pattern="[0-9]{9}" minlength="9" maxlength="9" placeholder="9 digits" required disabled /></div>
+                  <div class="field"><label for="achAccount">Account number</label><input id="achAccount" type="text" inputmode="numeric" autocomplete="off" pattern="[0-9]{4,17}" minlength="4" maxlength="17" placeholder="Account number" required disabled /></div>
+                </div>
+                <div class="ach-authorization">
+                  <h3>ACH standing authorization</h3>
+                  <p id="achMandateText"></p>
+                  <label class="consent-check" for="achConsent"><input id="achConsent" type="checkbox" required disabled /><span>I have authority over this account and agree to the ACH authorization above.</span></label>
+                </div>
+                <div class="processor-status" id="achProcessorStatus"><i class="fa-solid fa-circle-info"></i>ACH is available only after it is enabled for your eligible Braintree merchant account.</div>
+              </section>
+
+              <section class="method-panel" id="paypalPanel" data-panel="paypal" aria-labelledby="paypalPanelTitle" hidden>
+                <div id="paypalBillingSlot"></div>
+                <div class="panel-heading"><i class="fa-brands fa-paypal"></i><div><strong id="paypalPanelTitle">Connect PayPal Wallet</strong><span>You will leave this page briefly to sign in to PayPal and approve Job Space Link for future employer subscription payments.</span></div></div>
+              </section>
+
+              <div class="provider-box" id="providerMessage"><i class="fa-solid fa-lock"></i><div><strong>Your complete card details stay with Braintree.</strong><br />Job Space Link receives only a vault token and masked card information.</div></div>
+              <button type="submit" class="primary-button" id="submitPaymentButton"><i class="fa-regular fa-credit-card"></i><span>Save card</span></button>
+              <a href="subscribe.html" class="help-link" id="returnToSubscribeLink" hidden>
+                <i class="fa-solid fa-arrow-left"></i> Return to subscription
+              </a>
+            </form>
+          </div>
+        </section>
+      </div>
+
+      <aside class="side-stack">
+        <section class="card billing-account-card">
+          <div class="card-head"><div class="card-title"><i class="fa-solid fa-building-user"></i><div><h2>Billing account</h2><p>Current employer identity</p></div></div></div>
+          <div class="card-body">
+            <div class="summary-company">
+              <div class="company-mark" id="summaryCompanyMark"><i class="fa-solid fa-building"></i></div>
+              <div><strong id="summaryCompany">Not logged in</strong><span id="summaryEmail">Employer login required</span></div>
+            </div>
+
+            <div class="signed-in-record logged-out" id="signedInEmployerRecord" aria-live="polite">
+              <div class="signed-in-record-head"><i class="fa-solid fa-circle-user"></i> Logged-in employer record</div>
+              <div class="signed-in-record-grid">
+                <div class="signed-in-record-row"><span>Company</span><strong id="recordCompany">Not logged in</strong></div>
+                <div class="signed-in-record-row"><span>Email</span><strong id="recordEmail">—</strong></div>
+                <div class="signed-in-record-row"><span>Phone</span><strong id="recordPhone">—</strong></div>
+                <div class="signed-in-record-row"><span>Account ID</span><strong id="recordUserId">—</strong></div>
+              </div>
+            </div>
+
+            <div class="billing-summary-block">
+              <div class="summary-list">
+                <div class="summary-row"><span>Current plan</span><strong id="summaryPlan">No active plan</strong></div>
+                <div class="summary-row"><span>Currency</span><strong>USD</strong></div>
+                <div class="summary-row"><span>Processors</span><strong>PayPal + Braintree</strong></div>
+                <div class="summary-row"><span>Default method</span><strong id="summaryDefault">None</strong></div>
+              </div>
+              <a class="help-link" href="subscriptionstatus.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View subscription status</a>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <dialog class="confirm-dialog" id="deleteDialog">
+    <div class="dialog-body">
+      <h3>Remove payment method?</h3>
+      <p>This revokes the saved provider token and removes the method from Job Space Link. A method attached to an active Braintree subscription cannot be removed until that subscription is moved or canceled. Removing a PayPal token may stop future PayPal billing.</p>
+      <div class="dialog-actions"><button type="button" class="dialog-button" id="cancelDeleteButton">Cancel</button><button type="button" class="dialog-button danger" id="confirmDeleteButton">Remove</button></div>
+    </div>
+  </dialog>
+
+  <footer>© <span id="currentYear"></span> Job Space Link. Payment details are tokenized and vaulted by PayPal or Braintree, a PayPal service.</footer>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const PAYMENT_METHOD_TABLE = "employer_payment_methods";
+    const PAYMENT_SESSION_FUNCTION = "employer-payment-method";
+    const SUBSCRIPTION_TABLE = "employer_payment_transactions";
+    const EMPLOYER_TABLES = ["employer_company_profiles", "employer_profiles", "employers", "profiles"];
+    const LOGO_STORAGE_BUCKET = "job_pdfs";
+    const LEGACY_LOGO_STORAGE_BUCKET = "employer_profile_files";
+    const ACH_MANDATE_VERSION = "braintree-standing-authorization-v1";
+    const PAYMENT_RETURN_MARKER = "JSL_RETURNING_FROM_PAYMENT_METHODS";
+    const PUBLIC_PAYMENT_METHOD_COLUMNS = "id,user_id,method_type,provider,provider_mode,brand,last4,exp_month,exp_year,ach_bank_name,ach_account_type,paypal_email,masked_account,nickname,is_default,verification_status,status,created_at,updated_at";
+    const state = {
+      client:null,
+      user:null,
+      employer:null,
+      methods:[],
+      selectedMethod:"card",
+      pendingDeleteId:null,
+      braintreeClient:null,
+      braintreeClientPromise:null,
+      hostedFields:null,
+      hostedFieldsPromise:null,
+      cardFieldsValid:false,
+      usBankAccount:null,
+      usBankAccountPromise:null,
+      achUnavailable:false,
+      achUnavailableReason:"",
+      returnTarget:""
+    };
+
+    const byId = id => document.getElementById(id);
+    const clean = value => String(value == null ? "" : value).trim();
+    const lower = value => clean(value).toLowerCase();
+    const escapeHtml = value => clean(value).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+    const PAYMENT_METHOD_NOTES = {
+      card:"Credit or debit card: enter the card securely without leaving Job Space Link.",
+      ach:"U.S. bank account: enter an eligible checking or savings account and approve the ACH authorization.",
+      paypal:"PayPal Wallet: continue to PayPal to approve future Job Space Link subscription payments."
+    };
+
+    function isSafePaymentOrigin(){
+      return window.location.protocol==="https:"||["localhost","127.0.0.1","::1"].includes(window.location.hostname);
+    }
+
+    function setSetupStep(id,status,detail){
+      const step=byId(id); if(!step) return;
+      step.dataset.status=status;
+      const icon=step.querySelector(":scope > i");
+      const value=step.querySelector("strong");
+      if(icon) icon.className=status==="pass"?"fa-solid fa-circle-check":status==="fail"?"fa-solid fa-circle-xmark":status==="working"?"fa-solid fa-spinner fa-spin":"fa-regular fa-circle";
+      if(value) value.textContent=detail;
+    }
+
+    function setSetupMessage(message,type=""){
+      const box=byId("cardSetupMessage"); if(!box) return;
+      box.textContent=message;
+      box.className=`setup-message${type?` ${type}`:""}`;
+    }
+
+    function friendlyPaymentError(error){
+      const message=clean(error?.message)||"Unknown payment setup error.";
+      if(/^(Open this page through|The payment service could not be reached|The Supabase Edge Function|The employer session is not authorized|Braintree could not create a client token|Supabase is not configured|Log in with an employer account)/i.test(message)) return message;
+      if(window.location.protocol==="file:") return "Open this page through Live Server or HTTPS. Secure card fields cannot be tested reliably from a file:// address.";
+      if(/failed to fetch|network|load failed/i.test(message)) return `The payment service could not be reached. Check internet access, Edge Function CORS, and the deployed function name “${PAYMENT_SESSION_FUNCTION}”.`;
+      if(/non-2xx|404|not found|function.*not/i.test(message)) return `The Supabase Edge Function “${PAYMENT_SESSION_FUNCTION}” is missing or returned an error. Deploy it and inspect its logs.`;
+      if(/jwt|unauthorized|401|session/i.test(message)) return "The employer session is not authorized to call the payment Edge Function. Log in again and verify the function JWT settings.";
+      if(/merchant|private.?key|public.?key|client token|braintree/i.test(message)) return `Braintree could not create a client token. Verify the Sandbox merchant ID, public key, private key, and environment secrets. Details: ${message}`;
+      return message;
+    }
+
+    function isAchUnavailableError(error){
+      const message=lower(error?.message);
+      return /(?:us\s*bank|bank account|ach).*(?:not enabled|not available|unsupported|not authorized)/i.test(message)
+        || /(?:not enabled|not available|unsupported|not authorized).*(?:us\s*bank|bank account|ach)/i.test(message);
+    }
+
+    function disableUnavailableAch(error){
+      const providerMessage=clean(error?.message)||"U.S. bank account payments are not enabled for this Braintree merchant account.";
+      state.achUnavailable=true;
+      state.achUnavailableReason=providerMessage;
+      state.usBankAccount=null;
+      state.usBankAccountPromise=null;
+
+      const option=byId("paymentMethodSelect")?.querySelector('option[value="ach"]');
+      if(option){
+        option.disabled=true;
+        option.textContent="U.S. bank account (ACH) — unavailable";
+      }
+
+      const status=byId("achProcessorStatus");
+      if(status){
+        status.innerHTML='<i class="fa-solid fa-circle-exclamation"></i>ACH is unavailable for this Braintree merchant account. Use a credit/debit card or PayPal, or ask Braintree to enable U.S. bank account processing.';
+      }
+
+      if(state.selectedMethod==="ach") updateSelectedMethod("card");
+      showNotice("ACH is not enabled for this Braintree account. Credit/debit card and PayPal remain available.","info");
+    }
+
+    const CARD_FIELD_META = [
+      {key:"number",label:"card number",container:"cardNumber"},
+      {key:"expirationDate",label:"expiration date",container:"cardExpiration"},
+      {key:"cvv",label:"CVV",container:"cardCvv"}
+    ];
+
+    function inspectCardFields(instance=state.hostedFields){
+      let fields={};
+      try{ fields=instance?.getState?.()?.fields||{}; }catch(_error){}
+      return CARD_FIELD_META.map(meta=>{
+        const field=fields[meta.key]||{};
+        return {...meta,isEmpty:Boolean(field.isEmpty),isValid:Boolean(field.isValid)};
+      });
+    }
+
+    function updateCardFieldStatus(event){
+      const results=inspectCardFields();
+      const invalid=results.filter(field=>!field.isValid);
+      state.cardFieldsValid=Boolean(state.hostedFields)&&invalid.length===0;
+
+      for(const field of results){
+        const container=byId(field.container);
+        if(!container) continue;
+        container.classList.toggle("braintree-hosted-fields-invalid",!field.isEmpty&&!field.isValid);
+        container.classList.toggle("braintree-hosted-fields-valid",field.isValid);
+        container.setAttribute("aria-invalid",String(!field.isEmpty&&!field.isValid));
+      }
+
+      const status=byId("cardProcessorStatus");
+      if(status){
+        if(state.cardFieldsValid){
+          status.innerHTML='<i class="fa-solid fa-circle-check"></i>Card number, expiration date, and CVV are valid. Ready to save.';
+        }else{
+          const started=results.some(field=>!field.isEmpty);
+          const labels=invalid.map(field=>field.label).join(", ");
+          status.innerHTML=`<i class="fa-solid ${started?"fa-triangle-exclamation":"fa-circle-info"}"></i>${started?`Complete or correct: ${escapeHtml(labels)}.`:"Enter the card number, expiration date, and CVV."}`;
+        }
+      }
+
+      if(event?.emittedBy){
+        const current=results.find(field=>field.key===event.emittedBy);
+        if(current&&!current.isEmpty&&!current.isValid) setSetupMessage(`Check the ${current.label}.`,"error");
+        else if(state.cardFieldsValid) setSetupMessage("All secure card fields are valid. You can save the card now.","success");
+      }
+      syncSubmitState();
+      return invalid;
+    }
+
+    function focusFirstInvalidCardField(instance=state.hostedFields){
+      const invalid=updateCardFieldStatus();
+      const first=invalid[0];
+      if(!first) return [];
+      byId(first.container)?.scrollIntoView({behavior:"smooth",block:"center"});
+      try{ instance?.focus?.(first.key); }catch(_error){}
+      return invalid;
+    }
+
+    function resolveClient(){
+      try{ if(typeof window.resolveSupabaseClient === "function") return window.resolveSupabaseClient(); }catch(_error){}
+      if(window.supabaseClient && typeof window.supabaseClient.from === "function") return window.supabaseClient;
+      if(window.supabase && typeof window.supabase.from === "function") return window.supabase;
+      if(window.supabase && typeof window.supabase.createClient === "function" && window.SUPABASE_URL && window.SUPABASE_ANON_KEY){
+        window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        return window.supabaseClient;
+      }
+      return null;
+    }
+
+    function showNotice(message,type="info"){
+      const box=byId("pageNotice");
+      box.className=`notice show ${type}`;
+      box.replaceChildren();
+      const icon=document.createElement("i");
+      icon.className=type==="success"?"fa-solid fa-circle-check":type==="error"?"fa-solid fa-triangle-exclamation":"fa-solid fa-circle-info";
+      const text=document.createElement("span"); text.textContent=message;
+      box.append(icon,text);
+      box.scrollIntoView({behavior:"smooth",block:"nearest"});
+    }
+
+    function clearNotice(){ byId("pageNotice").className="notice"; }
+
+    function selectedProcessorReady(){
+      if(!state.user?.id||!state.client) return false;
+      if(state.selectedMethod==="card") return Boolean(state.hostedFields)&&state.cardFieldsValid;
+      if(state.selectedMethod==="ach") return Boolean(state.usBankAccount);
+      return true;
+    }
+
+    function syncSubmitState(){
+      const submit=byId("submitPaymentButton");
+      if(!submit||submit.dataset.busy==="true") return;
+      submit.disabled=!selectedProcessorReady();
+    }
+
+    function setBusy(button,busy,busyText="Please wait..."){
+      if(!button) return;
+      if(busy){ button.dataset.busy="true"; button.dataset.originalHtml=button.innerHTML; button.disabled=true; button.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i><span>${escapeHtml(busyText)}</span>`; }
+      else{
+        delete button.dataset.busy;
+        if(button.dataset.originalHtml) button.innerHTML=button.dataset.originalHtml;
+        if(button.id==="submitPaymentButton") syncSubmitState();
+        else button.disabled=false;
+      }
+    }
+
+    async function invokePaymentFunction(body){
+      if(!state.client?.functions || typeof state.client.functions.invoke!=="function") throw new Error("Supabase Edge Functions are not available on this page.");
+      const {data,error}=await state.client.functions.invoke(PAYMENT_SESSION_FUNCTION,{body});
+      if(error){
+        let message=clean(error.message)||"The payment service returned an error.";
+        try{
+          const response=error.context;
+          if(response && typeof response.clone==="function"){
+            const payload=await response.clone().json();
+            if(clean(payload?.message)) message=clean(payload.message);
+          }
+        }catch(_error){}
+        throw new Error(message);
+      }
+      if(data?.success===false) throw new Error(clean(data.message)||"The payment service could not complete the request.");
+      return data||{};
+    }
+
+    // SECURITY: payment methods are loaded only through the authenticated
+    // employer-payment-method Edge Function. There is intentionally no direct
+    // browser database fallback for employer_payment_methods.
+
+    function profileValue(row,keys){ for(const key of keys){ if(clean(row?.[key])) return clean(row[key]); } return ""; }
+
+    function mergeEmployerRecords(primary={},fallback={}){
+      const merged={...(primary&&typeof primary==="object"?primary:{})};
+      if(!fallback||typeof fallback!=="object") return merged;
+      for(const [key,value] of Object.entries(fallback)){
+        if(!clean(merged[key])&&clean(value)) merged[key]=value;
+      }
+      return merged;
+    }
+
+    function employerRecordMatchesUser(record,user=state.user){
+      if(!record||typeof record!=="object"||!user?.id) return false;
+      const recordUserId=profileValue(record,["user_id","userId","auth_user_id","authUserId","uid"]);
+      const recordEmail=lower(profileValue(record,["employer_email","company_email","email","contact_email","login_email"]));
+      const userEmail=lower(user.email);
+      return Boolean((recordUserId&&recordUserId===user.id)||(recordEmail&&userEmail&&recordEmail===userEmail));
+    }
+
+    function readLocalEmployer(user=state.user){
+      const keys=[
+        "jobSpaceLink_employer_profile",
+        "jobSpaceLink_employer_session",
+        "jobSpaceLink_logged_in_employer",
+        "jobSpaceLink_employer_login",
+        "jobSpaceLink_employer_identity",
+        "loggedInEmployer",
+        "loggedInEmployerData",
+        "employerSession",
+        "employerAccount",
+        "jobSpaceLink_login_identity"
+      ];
+      let matched={};
+      for(const storage of [localStorage,sessionStorage]){
+        for(const key of keys){
+          try{
+            const raw=storage.getItem(key);
+            if(!raw) continue;
+            const parsed=JSON.parse(raw);
+            const candidates=[parsed,parsed?.employer,parsed?.profile].filter(candidate=>candidate&&typeof candidate==="object");
+            for(const candidate of candidates){
+              if(employerRecordMatchesUser(candidate,user)) matched=mergeEmployerRecords(matched,candidate);
+            }
+          }catch(_error){}
+        }
+      }
+      return matched;
+    }
+
+    function isGenericSiteLogo(value){
+      const normalized=lower(value).split(/[?#]/)[0];
+      return normalized.endsWith("jobspacelink.png")||normalized.endsWith("job-space-link.png");
+    }
+
+    async function resolveEmployerLogoUrl(record,user=state.user){
+      const directLogo=profileValue(record,[
+        "company_logo_url",
+        "company_profile_url",
+        "logo_url",
+        "logoUrl",
+        "profile_picture_url",
+        "company_logo",
+        "logo",
+        "avatar_url"
+      ]);
+
+      const storedPath=profileValue(record,["company_logo_path","logo_path","profile_logo_path"])||
+        (directLogo&&!isGenericSiteLogo(directLogo)&&directLogo.includes("/")?directLogo:"");
+      if(storedPath&&state.client?.storage){
+        const userPrefix=clean(user?.id);
+        const isLegacyPath=storedPath.includes("/profile/")||Boolean(userPrefix&&storedPath.startsWith(`${userPrefix}/`));
+        const bucket=isLegacyPath?LEGACY_LOGO_STORAGE_BUCKET:LOGO_STORAGE_BUCKET;
+
+        try{
+          if(bucket===LOGO_STORAGE_BUCKET){
+            const {data}=state.client.storage.from(bucket).getPublicUrl(storedPath);
+            if(clean(data?.publicUrl)) return clean(data.publicUrl);
+          }
+          const {data,error}=await state.client.storage.from(bucket).createSignedUrl(storedPath,3600);
+          if(!error&&clean(data?.signedUrl)) return clean(data.signedUrl);
+        }catch(error){
+          console.warn("Unable to resolve the authenticated employer logo:",error);
+        }
+      }
+      return directLogo&&!isGenericSiteLogo(directLogo)?directLogo:"";
+    }
+
+    async function findEmployerProfile(user){
+      const email=lower(user?.email);
+      const selectors=user?.id?[{column:"user_id",value:user.id},{column:"auth_user_id",value:user.id},{column:"id",value:user.id}]:[];
+      if(email) selectors.push({column:"email",value:email},{column:"company_email",value:email},{column:"employer_email",value:email});
+      let profile={};
+      for(const table of EMPLOYER_TABLES){
+        let tableRecord=null;
+        for(const selector of selectors){
+          try{
+            const result=await state.client.from(table).select("*").eq(selector.column,selector.value).limit(1).maybeSingle();
+            if(result.error||!result.data) continue;
+            const role=lower(profileValue(result.data,["role","account_type","user_type","type"]));
+            if(role&&/(jobseeker|applicant|candidate)/.test(role)&&!role.includes("employer")) continue;
+            tableRecord=result.data;
+            break;
+          }catch(_error){}
+        }
+        if(tableRecord) profile=mergeEmployerRecords(profile,tableRecord);
+      }
+      profile=mergeEmployerRecords(profile,readLocalEmployer(user));
+      if(!Object.keys(profile).length) return null;
+      const logoUrl=await resolveEmployerLogoUrl(profile,user);
+      if(logoUrl) profile.company_logo_url=logoUrl;
+      return profile;
+    }
+
+    function employerIdentity(){
+      const local=readLocalEmployer(state.user);
+      const profile=state.employer||{};
+      const metadata=state.user?.user_metadata||{};
+      const firstName=profileValue(profile,["first_name","firstname","firstName"])||profileValue(metadata,["first_name","firstname","firstName"]);
+      const lastName=profileValue(profile,["last_name","lastname","lastName"])||profileValue(metadata,["last_name","lastname","lastName"]);
+      const fullName=profileValue(profile,["full_name","fullname","name"])||`${firstName} ${lastName}`.trim();
+      return {
+        company:
+          profileValue(profile,["company_name","business_name","organization_name","company"])||
+          profileValue(local,["company_name","companyName","business_name","company"])||
+          profileValue(metadata,["company_name","companyName","business_name","company"])||
+          fullName||
+          "Employer Account",
+        email:
+          lower(state.user?.email)||
+          lower(profileValue(profile,["email","company_email","employer_email"]))||
+          lower(profileValue(local,["email","company_email","employer_email"])),
+        logo:
+          profileValue(profile,["company_logo_url","company_profile_url","logo_url","logoUrl","profile_picture_url","company_logo","logo","avatar_url"])||
+          profileValue(local,["company_logo_url","company_profile_url","logo_url","logoUrl","profile_picture_url","companyLogo","logo","avatar_url"])||
+          profileValue(metadata,["company_logo_url","company_profile_url","logo_url","logoUrl","profile_picture_url","companyLogo","logo","avatar_url"]),
+        phone:
+          profileValue(profile,["phone","phone_number","mobile_number","contact_phone","mobile"])||
+          profileValue(local,["phone","phone_number","mobile_number","contact_phone","mobile"])||
+          profileValue(metadata,["phone","phone_number","mobile_number","contact_phone","mobile"])
+      };
+    }
+
+    function companyLogoFallback(companyName){
+      const words=clean(companyName).split(/\s+/).filter(Boolean);
+      const initials=((words[0]?.[0]||"E")+(words.length>1?(words[words.length-1]?.[0]||""):"")).toUpperCase();
+      const safeInitials=initials.replace(/[^A-Z0-9]/g,"").slice(0,2)||"E";
+      const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72"><rect width="72" height="72" rx="16" fill="#0b5cff"/><text x="36" y="45" text-anchor="middle" font-family="Arial,sans-serif" font-size="25" font-weight="700" fill="white">${safeInitials}</text></svg>`;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function renderIdentity(){
+      const identity=employerIdentity();
+      const loggedIn=Boolean(state.user?.id);
+      const fallbackLogo=loggedIn?companyLogoFallback(identity.company):"JOBSPACELINK.png";
+
+      byId("accountName").textContent=loggedIn?identity.company:"Employer Login";
+      byId("menuCompany").textContent=loggedIn?identity.company:"No login account";
+      byId("menuEmail").textContent=loggedIn?(identity.email||"No email found"):"Sign in to manage payment methods";
+
+      byId("summaryCompany").textContent=loggedIn?identity.company:"Not logged in";
+      byId("summaryEmail").textContent=loggedIn?(identity.email||"No email found"):"Employer login required";
+
+      const record=byId("signedInEmployerRecord");
+      record.classList.toggle("logged-out",!loggedIn);
+      byId("recordCompany").textContent=loggedIn?identity.company:"Not logged in";
+      byId("recordEmail").textContent=loggedIn?(identity.email||"—"):"—";
+      byId("recordPhone").textContent=loggedIn?(identity.phone||"—"):"—";
+      byId("recordUserId").textContent=loggedIn?(state.user?.id||"—"):"—";
+
+      byId("loginMenuLink").hidden=loggedIn;
+      byId("logoutButton").hidden=!loggedIn;
+
+      const headerLogo=byId("accountLogo");
+      headerLogo.src=loggedIn&&identity.logo?identity.logo:fallbackLogo;
+      headerLogo.alt=loggedIn?`${identity.company} company logo`:"Job Space Link";
+      headerLogo.onerror=()=>{ headerLogo.onerror=null; headerLogo.src=fallbackLogo; };
+
+      const summaryMark=byId("summaryCompanyMark");
+      summaryMark.replaceChildren();
+      if(loggedIn&&identity.logo){
+        const image=document.createElement("img");
+        image.src=identity.logo;
+        image.alt=`${identity.company} logo`;
+        image.onerror=()=>{ summaryMark.innerHTML='<i class="fa-solid fa-building"></i>'; };
+        summaryMark.appendChild(image);
+      }else{
+        summaryMark.innerHTML='<i class="fa-solid fa-building"></i>';
+      }
+
+      if(loggedIn){
+        byId("billingName").value=identity.company||"";
+        byId("billingEmail").value=identity.email||"";
+        if(identity.phone) byId("billingPhone").value=identity.phone;
+        if(!byId("achBusinessName").value) byId("achBusinessName").value=identity.company||"";
+      }
+
+      setSetupStep("checkEmployerLogin",loggedIn?"pass":"fail",loggedIn?"Logged in":"Login required");
+      syncSubmitState();
+      updateAchMandate(false);
+    }
+
+    function methodLabel(method){
+      const type=lower(method?.method_type||method?.type);
+      if(type==="paypal"||lower(method?.provider)==="paypal") return "PayPal";
+      if(type==="ach") return "U.S. bank account (ACH)";
+      return "Credit or debit card";
+    }
+
+    function methodIcon(method){
+      const type=lower(method?.method_type||method?.type);
+      if(type==="paypal"||lower(method?.provider)==="paypal") return "fa-brands fa-paypal";
+      if(type==="ach") return "fa-solid fa-building-columns";
+      return "fa-regular fa-credit-card";
+    }
+
+    function maskedDetail(method){
+      const type=lower(method?.method_type||method?.type);
+      if(type==="paypal"||lower(method?.provider)==="paypal"){
+        const email=lower(method?.paypal_email); if(email) return email;
+        const payer=clean(method?.paypal_payer_id); return payer?`PayPal account ••••${payer.slice(-4)}`:"PayPal Wallet";
+      }
+      const last4=clean(method?.last4);
+      if(type==="ach"){
+        const bank=clean(method?.ach_bank_name)||"U.S. bank"; const account=clean(method?.ach_account_type)||"account";
+        return `${bank} ${account}${last4?` ending in ${last4}`:""}`;
+      }
+      const brand=clean(method?.brand)||"Card";
+      const expiry=method?.exp_month&&method?.exp_year?` · expires ${String(method.exp_month).padStart(2,"0")}/${String(method.exp_year).slice(-2)}`:"";
+      return `${brand}${last4?` ending in ${last4}`:""}${expiry}`;
+    }
+
+    function renderMethods(){
+      const list=byId("methodList"); list.replaceChildren();
+      if(!state.user?.id){ const empty=document.createElement("div"); empty.className="method-empty"; empty.innerHTML='<i class="fa-solid fa-building-lock"></i>Log in with an employer account to view saved methods.'; list.appendChild(empty); byId("summaryDefault").textContent="None"; return; }
+      if(!state.methods.length){ const empty=document.createElement("div"); empty.className="method-empty"; empty.innerHTML='<i class="fa-solid fa-wallet"></i>No payment method has been saved yet.'; list.appendChild(empty); byId("summaryDefault").textContent="None"; return; }
+      const defaultMethod=state.methods.find(item=>item.is_default)||state.methods[0]; byId("summaryDefault").textContent=methodLabel(defaultMethod);
+      for(const method of state.methods){
+        const row=document.createElement("article"); row.className="saved-method";
+        const icon=document.createElement("div"); icon.className="method-icon"; icon.innerHTML=`<i class="${methodIcon(method)}"></i>`;
+        const copy=document.createElement("div"); copy.className="method-copy";
+        const title=document.createElement("strong"); title.textContent=clean(method.nickname)||methodLabel(method);
+        const detail=document.createElement("span"); detail.textContent=maskedDetail(method); copy.append(title,detail);
+        if(method.is_default){ const badge=document.createElement("span"); badge.className="default-badge"; badge.textContent="Default"; copy.appendChild(badge); }
+        if(lower(method.method_type)==="ach"&&lower(method.verification_status)==="verified"){ const badge=document.createElement("span"); badge.className="verified-badge"; badge.textContent="Verified ACH"; copy.appendChild(badge); }
+        const actions=document.createElement("div"); actions.className="method-actions";
+        if(!method.is_default){ const makeDefault=document.createElement("button"); makeDefault.type="button"; makeDefault.className="icon-button"; makeDefault.title="Set as default"; makeDefault.setAttribute("aria-label","Set as default"); makeDefault.innerHTML='<i class="fa-solid fa-star"></i>'; makeDefault.addEventListener("click",()=>setDefaultMethod(method.id)); actions.appendChild(makeDefault); }
+        const remove=document.createElement("button"); remove.type="button"; remove.className="icon-button danger"; remove.title="Remove"; remove.setAttribute("aria-label","Remove payment method"); remove.innerHTML='<i class="fa-solid fa-trash"></i>'; remove.addEventListener("click",()=>openDeleteDialog(method.id)); actions.appendChild(remove);
+        row.append(icon,copy,actions); list.appendChild(row);
+      }
+    }
+
+    function isUsableStoredMethod(method){
+      const provider=lower(method?.provider);
+      const type=lower(method?.method_type||method?.type);
+      const status=lower(method?.status);
+      return ["braintree","paypal"].includes(provider)
+        && ["card","ach","paypal"].includes(type)
+        && (!status||["active","verified","approved","current"].includes(status));
+    }
+
+    async function loadMethods({silent=false}={}){
+      if(!state.user?.id){ state.methods=[]; renderMethods(); return; }
+      if(!silent) byId("methodList").innerHTML='<div class="method-empty"><i class="fa-solid fa-spinner fa-spin"></i>Loading payment methods...</div>';
+      try{
+        const result=await invokePaymentFunction({
+          action:"list_payment_methods"
+        });
+        const rows=Array.isArray(result?.methods)?result.methods:[];
+        state.methods=rows
+          .filter(isUsableStoredMethod)
+          .sort((a,b)=>Boolean(a.is_default)===Boolean(b.is_default)?Date.parse(b.created_at||0)-Date.parse(a.created_at||0):(a.is_default?-1:1));
+        renderMethods();
+      }catch(error){
+        console.warn("Payment method loading failed:",error);
+        state.methods=[];
+        renderMethods();
+        showNotice(error?.message||"Payment methods could not be loaded.","error");
+      }
+    }
+
+    function subscriptionField(row,names){
+      for(const name of names){
+        if(row&&row[name]!=null&&clean(row[name])) return row[name];
+      }
+      return "";
+    }
+
+    function subscriptionEndDate(row){
+      return clean(subscriptionField(row,["subscription_end_date","end_date","date_end","expiry_date","expiration_date"])).slice(0,10);
+    }
+
+    async function loadCurrentPlan(){
+      const target=byId("summaryPlan");
+      if(!target) return;
+      if(!state.user?.id||!state.client){ target.textContent="No active plan"; return; }
+
+      try{
+        const {data,error}=await state.client.rpc("get_current_employer_subscription_summary");
+        if(error) throw error;
+
+        const summary=data&&typeof data==="object"?data:{};
+        if(!summary.has_subscription || !summary.active){
+          target.textContent="No active plan";
+          return;
+        }
+
+        const remaining=Number(summary.days_remaining);
+        if(Number.isFinite(remaining)){
+          target.textContent=`Active · ${Math.max(remaining,0)} day${remaining===1?"":"s"} remaining`;
+          return;
+        }
+
+        const end=clean(summary.subscription_end_date||"").slice(0,10);
+        target.textContent=end?`Active until ${end}`:"Active plan";
+      }catch(error){
+        console.warn("Secure subscription summary lookup failed:",error);
+        target.textContent="Plan unavailable";
+      }
+    }
+
+    async function setDefaultMethod(id){
+      if(!state.user?.id||!id) return;
+      try{
+        await invokePaymentFunction({
+          action:"set_default_payment_method",
+          method_id:id
+        });
+        showNotice("Default payment method updated.","success");
+        await loadMethods({silent:true});
+      }catch(error){
+        showNotice(error?.message||"Unable to update the default payment method.","error");
+      }
+    }
+
+    function openDeleteDialog(id){ state.pendingDeleteId=id; byId("deleteDialog").showModal(); }
+
+    async function deletePendingMethod(){
+      const id=state.pendingDeleteId; if(!state.user?.id||!id) return;
+      const button=byId("confirmDeleteButton"); setBusy(button,true,"Removing...");
+      try{
+        await invokePaymentFunction({action:"delete_payment_method",method_id:id});
+        byId("deleteDialog").close(); state.pendingDeleteId=null; showNotice("Payment method removed.","success"); await loadMethods({silent:true});
+      }catch(error){ showNotice(error?.message||"Unable to remove the payment method.","error"); }
+      finally{ setBusy(button,false); }
+    }
+
+    function billingPayload(){
+      return {
+        name:clean(byId("billingName").value), email:lower(byId("billingEmail").value), phone:clean(byId("billingPhone").value), country:"US",
+        address:clean(byId("billingAddress").value), city:clean(byId("billingCity").value), region:clean(byId("billingRegion").value),
+        postal_code:clean(byId("billingPostal").value), nickname:clean(byId("methodNickname").value)
+      };
+    }
+
+    async function ensureBraintreeClient(){
+      if(state.braintreeClient){ setSetupStep("checkClientToken","pass","Client token ready"); return state.braintreeClient; }
+      if(state.braintreeClientPromise) return state.braintreeClientPromise;
+      if(!window.braintree?.client){
+        setSetupStep("checkClientToken","fail","SDK did not load");
+        throw new Error("The Braintree browser SDK did not load. Check the Braintree script URL and Content Security Policy.");
+      }
+      setSetupStep("checkClientToken","working","Requesting token…");
+      state.braintreeClientPromise=(async()=>{
+        const data=await invokePaymentFunction({action:"create_braintree_client_token"});
+        const token=clean(data.client_token); if(!token) throw new Error("The payment function did not return a Braintree client token.");
+        state.braintreeClient=await window.braintree.client.create({authorization:token});
+        setSetupStep("checkClientToken","pass","Client token ready");
+        return state.braintreeClient;
+      })();
+      try{ return await state.braintreeClientPromise; }
+      catch(error){
+        state.braintreeClientPromise=null;
+        setSetupStep("checkClientToken","fail","Function/token failed");
+        throw new Error(friendlyPaymentError(error));
+      }
+    }
+
+    async function ensureCardFields(){
+      if(state.hostedFields){ setSetupStep("checkHostedFields","pass","Ready for input"); return state.hostedFields; }
+      if(state.hostedFieldsPromise) return state.hostedFieldsPromise;
+      const status=byId("cardProcessorStatus");
+      const retryButton=byId("retryCardFieldsButton");
+      retryButton.hidden=true;
+      status.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i>Preparing secure card fields…';
+      setSetupStep("checkHostedFields","working","Mounting fields…");
+      state.hostedFieldsPromise=(async()=>{
+        const client=await ensureBraintreeClient();
+        if(!window.braintree?.hostedFields) throw new Error("Braintree Hosted Fields did not load.");
+        state.hostedFields=await window.braintree.hostedFields.create({
+          client,
+          styles:{input:{"font-size":"16px","font-family":"Segoe UI, Arial, sans-serif",color:"#183153"},"input.invalid":{color:"#c92933"},"input.valid":{color:"#168445"},":focus":{color:"#0f2f66"}},
+          fields:{number:{container:"#cardNumber",placeholder:"4111 1111 1111 1111"},expirationDate:{container:"#cardExpiration",placeholder:"MM/YYYY"},cvv:{container:"#cardCvv",placeholder:"123"}}
+        });
+        state.cardFieldsValid=false;
+        for(const eventName of ["validityChange","empty","notEmpty","cardTypeChange","blur"]){
+          state.hostedFields.on(eventName,updateCardFieldStatus);
+        }
+        state.hostedFields.on("inputSubmitRequest",()=>{
+          if(state.cardFieldsValid) byId("paymentMethodForm")?.requestSubmit();
+          else focusFirstInvalidCardField();
+        });
+        updateCardFieldStatus();
+        retryButton.hidden=true;
+        setSetupStep("checkHostedFields","pass","Ready for input");
+        setSetupMessage("Card setup passed. Enter all three secure card fields; Save card enables only when they are valid.","success");
+        return state.hostedFields;
+      })();
+      try{ return await state.hostedFieldsPromise; }
+      catch(error){
+        state.hostedFieldsPromise=null;
+        const message=friendlyPaymentError(error);
+        byId("cardProcessorStatus").innerHTML='<i class="fa-solid fa-triangle-exclamation"></i>Secure card fields could not be initialized.';
+        retryButton.hidden=false;
+        setSetupStep("checkHostedFields","fail","Could not load");
+        setSetupMessage(message,"error");
+        throw new Error(message);
+      }
+    }
+
+    async function runCardSetupCheck(){
+      const secureOrigin=isSafePaymentOrigin();
+      if(window.location.protocol==="file:"){
+        setSetupStep("checkPageAddress","fail","Use Live Server");
+        throw new Error(friendlyPaymentError(new Error("file protocol")));
+      }
+      setSetupStep("checkPageAddress",secureOrigin?"pass":"fail",secureOrigin?"HTTP(S) ready":"Use HTTPS");
+      if(!state.client){
+        setSetupStep("checkClientToken","fail","Supabase missing");
+        throw new Error("Supabase is not configured. Confirm supabase_config.js loads before this payment page.");
+      }
+      if(!state.user?.id){
+        setSetupStep("checkEmployerLogin","fail","Login required");
+        throw new Error("Log in with an employer account before checking or entering card details.");
+      }
+      setSetupStep("checkEmployerLogin","pass","Logged in");
+      const fields=await ensureCardFields();
+      syncSubmitState();
+      return fields;
+    }
+
+    async function ensureAchInstance(){
+      if(state.achUnavailable) throw new Error(state.achUnavailableReason||"U.S. bank account payments are not enabled for this merchant account.");
+      if(state.usBankAccount) return state.usBankAccount;
+      if(state.usBankAccountPromise) return state.usBankAccountPromise;
+      state.usBankAccountPromise=(async()=>{
+        const client=await ensureBraintreeClient();
+        if(!window.braintree?.usBankAccount) throw new Error("The Braintree U.S. bank component did not load.");
+        state.usBankAccount=await window.braintree.usBankAccount.create({client}); return state.usBankAccount;
+      })();
+      try{ return await state.usBankAccountPromise; }
+      catch(error){
+        state.usBankAccountPromise=null;
+        if(isAchUnavailableError(error)) disableUnavailableAch(error);
+        throw error;
+      }
+    }
+
+    function achHolderName(){
+      return byId("achOwnership").value==="personal"?`${clean(byId("achFirstName").value)} ${clean(byId("achLastName").value)}`.trim():clean(byId("achBusinessName").value);
+    }
+
+    function updateAchMandate(resetConsent=true){
+      const holder=achHolderName()||"[account holder]";
+      const bank=clean(byId("achBankName").value)||"[financial institution]";
+      const account=clean(byId("achAccount").value); const accountLast4=account?account.slice(-4):"[last 4]";
+      const routing=clean(byId("achRouting").value)||"[routing number]";
+      const accountType=byId("achAccountType").value==="savings"?"Savings":"Checking";
+      const date=new Intl.DateTimeFormat("en-US",{year:"numeric",month:"long",day:"numeric"}).format(new Date());
+      byId("achMandateText").textContent=`By clicking “Save U.S. bank account”, I authorize Braintree, a PayPal service, on behalf of Job Space Link to verify my bank account information using bank information and consumer reports and I authorize Job Space Link to store my account information on file and to initiate ACH/electronic debits for future payments, as follows: Account holder: ${holder}, Financial Institution: ${bank}, ${accountType} Account Number: ••••${accountLast4}, Routing Number: ${routing}, Authorization Date: ${date}.\n\nAny subsequent ACH/electronic debits to my account can be initiated by online confirmation. I understand that this authorization will remain in full force and effect until I notify Job Space Link that I wish to revoke this authorization through my account support channel.`;
+      if(resetConsent) byId("achConsent").checked=false;
+    }
+
+    function updateAchOwnership(resetConsent=true){
+      const active=state.selectedMethod==="ach"; const personal=byId("achOwnership").value==="personal";
+      byId("achBusinessField").hidden=personal; byId("achFirstNameField").hidden=!personal; byId("achLastNameField").hidden=!personal;
+      byId("achBusinessName").disabled=!active||personal; byId("achBusinessName").required=active&&!personal;
+      for(const id of ["achFirstName","achLastName"]){ byId(id).disabled=!active||!personal; byId(id).required=active&&personal; }
+      updateAchMandate(resetConsent);
+    }
+
+    function setPanelInputs(method){
+      document.querySelectorAll("[data-panel]").forEach(panel=>{
+        const selected=panel.dataset.panel===method; panel.hidden=!selected;
+        panel.querySelectorAll("input,select").forEach(control=>{ control.disabled=!selected; });
+      });
+      updateAchOwnership(false);
+    }
+
+    function updateSelectedMethod(method){
+      if(method==="ach"&&state.achUnavailable){
+        method="card";
+        showNotice("ACH is unavailable for this Braintree account. Choose credit/debit card or PayPal.","info");
+      }
+      state.selectedMethod=method;
+      byId("paymentMethodSelect").value=method;
+      const note=PAYMENT_METHOD_NOTES[method]||PAYMENT_METHOD_NOTES.card;
+      const separator=note.indexOf(":");
+      const noteBox=byId("paymentChoiceNote");
+      noteBox.replaceChildren();
+      const noteTitle=document.createElement("strong");
+      noteTitle.textContent=separator>=0?note.slice(0,separator+1):"Payment method:";
+      noteBox.append(noteTitle,document.createTextNode(separator>=0?note.slice(separator+1):` ${note}`));
+
+      // Move the single billing form into the selected payment-method panel.
+      // This keeps only one complete payment form visible at a time.
+      const billingBlock=byId("billingFieldsBlock");
+      const slot=byId(method==="ach"?"achBillingSlot":method==="paypal"?"paypalBillingSlot":"cardBillingSlot");
+      if(billingBlock&&slot&&billingBlock.parentElement!==slot) slot.appendChild(billingBlock);
+
+      setPanelInputs(method);
+      const submit=byId("submitPaymentButton"); submit.classList.toggle("paypal-button",method==="paypal");
+      if(method==="card"){
+        byId("providerMessage").innerHTML='<i class="fa-solid fa-lock"></i><div><strong>Your complete card details stay with Braintree.</strong><br>Job Space Link receives only a vault token and masked card information.</div>';
+        submit.innerHTML='<i class="fa-regular fa-credit-card"></i><span>Save card</span>';
+      }else if(method==="ach"){
+        byId("providerMessage").innerHTML='<i class="fa-solid fa-building-shield"></i><div><strong>Your bank account is tokenized and verified by Braintree.</strong><br>Job Space Link stores only a provider token, masked account details, and authorization status.</div>';
+        submit.innerHTML='<i class="fa-solid fa-building-columns"></i><span>Save U.S. bank account</span>';
+      }else{
+        byId("providerMessage").innerHTML='<i class="fa-brands fa-paypal"></i><div><strong>Your PayPal password and funding details are never entered here.</strong><br>You will continue to PayPal to approve Job Space Link as a payment method.</div>';
+        submit.innerHTML='<i class="fa-brands fa-paypal"></i><span>Connect with PayPal</span>';
+      }
+      syncSubmitState();
+      prepareSelectedProcessor().catch(error=>{
+        console.error("Payment component initialization failed:",error);
+        if(isAchUnavailableError(error)){
+          if(!state.achUnavailable) disableUnavailableAch(error);
+          return;
+        }
+        showNotice(error?.message||"The secure payment component could not be initialized.","error");
+      });
+    }
+
+    async function prepareSelectedProcessor(){
+      syncSubmitState();
+      if(!state.user?.id||!state.client) return;
+      const requestedMethod=state.selectedMethod;
+      if(requestedMethod==="card") await runCardSetupCheck();
+      if(requestedMethod==="ach") await ensureAchInstance();
+      if(state.selectedMethod===requestedMethod) syncSubmitState();
+    }
+
+    async function saveCard(){
+      const hostedFields=await ensureCardFields();
+      const invalidFields=focusFirstInvalidCardField(hostedFields);
+      if(invalidFields.length){
+        throw new Error(`Complete or correct the ${invalidFields.map(field=>field.label).join(", ")} before saving the card.`);
+      }
+      const billing=billingPayload();
+      let tokenized;
+      try{
+        tokenized=await hostedFields.tokenize({
+          cardholderName:billing.name,
+          billingAddress:{
+            company:billing.name,
+            streetAddress:billing.address,
+            locality:billing.city,
+            region:billing.region,
+            postalCode:billing.postal_code,
+            countryCodeAlpha2:billing.country
+          }
+        });
+      }
+      catch(error){
+        const invalid=focusFirstInvalidCardField(hostedFields);
+        if(invalid.length) throw new Error(`Complete or correct the ${invalid.map(field=>field.label).join(", ")} before saving the card.`);
+        throw new Error(clean(error?.message)||"Braintree could not tokenize the card. Re-enter the card number, expiration date, and CVV.");
+      }
+      if(!clean(tokenized?.nonce)) throw new Error("Braintree did not return a payment method nonce. Run Check card setup and try again.");
+      const data=await invokePaymentFunction({action:"vault_braintree_payment_method",method_type:"card",payment_method_nonce:tokenized.nonce,billing});
+      for(const field of ["number","expirationDate","cvv"]){ try{ hostedFields.clear(field); }catch(_error){} }
+      state.cardFieldsValid=false;
+      syncSubmitState();
+      return data;
+    }
+
+    async function saveAch(){
+      if(!byId("achConsent").checked) throw new Error("Accept the ACH authorization before saving this bank account.");
+      const instance=await ensureAchInstance(); const ownership=byId("achOwnership").value;
+      const bankDetails={
+        accountNumber:clean(byId("achAccount").value), routingNumber:clean(byId("achRouting").value), accountType:byId("achAccountType").value, ownershipType:ownership,
+        billingAddress:{streetAddress:clean(byId("billingAddress").value),locality:clean(byId("billingCity").value),region:clean(byId("billingRegion").value),postalCode:clean(byId("billingPostal").value)}
+      };
+      if(ownership==="personal"){ bankDetails.firstName=clean(byId("achFirstName").value); bankDetails.lastName=clean(byId("achLastName").value); }
+      else bankDetails.businessName=clean(byId("achBusinessName").value);
+      const mandateText=byId("achMandateText").textContent;
+      let tokenized;
+      try{ tokenized=await instance.tokenize({bankDetails,mandateText}); }
+      catch(error){ throw new Error(clean(error?.message)||"Check the U.S. bank account and routing details."); }
+      byId("achAccount").value=""; byId("achRouting").value=""; byId("achConsent").checked=false; updateAchMandate(false);
+      return invokePaymentFunction({action:"vault_braintree_payment_method",method_type:"ach",payment_method_nonce:tokenized.nonce,billing:billingPayload(),ach_consent:{accepted:true,mandate_version:ACH_MANDATE_VERSION}});
+    }
+
+    async function startPayPal(){
+      const identity=employerIdentity();
+      const data=await invokePaymentFunction({
+        action:"create_paypal_setup_token",billing:billingPayload(),
+        success_url:(()=>{ const u=new URL(window.location.href); u.searchParams.set("payment","paypal-return"); ["approval_token_id","setup_token_id","token","PayerID","payer_id"].forEach(k=>u.searchParams.delete(k)); return u.href; })(),
+        cancel_url:(()=>{ const u=new URL(window.location.href); u.searchParams.set("payment","paypal-cancelled"); ["approval_token_id","setup_token_id","token","PayerID","payer_id"].forEach(k=>u.searchParams.delete(k)); return u.href; })()
+      });
+      const redirectUrl=clean(data.approval_url||data.checkout_url||data.redirect_url||data.url);
+      if(!/^https:\/\//i.test(redirectUrl)) throw new Error("The PayPal function did not return a secure approval URL.");
+      window.location.assign(redirectUrl);
+    }
+
+    function scheduleSubscriptionReturn(result,label){
+      if(state.returnTarget!=="subscribe.html") return false;
+      try{
+        sessionStorage.setItem(PAYMENT_RETURN_MARKER,JSON.stringify({
+          saved_at:new Date().toISOString(),
+          method_id:clean(result?.method_id),
+          method_type:clean(result?.method_type)||state.selectedMethod
+        }));
+      }catch(_error){}
+      showNotice(`${label} Returning to the subscription page…`,"success");
+      const url=new URL("subscribe.html",window.location.href);
+      url.searchParams.set("payment_method_saved","1");
+      if(clean(result?.method_id)) url.searchParams.set("method_id",clean(result.method_id));
+      window.setTimeout(()=>window.location.assign(url.href),900);
+      return true;
+    }
+
+    async function startProviderSession(event){
+      event.preventDefault(); clearNotice();
+      if(!state.user?.id){ showNotice("Please log in with an employer account before adding a payment method.","error"); return; }
+      if(!event.currentTarget.reportValidity()) return;
+      const requestedMethod=state.selectedMethod;
+      const submit=byId("submitPaymentButton"); const busyText=requestedMethod==="paypal"?"Opening PayPal…":requestedMethod==="ach"?"Verifying bank account…":"Verifying card…"; setBusy(submit,true,busyText);
+      try{
+        let savedResult=null;
+        let successMessage="Payment method saved successfully.";
+        if(requestedMethod==="card"){
+          savedResult=await saveCard();
+          const brand=clean(savedResult?.display?.brand)||"Card";
+          const last4=clean(savedResult?.display?.last4);
+          successMessage=`${brand}${last4?` ending in ${last4}`:""} saved successfully.`;
+        }
+        else if(requestedMethod==="ach"){
+          savedResult=await saveAch();
+          successMessage="U.S. bank account verified and saved successfully.";
+        }
+        else{ await startPayPal(); return; }
+        await loadMethods({silent:true}); byId("methodNickname").value="";
+        if(!scheduleSubscriptionReturn(savedResult,successMessage)) showNotice(successMessage,"success");
+      }catch(error){
+        console.error("Payment method setup failed:",error);
+        if(requestedMethod==="ach"&&isAchUnavailableError(error)){
+          if(!state.achUnavailable) disableUnavailableAch(error);
+          return;
+        }
+        const message=requestedMethod==="card"?friendlyPaymentError(error):(error?.message||"Unable to save the payment method.");
+        if(requestedMethod==="card") setSetupMessage(message,"error");
+        showNotice(message,"error");
+      }
+      finally{ setBusy(submit,false); }
+    }
+
+    async function completePayPalSetup(searchParams){
+      const setupTokenId=clean(searchParams.get("approval_token_id")||searchParams.get("setup_token_id")||searchParams.get("token"));
+      if(!setupTokenId) throw new Error("PayPal returned without a setup token. Please connect the account again.");
+      const result=await invokePaymentFunction({action:"complete_paypal_setup_token",setup_token_id:setupTokenId});
+      const cleanUrl=new URL(window.location.href); ["payment","approval_token_id","setup_token_id","token","PayerID","payer_id"].forEach(key=>cleanUrl.searchParams.delete(key));
+      window.history.replaceState({},document.title,cleanUrl.pathname+cleanUrl.search+cleanUrl.hash);
+      showNotice("PayPal Wallet connected successfully.","success");
+      return result;
+    }
+
+    async function logout(){
+      try{ await state.client?.auth?.signOut?.({scope:"local"}); }catch(_error){}
+      for(const storage of [localStorage,sessionStorage]){ ["jobSpaceLink_employer_session","jobSpaceLink_logged_in_employer","loggedInEmployerData","employerSession","employerAccount","currentEmployerEmail","employerEmail"].forEach(key=>{ try{ storage.removeItem(key); }catch(_error){} }); }
+      window.location.replace("index.html");
+    }
+
+    function bindUi(){
+      byId("currentYear").textContent=new Date().getFullYear();
+      byId("accountButton").addEventListener("click",event=>{ event.stopPropagation(); const menu=byId("accountMenu"); const open=!menu.classList.contains("open"); menu.classList.toggle("open",open); menu.setAttribute("aria-hidden",open?"false":"true"); byId("accountButton").setAttribute("aria-expanded",open?"true":"false"); });
+      document.addEventListener("click",event=>{ if(!byId("accountArea").contains(event.target)){ byId("accountMenu").classList.remove("open"); byId("accountMenu").setAttribute("aria-hidden","true"); byId("accountButton").setAttribute("aria-expanded","false"); } });
+      byId("mobileToggle").addEventListener("click",()=>{ const panel=byId("mobilePanel"); const open=!panel.classList.contains("open"); panel.classList.toggle("open",open); panel.setAttribute("aria-hidden",open?"false":"true"); byId("mobileToggle").setAttribute("aria-expanded",open?"true":"false"); byId("mobileToggle").innerHTML=open?'<i class="fa-solid fa-xmark"></i>':'<i class="fa-solid fa-bars"></i>'; });
+      byId("paymentMethodSelect").addEventListener("change",event=>updateSelectedMethod(event.currentTarget.value));
+      byId("paymentMethodForm").addEventListener("submit",startProviderSession); byId("refreshMethodsButton").addEventListener("click",()=>loadMethods()); byId("logoutButton").addEventListener("click",logout);
+      byId("cancelDeleteButton").addEventListener("click",()=>{ state.pendingDeleteId=null; byId("deleteDialog").close(); }); byId("confirmDeleteButton").addEventListener("click",deletePendingMethod);
+      byId("deleteDialog").addEventListener("click",event=>{ if(event.target===event.currentTarget){ state.pendingDeleteId=null; event.currentTarget.close(); } });
+      byId("achOwnership").addEventListener("change",()=>updateAchOwnership(true));
+      for(const id of ["achBankName","achAccountType","achBusinessName","achFirstName","achLastName","achRouting","achAccount"]){ byId(id).addEventListener("input",()=>updateAchMandate(true)); byId(id).addEventListener("change",()=>updateAchMandate(true)); }
+      const checkCardSetup=async event=>{
+        clearNotice();
+        if(state.selectedMethod!=="card") updateSelectedMethod("card");
+        const button=event.currentTarget;
+        setBusy(button,true,"Checking...");
+        try{
+          await runCardSetupCheck();
+          showNotice("Card setup passed. The secure card fields are ready for Sandbox testing.","success");
+        }catch(error){
+          const message=friendlyPaymentError(error);
+          setSetupMessage(message,"error");
+          showNotice(message,"error");
+        }finally{ setBusy(button,false); }
+      };
+      byId("checkCardSetupButton").addEventListener("click",checkCardSetup);
+      byId("retryCardFieldsButton").addEventListener("click",checkCardSetup);
+    }
+
+    async function initialize(){
+      bindUi(); updateSelectedMethod("card");
+      const pageUrl=new URL(window.location.href); const returnState=pageUrl.searchParams.get("payment");
+      const sandboxTestMode=pageUrl.searchParams.get("payment_test")==="1"||["localhost","127.0.0.1","::1"].includes(pageUrl.hostname);
+      byId("sandboxTestGuide").hidden=!sandboxTestMode;
+      byId("sandboxTestGuide").open=sandboxTestMode;
+      if(window.location.protocol==="file:") setSetupStep("checkPageAddress","fail","Use Live Server");
+      else setSetupStep("checkPageAddress",isSafePaymentOrigin()?"pass":"fail",isSafePaymentOrigin()?"HTTP(S) ready":"Use HTTPS");
+      const returnTarget=clean(pageUrl.searchParams.get("return"));
+      const returnLink=byId("returnToSubscribeLink");
+      if(returnLink && /^(subscribe(?:\.html)?)(?:[?#].*)?$/i.test(returnTarget)){
+        state.returnTarget="subscribe.html";
+        returnLink.href="subscribe.html";
+        returnLink.hidden=false;
+      }
+      if(returnState==="paypal-cancelled"||returnState==="cancelled") showNotice("PayPal setup was cancelled. No changes were made.","info");
+      state.client=resolveClient();
+      if(!state.client){ setSetupStep("checkClientToken","fail","Supabase missing"); setSetupMessage("Supabase is not configured. Confirm supabase_config.js loads before this page.","error"); renderIdentity(); renderMethods(); showNotice("Supabase is not configured. Load supabase_config.js before using payment methods.","error"); return; }
+      try{ const {data,error}=await state.client.auth.getUser(); if(error&&!/session missing/i.test(clean(error.message))) console.warn("Employer session check failed:",error); state.user=data?.user||null; if(state.user) state.employer=await findEmployerProfile(state.user); }
+      catch(error){ console.warn("Unable to load employer identity:",error); }
+      renderIdentity();
+      let completedReturn=false;
+      let completedPayPalResult=null;
+      if(returnState==="paypal-return"){
+        if(!state.user) showNotice("PayPal approval was received, but your employer session expired. Log in and connect PayPal again.","error");
+        else{
+          try{ showNotice("Completing your PayPal Wallet connection…","info"); completedPayPalResult=await completePayPalSetup(pageUrl.searchParams); completedReturn=true; }
+          catch(error){ console.error("PayPal setup completion failed:",error); showNotice(error?.message||"Unable to complete the PayPal connection.","error"); }
+        }
+      }else if(!state.user) showNotice("Log in with an employer account to add or manage payment methods.","info");
+      await Promise.all([loadMethods({silent:completedReturn}),loadCurrentPlan()]);
+      if(completedPayPalResult&&scheduleSubscriptionReturn(completedPayPalResult,"PayPal Wallet connected successfully.")) return;
+      if(state.user?.id){
+        try{ await prepareSelectedProcessor(); }
+        catch(error){
+          const message=friendlyPaymentError(error);
+          console.error("Initial payment component setup failed:",error);
+          setSetupMessage(message,"error");
+          showNotice(message,"error");
+        }
+      }
+
+      state.client.auth.onAuthStateChange?.(async(_event,session)=>{
+        const nextUser=session?.user||null;
+
+        if(!nextUser){
+          state.user=null;
+          state.employer=null;
+          state.methods=[];
+          renderIdentity();
+          renderMethods();
+          byId("summaryPlan").textContent="No active plan";
+          return;
+        }
+
+        if(state.user?.id!==nextUser.id){
+          state.user=nextUser;
+          try{ state.employer=await findEmployerProfile(nextUser); }
+          catch(error){ console.warn("Unable to refresh employer profile:",error); state.employer=null; }
+          renderIdentity();
+          await Promise.all([loadMethods({silent:true}),loadCurrentPlan()]);
+          try{ await prepareSelectedProcessor(); }
+          catch(error){
+            const message=friendlyPaymentError(error);
+            console.error("Payment component refresh failed:",error);
+            setSetupMessage(message,"error");
+            showNotice(message,"error");
+          }
+        }
+      });
+    }
+
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",initialize,{once:true});
+    else initialize();
+  })();
+  </script>
+</body>
+</html>

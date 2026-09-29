@@ -8062,6 +8062,49 @@ html body .filter-panel .filter-option{
   }
 </style>
 
+
+<!-- ============================================================
+     FINAL READABILITY UPDATE - TABLE HEADER
+     Keeps all existing functionality/behavior unchanged.
+     Uses a solid Job Space Link navy background with white text
+     for stronger contrast and easier reading.
+============================================================ -->
+<style id="jsl-table-header-font-readability-final">
+  #tablePanel thead th,
+  .table-scroll thead th,
+  .results-area thead th,
+  thead th{
+    background:#0b4f8a!important;
+    background-image:none!important;
+    color:#ffffff!important;
+    font-weight:700!important;
+    text-shadow:0 1px 2px rgba(0,0,0,.28)!important;
+    -webkit-text-stroke:0!important;
+    border-color:rgba(255,255,255,.22)!important;
+  }
+
+  /* Keep header links/icons readable too, if any are present. */
+  #tablePanel thead th a,
+  #tablePanel thead th i,
+  .table-scroll thead th a,
+  .table-scroll thead th i,
+  .results-area thead th a,
+  .results-area thead th i,
+  thead th a,
+  thead th i{
+    color:#ffffff!important;
+  }
+
+  /* Subtle hover keeps the header readable without changing behavior. */
+  #tablePanel thead th:hover,
+  .table-scroll thead th:hover,
+  .results-area thead th:hover,
+  thead th:hover{
+    background:#094274!important;
+    background-image:none!important;
+    color:#ffffff!important;
+  }
+</style>
 </head>
 <body class="employer-logged-out view-table-active">
 <header>
@@ -8074,8 +8117,8 @@ html body .filter-panel .filter-option{
         <button type="button" class="nav-dropdown-toggle" id="aboutNavToggle" aria-label="Toggle About menu"><i class="fa-solid fa-caret-down"></i></button>
       </div>
       <div class="nav-dropdown-menu">
-        <a href="<<why choose us.html>>"><i class="fa-solid fa-circle-check"></i><span>Why Choose Us</span></a>
-        <a href="<<how it works.html>>"><i class="fa-solid fa-diagram-project"></i><span>How It Works</span></a>
+        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i><span>Why Choose Us</span></a>
+        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i><span>How It Works</span></a>
       </div>
     </div>
     <a href="postedhiring1.html"><i class="fa-solid fa-briefcase"></i><span>Job Hiring</span></a>
@@ -8101,9 +8144,12 @@ html body .filter-panel .filter-option{
       </div>
       <div class="account-menu">
         <a href="employerprofile.html"><i class="fa-solid fa-id-card"></i>View Company Profile</a>
+        <a href="paymentmethod.html"><i class="fa-solid fa-wallet"></i> Billing Account</a>
         <a href="subscribe.html"><i class="fa-solid fa-credit-card"></i> Subscribe</a>
         <a href="subscriptionstatus.html" id="accountSubscriptionStatusLink"><i class="fa-solid fa-clipboard-check"></i> Subscription Status</a>
         <a href="postedjobs.html"><i class="fa-solid fa-briefcase"></i> Posted Jobs</a>
+        <a href="employer-post-activity.html"><i class="fa-solid fa-users-viewfinder" aria-hidden="true"></i>Job Applications</a>
+
         <button type="button" id="logoutButton"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
       </div>
     </div>
@@ -8130,6 +8176,7 @@ html body .filter-panel .filter-option{
       </div>
       <div class="mobile-account-menu">
         <a href="employerprofile.html"><span><i class="fa-solid fa-id-card"></i> View Company Profile</span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="paymentmethod.html"><span><i class="fa-solid fa-wallet"></i> Billing Account</span><i class="fa-solid fa-arrow-right"></i></a>
         <a href="subscribe.html"><span><i class="fa-solid fa-credit-card"></i> Subscribe</span><i class="fa-solid fa-arrow-right"></i></a>
         <a href="subscriptionstatus.html" id="mobileAccountSubscriptionStatusLink"><span><i class="fa-solid fa-clipboard-check"></i> Subscription Status</span><i class="fa-solid fa-arrow-right"></i></a>
         <a href="postedjobs.html"><span><i class="fa-solid fa-briefcase"></i> Posted Jobs</span><i class="fa-solid fa-arrow-right"></i></a>
@@ -8143,8 +8190,8 @@ html body .filter-panel .filter-option{
         <button type="button" class="mnav-toggle" id="mobileAboutToggle"><i class="fa-solid fa-caret-down"></i></button>
       </div>
       <div class="mnav-submenu">
-        <a href="<<why choose us.html>>"><span><i class="fa-solid fa-circle-check"></i> Why Choose Us</span><i class="fa-solid fa-arrow-right"></i></a>
-        <a href="<<how it works.html>>"><span><i class="fa-solid fa-diagram-project"></i> How It Works</span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="why choose us.html"><span><i class="fa-solid fa-circle-check"></i> Why Choose Us</span><i class="fa-solid fa-arrow-right"></i></a>
+        <a href="how it works.html"><span><i class="fa-solid fa-diagram-project"></i> How It Works</span><i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
     <a href="postedhiring1.html"><span><i class="fa-solid fa-briefcase"></i> Job Hiring</span><i class="fa-solid fa-arrow-right"></i></a>
@@ -8165,7 +8212,7 @@ html body .filter-panel .filter-option{
         <span>Applicant Directory</span>
       </div>
       <label class="search-field" id="mainSearchField" for="searchInput" aria-label="Search applicant records">
-        <input id="searchInput" type="search" placeholder="Type any keyword from the database ..." autocomplete="off" />
+        <input id="searchInput" type="search" placeholder="Type any keyword" autocomplete="off" />
         <button type="button" class="search-clear" id="clearSearchBtn" aria-label="Clear search"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
         <button type="button" class="search-action" id="searchActionBtn" aria-label="Search applicants"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Search</span></button>
       </label>
@@ -17181,7 +17228,7 @@ header nav .nav-main-link:focus-visible::after,
   }
 </style>
 
-<script id="final-login-directly-above-refresh-2026-06-15-1257">
+<script id="final-login-directly-above-refresh-script-2026-06-15-1257">
 (function(){
   function byId(id){ return document.getElementById(id); }
 
@@ -17613,7 +17660,7 @@ header nav .nav-main-link:focus-visible::after,
   }
 </style>
 
-<script id="final-gray-country-industry-second-row-dropdown-options-2026-06-15">
+<script id="final-gray-country-industry-second-row-dropdown-options-script-2026-06-15">
 (function(){
   var TARGET_FILTER_IDS = [
     "countryFilter","industryFilter",
@@ -19936,7 +19983,20 @@ body.employer-logged-in header #accountDropdown .account-menu button:focus-visib
   function showError(message){
     loading.hidden=true;
     errorBox.hidden=false;
-    errorBox.innerHTML='<div><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><br>'+String(message||"Unable to display this PDF.")+'<br><br><a href="'+viewer.url+'" target="_blank" rel="noopener" style="color:#7dd3fc;text-decoration:underline;">Open PDF in a new tab</a></div>';
+    errorBox.replaceChildren();
+    var wrapper=document.createElement("div");
+    var icon=document.createElement("i");
+    icon.className="fa-solid fa-triangle-exclamation";
+    icon.setAttribute("aria-hidden","true");
+    wrapper.append(icon,document.createElement("br"),document.createTextNode(String(message||"Unable to display this PDF.")),document.createElement("br"),document.createElement("br"));
+    var link=document.createElement("a");
+    link.href=viewer.url;
+    link.target="_blank";
+    link.rel="noopener noreferrer";
+    link.style.cssText="color:#7dd3fc;text-decoration:underline;";
+    link.textContent="Open PDF in a new tab";
+    wrapper.appendChild(link);
+    errorBox.appendChild(wrapper);
   }
   function hideMessages(){loading.hidden=true;errorBox.hidden=true;}
 
@@ -24759,6 +24819,638 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     gap:7px!important;
     flex-wrap:wrap!important;
     width:100%!important;
+  }
+}
+</style>
+
+<style id="jsl-final-complete-filter-labels-20260922">
+/* Keep the existing two-row toolbar while giving longer labels enough room. */
+@media (min-width:1440px){
+  html body .controls{
+    grid-template-columns:
+      minmax(0,1.30fr)
+      minmax(0,1.45fr)
+      minmax(0,.90fr)
+      minmax(0,1fr)
+      repeat(5,minmax(0,1fr))!important;
+  }
+
+  html body .filters{
+    grid-template-columns:
+      minmax(0,1fr)
+      minmax(0,.95fr)
+      minmax(0,.72fr)
+      minmax(0,1.45fr)
+      minmax(0,1.18fr)
+      repeat(4,minmax(0,1fr))!important;
+  }
+
+  html body .controls .inline-directory-title,
+  html body .controls .inline-directory-title span,
+  html body .controls #searchInput,
+  html body .controls #searchInput::placeholder,
+  html body .filters .filter-trigger,
+  html body .filters .filter-trigger .filter-label{
+    font-size:.92rem!important;
+  }
+}
+
+@media (min-width:1024px) and (max-width:1439px){
+  html body .controls{
+    grid-template-columns:
+      minmax(0,1.45fr)
+      minmax(0,1.55fr)
+      minmax(0,.85fr)
+      minmax(0,.95fr)
+      repeat(5,minmax(0,.80fr))!important;
+  }
+
+  html body .filters{
+    grid-template-columns:
+      minmax(0,1fr)
+      minmax(0,.95fr)
+      minmax(0,.70fr)
+      minmax(0,1.55fr)
+      minmax(0,1.30fr)
+      minmax(0,.95fr)
+      minmax(0,.95fr)
+      repeat(2,minmax(0,1fr))!important;
+  }
+
+  html body .controls .inline-directory-title,
+  html body .controls .inline-directory-title span,
+  html body .controls .inline-directory-title i,
+  html body .controls #searchInput,
+  html body .controls #searchInput::placeholder,
+  html body .controls .filter-trigger,
+  html body .controls .filter-trigger .filter-label,
+  html body .controls .toolbar-actions-box button,
+  html body .filters .input,
+  html body .filters .filter-trigger,
+  html body .filters .filter-trigger .filter-label{
+    font-size:.78rem!important;
+  }
+}
+
+@media (min-width:1024px){
+  html body .controls .inline-directory-title{
+    padding-left:7px!important;
+    padding-right:7px!important;
+  }
+
+  html body .controls .inline-directory-title span,
+  html body .filters .filter-unit:has(#employmentFilter) .filter-label,
+  html body .filters [data-filter-toggle="employmentFilter"] .filter-label,
+  html body .filters .filter-unit:has(#salaryFilter) .filter-label,
+  html body .filters [data-filter-toggle="salaryFilter"] .filter-label{
+    max-width:none!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    white-space:nowrap!important;
+  }
+
+  html body .filters .filter-unit:has(#employmentFilter) .filter-trigger,
+  html body .filters [data-filter-toggle="employmentFilter"],
+  html body .filters .filter-unit:has(#salaryFilter) .filter-trigger,
+  html body .filters [data-filter-toggle="salaryFilter"]{
+    gap:4px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+
+  html body .controls #searchInput{
+    overflow:visible!important;
+    text-overflow:clip!important;
+  }
+}
+</style>
+
+<!-- Unified chatbot help panel: popular Job Space Link questions in one place. -->
+<style id="jsl-preset-faq-style">
+  #jsl-preset-faq, #jsl-preset-faq * { box-sizing: border-box; }
+  #jsl-preset-faq {
+    position: fixed;
+    right: max(18px, env(safe-area-inset-right, 0px));
+    bottom: max(92px, calc(env(safe-area-inset-bottom, 0px) + 76px));
+    z-index: 10000;
+    color: #0f172a;
+    font: 14px/1.45 Inter, Poppins, Arial, sans-serif;
+  }
+  #jsl-preset-faq button,
+  #jsl-preset-faq a { font: inherit; }
+  #jsl-preset-faq button { cursor: pointer; }
+
+  #jsl-preset-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 46px;
+    padding: 9px 16px;
+    border: 1px solid #93c5fd;
+    border-radius: 999px;
+    background: #fff;
+    color: #0b4bcc;
+    box-shadow: 0 8px 28px rgba(7, 23, 52, .30);
+    font-weight: 800 !important;
+  }
+  #jsl-preset-toggle:hover { background: #eff6ff; }
+
+  #jsl-preset-panel[hidden],
+  #jsl-preset-answer[hidden] { display: none !important; }
+
+  #jsl-preset-panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 10px);
+    width: min(390px, calc(100vw - 28px));
+    max-height: min(600px, calc(100dvh - 120px));
+    overflow: auto;
+    padding: 16px;
+    border: 1px solid #cbdaf3;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 16px 40px rgba(7, 23, 52, .40);
+    color: #0f172a;
+  }
+
+  #jsl-preset-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  #jsl-preset-title {
+    margin: 0;
+    font-size: 16px;
+    color: #0f172a;
+  }
+  #jsl-preset-close {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 9px;
+    background: #eaf2ff;
+    color: #0f172a;
+    font-size: 21px !important;
+  }
+
+  #jsl-preset-panel > p {
+    margin: 8px 0 12px;
+    color: #475569;
+    font-size: 12px;
+  }
+
+  #jsl-popular-question-box {
+    padding: 12px;
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    background: #f8fbff;
+  }
+  #jsl-popular-question-heading {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 9px;
+    color: #172554;
+    font-size: 13px;
+    font-weight: 850;
+  }
+  #jsl-popular-question-heading i { color: #0b5cff; }
+
+  #jsl-preset-questions { display: grid; gap: 7px; }
+  #jsl-preset-questions button,
+  #jsl-preset-questions .jsl-preset-nav-question {
+    width: 100%;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 11px;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    background: #fff;
+    color: #1e3a8a;
+    text-align: left;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  #jsl-preset-questions button:hover,
+  #jsl-preset-questions button[aria-pressed="true"],
+  #jsl-preset-questions .jsl-preset-nav-question:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+  }
+  #jsl-preset-questions .jsl-preset-nav-question i {
+    flex: 0 0 auto;
+    color: #0b5cff;
+  }
+
+  #jsl-preset-answer {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    background: #eff6ff;
+  }
+  #jsl-preset-answer strong { display: block; color: #172554; }
+  #jsl-preset-answer p { margin: 6px 0; color: #334155; }
+  #jsl-preset-link {
+    color: #0b4bcc;
+    font-weight: 800;
+    text-decoration: underline;
+  }
+
+  #jsl-preset-ask-ai {
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px;
+    border: 0;
+    border-radius: 10px;
+    background: #0b5cff;
+    color: #fff;
+    font-weight: 800 !important;
+  }
+  #jsl-preset-ask-ai:hover { background: #0749c8; }
+  #jsl-preset-status {
+    min-height: 18px;
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: #475569;
+  }
+
+  #jsl-preset-faq button:focus-visible,
+  #jsl-preset-faq a:focus-visible {
+    outline: 3px solid #0b5cff;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 480px) {
+    #jsl-preset-faq {
+      right: max(10px, env(safe-area-inset-right, 0px));
+      bottom: max(88px, calc(env(safe-area-inset-bottom, 0px) + 72px));
+    }
+    #jsl-preset-panel {
+      width: min(370px, calc(100vw - 20px));
+      max-height: calc(100dvh - 120px);
+    }
+    #jsl-preset-toggle {
+      min-height: 42px;
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+  }
+</style>
+
+<div id="jsl-preset-faq">
+  <button
+    type="button"
+    id="jsl-preset-toggle"
+    aria-controls="jsl-preset-panel"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-comments" aria-hidden="true"></i>
+    Help &amp; popular questions
+  </button>
+
+  <section id="jsl-preset-panel" role="region" aria-labelledby="jsl-preset-title" hidden>
+    <div id="jsl-preset-panel-head">
+      <h2 id="jsl-preset-title">Job Space Link Chat</h2>
+      <button type="button" id="jsl-preset-close" aria-label="Close chatbot help">&times;</button>
+    </div>
+
+    <p>Choose a popular question below or open Chatling AI to type your own question.</p>
+
+    <div id="jsl-popular-question-box">
+      <div id="jsl-popular-question-heading">
+        <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
+        <span>Popular questions</span>
+      </div>
+
+      <div id="jsl-preset-questions" role="group" aria-label="Popular Job Space Link questions">
+        <a
+          class="jsl-preset-nav-question"
+          id="jsl-learn-about-question"
+          href="about.html"
+          aria-label="Learn about Job Space Link"
+        >
+          <span>Learn about Job Space Link</span>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+
+        <button type="button" data-jsl-question="0" aria-pressed="false">How do I find remote jobs?</button>
+        <button type="button" data-jsl-question="1" aria-pressed="false">How do I post my resume?</button>
+        <button type="button" data-jsl-question="2" aria-pressed="false">How do employers find candidates?</button>
+        <button type="button" data-jsl-question="3" aria-pressed="false">How do I post a job?</button>
+        <button type="button" data-jsl-question="4" aria-pressed="false">Where do I sign in?</button>
+        <button type="button" data-jsl-question="5" aria-pressed="false">How do I view an applicant PDF?</button>
+      </div>
+    </div>
+
+    <div id="jsl-preset-answer" aria-live="polite" hidden>
+      <strong id="jsl-preset-selected-question"></strong>
+      <p id="jsl-preset-selected-answer"></p>
+      <a id="jsl-preset-link" href="#"></a>
+    </div>
+
+    <button type="button" id="jsl-preset-ask-ai">
+      <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+      Open Chatling AI
+    </button>
+    <p id="jsl-preset-status" role="status" aria-live="polite"></p>
+  </section>
+</div>
+
+<script id="jsl-preset-faq-script">
+(() => {
+  const root = document.getElementById('jsl-preset-faq');
+  if (!root) return;
+
+  const toggle = root.querySelector('#jsl-preset-toggle');
+  const panel = root.querySelector('#jsl-preset-panel');
+  const close = root.querySelector('#jsl-preset-close');
+  const answer = root.querySelector('#jsl-preset-answer');
+  const questionText = root.querySelector('#jsl-preset-selected-question');
+  const answerText = root.querySelector('#jsl-preset-selected-answer');
+  const link = root.querySelector('#jsl-preset-link');
+  const askAI = root.querySelector('#jsl-preset-ask-ai');
+  const status = root.querySelector('#jsl-preset-status');
+  const buttons = Array.from(root.querySelectorAll('[data-jsl-question]'));
+
+  const questions = [
+    {
+      question: 'How do I find remote jobs?',
+      answer: 'Open Job Hiring to browse available listings and use its search and filters to narrow your results.',
+      href: 'postedhiring1.html',
+      link: 'Browse job listings'
+    },
+    {
+      question: 'How do I post my resume?',
+      answer: 'Use the Post Resume page to add or update your jobseeker details and resume.',
+      href: 'applicantform1.html?source=jobspacelink',
+      link: 'Open Post Resume'
+    },
+    {
+      question: 'How do employers find candidates?',
+      answer: 'Search this Applicant Directory by keyword or filter the results. Employer account actions may require sign-in.',
+      href: 'loginemployer.html',
+      link: 'Employer sign-in'
+    },
+    {
+      question: 'How do I post a job?',
+      answer: 'Open Post Jobs to create a job listing. Sign in as an employer when prompted.',
+      href: 'postjob1.html',
+      link: 'Open Post Jobs'
+    },
+    {
+      question: 'Where do I sign in?',
+      answer: 'Use the Login page to choose the appropriate account access for your role.',
+      href: 'index1.html',
+      link: 'Open Login'
+    },
+    {
+      question: 'How do I view an applicant PDF?',
+      answer: 'Select View PDF for an applicant in the directory. Sign in as an employer if the action asks you to.',
+      href: 'loginemployer.html',
+      link: 'Employer sign-in'
+    }
+  ];
+
+  let selected = null;
+
+  const setOpen = (open) => {
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    if (open) close.focus({ preventScroll: true });
+  };
+
+  toggle.addEventListener('click', () => setOpen(panel.hidden));
+  close.addEventListener('click', () => {
+    setOpen(false);
+    toggle.focus({ preventScroll: true });
+  });
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const index = Number(button.dataset.jslQuestion);
+      selected = questions[index];
+      if (!selected) return;
+
+      buttons.forEach((item) => {
+        item.setAttribute('aria-pressed', String(item === button));
+      });
+
+      questionText.textContent = selected.question;
+      answerText.textContent = selected.answer;
+      link.href = selected.href;
+      link.textContent = selected.link;
+      answer.hidden = false;
+      askAI.innerHTML = '<i class="fa-solid fa-comment-dots" aria-hidden="true"></i> Copy question and open AI chat';
+      status.textContent = '';
+    });
+  });
+
+  askAI.addEventListener('click', async () => {
+    if (typeof window.Chatling?.open !== 'function') {
+      status.textContent = 'AI chat is loading. Please try again in a moment.';
+      return;
+    }
+
+    try {
+      window.Chatling.open();
+    } catch (_) {
+      status.textContent = 'AI chat is unavailable right now.';
+      return;
+    }
+
+    if (!selected) {
+      status.textContent = '';
+      return;
+    }
+
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(selected.question);
+      status.textContent = 'Question copied. Paste it into Chatling and press Send.';
+    } catch (_) {
+      status.textContent = 'Copy the question shown above, then paste it into Chatling.';
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !panel.hidden) {
+      setOpen(false);
+      toggle.focus({ preventScroll: true });
+    }
+  });
+
+  document.addEventListener('pointerdown', (event) => {
+    if (!panel.hidden && !root.contains(event.target)) setOpen(false);
+  });
+})();
+</script>
+
+<!-- Chatling AI chat: shared chatbot for Job Space Link pages. -->
+<script>window.chtlConfig = { chatbotId: "3146762929" };</script>
+<script async data-id="3146762929" id="chtl-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
+
+<!-- Laptop account menu: keep its ancestor stacking contexts above dashboard content. -->
+<style id="jsl-laptop-account-dropdown-layer-20260929">
+@media (min-width:1024px) and (max-width:1439px){
+  html body.employer-logged-in > header{
+    z-index:280000!important;
+    overflow:visible!important;
+  }
+  html body.employer-logged-in > header #authButtons.auth-buttons{
+    position:relative!important;
+    z-index:280010!important;
+    overflow:visible!important;
+  }
+  html body.employer-logged-in > header #authButtons #accountDropdown.account-dropdown{
+    z-index:280020!important;
+    overflow:visible!important;
+  }
+}
+</style>
+
+<style id="jsl-tablet-header-contained-account-20260929">
+/* Tablet header: reserve space for account actions without clipping dropdowns. */
+@media (min-width:769px) and (max-width:1023px){
+  html body.employer-logged-in > header{
+    display:grid!important;
+    grid-template-columns:80px minmax(0,1fr) 164px!important;
+    grid-template-rows:72px!important;
+    gap:0 6px!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    max-width:100vw!important;
+    padding:0 6px!important;
+    overflow:visible!important;
+    z-index:280000!important;
+  }
+  html body.employer-logged-in > header > .logo{
+    grid-column:1!important;
+    grid-row:1!important;
+    width:80px!important;
+    min-width:0!important;
+    max-width:80px!important;
+    margin:0!important;
+  }
+  html body.employer-logged-in > header > .logo img{
+    max-width:80px!important;
+    object-fit:contain!important;
+  }
+  html body.employer-logged-in > header > nav{
+    grid-column:2!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    gap:3px!important;
+    justify-content:space-between!important;
+  }
+  html body.employer-logged-in > header > nav > a,
+  html body.employer-logged-in > header > nav .nav-main-link{
+    font-size:clamp(10px,1.12vw,11.5px)!important;
+    gap:2px!important;
+    padding-left:0!important;
+    padding-right:0!important;
+  }
+  html body.employer-logged-in > header > nav > a > i,
+  html body.employer-logged-in > header > nav .nav-main-link > i{
+    font-size:11px!important;
+    margin:0!important;
+  }
+  html body.employer-logged-in > header > nav .nav-dropdown-toggle{
+    width:16px!important;
+    min-width:16px!important;
+    padding:0!important;
+  }
+  html body.employer-logged-in:is(.employer-logged-in,.jsl-auth-direct-refresh,.jsl-auth-align-refresh) > header > #authButtons.auth-buttons{
+    display:flex!important;
+    position:relative!important;
+    inset:auto!important;
+    grid-column:3!important;
+    grid-row:1!important;
+    justify-self:end!important;
+    align-self:center!important;
+    align-items:center!important;
+    flex-wrap:nowrap!important;
+    width:164px!important;
+    min-width:0!important;
+    max-width:164px!important;
+    height:32px!important;
+    margin:0!important;
+    padding:0!important;
+    gap:4px!important;
+    transform:none!important;
+    translate:none!important;
+    overflow:visible!important;
+    z-index:280010!important;
+  }
+  html body.employer-logged-in > header #headerInteractionFilterWrap.header-interaction-filter-wrap{
+    display:grid!important;
+    position:static!important;
+    grid-template-columns:repeat(2,26px)!important;
+    flex:0 0 56px!important;
+    width:56px!important;
+    min-width:56px!important;
+    max-width:56px!important;
+    gap:4px!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+  }
+  html body.employer-logged-in > header #headerInteractionFilterWrap .interaction-filter-btn{
+    box-sizing:border-box!important;
+    width:26px!important;
+    min-width:26px!important;
+    max-width:26px!important;
+    height:32px!important;
+    min-height:32px!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+  }
+  html body.employer-logged-in > header #accountButton.company-account-button{
+    box-sizing:border-box!important;
+    position:relative!important;
+    inset:auto!important;
+    flex:0 1 104px!important;
+    width:104px!important;
+    min-width:0!important;
+    max-width:104px!important;
+    height:32px!important;
+    min-height:32px!important;
+    margin:0!important;
+    padding:0 6px!important;
+    gap:4px!important;
+    overflow:hidden!important;
+    transform:none!important;
+  }
+  html body.employer-logged-in > header #accountButton.company-account-button #accountButtonText{
+    flex:1 1 0!important;
+    min-width:0!important;
+    max-width:100%!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    transform:none!important;
+  }
+  html body.employer-logged-in > header #accountButton.company-account-button img{
+    flex:0 0 20px!important;
+    width:20px!important;
+    min-width:20px!important;
+    max-width:20px!important;
+    height:20px!important;
+    transform:none!important;
+  }
+  html body.employer-logged-in > header #authButtons #accountDropdown.account-dropdown{
+    right:0!important;
+    left:auto!important;
+    z-index:280020!important;
   }
 }
 </style>
