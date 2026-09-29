@@ -8107,7 +8107,7 @@ html body .filter-panel .filter-option{
 </style>
 </head>
 <body class="employer-logged-out view-table-active">
-<header>
+<header id="jslMainHeader">
   <a class="logo" href="home.html" aria-label="Job Space Link Home"><img src="JOBSPACELINK.png" alt="Job Space Link Logo" /></a>
   <nav>
     <a href="home.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
@@ -25318,10 +25318,17 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
 <style id="jsl-tablet-header-contained-account-20260929">
 /* Tablet header: reserve space for account actions without clipping dropdowns. */
 @media (min-width:769px) and (max-width:1023px){
-  html body.employer-logged-in > header{
+  html body.employer-logged-in > header#jslMainHeader{
     display:grid!important;
     grid-template-columns:80px minmax(0,1fr) 164px!important;
-    grid-template-rows:72px!important;
+    grid-template-rows:minmax(0,1fr)!important;
+    height:72px!important;
+    min-height:72px!important;
+    align-items:center!important;
+    align-content:center!important;
+    justify-content:stretch!important;
+    margin:0!important;
+    transform:none!important;
     gap:0 6px!important;
     box-sizing:border-box!important;
     width:100%!important;
@@ -25330,7 +25337,10 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     overflow:visible!important;
     z-index:280000!important;
   }
-  html body.employer-logged-in > header > .logo{
+  html body.employer-logged-in > header#jslMainHeader > .logo{
+    position:relative!important;
+    inset:auto!important;
+    transform:none!important;
     grid-column:1!important;
     grid-row:1!important;
     width:80px!important;
@@ -25338,11 +25348,17 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     max-width:80px!important;
     margin:0!important;
   }
-  html body.employer-logged-in > header > .logo img{
+  html body.employer-logged-in > header#jslMainHeader > .logo img{
     max-width:80px!important;
     object-fit:contain!important;
   }
-  html body.employer-logged-in > header > nav{
+  html body.employer-logged-in > header#jslMainHeader > nav{
+    display:flex!important;
+    position:relative!important;
+    inset:auto!important;
+    transform:none!important;
+    padding:0!important;
+    box-sizing:border-box!important;
     grid-column:2!important;
     grid-row:1!important;
     width:100%!important;
@@ -25351,25 +25367,26 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     gap:3px!important;
     justify-content:space-between!important;
   }
-  html body.employer-logged-in > header > nav > a,
-  html body.employer-logged-in > header > nav .nav-main-link{
+  html body.employer-logged-in > header#jslMainHeader > nav > a,
+  html body.employer-logged-in > header#jslMainHeader > nav .nav-main-link{
     font-size:clamp(10px,1.12vw,11.5px)!important;
     gap:2px!important;
     padding-left:0!important;
     padding-right:0!important;
   }
-  html body.employer-logged-in > header > nav > a > i,
-  html body.employer-logged-in > header > nav .nav-main-link > i{
+  html body.employer-logged-in > header#jslMainHeader > nav > a > i,
+  html body.employer-logged-in > header#jslMainHeader > nav .nav-main-link > i{
     font-size:11px!important;
     margin:0!important;
   }
-  html body.employer-logged-in > header > nav .nav-dropdown-toggle{
+  html body.employer-logged-in > header#jslMainHeader > nav .nav-dropdown-toggle{
     width:16px!important;
     min-width:16px!important;
     padding:0!important;
   }
-  html body.employer-logged-in:is(.employer-logged-in,.jsl-auth-direct-refresh,.jsl-auth-align-refresh) > header > #authButtons.auth-buttons{
+  html body.employer-logged-in:is(.employer-logged-in,.jsl-auth-direct-refresh,.jsl-auth-align-refresh) > header#jslMainHeader > #authButtons.auth-buttons{
     display:flex!important;
+    box-sizing:border-box!important;
     position:relative!important;
     inset:auto!important;
     grid-column:3!important;
@@ -25390,7 +25407,7 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     overflow:visible!important;
     z-index:280010!important;
   }
-  html body.employer-logged-in > header #headerInteractionFilterWrap.header-interaction-filter-wrap{
+  html body.employer-logged-in > header#jslMainHeader #headerInteractionFilterWrap.header-interaction-filter-wrap{
     display:grid!important;
     position:static!important;
     grid-template-columns:repeat(2,26px)!important;
@@ -25403,7 +25420,7 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     padding:0!important;
     transform:none!important;
   }
-  html body.employer-logged-in > header #headerInteractionFilterWrap .interaction-filter-btn{
+  html body.employer-logged-in > header#jslMainHeader #headerInteractionFilterWrap .interaction-filter-btn{
     box-sizing:border-box!important;
     width:26px!important;
     min-width:26px!important;
@@ -25414,7 +25431,7 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     padding:0!important;
     transform:none!important;
   }
-  html body.employer-logged-in > header #accountButton.company-account-button{
+  html body.employer-logged-in > header#jslMainHeader #accountButton.company-account-button{
     box-sizing:border-box!important;
     position:relative!important;
     inset:auto!important;
@@ -25430,7 +25447,7 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     overflow:hidden!important;
     transform:none!important;
   }
-  html body.employer-logged-in > header #accountButton.company-account-button #accountButtonText{
+  html body.employer-logged-in > header#jslMainHeader #accountButton.company-account-button #accountButtonText{
     flex:1 1 0!important;
     min-width:0!important;
     max-width:100%!important;
@@ -25439,7 +25456,7 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     text-overflow:ellipsis!important;
     transform:none!important;
   }
-  html body.employer-logged-in > header #accountButton.company-account-button img{
+  html body.employer-logged-in > header#jslMainHeader #accountButton.company-account-button img{
     flex:0 0 20px!important;
     width:20px!important;
     min-width:20px!important;
@@ -25447,11 +25464,43 @@ html body #pagination .pagination-control:active:not([aria-disabled="true"]):not
     height:20px!important;
     transform:none!important;
   }
-  html body.employer-logged-in > header #authButtons #accountDropdown.account-dropdown{
+  html body.employer-logged-in > header#jslMainHeader #authButtons #accountDropdown.account-dropdown{
     right:0!important;
     left:auto!important;
     z-index:280020!important;
   }
+  html body.employer-logged-in > header#jslMainHeader #loginButton,
+  html body.employer-logged-in > header#jslMainHeader #mobileHeaderInteractionFilterWrap,
+  html body.employer-logged-in > header#jslMainHeader #navToggle{
+    display:none!important;
+  }
+  html body.employer-logged-in > header#jslMainHeader #headerInteractionFilterWrap{
+    box-sizing:border-box!important;
+    inset:auto!important;
+    height:32px!important;
+    min-height:0!important;
+    align-self:center!important;
+    translate:none!important;
+  }
+  html body.employer-logged-in > header#jslMainHeader #headerInteractionFilterWrap .interaction-filter-btn{
+    position:relative!important;
+    inset:auto!important;
+    translate:none!important;
+  }
+  html body.employer-logged-in > header#jslMainHeader #accountButton{
+    display:inline-flex!important;
+    align-items:center!important;
+    translate:none!important;
+  }
+  html body.employer-logged-in > header#jslMainHeader #accountDropdown{
+    position:absolute!important;
+    top:calc(100% + 10px)!important;
+    bottom:auto!important;
+    transform:none!important;
+    width:min(270px,calc(100vw - 16px))!important;
+    box-sizing:border-box!important;
+  }
+
 }
 </style>
 
