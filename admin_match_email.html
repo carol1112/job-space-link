@@ -1661,6 +1661,210 @@ header .auth-buttons a:hover{
 }
 
 
+
+/* ============================================================
+   FINAL HEADER PATCH
+   Header now shows logo on the left and Back button on the right only
+============================================================ */
+header nav,
+.nav-toggle,
+.mobile-panel,
+header .auth-buttons{
+  display:none !important;
+}
+
+header{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  padding:0 16px 0 10px !important;
+  overflow:hidden !important;
+}
+
+header .logo{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  max-width:calc(100% - 122px) !important;
+  margin:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+}
+
+header .logo img{
+  height:58px !important;
+  width:auto !important;
+  max-width:min(210px, 58vw) !important;
+  object-fit:contain !important;
+  object-position:left center !important;
+}
+
+.back-btn{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  height:38px;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:linear-gradient(135deg, rgba(0,198,255,0.24), rgba(139,92,246,0.24));
+  color:#ffffff;
+  cursor:pointer;
+  font-size:0.84rem;
+  font-weight:800;
+  text-decoration:none;
+  white-space:nowrap;
+  box-shadow:0 0 14px rgba(0,198,255,0.12);
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.back-btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(0,198,255,0.36);
+  box-shadow:0 0 20px rgba(0,198,255,0.24);
+}
+
+.back-btn:focus-visible{
+  outline:2px solid rgba(56,189,248,0.95);
+  outline-offset:3px;
+}
+
+@media (max-width:768px){
+  header{
+    height:var(--header-h) !important;
+    padding:0 10px !important;
+    gap:8px !important;
+  }
+
+  header .logo{
+    max-width:calc(100% - 104px) !important;
+  }
+
+  header .logo img{
+    height:46px !important;
+    max-width:min(170px, 54vw) !important;
+  }
+
+  .back-btn{
+    height:36px;
+    padding:0 12px;
+    border-radius:10px;
+    font-size:0.78rem;
+    gap:6px;
+  }
+}
+
+@media (max-width:480px){
+  header .logo{
+    max-width:calc(100% - 94px) !important;
+  }
+
+  
+  header .logo img{
+    height:42px !important;
+    max-width:min(158px, 52vw) !important;
+  }
+
+  .back-btn{
+    height:34px;
+    padding:0 10px;
+    border-radius:9px;
+    font-size:0.74rem;
+  }
+}
+
+/* ============================================================
+   ADMIN WHITE THEME
+   Visual overrides only; all existing page logic is preserved.
+============================================================ */
+:root{
+  --glass-bg:#ffffff;
+  --glass-border:#d8e5f4;
+  --text-main:#10213d;
+  --text-soft:#52627a;
+  --primary1:#24b7ee;
+  --primary2:#6d43ed;
+}
+
+html,body{background:#ffffff !important;color:var(--text-main)}
+
+header{
+  background:#ffffff !important;
+  border-bottom:1px solid #dce6f2 !important;
+  backdrop-filter:none !important;
+  box-shadow:0 5px 18px rgba(15,52,96,.08) !important;
+}
+header .logo img{filter:none !important}
+
+.back-btn{
+  min-width:108px;height:44px;border:0;border-radius:13px;
+  background:linear-gradient(135deg,#35c8f4 0%,#62bff5 45%,#a988f4 100%);
+  color:#fff;box-shadow:0 8px 20px rgba(79,144,229,.20),inset 0 1px 0 rgba(255,255,255,.28);
+}
+.back-btn:hover{
+  border:0;background:linear-gradient(135deg,#20bceb 0%,#4d9ff0 48%,#986df0 100%);
+  box-shadow:0 11px 24px rgba(79,144,229,.29),inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+.page-wrap{background:#ffffff}
+.hero-card,.mini-card,.panel{
+  background:#ffffff;border-color:#d8e5f4;backdrop-filter:none;
+  box-shadow:0 12px 30px rgba(15,52,96,.09);
+}
+.mini-card{background:linear-gradient(135deg,#f3fbff 0%,#f7f3ff 100%)}
+.hero-card h1,.panel-title h2{color:#073878}
+.hero-card p,.mini-card .v{color:#44546a}
+.mini-card .k,.summary-grid .k{color:#1765c1}
+.chip i,.panel-title h2 i,.hero-card h1 i{color:#075bab}
+
+.chip,.check-wrap,.tool-btn,.ghost-btn,.note-box,.token-box,
+.status-line,.summary-grid .card,.job-summary,.table-wrap{
+  background:#f8fbff;border-color:#d8e5f4;color:#263c59;
+}
+.field label{color:#263c59}
+.input,.select,.textarea{
+  background:#fff;border-color:#c8d8eb;color:#10213d;
+  box-shadow:inset 0 1px 2px rgba(15,52,96,.03);
+}
+.input::placeholder,.textarea::placeholder{color:#8290a4}
+.input:focus,.select:focus,.textarea:focus{
+  border-color:#2f9fe8;box-shadow:0 0 0 3px rgba(47,159,232,.13);
+}
+.tool-btn,.ghost-btn{color:#17365f}
+.tool-btn:hover,.ghost-btn:hover:not(:disabled){
+  background:#edf6ff;border-color:#a9c9ea;color:#075bab;
+}
+.note-box,.token-box,.job-summary{color:#44546a}
+.note-box strong,.token-box strong{color:#073878}
+.token-item{background:#fff;border-color:#d8e5f4;color:#334b68}
+.summary-grid .v{color:#073878}
+
+.preview-surface{border-color:#d8e5f4;box-shadow:0 6px 18px rgba(15,52,96,.06)}
+.preview-head{background:#f5f9fe;border-bottom-color:#d8e5f4}
+.table-wrap{background:#fff}
+.table th,.table td{border-bottom-color:#e1e9f3}
+.table th{
+  background:linear-gradient(135deg,#25afe9 0%,#347ee9 50%,#7044ed 100%);
+  color:#fff;
+}
+.table td{color:#263c59}
+.badge.exact{background:#e9f9ef;color:#137a3e;border-color:#bce9cb}
+.badge.flex{background:#fff7df;color:#9a5b00;border-color:#f2d58a}
+
+.loading-overlay,.popup-overlay{
+  background:rgba(231,239,249,.78);backdrop-filter:blur(3px);
+}
+.loading-card,.popup-card{
+  background:#fff;border-color:#cfe0f2;box-shadow:0 20px 48px rgba(15,52,96,.18);
+}
+.popup-title{color:#073878}.popup-text{color:#52627a}
+.spinner{border-color:#d9e8f6;border-top-color:#24afe9}
+
+@media (max-width:768px){.back-btn{min-width:96px;height:40px}}
+
 </style>
 </head>
 <body>
@@ -1670,90 +1874,11 @@ header .auth-buttons a:hover{
     <img src="JOBSPACELINK.png" alt="Job Space Link Logo" />
   </div>
 
-  <nav>
-    <a href="index.html">Home</a>
 
-    <div class="nav-dropdown" id="aboutNavDropdown">
-      <div class="nav-dropdown-trigger">
-        <a href="about.html" id="aboutNavLink" class="nav-main-link">About</a>
-        <button
-          type="button"
-          class="nav-dropdown-toggle"
-          id="aboutNavToggle"
-          aria-expanded="false"
-          aria-controls="aboutNavMenu"
-          aria-label="Toggle About menu"
-        >
-          <i class="fa-solid fa-caret-down nav-caret"></i>
-        </button>
-      </div>
-
-      <div class="nav-dropdown-menu" id="aboutNavMenu">
-        <a href="why choose us.html"><i class="fa-solid fa-circle-check"></i> Why Choose Us</a>
-        <a href="how it works.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
-      </div>
-    </div>
-
-    <a href="postedhiring.html">Job Hiring</a>
-    <a href="dashboard.html">Jobseeker</a>
-    <a href="postjob.html">Post Jobs</a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume</a>
-  </nav>
-
-  <div class="auth-buttons">
-    <a href="loginemployer.html" class="admin"><i class="fa-solid fa-user-lock"></i> Employer</a>
-    <a href="loginjobseeker.html" class="admin"><i class="fa-solid fa-user-lock"></i> Jobseeker</a>
-    <a href="admin.html" class="admin"><i class="fa-solid fa-user-lock"></i> Admin</a>
-  </div>
-
-  <button
-    type="button"
-    class="nav-toggle"
-    id="navToggle"
-    aria-label="Open mobile menu"
-    aria-expanded="false"
-  >
-    <i class="fa-solid fa-bars"></i>
+  <button type="button" class="back-btn" id="backBtn" aria-label="Go back">
+    <i class="fa-solid fa-arrow-left"></i> Back
   </button>
 </header>
-
-
-<!-- Mobile panel -->
-<div class="mobile-panel" id="mobilePanel" aria-hidden="true">
-  <div class="mnav">
-    <a href="index.html">Home <i class="fa-solid fa-arrow-right"></i></a>
-
-    <div class="mnav-group" id="mobileAboutGroup">
-      <div class="mnav-row">
-        <a href="about.html" class="mnav-link" id="mobileAboutLink">About <i class="fa-solid fa-arrow-right"></i></a>
-        <button
-          type="button"
-          class="mnav-toggle"
-          id="mobileAboutToggle"
-          aria-expanded="false"
-          aria-controls="mobileAboutMenu"
-          aria-label="Toggle About submenu"
-        >
-          <i class="fa-solid fa-caret-down mnav-caret"></i>
-        </button>
-      </div>
-
-      <div class="mnav-submenu" id="mobileAboutMenu">
-        <a href="why choose us.html">Why Choose Us <i class="fa-solid fa-arrow-right"></i></a>
-        <a href="how it works.html">How It Works <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-    </div>
-
-    <a href="postjob.html">Post Jobs <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="postedhiring.html">Job Hiring <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="dashboard.html">Applicant Directory <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="applicantform.html?source=jobspacelink">Post Resume <i class="fa-solid fa-arrow-right"></i></a>
-    <a href="loginemployer.html">Employer <i class="fa-solid fa-arrow-right"></i></a>
-   <a href="loginjobseeker.html">Jobseeker <i class="fa-solid fa-arrow-right"></i></a>
-
-    <a href="admin.html">Admin <i class="fa-solid fa-arrow-right"></i></a>
-  </div>
-</div>
 
 <div class="page-wrap">
   <section class="hero">
@@ -1812,7 +1937,8 @@ header .auth-buttons a:hover{
             <button type="button" class="tool-btn" data-insert="<strong>{{company_name}}</strong>"><i class="fa-solid fa-building"></i> Company</button>
             <button type="button" class="tool-btn" data-insert="<strong>{{department}}</strong>"><i class="fa-solid fa-layer-group"></i> Department</button>
             <button type="button" class="tool-btn" data-insert="<strong>{{salary_range}}</strong>"><i class="fa-solid fa-money-bill-wave"></i> Salary</button>
-            <button type="button" class="tool-btn" data-insert="<a href='https://jobspacelink.com' target='_blank'>Visit Job Space Link</a>"><i class="fa-solid fa-link"></i> Link</button>
+            <button type="button" class="tool-btn" data-insert="<a href='https://jobspacelink.com' target='_blank' rel='noopener noreferrer'>Visit Job Space Link</a>"><i class="fa-solid fa-link"></i> Link</button>
+            <button type="button" class="tool-btn" data-insert="<a href='{{job_url}}' target='_blank' rel='noopener noreferrer'>View this job posting</a>"><i class="fa-solid fa-arrow-up-right-from-square"></i> Matching Job Link</button>
             <button type="button" class="tool-btn" id="sampleBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Load Sample</button>
           </div>
         </div>
@@ -1843,6 +1969,7 @@ header .auth-buttons a:hover{
             <div class="token-item">{{applicant_position}}</div>
             <div class="token-item">{{applicant_location}}</div>
             <div class="token-item">{{match_reason}}</div>
+            <div class="token-item">{{job_url}}</div>
           </div>
         </div>
 
@@ -1853,6 +1980,7 @@ header .auth-buttons a:hover{
           <strong>applicant_transaction_table.master_id → applicant_master_table.id</strong>,
           uses the recipient email from <strong>applicant_transaction_table.email</strong>,
           and only includes rows where <strong>applicant_transaction_table.status = Active</strong>.
+          The <strong>{{job_url}}</strong> placeholder resolves to the selected posted job; every sent email includes this link automatically.
         </div>
 
         <div class="actions">
@@ -1956,125 +2084,20 @@ header .auth-buttons a:hover{
 </div>
 
 <script>
-/* ============================================================
-   ABOUT DROPDOWN (HEADER)
-=========================================================== */
-(function(){
-  const dd = document.getElementById("aboutNavDropdown");
-  const toggle = document.getElementById("aboutNavToggle");
-  const menu = document.getElementById("aboutNavMenu");
+console.log("admin_match_email auth build: 2026-09-08-edge-authoritative-v2");
 
-  if(!dd || !toggle || !menu) return;
-
-  function closeAboutMenu(){
-    dd.classList.remove("open");
-    toggle.setAttribute("aria-expanded", "false");
-  }
-
-  function openAboutMenu(){
-    dd.classList.add("open");
-    toggle.setAttribute("aria-expanded", "true");
-  }
-
-  toggle.addEventListener("click", function(e){
-    e.preventDefault();
-    e.stopPropagation();
-
-    const isOpen = dd.classList.contains("open");
-    if(isOpen){
-      closeAboutMenu();
+const backBtn = document.getElementById("backBtn");
+if (backBtn){
+  backBtn.addEventListener("click", () => {
+    if (window.history.length > 1){
+      window.history.back();
     }else{
-      openAboutMenu();
+      window.location.href = "admin.html";
     }
   });
+}
 
-  document.addEventListener("click", function(e){
-    if(!dd.contains(e.target)){
-      closeAboutMenu();
-    }
-  });
-
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape"){
-      closeAboutMenu();
-    }
-  });
-
-  menu.querySelectorAll("a").forEach(function(a){
-    a.addEventListener("click", function(){
-      closeAboutMenu();
-    });
-  });
-})();
-
-/* ============================================================
-   MOBILE MENU (HEADER)
-=========================================================== */
-(function(){
-  const btn = document.getElementById("navToggle");
-  const panel = document.getElementById("mobilePanel");
-  const mobileAboutGroup = document.getElementById("mobileAboutGroup");
-  const mobileAboutToggle = document.getElementById("mobileAboutToggle");
-  const mobileAboutMenu = document.getElementById("mobileAboutMenu");
-  if(!btn || !panel) return;
-
-  function closeMobileAbout(){
-    if(!mobileAboutGroup || !mobileAboutToggle) return;
-    mobileAboutGroup.classList.remove("open");
-    mobileAboutToggle.setAttribute("aria-expanded", "false");
-  }
-
-  function toggleMobileAbout(e){
-    if(e){
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if(!mobileAboutGroup || !mobileAboutToggle) return;
-    const willOpen = !mobileAboutGroup.classList.contains("open");
-    mobileAboutGroup.classList.toggle("open", willOpen);
-    mobileAboutToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
-  }
-
-  function close(){
-    panel.classList.remove("open");
-    panel.setAttribute("aria-hidden","true");
-    btn.setAttribute("aria-expanded","false");
-    closeMobileAbout();
-  }
-
-  btn.addEventListener("click", ()=>{
-    const open = panel.classList.toggle("open");
-    panel.setAttribute("aria-hidden", open ? "false" : "true");
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
-    if(!open) closeMobileAbout();
-  });
-
-  if(mobileAboutToggle){
-    mobileAboutToggle.addEventListener("click", toggleMobileAbout);
-  }
-
-  panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
-  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") close(); });
-
-  document.addEventListener("click", (e)=>{
-    if(panel.classList.contains("open")){
-      const header = document.querySelector("header");
-      if(header && header.contains(e.target)) return;
-      if(panel.contains(e.target)) return;
-      close();
-    }
-  });
-
-  if(mobileAboutMenu){
-    mobileAboutMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
-  }
-
-  window.addEventListener("resize", ()=>{
-    if(window.innerWidth > 768) close();
-  }, { passive:true });
-})();
-
-const sb = window.supabase;
+const sb = window.sbClient || window.supabaseClient || window.supabase;
 const FUNCTION_NAME = "admin_match_send_email";
 
 const jobSelect = document.getElementById("jobSelect");
@@ -2115,6 +2138,15 @@ function escapeHtml(v){
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+const PUBLIC_JOB_DETAILS_PAGE = "https://jobspacelink.com/matched-job.html";
+
+function getJobUrl(jobId){
+  if (!jobId) return "";
+  const url = new URL(PUBLIC_JOB_DETAILS_PAGE);
+  url.searchParams.set("job_id", String(jobId));
+  return url.toString();
 }
 
 function showStatus(type, message){
@@ -2176,7 +2208,10 @@ function setBusy(state){
 
 function updateEmailPreview(){
   previewSubject.textContent = subjectInput.value.trim() || "No subject yet";
-  previewBody.innerHTML = htmlInput.value.trim() || `<p style="color:#64748b;">Your email preview will appear here.</p>`;
+  const rawHtml = htmlInput.value.trim();
+  const selectedJobUrl = getJobUrl(jobSelect.value);
+  const previewHtml = rawHtml.replace(/\{\{\s*job_url\s*\}\}/g, escapeHtml(selectedJobUrl || "#"));
+  previewBody.innerHTML = previewHtml || '<p style="color:#64748b;">Your email preview will appear here.</p>';
 }
 
 function insertAtCursor(text){
@@ -2191,49 +2226,47 @@ function insertAtCursor(text){
 }
 
 async function requireAdmin(){
-  if (!sb){
+  if (!sb || !sb.auth){
     alert("Supabase is not initialized. Check supabase_config.js");
     window.location.href = "admin.html";
     return false;
   }
 
   try{
-    const { data: { session }, error: sessionError } = await sb.auth.getSession();
+    const { data: sessionData, error: sessionError } = await sb.auth.getSession();
+    const session = sessionData?.session || null;
+
     if (sessionError || !session){
+      console.warn("No admin session:", sessionError);
       alert("Please log in as admin first.");
       window.location.href = "admin.html";
       return false;
     }
 
-    const { data: { user }, error: userError } = await sb.auth.getUser();
+    const { data: userData, error: userError } = await sb.auth.getUser();
+    const user = userData?.user || null;
+
     if (userError || !user){
-      alert("Unable to verify the logged-in admin.");
+      console.warn("Unable to verify current Supabase user:", userError);
+      alert("Unable to verify the logged-in session.");
       window.location.href = "admin.html";
       return false;
     }
 
-    const appMetaRole = String(user?.app_metadata?.role || "").toLowerCase();
-    if (appMetaRole === "admin"){
-      return true;
-    }
+    /*
+      IMPORTANT:
+      Do not check profiles.role or browser-side admin_accounts here.
 
-    const { data: profile, error: profileError } = await sb
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profileError || String(profile?.role || "").toLowerCase() !== "admin"){
-      alert("Access denied: Admins only.");
-      await sb.auth.signOut().catch(() => {});
-      window.location.href = "admin.html";
-      return false;
-    }
-
+      The Edge Function admin_match_send_email performs the authoritative
+      admin check with the service role against public.admin_accounts.
+      This prevents browser RLS or a missing legacy profiles row from
+      incorrectly rejecting a valid administrator.
+    */
     return true;
+
   }catch(err){
-    console.error("Admin check error:", err);
-    alert("Unexpected admin validation error.");
+    console.error("Session check error:", err);
+    alert("Unable to validate the login session.");
     window.location.href = "admin.html";
     return false;
   }
@@ -2327,8 +2360,15 @@ async function loadJobs(){
     showStatus("success", `${jobsCache.length} posted jobs loaded.`);
   }catch(err){
     console.error(err);
-    showStatus("error", err?.message || "Unable to load posted jobs.");
+
+    const message = String(err?.message || "Unable to load posted jobs.");
+    showStatus("error", message);
     jobSelect.innerHTML = `<option value="">Failed to load jobs</option>`;
+
+    if (/access denied|unauthorized|missing bearer token/i.test(message)){
+      alert(message);
+      window.location.href = "admin.html";
+    }
   }finally{
     setBusy(false);
     showLoading(false);
@@ -2465,6 +2505,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 subjectInput.addEventListener("input", updateEmailPreview);
 htmlInput.addEventListener("input", updateEmailPreview);
+jobSelect.addEventListener("change", updateEmailPreview);
 refreshPreviewBtn.addEventListener("click", updateEmailPreview);
 previewMatchesBtn.addEventListener("click", previewMatches);
 sendBtn.addEventListener("click", sendMatchedEmails);
@@ -2490,6 +2531,15 @@ sampleBtn.addEventListener("click", () => {
     <strong>Match Type:</strong> {{match_reason}}
   </p>
 
+  <p style="margin:0 0 12px;">
+    View the specific job posting that matched your profile:
+  </p>
+  <p style="margin:0 0 18px;">
+    <a href="{{job_url}}" target="_blank" rel="noopener noreferrer"
+       style="display:inline-block;padding:12px 18px;border-radius:8px;background:#075bab;color:#ffffff;text-decoration:none;font-weight:700;">
+      View This Job Posting
+    </a>
+  </p>
   <p style="margin:0 0 12px;">
     Please reply to this email or visit
     <a href="https://jobspacelink.com" target="_blank">Job Space Link</a>
