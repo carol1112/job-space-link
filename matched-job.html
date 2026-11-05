@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Details | Job Space Link</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_config.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#f3f7fc;color:#172b4d;font-family:Arial,Helvetica,sans-serif}
+.top{background:#102a56;color:#fff;padding:18px max(20px,calc((100% - 1040px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:1.1rem;font-weight:800;letter-spacing:.2px}
+.wrap{max-width:1040px;margin:34px auto;padding:0 18px 48px}
+.card{background:#fff;border:1px solid #d9e3ef;border-radius:18px;box-shadow:0 10px 30px rgba(16,42,86,.08);padding:clamp(22px,4vw,38px)}
+h1{margin:0 0 8px;color:#102a56;font-size:clamp(1.7rem,4vw,2.5rem)}
+.company{font-size:1.12rem;color:#426184;font-weight:700;margin:0 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 24px}
+.pill{background:#edf5ff;border:1px solid #d0e3fa;color:#174c88;border-radius:999px;padding:8px 12px;font-size:.92rem}
+h2{margin:26px 0 10px;color:#102a56;font-size:1.1rem}
+.content{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;color:#334155}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 17px;border-radius:10px;text-decoration:none;font-weight:700;border:0;cursor:pointer;font-size:.95rem}
+.primary{background:#126ac3;color:white}
+.secondary{background:#edf2f8;color:#17406f}
+.state{padding:24px;border-radius:12px;background:#f8fafc;color:#52627a;line-height:1.6}
+.error{background:#fff1f2;color:#a11;border:1px solid #fecdd3}
+@media(max-width:600px){.top{padding:16px 18px}.wrap{margin:18px auto}.card{border-radius:14px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand"><i class="fa-solid fa-briefcase"></i> Job Space Link</div><a class="btn secondary" href="postedhiring1.html">Browse jobs</a></header>
+<main class="wrap">
+  <article class="card" id="jobCard">
+    <div class="state" id="stateBox">Loading the matched job posting… No admin sign-in is required.</div>
+  </article>
+</main>
+<script>
+const sb = window.sbClient || window.supabaseClient ||
+  (window.supabase && typeof window.supabase.functions?.invoke === "function" ? window.supabase : null);
+const functionName = "public-job-details";
+const params = new URLSearchParams(window.location.search);
+const jobId = params.get("job_id");
+
+function valueOf(row, names){
+  for(const name of names){
+    const value = row && row[name];
+    if(value !== null && value !== undefined && String(value).trim() !== ""){
+      return typeof value === "object" ? JSON.stringify(value) : String(value);
+    }
+  }
+  return "";
+}
+function locationOf(job){
+  return [valueOf(job,["address"]),valueOf(job,["city"]),valueOf(job,["state"]),valueOf(job,["country"])].filter(Boolean).join(", ");
+}
+function salaryOf(job){
+  const min=valueOf(job,["salary_min"]);
+  const max=valueOf(job,["salary_max"]);
+  const currency=valueOf(job,["salary_currency"]);
+  const amount=min&&max?min+" – "+max:min?("From "+min):max?("Up to "+max):"";
+  return amount ? (currency ? currency+" "+amount : amount) : "";
+}
+function addSection(parent, title, value){
+  if(!value) return;
+  const heading=document.createElement("h2");
+  heading.textContent=title;
+  const content=document.createElement("div");
+  content.className="content";
+  content.textContent=value;
+  parent.append(heading,content);
+}
+function showError(message){
+  const box=document.getElementById("stateBox");
+  box.className="state error";
+  box.textContent=message;
+}
+function renderJob(job){
+  const card=document.getElementById("jobCard");
+  card.innerHTML="";
+  const title=document.createElement("h1");
+  title.textContent=valueOf(job,["position","title"])||"Job posting";
+  const company=document.createElement("p");
+  company.className="company";
+  company.textContent=valueOf(job,["company_name","company"])||"Company";
+  card.append(title,company);
+  const meta=document.createElement("div");
+  meta.className="meta";
+  const fields=[
+    ["Department",valueOf(job,["department"])],
+    ["Employment type",valueOf(job,["employment_type","job_type"])],
+    ["Location",locationOf(job)],
+    ["Salary",salaryOf(job)]
+  ];
+  for(const [label,value] of fields){
+    if(!value) continue;
+    const pill=document.createElement("span");
+    pill.className="pill";
+    pill.textContent=label+": "+value;
+    meta.appendChild(pill);
+  }
+  if(meta.childElementCount) card.appendChild(meta);
+  addSection(card,"About the role",valueOf(job,["job_description","job_description_text","description","description_text","role_description"]));
+  addSection(card,"Responsibilities",valueOf(job,["responsibilities"]));
+  addSection(card,"Requirements",valueOf(job,["requirements","qualifications","skills"]));
+  addSection(card,"Education",valueOf(job,["education","education_level"]));
+  addSection(card,"Experience",valueOf(job,["experience","experience_level"]));
+  addSection(card,"Benefits",valueOf(job,["benefits"]));
+  const actions=document.createElement("div");
+  actions.className="actions";
+  const board=document.createElement("a");
+  board.className="btn primary";
+  board.href="postedhiring1.html";
+  board.textContent="Browse all jobs";
+  const copy=document.createElement("button");
+  copy.type="button";
+  copy.className="btn secondary";
+  copy.textContent="Copy job link";
+  copy.addEventListener("click",async function(){
+    try{await navigator.clipboard.writeText(window.location.href);copy.textContent="Link copied";}
+    catch(_){copy.textContent=window.location.href;}
+  });
+  actions.append(board,copy);
+  card.appendChild(actions);
+  document.title=(title.textContent||"Job Details")+" | Job Space Link";
+}
+async function loadJob(){
+  if(!jobId || !/^\d+$/.test(jobId)){
+    showError("The job link is missing a valid job ID.");
+    return;
+  }
+  if(!sb || !sb.functions || typeof sb.functions.invoke !== "function"){
+    showError("Job details could not be loaded. Please check the public Supabase configuration.");
+    return;
+  }
+  try{
+    const result=await sb.functions.invoke(functionName,{body:{job_id:Number(jobId)}});
+    const data=result && result.data;
+    const error=result && result.error;
+    if(error){
+      let message=error.message || "The public job service could not be reached.";
+      try{
+        if(error.context && typeof error.context.json === "function"){
+          const details=await error.context.json();
+          if(details && details.error) message=details.error;
+        }
+      }catch(_){}
+      throw new Error(message);
+    }
+    if(data && data.error) throw new Error(data.error);
+    if(!data || !data.job) throw new Error("This job posting could not be found.");
+    renderJob(data.job);
+  }catch(err){
+    console.error("Unable to load public job details:",err);
+    showError((err && err.message)||"Unable to load this job posting right now.");
+  }
+}
+loadJob();
+</script>
+</body>
+</html>
